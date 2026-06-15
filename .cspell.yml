@@ -69,6 +69,8 @@ ignoreWords:
   - codegen
   - Dockerfiles
   - otelconfig
+  - opentelemetrybot
+  - otelbot
 words:
   - autocorrection
   - bigdecimal

@@ -31,6 +31,8 @@ module OpenTelemetry
 
       # The exception message.
       #
+      # > [!WARNING]> This attribute may contain sensitive information.
+      #
       # @note Stability Level: stable
       EXCEPTION_MESSAGE = 'exception.message'
 
@@ -40,6 +42,12 @@ module OpenTelemetry
       EXCEPTION_STACKTRACE = 'exception.stacktrace'
 
       # The type of the exception (its fully-qualified class name, if applicable). The dynamic type of the exception should be preferred over the static type in languages that support it.
+      #
+      # If the recorded exception type is a wrapper that is not meaningful for
+      # failure classification, instrumentation MAY use the type of the inner
+      # exception instead. For example, in Go, errors created with `fmt.Errorf`
+      # using `%w` MAY be unwrapped when the wrapper type does not help
+      # classify the failure.
       #
       # @note Stability Level: stable
       EXCEPTION_TYPE = 'exception.type'

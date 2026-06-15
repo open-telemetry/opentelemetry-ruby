@@ -89,4 +89,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './registry/version'
+require_relative 'registry/version'

@@ -24,31 +24,81 @@ module OpenTelemetry
       module K8S
         # @!group Metrics Names
 
-        # Maximum CPU resource limit set for the container.
-        #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # Deprecated, use `k8s.container.cpu.limit.desired` and `k8s.container.cpu.limit.current` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `k8s.container.cpu.limit.desired`.
         K8S_CONTAINER_CPU_LIMIT = 'k8s.container.cpu.limit'
 
-        # The ratio of container CPU usage to its CPU limit.
+        # Maximum CPU resource limit currently configured for a running container.
         #
-        # The value range is [0.0,1.0]. A value of 1.0 means the container is using 100% of its CPU limit. If the CPU limit is not set, this metric SHOULD NOT be emitted for that container.
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core)
+        # (status.containerStatuses[*].resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
         #
         # @note Stability Level: development
-        K8S_CONTAINER_CPU_LIMIT_UTILIZATION = 'k8s.container.cpu.limit_utilization'
+        K8S_CONTAINER_CPU_LIMIT_CURRENT = 'k8s.container.cpu.limit.current'
 
-        # CPU resource requested for the container.
+        # Maximum CPU resource limit as defined by the container spec.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#container-v1-core)
+        # (spec.containers[*].resources). Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
         #
         # @note Stability Level: development
+        K8S_CONTAINER_CPU_LIMIT_DESIRED = 'k8s.container.cpu.limit.desired'
+
+        # The ratio of container CPU usage to its current CPU limit.
+        #
+        # The current CPU limit reflects the actual resources applied to the container, as reported by
+        # [ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core).
+        # The value range is [0.0,1.0]. A value of 1.0 means the container is using 100% of its actual CPU limit.
+        # If the CPU limit is not set, this metric SHOULD NOT be emitted for that container.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_CPU_LIMIT_UTILIZATION = 'k8s.container.cpu.limit.utilization'
+
+        # Deprecated, use `k8s.container.cpu.request.desired` and `k8s.container.cpu.request.current` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `k8s.container.cpu.request.desired`.
         K8S_CONTAINER_CPU_REQUEST = 'k8s.container.cpu.request'
 
-        # The ratio of container CPU usage to its CPU request.
+        # CPU resource requested currently configured for a running container.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core)
+        # (status.containerStatuses[*].resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
         #
         # @note Stability Level: development
-        K8S_CONTAINER_CPU_REQUEST_UTILIZATION = 'k8s.container.cpu.request_utilization'
+        K8S_CONTAINER_CPU_REQUEST_CURRENT = 'k8s.container.cpu.request.current'
+
+        # CPU resource requested as defined by the container spec.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#container-v1-core)
+        # (spec.containers[*].resources). Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_CPU_REQUEST_DESIRED = 'k8s.container.cpu.request.desired'
+
+        # The ratio of container CPU usage to its current CPU request.
+        #
+        # The current CPU request reflects the request applied to the running container, as reported by
+        # [ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core).
+        # The value range is [0.0,1.0]. A value of 1.0 means the container is using 100% of its actual CPU request.
+        # If the CPU request is not set, this metric SHOULD NOT be emitted for that container.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_CPU_REQUEST_UTILIZATION = 'k8s.container.cpu.request.utilization'
 
         # Maximum ephemeral storage resource limit set for the container.
         #
@@ -64,19 +114,61 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_CONTAINER_EPHEMERAL_STORAGE_REQUEST = 'k8s.container.ephemeral_storage.request'
 
-        # Maximum memory resource limit set for the container.
-        #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # Deprecated, use `k8s.container.memory.limit.desired` and `k8s.container.memory.limit.current` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `k8s.container.memory.limit.desired`.
         K8S_CONTAINER_MEMORY_LIMIT = 'k8s.container.memory.limit'
 
-        # Memory resource requested for the container.
+        # Maximum memory resource limit currently configured for a running container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core)
+        # (status.containerStatuses[*].resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
         #
         # @note Stability Level: development
+        K8S_CONTAINER_MEMORY_LIMIT_CURRENT = 'k8s.container.memory.limit.current'
+
+        # Maximum memory resource limit as defined by the container spec.
+        #
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#container-v1-core)
+        # (spec.containers[*].resources). Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_MEMORY_LIMIT_DESIRED = 'k8s.container.memory.limit.desired'
+
+        # Deprecated, use `k8s.container.memory.request.desired` and `k8s.container.memory.request.current` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `k8s.container.memory.request.desired`.
         K8S_CONTAINER_MEMORY_REQUEST = 'k8s.container.memory.request'
+
+        # Memory resource request currently configured for a running container.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core)
+        # (status.containerStatuses[*].resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_MEMORY_REQUEST_CURRENT = 'k8s.container.memory.request.current'
+
+        # Memory resource requested as defined by the container spec.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) field of
+        # [K8s Container](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#container-v1-core)
+        # (spec.containers[*].resources). Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_MEMORY_REQUEST_DESIRED = 'k8s.container.memory.request.desired'
 
         # Indicates whether the container is currently marked as ready to accept traffic, based on its readiness probe (1 = ready, 0 = not ready).
         #
@@ -580,6 +672,34 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_NODE_POD_ALLOCATABLE = 'k8s.node.pod.allocatable'
 
+        # Node's system container CPU time.
+        #
+        # This metric is derived from the [CPUStats.UsageCoreNanoSeconds](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L236) field of the [ContainerStats](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L157C6-L157C20) of [Node.SystemContainers](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L40) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_SYSTEM_CONTAINER_CPU_TIME = 'k8s.node.system_container.cpu.time'
+
+        # Node's system container CPU usage, measured in cpus.
+        #
+        # This metric is derived from the [CPUStats.UsageNanoCores](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L233) field of the [ContainerStats](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L157C6-L157C20) of [Node.SystemContainers](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L40) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_SYSTEM_CONTAINER_CPU_USAGE = 'k8s.node.system_container.cpu.usage'
+
+        # Node's system container memory usage.
+        #
+        # This metric is derived from the [MemoryStats.UsageBytes](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L252) field of the [ContainerStats](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L157C6-L157C20) of [Node.SystemContainers](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L40) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_SYSTEM_CONTAINER_MEMORY_USAGE = 'k8s.node.system_container.memory.usage'
+
+        # The amount of working set memory.
+        #
+        # This metric is derived from the [MemoryStats.WorkingSetBytes](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L256) field of the [ContainerStats](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L157C6-L157C20) of [Node.SystemContainers](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L40) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_SYSTEM_CONTAINER_MEMORY_WORKING_SET = 'k8s.node.system_container.memory.working_set'
+
         # The time the Node has been running.
         #
         # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
@@ -587,6 +707,47 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         K8S_NODE_UPTIME = 'k8s.node.uptime'
+
+        # Number of PersistentVolumes in a given phase.
+        #
+        # All possible phases should be reported at each interval to avoid gaps in the time series.
+        # This metric is derived from the `.status.phase` field of the
+        # [K8s PersistentVolumeStatus](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeStatus).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_STATUS_PHASE = 'k8s.persistentvolume.status.phase'
+
+        # The storage capacity of the PersistentVolume.
+        #
+        # This metric is derived from the `.spec.capacity.storage` field of the [K8s PersistentVolumeSpec](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeSpec).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_STORAGE_CAPACITY = 'k8s.persistentvolume.storage.capacity'
+
+        # Number of PersistentVolumeClaims in a given phase.
+        #
+        # All possible phases should be reported at each interval to avoid gaps in the time series.
+        # This metric is derived from the `.status.phase` field of the
+        # [K8s PersistentVolumeClaimStatus](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#PersistentVolumeClaimStatus).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_STATUS_PHASE = 'k8s.persistentvolumeclaim.status.phase'
+
+        # The actual storage capacity provisioned for the PersistentVolumeClaim.
+        #
+        # Only available when the PVC is bound. May differ from the requested capacity due to provisioner rounding.
+        # This metric is derived from the `.status.capacity.storage` field of the
+        # [K8s PersistentVolumeClaimStatus](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#PersistentVolumeClaimStatus).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_STORAGE_CAPACITY = 'k8s.persistentvolumeclaim.storage.capacity'
+
+        # The storage requested by the PersistentVolumeClaim.
+        #
+        # This metric is derived from the `.spec.resources.requests.storage` field of the [K8s PersistentVolumeClaimSpec](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#PersistentVolumeClaimSpec).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_STORAGE_REQUEST = 'k8s.persistentvolumeclaim.storage.request'
 
         # Total CPU time consumed.
         #
@@ -1036,6 +1197,49 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_STORAGE_REQUEST_USED = 'k8s.resourcequota.storage.request.used'
+
+        # Number of endpoints for a service by condition and address type.
+        #
+        # This metric is derived from the Kubernetes [EndpointSlice API](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/).
+        # It reports the number of network endpoints backing a Service, broken down by their condition and address type.
+        #
+        # In dual-stack or multi-protocol clusters, separate counts are reported for each address family (`IPv4`, `IPv6`, `FQDN`).
+        #
+        # When the optional `zone` attribute is enabled, counts are further broken down by availability zone for zone-aware monitoring.
+        #
+        # An endpoint may be reported under multiple conditions simultaneously (e.g., both `serving` and `terminating` during a graceful shutdown).
+        # See [K8s EndpointConditions](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/) for more details.
+        #
+        # The conditions represent:
+        #
+        # - `ready`: Endpoints capable of receiving new connections.
+        # - `serving`: Endpoints currently handling traffic.
+        # - `terminating`: Endpoints that are being phased out but may still be handling existing connections.
+        #
+        # For Services with `publishNotReadyAddresses` enabled (common for headless StatefulSets),
+        # this metric will include endpoints that are published despite not being ready.
+        # The `k8s.service.publish_not_ready_addresses` resource attribute indicates this setting.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_ENDPOINT_COUNT = 'k8s.service.endpoint.count'
+
+        # Number of load balancer ingress points (external IPs/hostnames) assigned to the service.
+        #
+        # This metric reports the number of external ingress points (IP addresses or hostnames)
+        # assigned to a LoadBalancer Service.
+        #
+        # It is only emitted for Services of type `LoadBalancer` and reflects the assignments
+        # made by the underlying infrastructure's load balancer controller in the
+        # [.status.loadBalancer.ingress](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceStatus) field.
+        #
+        # A value of `0` indicates that no ingress points have been assigned yet (e.g., during provisioning).
+        # A value greater than `1` may occur when multiple IPs or hostnames are assigned (e.g., dual-stack configurations).
+        #
+        # This metric signals that external endpoints have been assigned by the load balancer controller, but it does not
+        # guarantee that the load balancer is healthy.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_LOAD_BALANCER_INGRESS_COUNT = 'k8s.service.load_balancer.ingress.count'
 
         # Deprecated, use `k8s.statefulset.pod.current` instead.
         #

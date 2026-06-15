@@ -42,6 +42,7 @@ end
 # Test helper for Zipkin Exporter
 class InMemoryMetricsReporter
   include OpenTelemetry::SDK::Trace::Export::MetricsReporter
+
   attr_reader :counters, :records, :observes
 
   def initialize

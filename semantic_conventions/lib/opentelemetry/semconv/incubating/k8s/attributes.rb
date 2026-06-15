@@ -26,7 +26,7 @@ module OpenTelemetry
 
         # The name of the cluster.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CLUSTER_NAME = 'k8s.cluster.name'
 
         # A pseudo-ID for the cluster, set to the UID of the `kube-system` namespace.
@@ -54,17 +54,17 @@ module OpenTelemetry
         # Therefore, UIDs between clusters should be extremely unlikely to
         # conflict.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CLUSTER_UID = 'k8s.cluster.uid'
 
         # The name of the Container from Pod specification, must be unique within a Pod. Container runtime usually uses different globally unique name (`container.name`).
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CONTAINER_NAME = 'k8s.container.name'
 
         # Number of times the container was restarted. This attribute can be used to identify a particular container (running or stopped) within a container spec.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CONTAINER_RESTART_COUNT = 'k8s.container.restart_count'
 
         # Last terminated reason of the Container.
@@ -97,7 +97,7 @@ module OpenTelemetry
         # - An annotation `data` with empty string value SHOULD be recorded as
         #   the `k8s.cronjob.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CRONJOB_ANNOTATION_LAMBDA = ->(key) { "k8s.cronjob.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -115,17 +115,17 @@ module OpenTelemetry
         # - A label `automated` with empty string value SHOULD be recorded as
         #   the `k8s.cronjob.label.automated` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CRONJOB_LABEL_LAMBDA = ->(key) { "k8s.cronjob.label.#{key}" }
 
         # The name of the CronJob.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CRONJOB_NAME = 'k8s.cronjob.name'
 
         # The UID of the CronJob.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_CRONJOB_UID = 'k8s.cronjob.uid'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -143,7 +143,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.daemonset.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DAEMONSET_ANNOTATION_LAMBDA = ->(key) { "k8s.daemonset.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -161,17 +161,17 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.daemonset.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DAEMONSET_LABEL_LAMBDA = ->(key) { "k8s.daemonset.label.#{key}" }
 
         # The name of the DaemonSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DAEMONSET_NAME = 'k8s.daemonset.name'
 
         # The UID of the DaemonSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DAEMONSET_UID = 'k8s.daemonset.uid'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -189,7 +189,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.deployment.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DEPLOYMENT_ANNOTATION_LAMBDA = ->(key) { "k8s.deployment.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -207,17 +207,17 @@ module OpenTelemetry
         # - A label `injected` with empty string value SHOULD be recorded as
         #   the `k8s.deployment.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DEPLOYMENT_LABEL_LAMBDA = ->(key) { "k8s.deployment.label.#{key}" }
 
         # The name of the Deployment.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DEPLOYMENT_NAME = 'k8s.deployment.name'
 
         # The UID of the Deployment.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_DEPLOYMENT_UID = 'k8s.deployment.uid'
 
         # The type of metric source for the horizontal pod autoscaler.
@@ -278,7 +278,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.job.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_JOB_ANNOTATION_LAMBDA = ->(key) { "k8s.job.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -296,17 +296,17 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.job.label.automated` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_JOB_LABEL_LAMBDA = ->(key) { "k8s.job.label.#{key}" }
 
         # The name of the Job.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_JOB_NAME = 'k8s.job.name'
 
         # The UID of the Job.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_JOB_UID = 'k8s.job.uid'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -324,7 +324,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.namespace.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NAMESPACE_ANNOTATION_LAMBDA = ->(key) { "k8s.namespace.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -342,12 +342,12 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.namespace.label.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NAMESPACE_LABEL_LAMBDA = ->(key) { "k8s.namespace.label.#{key}" }
 
         # The name of the namespace that the pod is running in.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NAMESPACE_NAME = 'k8s.namespace.name'
 
         # The phase of the K8s namespace.
@@ -373,7 +373,7 @@ module OpenTelemetry
         # - An annotation `data` with empty string value SHOULD be recorded as
         #   the `k8s.node.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_ANNOTATION_LAMBDA = ->(key) { "k8s.node.annotation.#{key}" }
 
         # The status of the condition, one of True, False, Unknown.
@@ -414,18 +414,139 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.node.label.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_LABEL_LAMBDA = ->(key) { "k8s.node.label.#{key}" }
 
         # The name of the Node.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_NAME = 'k8s.node.name'
+
+        # The name of the system container running on the K8s Node.
+        #
+        # @note Stability Level: development
+        K8S_NODE_SYSTEM_CONTAINER_NAME = 'k8s.node.system_container.name'
 
         # The UID of the Node.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_UID = 'k8s.node.uid'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   K8S_PERSISTENTVOLUME_ANNOTATION_LAMBDA.call('some-cool-key') #=> 'k8s.persistentvolume.annotation.some-cool-key'
+        #
+        # The annotation placed on the PersistentVolume, the `<key>` being the annotation name, the value being the annotation value, even if the value is empty.
+        #
+        # Examples:
+        #
+        # - An annotation `pv.kubernetes.io/provisioned-by` with value `kubernetes.io/aws-ebs` SHOULD be recorded as
+        #   the `k8s.persistentvolume.annotation.pv.kubernetes.io/provisioned-by` attribute with value `"kubernetes.io/aws-ebs"`.
+        # - An annotation `data` with empty string value SHOULD be recorded as
+        #   the `k8s.persistentvolume.annotation.data` attribute with value `""`.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_ANNOTATION_LAMBDA = ->(key) { "k8s.persistentvolume.annotation.#{key}" }
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   K8S_PERSISTENTVOLUME_LABEL_LAMBDA.call('some-cool-key') #=> 'k8s.persistentvolume.label.some-cool-key'
+        #
+        # The label placed on the PersistentVolume, the `<key>` being the label name, the value being the label value, even if the value is empty.
+        #
+        # Examples:
+        #
+        # - A label `type` with value `ssd` SHOULD be recorded as
+        #   the `k8s.persistentvolume.label.type` attribute with value `"ssd"`.
+        # - A label `data` with empty string value SHOULD be recorded as
+        #   the `k8s.persistentvolume.label.data` attribute with value `""`.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_LABEL_LAMBDA = ->(key) { "k8s.persistentvolume.label.#{key}" }
+
+        # The name of the PersistentVolume.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_NAME = 'k8s.persistentvolume.name'
+
+        # The reclaim policy of the PersistentVolume.
+        #
+        # This attribute aligns with the `persistentVolumeReclaimPolicy` field of the
+        # [K8s PersistentVolumeSpec](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeSpec).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_RECLAIM_POLICY = 'k8s.persistentvolume.reclaim_policy'
+
+        # The phase of the PersistentVolume.
+        #
+        # This attribute aligns with the `phase` field of the
+        # [K8s PersistentVolumeStatus](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-v1/#PersistentVolumeStatus).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_STATUS_PHASE = 'k8s.persistentvolume.status.phase'
+
+        # The UID of the PersistentVolume.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUME_UID = 'k8s.persistentvolume.uid'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   K8S_PERSISTENTVOLUMECLAIM_ANNOTATION_LAMBDA.call('some-cool-key') #=> 'k8s.persistentvolumeclaim.annotation.some-cool-key'
+        #
+        # The annotation placed on the PersistentVolumeClaim, the `<key>` being the annotation name, the value being the annotation value, even if the value is empty.
+        #
+        # Examples:
+        #
+        # - An annotation `volume.beta.kubernetes.io/storage-provisioner` with value `kubernetes.io/aws-ebs` SHOULD be recorded as
+        #   the `k8s.persistentvolumeclaim.annotation.volume.beta.kubernetes.io/storage-provisioner` attribute with value `"kubernetes.io/aws-ebs"`.
+        # - An annotation `data` with empty string value SHOULD be recorded as
+        #   the `k8s.persistentvolumeclaim.annotation.data` attribute with value `""`.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_ANNOTATION_LAMBDA = ->(key) { "k8s.persistentvolumeclaim.annotation.#{key}" }
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   K8S_PERSISTENTVOLUMECLAIM_LABEL_LAMBDA.call('some-cool-key') #=> 'k8s.persistentvolumeclaim.label.some-cool-key'
+        #
+        # The label placed on the PersistentVolumeClaim, the `<key>` being the label name, the value being the label value, even if the value is empty.
+        #
+        # Examples:
+        #
+        # - A label `app` with value `my-app` SHOULD be recorded as
+        #   the `k8s.persistentvolumeclaim.label.app` attribute with value `"my-app"`.
+        # - A label `data` with empty string value SHOULD be recorded as
+        #   the `k8s.persistentvolumeclaim.label.data` attribute with value `""`.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_LABEL_LAMBDA = ->(key) { "k8s.persistentvolumeclaim.label.#{key}" }
+
+        # The name of the PersistentVolumeClaim.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_NAME = 'k8s.persistentvolumeclaim.name'
+
+        # The phase of the PersistentVolumeClaim.
+        #
+        # This attribute aligns with the `phase` field of the
+        # [K8s PersistentVolumeClaimStatus](https://kubernetes.io/docs/reference/kubernetes-api/config-and-storage-resources/persistent-volume-claim-v1/#PersistentVolumeClaimStatus).
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_STATUS_PHASE = 'k8s.persistentvolumeclaim.status.phase'
+
+        # The UID of the PersistentVolumeClaim.
+        #
+        # @note Stability Level: development
+        K8S_PERSISTENTVOLUMECLAIM_UID = 'k8s.persistentvolumeclaim.uid'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
@@ -444,8 +565,28 @@ module OpenTelemetry
         # - An annotation `data` with empty string value SHOULD be recorded as
         #   the `k8s.pod.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_ANNOTATION_LAMBDA = ->(key) { "k8s.pod.annotation.#{key}" }
+
+        # Specifies the hostname of the Pod.
+        #
+        # The K8s Pod spec has an optional hostname field, which can be used to specify a hostname.
+        # Refer to [K8s docs](https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-hostname-and-subdomain-field)
+        # for more information about this field.
+        #
+        # This attribute aligns with the `hostname` field of the
+        # [K8s PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#podspec-v1-core).
+        #
+        # @note Stability Level: release_candidate
+        K8S_POD_HOSTNAME = 'k8s.pod.hostname'
+
+        # IP address allocated to the Pod.
+        #
+        # This attribute aligns with the `podIP` field of the
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#podstatus-v1-core).
+        #
+        # @note Stability Level: release_candidate
+        K8S_POD_IP = 'k8s.pod.ip'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
@@ -464,7 +605,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.pod.label.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_LABEL_LAMBDA = ->(key) { "k8s.pod.label.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -481,8 +622,20 @@ module OpenTelemetry
 
         # The name of the Pod.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_NAME = 'k8s.pod.name'
+
+        # The start timestamp of the Pod.
+        #
+        # Date and time at which the object was acknowledged by the Kubelet.
+        # This is before the Kubelet pulled the container image(s) for the pod.
+        #
+        # This attribute aligns with the `startTime` field of the
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#podstatus-v1-core),
+        # in ISO 8601 (RFC 3339 compatible) format.
+        #
+        # @note Stability Level: release_candidate
+        K8S_POD_START_TIME = 'k8s.pod.start_time'
 
         # The phase for the pod. Corresponds to the `phase` field of the: [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#podstatus-v1-core)
         #
@@ -496,7 +649,7 @@ module OpenTelemetry
 
         # The UID of the Pod.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_UID = 'k8s.pod.uid'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -514,7 +667,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.replicaset.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_REPLICASET_ANNOTATION_LAMBDA = ->(key) { "k8s.replicaset.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -532,17 +685,17 @@ module OpenTelemetry
         # - A label `injected` with empty string value SHOULD be recorded as
         #   the `k8s.replicaset.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_REPLICASET_LABEL_LAMBDA = ->(key) { "k8s.replicaset.label.#{key}" }
 
         # The name of the ReplicaSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_REPLICASET_NAME = 'k8s.replicaset.name'
 
         # The UID of the ReplicaSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_REPLICASET_UID = 'k8s.replicaset.uid'
 
         # The name of the replication controller.
@@ -576,6 +729,138 @@ module OpenTelemetry
         # for the state of the key.
         #
         # @example Usage
+        #   K8S_SERVICE_ANNOTATION_LAMBDA.call('some-cool-key') #=> 'k8s.service.annotation.some-cool-key'
+        #
+        # The annotation placed on the Service, the `<key>` being the annotation name, the value being the annotation value, even if the value is empty.
+        #
+        # Examples:
+        #
+        # - An annotation `prometheus.io/scrape` with value `true` SHOULD be recorded as
+        #   the `k8s.service.annotation.prometheus.io/scrape` attribute with value `"true"`.
+        # - An annotation `data` with empty string value SHOULD be recorded as
+        #   the `k8s.service.annotation.data` attribute with value `""`.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_ANNOTATION_LAMBDA = ->(key) { "k8s.service.annotation.#{key}" }
+
+        # The address type of the service endpoint.
+        #
+        # The network address family or type of the endpoint.
+        # This attribute aligns with the `addressType` field of the
+        # [K8s EndpointSlice](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/).
+        # It is used to differentiate metrics when a Service is backed by multiple address types
+        # (e.g., in dual-stack clusters).
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_ENDPOINT_ADDRESS_TYPE = 'k8s.service.endpoint.address_type'
+
+        # The condition of the service endpoint.
+        #
+        # The current operational condition of the service endpoint.
+        # An endpoint can have multiple conditions set at once (e.g., both `serving` and `terminating` during rollout).
+        # This attribute aligns with the condition fields in the [K8s EndpointSlice](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/).
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_ENDPOINT_CONDITION = 'k8s.service.endpoint.condition'
+
+        # The zone of the service endpoint.
+        #
+        # The zone where the endpoint is located, typically corresponding to a failure domain.
+        # This attribute aligns with the `zone` field of endpoints in the
+        # [K8s EndpointSlice](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/endpoint-slice-v1/).
+        # It enables zone-aware monitoring of service endpoint distribution and supports
+        # features like [Topology Aware Routing](https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/).
+        #
+        # If the zone is not populated (e.g., nodes without the `topology.kubernetes.io/zone` label),
+        # the attribute value will be an empty string.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_ENDPOINT_ZONE = 'k8s.service.endpoint.zone'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   K8S_SERVICE_LABEL_LAMBDA.call('some-cool-key') #=> 'k8s.service.label.some-cool-key'
+        #
+        # The label placed on the Service, the `<key>` being the label name, the value being the label value, even if the value is empty.
+        #
+        # Examples:
+        #
+        # - A label `app` with value `my-service` SHOULD be recorded as
+        #   the `k8s.service.label.app` attribute with value `"my-service"`.
+        # - A label `data` with empty string value SHOULD be recorded as
+        #   the `k8s.service.label.data` attribute with value `""`.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_LABEL_LAMBDA = ->(key) { "k8s.service.label.#{key}" }
+
+        # The name of the Service.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_NAME = 'k8s.service.name'
+
+        # Whether the Service publishes not-ready endpoints.
+        #
+        # Whether the Service is configured to publish endpoints before the pods are ready.
+        # This attribute is typically used to indicate that a Service (such as a headless
+        # Service for a StatefulSet) allows peer discovery before pods pass their readiness probes.
+        # It aligns with the `publishNotReadyAddresses` field of the
+        # [K8s ServiceSpec](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec).
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_PUBLISH_NOT_READY_ADDRESSES = 'k8s.service.publish_not_ready_addresses'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   K8S_SERVICE_SELECTOR_LAMBDA.call('some-cool-key') #=> 'k8s.service.selector.some-cool-key'
+        #
+        # The selector key-value pair placed on the Service, the `<key>` being the selector key, the value being the selector value.
+        #
+        # These selectors are used to correlate with pod labels. Each selector key-value pair becomes a separate attribute.
+        #
+        # Examples:
+        #
+        # - A selector `app=my-app` SHOULD be recorded as
+        #   the `k8s.service.selector.app` attribute with value `"my-app"`.
+        # - A selector `version=v1` SHOULD be recorded as
+        #   the `k8s.service.selector.version` attribute with value `"v1"`.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_SELECTOR_LAMBDA = ->(key) { "k8s.service.selector.#{key}" }
+
+        # The traffic distribution policy for the Service.
+        #
+        # Specifies how traffic is distributed to endpoints for this Service.
+        # This attribute aligns with the `trafficDistribution` field of the
+        # [K8s ServiceSpec](https://kubernetes.io/docs/reference/networking/virtual-ips/#traffic-distribution).
+        # Known values include `PreferSameZone` (prefer endpoints in the same zone as the client) and
+        # `PreferSameNode` (prefer endpoints on the same node, fallback to same zone, then cluster-wide).
+        # If this field is not set on the Service, the attribute SHOULD NOT be emitted.
+        # When not set, Kubernetes distributes traffic evenly across all endpoints cluster-wide.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_TRAFFIC_DISTRIBUTION = 'k8s.service.traffic_distribution'
+
+        # The type of the Kubernetes Service.
+        #
+        # This attribute aligns with the `type` field of the
+        # [K8s ServiceSpec](https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec).
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_TYPE = 'k8s.service.type'
+
+        # The UID of the Service.
+        #
+        # @note Stability Level: development
+        K8S_SERVICE_UID = 'k8s.service.uid'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
         #   K8S_STATEFULSET_ANNOTATION_LAMBDA.call('some-cool-key') #=> 'k8s.statefulset.annotation.some-cool-key'
         #
         # The annotation placed on the StatefulSet, the `<key>` being the annotation name, the value being the annotation value, even if the value is empty.
@@ -587,7 +872,7 @@ module OpenTelemetry
         # - A label `data` with empty string value SHOULD be recorded as
         #   the `k8s.statefulset.annotation.data` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_STATEFULSET_ANNOTATION_LAMBDA = ->(key) { "k8s.statefulset.annotation.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -605,17 +890,17 @@ module OpenTelemetry
         # - A label `injected` with empty string value SHOULD be recorded as
         #   the `k8s.statefulset.label.injected` attribute with value `""`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_STATEFULSET_LABEL_LAMBDA = ->(key) { "k8s.statefulset.label.#{key}" }
 
         # The name of the StatefulSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_STATEFULSET_NAME = 'k8s.statefulset.name'
 
         # The UID of the StatefulSet.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_STATEFULSET_UID = 'k8s.statefulset.uid'
 
         # The name of K8s [StorageClass](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#storageclass-v1-storage-k8s-io) object.

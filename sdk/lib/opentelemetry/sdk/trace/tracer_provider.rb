@@ -170,7 +170,7 @@ module OpenTelemetry
         private
 
         def sampler_from_environment(default_sampler)
-          case ENV['OTEL_TRACES_SAMPLER']
+          case ENV.fetch('OTEL_TRACES_SAMPLER', nil)
           when 'always_on' then Samplers::ALWAYS_ON
           when 'always_off' then Samplers::ALWAYS_OFF
           when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0)))
