@@ -10,6 +10,7 @@ require 'opentelemetry/components/trace'
 require_relative 'otelconfig/instrumentation'
 require_relative 'otelconfig/propagation'
 require_relative 'otelconfig/resource'
+require_relative 'otelconfig/constants'
 
 module OpenTelemetry
   # OtelConfig module handles declarative configuration of OpenTelemetry components
@@ -53,10 +54,15 @@ module OpenTelemetry
           resource = build_resource(config['resource'])
           tracer_provider = Trace.build_tracer_provider(config['tracer_provider'], resource)
 
-          OpenTelemetry.tracer_provider = tracer_provider
+          propagators = configure_propagation(config['propagator'])
 
-          configure_propagation(config['propagator'])
           configure_instrumentation(config['instrumentation/development'])
+
+          RubySDK.new(
+            :tracer_provider => tracer_provider,
+            :propagator => propagators,
+            :resource => resource
+          )
         end
       end
 

@@ -17,7 +17,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "my-service"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -35,7 +36,8 @@ describe OpenTelemetry::OtelConfig do
                 value: 3
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -53,7 +55,8 @@ describe OpenTelemetry::OtelConfig do
                 value: true
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -74,7 +77,8 @@ describe OpenTelemetry::OtelConfig do
                 type: string
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -94,7 +98,8 @@ describe OpenTelemetry::OtelConfig do
                 type: string
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -142,7 +147,8 @@ describe OpenTelemetry::OtelConfig do
                 type: double_array
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -190,7 +196,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "valid"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -211,7 +218,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "present"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -245,7 +253,8 @@ describe OpenTelemetry::OtelConfig do
                 type: bool
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -268,7 +277,8 @@ describe OpenTelemetry::OtelConfig do
             attributes_list: "env=production"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -284,7 +294,8 @@ describe OpenTelemetry::OtelConfig do
             attributes_list: "region=us-east-1,team=platform,tier=backend"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -302,7 +313,8 @@ describe OpenTelemetry::OtelConfig do
             attributes_list: "auth.token=abc=def=ghi"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -323,7 +335,8 @@ describe OpenTelemetry::OtelConfig do
             attributes_list: "service.name=from-list"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -342,7 +355,8 @@ describe OpenTelemetry::OtelConfig do
             attributes_list: "service.name=from-list,extra.key=bonus-value"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -362,7 +376,8 @@ describe OpenTelemetry::OtelConfig do
             attributes_list: "only-in-list=there"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -384,7 +399,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "schema-test"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -407,7 +423,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "detection-test"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -432,7 +449,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "filter-test"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -457,7 +475,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "exclude-test"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -477,7 +496,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "sdk-merge-test"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           attrs = OpenTelemetry.tracer_provider
                                .instance_variable_get(:@resource)
@@ -501,7 +521,8 @@ describe OpenTelemetry::OtelConfig do
                 value: "staging"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           tp_attrs = OpenTelemetry.tracer_provider
                                   .instance_variable_get(:@resource)

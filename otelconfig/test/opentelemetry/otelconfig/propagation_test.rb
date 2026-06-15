@@ -16,7 +16,9 @@ describe OpenTelemetry::OtelConfig do
             composite:
               - tracecontext:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator
@@ -33,7 +35,9 @@ describe OpenTelemetry::OtelConfig do
             composite:
               - baggage:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Baggage::Propagation::TextMapPropagator
@@ -50,7 +54,9 @@ describe OpenTelemetry::OtelConfig do
               - tracecontext:
               - baggage:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Context::Propagation::CompositeTextMapPropagator
@@ -77,7 +83,9 @@ describe OpenTelemetry::OtelConfig do
               - tracecontext:
               - nonexistent_xyz:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator
@@ -92,7 +100,9 @@ describe OpenTelemetry::OtelConfig do
           propagator:
             composite: []
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           fields = OpenTelemetry.propagation.fields
           _(fields).wont_include 'traceparent'
@@ -109,7 +119,9 @@ describe OpenTelemetry::OtelConfig do
           propagator:
             composite_list: "tracecontext,baggage"
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Context::Propagation::CompositeTextMapPropagator
@@ -130,7 +142,9 @@ describe OpenTelemetry::OtelConfig do
           propagator:
             composite_list: " tracecontext , baggage "
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           fields = OpenTelemetry.propagation.fields
           _(fields).must_include 'traceparent'
@@ -145,7 +159,9 @@ describe OpenTelemetry::OtelConfig do
           propagator:
             composite_list: "tracecontext,totally_unknown_propagator"
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator
@@ -164,7 +180,9 @@ describe OpenTelemetry::OtelConfig do
               - tracecontext:
             composite_list: "baggage"
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           propagation = OpenTelemetry.propagation
           _(propagation).must_be_instance_of OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator
@@ -185,7 +203,9 @@ describe OpenTelemetry::OtelConfig do
                 - #{name}:
                 - tracecontext:
           YAML
-            OpenTelemetry::OtelConfig.configure_from_file(path)
+            sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+            OpenTelemetry.tracer_provider = sdk.tracer_provider
+            OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
             _(OpenTelemetry.propagation.fields).must_include 'traceparent'
           end
@@ -206,7 +226,9 @@ describe OpenTelemetry::OtelConfig do
               composite:
                 - xray:
           YAML
-            OpenTelemetry::OtelConfig.configure_from_file(path)
+            sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+            OpenTelemetry.tracer_provider = sdk.tracer_provider
+            OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
             _(OpenTelemetry.propagation).must_be_instance_of \
               OpenTelemetry::Propagator::XRay::TextMapPropagator
@@ -222,7 +244,9 @@ describe OpenTelemetry::OtelConfig do
                 - xray:
                 - tracecontext:
           YAML
-            OpenTelemetry::OtelConfig.configure_from_file(path)
+            sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+            OpenTelemetry.tracer_provider = sdk.tracer_provider
+            OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
             propagation = OpenTelemetry.propagation
             _(propagation).must_be_instance_of \
@@ -243,7 +267,9 @@ describe OpenTelemetry::OtelConfig do
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
+          OpenTelemetry.propagation = sdk.propagator if sdk.propagator
 
           fields = OpenTelemetry.propagation.fields
           _(fields).wont_include 'traceparent'

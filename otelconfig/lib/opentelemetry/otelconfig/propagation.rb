@@ -17,9 +17,7 @@ module OpenTelemetry
         propagators = names.filter_map { |name| resolve_propagator(name) }
         return if propagators.empty?
 
-        OpenTelemetry.propagation =
-          OpenTelemetry::Context::Propagation::CompositeTextMapPropagator
-          .compose_propagators(propagators)
+        return OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators(propagators)
       end
 
       # Extracts an ordered list of propagator name strings from the config hash.

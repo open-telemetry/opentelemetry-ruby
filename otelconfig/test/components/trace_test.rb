@@ -13,7 +13,8 @@ describe OpenTelemetry::OtelConfig do
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
           tp = OpenTelemetry.tracer_provider
 
           _(tp).must_be_instance_of OpenTelemetry::SDK::Trace::TracerProvider
@@ -47,7 +48,8 @@ describe OpenTelemetry::OtelConfig do
                       compression: gzip
                       timeout: 10000
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           processors = OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)
           _(processors.size).must_equal 1
@@ -79,7 +81,8 @@ describe OpenTelemetry::OtelConfig do
                     otlp_http:
                       endpoint: http://localhost:4318/v1/traces
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           processors = OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)
           _(processors.size).must_equal 1
@@ -106,7 +109,8 @@ describe OpenTelemetry::OtelConfig do
                   exporter:
                     console:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           processors = OpenTelemetry.tracer_provider.instance_variable_get(:@span_processors)
           _(processors.size).must_equal 2
@@ -132,7 +136,8 @@ describe OpenTelemetry::OtelConfig do
             sampler:
               always_on:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           _(OpenTelemetry.tracer_provider.sampler).must_equal OpenTelemetry::SDK::Trace::Samplers::ALWAYS_ON
         end
@@ -149,7 +154,8 @@ describe OpenTelemetry::OtelConfig do
             sampler:
               always_off:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           _(OpenTelemetry.tracer_provider.sampler).must_equal OpenTelemetry::SDK::Trace::Samplers::ALWAYS_OFF
         end
@@ -167,7 +173,8 @@ describe OpenTelemetry::OtelConfig do
               trace_id_ratio_based:
                 ratio: 0.25
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
           sampler = OpenTelemetry.tracer_provider.sampler
 
           _(sampler.description).must_match(/0.25/)
@@ -191,7 +198,8 @@ describe OpenTelemetry::OtelConfig do
                 remote_parent_not_sampled:
                   always_off:
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
           sampler = OpenTelemetry.tracer_provider.sampler
 
           _(sampler.description).must_match(/ParentBased/)
@@ -216,7 +224,8 @@ describe OpenTelemetry::OtelConfig do
               event_attribute_count_limit: 8
               link_attribute_count_limit: 4
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
           limits = OpenTelemetry.tracer_provider
                                 .instance_variable_get(:@span_limits)
 

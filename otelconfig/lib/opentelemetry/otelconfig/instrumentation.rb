@@ -11,6 +11,7 @@ module OpenTelemetry
       def configure_instrumentation(instrumentation_cfg)
         config_map = build_instrumentation_config_map(instrumentation_cfg)
         OpenTelemetry::Instrumentation.registry.install_all(config_map)
+        config_map
       rescue NameError
         OpenTelemetry.logger.warn('opentelemetry-instrumentation-all not available; skipping instrumentation install.')
       end
@@ -20,11 +21,11 @@ module OpenTelemetry
       def build_instrumentation_config_map(instrumentation_cfg)
         return {} unless instrumentation_cfg.is_a?(Hash)
 
-        general = instrumentation_cfg['general']
-        return {} unless general.is_a?(Hash)
+        ruby_instrumentation = instrumentation_cfg['ruby']
+        return {} unless ruby_instrumentation.is_a?(Hash)
 
         name_map = build_instrumentation_name_map
-        general.each_with_object({}) do |(short_name, options), result|
+        ruby_instrumentation.each_with_object({}) do |(short_name, options), result|
           full_name = name_map[short_name.to_s]
           unless full_name
             OpenTelemetry.logger.warn("Declarative config: unknown instrumentation short name '#{short_name}' — skipping.")

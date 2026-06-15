@@ -33,7 +33,8 @@ describe OpenTelemetry::OtelConfig do
                 exporter:
                   console:
       YAML
-        OpenTelemetry::OtelConfig.configure_from_file(path)
+        sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+        OpenTelemetry.tracer_provider = sdk.tracer_provider
 
         _(OpenTelemetry.tracer_provider).must_be_instance_of OpenTelemetry::SDK::Trace::TracerProvider
       end
@@ -70,7 +71,9 @@ describe OpenTelemetry::OtelConfig do
             - tracecontext:
             - baggage:
       YAML
-        OpenTelemetry::OtelConfig.configure_from_file(path)
+        sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+        OpenTelemetry.tracer_provider = sdk.tracer_provider
+        OpenTelemetry.propagation = sdk.propagator
 
         _(OpenTelemetry.tracer_provider).must_be_instance_of OpenTelemetry::SDK::Trace::TracerProvider
 

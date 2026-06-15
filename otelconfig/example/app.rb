@@ -12,7 +12,9 @@ require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'
 require 'opentelemetry_otelconfig'
 
-OpenTelemetry::OtelConfig.configure
+sdk = OpenTelemetry::OtelConfig.configure
+OpenTelemetry.tracer_provider = sdk.tracer_provider
+OpenTelemetry.propagation = sdk.propagator if sdk&.propagator
 
 tracer = OpenTelemetry.tracer_provider.tracer('otelconfig-example', '1.0.0')
 

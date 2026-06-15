@@ -111,7 +111,8 @@ describe OpenTelemetry::OtelConfig do
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           _(OpenTelemetry.tracer_provider).must_be_instance_of OpenTelemetry::SDK::Trace::TracerProvider
         end
@@ -122,14 +123,15 @@ describe OpenTelemetry::OtelConfig do
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
           instrumentation:
-            general:
+            ruby:
               net_http:
                 untraced_hosts:
                   - example.com
               rack:
                 record_frontend_span: false
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           _(OpenTelemetry.tracer_provider).must_be_instance_of OpenTelemetry::SDK::Trace::TracerProvider
         end
@@ -140,7 +142,7 @@ describe OpenTelemetry::OtelConfig do
           file_format: "1.0"
           #{TRACER_PROVIDER_YAML}
           instrumentation:
-            general:
+            ruby:
               redis:
                 peer_service: "cache-cluster"
                 trace_root_spans: true
@@ -154,7 +156,8 @@ describe OpenTelemetry::OtelConfig do
                 force_flush: true
                 span_naming: job_class
         YAML
-          OpenTelemetry::OtelConfig.configure_from_file(path)
+          sdk = OpenTelemetry::OtelConfig.configure_from_file(path)
+          OpenTelemetry.tracer_provider = sdk.tracer_provider
 
           _(OpenTelemetry.tracer_provider).must_be_instance_of OpenTelemetry::SDK::Trace::TracerProvider
         end
@@ -172,17 +175,17 @@ describe OpenTelemetry::OtelConfig do
         _(OpenTelemetry::OtelConfig.build_instrumentation_config_map(42)).must_equal({})
       end
 
-      it 'returns {} when the general key is absent' do
+      it 'returns {} when the ruby key is absent' do
         _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'other' => {} })).must_equal({})
       end
 
-      it 'returns {} when general is not a Hash' do
-        _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'general' => 'flat' })).must_equal({})
-        _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'general' => [] })).must_equal({})
+      it 'returns {} when ruby is not a Hash' do
+        _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'ruby' => 'flat' })).must_equal({})
+        _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'ruby' => [] })).must_equal({})
       end
 
-      it 'returns {} when general is an empty Hash' do
-        _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'general' => {} })).must_equal({})
+      it 'returns {} when ruby is an empty Hash' do
+        _(OpenTelemetry::OtelConfig.build_instrumentation_config_map({ 'ruby' => {} })).must_equal({})
       end
     end
 
@@ -191,7 +194,7 @@ describe OpenTelemetry::OtelConfig do
       describe 'core transformation behaviour' do
         it 'maps the short name to the full class name' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'net_http' => {} } }
+            cfg = { 'ruby' => { 'net_http' => {} } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             _(result.keys).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
           end
@@ -199,7 +202,7 @@ describe OpenTelemetry::OtelConfig do
 
         it 'symbolizes option keys' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'net_http' => { 'untraced_hosts' => ['localhost'] } } }
+            cfg = { 'ruby' => { 'net_http' => { 'untraced_hosts' => ['localhost'] } } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             opts = result['OpenTelemetry::Instrumentation::Net::HTTP']
             _(opts.keys).must_include :untraced_hosts
@@ -209,7 +212,7 @@ describe OpenTelemetry::OtelConfig do
 
         it 'treats nil options as an empty Hash' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'net_http' => nil } }
+            cfg = { 'ruby' => { 'net_http' => nil } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal({})
           end
@@ -217,7 +220,7 @@ describe OpenTelemetry::OtelConfig do
 
         it 'treats non-Hash options as an empty Hash' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'net_http' => 'enabled' } }
+            cfg = { 'ruby' => { 'net_http' => 'enabled' } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal({})
           end
@@ -225,7 +228,7 @@ describe OpenTelemetry::OtelConfig do
 
         it 'skips and does not include unknown short names' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'totally_unknown_lib' => { 'opt' => 1 } } }
+            cfg = { 'ruby' => { 'totally_unknown_lib' => { 'opt' => 1 } } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             _(result).must_equal({})
           end
@@ -234,7 +237,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps multiple instrumentations in one call' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'net_http' => { 'untraced_hosts' => ['internal.example.com'] },
                 'redis' => { 'peer_service' => 'cache', 'trace_root_spans' => true }
               }
@@ -251,7 +254,7 @@ describe OpenTelemetry::OtelConfig do
       describe 'net_http options' do
         it 'maps untraced_hosts array' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'net_http' => { 'untraced_hosts' => ['metrics.example.com', 'localhost'] } } }
+            cfg = { 'ruby' => { 'net_http' => { 'untraced_hosts' => ['metrics.example.com', 'localhost'] } } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal(
               untraced_hosts: ['metrics.example.com', 'localhost']
@@ -264,7 +267,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps all rack options correctly' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'rack' => {
                   'allowed_request_headers' => %w[X-Request-ID X-Forwarded-For],
                   'allowed_response_headers' => ['X-Response-Time'],
@@ -289,7 +292,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps peer_service, trace_root_spans, and db_statement' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'redis' => {
                   'peer_service' => 'redis-primary',
                   'trace_root_spans' => false,
@@ -310,7 +313,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps span_naming, propagation_style, and boolean trace flags' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'sidekiq' => {
                   'span_naming' => 'job_class',
                   'propagation_style' => 'child',
@@ -338,7 +341,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps propagation_style, force_flush, and span_naming' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'active_job' => {
                   'propagation_style' => 'none',
                   'force_flush' => true,
@@ -359,7 +362,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps span_kind, peer_service, and enable_internal_instrumentation' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'faraday' => {
                   'span_kind' => 'internal',
                   'peer_service' => 'downstream-api',
@@ -380,7 +383,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps db_statement, obfuscation_limit, span_name, and peer_service' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'mysql2' => {
                   'peer_service' => 'mysql-primary',
                   'db_statement' => 'omit',
@@ -403,7 +406,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps db_statement, obfuscation_limit, and peer_service' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'pg' => {
                   'peer_service' => 'postgres-replica',
                   'db_statement' => 'include',
@@ -424,7 +427,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps allowed_metadata_headers and peer_service' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'grpc' => {
                   'allowed_metadata_headers' => %w[x-correlation-id x-tenant-id],
                   'peer_service' => 'grpc-backend'
@@ -443,7 +446,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps schemas array and all boolean platform flags' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'graphql' => {
                   'schemas' => [],
                   'enable_platform_field' => true,
@@ -468,7 +471,7 @@ describe OpenTelemetry::OtelConfig do
         it 'maps peer_service and db_statement' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
-              'general' => {
+              'ruby' => {
                 'dalli' => {
                   'peer_service' => 'memcached',
                   'db_statement' => 'omit'
@@ -486,7 +489,7 @@ describe OpenTelemetry::OtelConfig do
       describe 'action_pack options' do
         it 'maps span_naming' do
           with_name_map(FAKE_NAME_MAP) do
-            cfg = { 'general' => { 'action_pack' => { 'span_naming' => 'class' } } }
+            cfg = { 'ruby' => { 'action_pack' => { 'span_naming' => 'class' } } }
             result = OpenTelemetry::OtelConfig.build_instrumentation_config_map(cfg)
             _(result['OpenTelemetry::Instrumentation::ActionPack']).must_equal(span_naming: 'class')
           end
