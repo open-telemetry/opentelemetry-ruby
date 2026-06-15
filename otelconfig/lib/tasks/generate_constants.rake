@@ -22,11 +22,12 @@ require 'yaml'
 require 'rubygems/package'
 
 SCHEMA_VERSION = ENV.fetch('SCHEMA_VERSION', 'v1.0.0-rc.3')
-SCHEMA_TARBALL = "https://api.github.com/repos/open-telemetry/opentelemetry-configuration/tarball/#{SCHEMA_VERSION}"
+SCHEMA_TARBALL = "https://api.github.com/repos/open-telemetry/opentelemetry-configuration/tarball/#{SCHEMA_VERSION}".freeze
 OUTPUT_FILE    = File.expand_path('../opentelemetry/constants/generated_constants.rb', __dir__)
 
 # Ruby tarball downloader
 module SchemaDownloader
+  # Downloads the gzip tarball from +url+ and extracts +schema/*.yaml+ files into +dest_dir+.
   def self.fetch_schema(url, dest_dir)
     FileUtils.mkdir_p(dest_dir)
 
@@ -53,6 +54,7 @@ end
 module SchemaReader
   ROOT_FILE = 'opentelemetry_configuration.yaml'
 
+  # Loads and returns the parsed YAML document at +path+.
   def self.load_yaml(path)
     YAML.safe_load(File.read(path))
   end
@@ -94,7 +96,7 @@ module ConstantsGenerator
 
   # "detection/development" become "detection_development".
   def field_name(key)
-    key.gsub(%r{[/.\-]}, '_').gsub(/[^a-zA-Z0-9_]/, '_')
+    key.gsub(%r{[/.-]}, '_').gsub(/[^a-zA-Z0-9_]/, '_')
   end
 
   # extracts the definition name from a $ref string
@@ -113,6 +115,7 @@ module ConstantsGenerator
     body.is_a?(Hash) && body['properties'].is_a?(Hash) && !body['properties'].empty?
   end
 
+  # Returns true when +name+ is a presence-only marker object (no properties, no enum).
   def marker?(defs, name)
     body = defs[name]
     return false unless body.is_a?(Hash)
@@ -124,6 +127,7 @@ module ConstantsGenerator
     object_type && (add == false || add.nil?)
   end
 
+  # Returns true when +prop+ describes an array-typed schema property.
   def array_schema?(prop)
     Array(prop['type']).include?('array') || prop.key?('items')
   end
@@ -148,6 +152,7 @@ module ConstantsGenerator
     end
   end
 
+  # Renders a Ruby Struct definition string for the given schema object +body+.
   def render_struct(name, body, defs)
     props = body['properties']
     member_names = props.keys.map { |k| field_name(k) }
@@ -182,6 +187,7 @@ module ConstantsGenerator
     RUBY
   end
 
+  # Generates the full Ruby source for all object struct definitions in +defs+.
   def generate(defs)
     names = defs.keys.select { |n| struct?(defs, n) }.sort
     parts = [header(names.size)]
@@ -189,6 +195,7 @@ module ConstantsGenerator
     parts.join("\n")
   end
 
+  # Returns the frozen-string-literal header comment for the generated file.
   def header(count)
     <<~RUBY
       # frozen_string_literal: true

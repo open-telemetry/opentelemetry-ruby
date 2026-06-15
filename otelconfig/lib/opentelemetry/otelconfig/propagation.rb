@@ -17,7 +17,7 @@ module OpenTelemetry
         composite_propagators = propagators.filter_map { |name| resolve_propagator(name) }
         return if composite_propagators.empty?
 
-        return OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators(composite_propagators)
+        OpenTelemetry::Context::Propagation::CompositeTextMapPropagator.compose_propagators(composite_propagators)
       end
 
       # Extracts an ordered, deduplicated list of propagator name strings from

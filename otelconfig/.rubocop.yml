@@ -14,3 +14,12 @@ Metrics/ClassLength:
   Enabled: false
 Metrics/ModuleLength:
   Max: 150
+Style/DocumentationMethod:
+  Exclude:
+    - lib/opentelemetry/constants/generated_constants.rb
+Naming/MethodParameterName:
+  Exclude:
+    - lib/opentelemetry/constants/generated_constants.rb
+Lint/StructNewOverride:
+  Exclude:
+    - lib/opentelemetry/constants/generated_constants.rb

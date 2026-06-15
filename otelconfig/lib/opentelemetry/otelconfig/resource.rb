@@ -73,6 +73,8 @@ module OpenTelemetry
           attrs.merge!(run_detector(name).attribute_enumerator.to_h)
         end
 
+        # File.fnmatch: * matches any chars except /, so "process.*" covers
+        # "process.pid", "process.runtime.name", etc.
         raw.select do |key, _|
           included = included_patterns.empty? || included_patterns.any? { |pat| File.fnmatch(pat, key) }
           excluded = excluded_patterns.any? { |pat| File.fnmatch(pat, key) }

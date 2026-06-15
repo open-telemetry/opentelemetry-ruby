@@ -8,7 +8,6 @@
 # Structs: 74 (one per object definition in the schema)
 # To regenerate: bundle exec rake generate:constants
 
-
 Aggregation = Struct.new(
   :default,
   :drop,
@@ -275,7 +274,7 @@ ExperimentalComposableSampler = Struct.new(
       parent_threshold: ExperimentalComposableParentThresholdSampler.from_hash(h['parent_threshold']),
       probability: ExperimentalComposableProbabilitySampler.from_hash(h['probability']),
       rule_based: ExperimentalComposableRuleBasedSampler.from_hash(h['rule_based']),
-      additional_properties: h.reject { |k, _| ['always_off', 'always_on', 'parent_threshold', 'probability', 'rule_based'].include?(k) }
+      additional_properties: h.reject { |k, _| %w[always_off always_on parent_threshold probability rule_based].include?(k) }
     )
   end
 end
@@ -607,7 +606,7 @@ ExperimentalResourceDetector = Struct.new(
       host: h.key?('host'),
       process: h.key?('process'),
       service: h.key?('service'),
-      additional_properties: h.reject { |k, _| ['container', 'host', 'process', 'service'].include?(k) }
+      additional_properties: h.reject { |k, _| %w[container host process service].include?(k) }
     )
   end
 end
@@ -769,7 +768,7 @@ LogRecordProcessor = Struct.new(
     new(
       batch: BatchLogRecordProcessor.from_hash(h['batch']),
       simple: SimpleLogRecordProcessor.from_hash(h['simple']),
-      additional_properties: h.reject { |k, _| ['batch', 'simple'].include?(k) }
+      additional_properties: h.reject { |k, _| %w[batch simple].include?(k) }
     )
   end
 end
@@ -1232,7 +1231,7 @@ SpanProcessor = Struct.new(
     new(
       batch: BatchSpanProcessor.from_hash(h['batch']),
       simple: SimpleSpanProcessor.from_hash(h['simple']),
-      additional_properties: h.reject { |k, _| ['batch', 'simple'].include?(k) }
+      additional_properties: h.reject { |k, _| %w[batch simple].include?(k) }
     )
   end
 end
@@ -1257,7 +1256,7 @@ TextMapPropagator = Struct.new(
       b3multi: h.key?('b3multi'),
       jaeger: h.key?('jaeger'),
       ottrace: h.key?('ottrace'),
-      additional_properties: h.reject { |k, _| ['tracecontext', 'baggage', 'b3', 'b3multi', 'jaeger', 'ottrace'].include?(k) }
+      additional_properties: h.reject { |k, _| %w[tracecontext baggage b3 b3multi jaeger ottrace].include?(k) }
     )
   end
 end
