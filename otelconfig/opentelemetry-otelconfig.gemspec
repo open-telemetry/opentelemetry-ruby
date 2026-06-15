@@ -24,19 +24,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
   spec.required_ruby_version = '>= 3.3'
 
-  spec.add_development_dependency 'opentelemetry-api', '~> 1.10.0'
-  spec.add_development_dependency 'opentelemetry-common', '~> 0.25.0'
-  spec.add_development_dependency 'opentelemetry-exporter-otlp', '~> 0.34.0'
-  spec.add_development_dependency 'opentelemetry-instrumentation-all', '~> 0.91.0'
-  spec.add_development_dependency 'opentelemetry-propagator-google_cloud_trace_context', '~> 0.4.0'
-  spec.add_development_dependency 'opentelemetry-propagator-ottrace', '~> 0.25.0'
-  spec.add_development_dependency 'opentelemetry-propagator-xray', '~> 0.27.0'
-  spec.add_development_dependency 'opentelemetry-resource-detector-aws', '~> 0.5.0'
-  spec.add_development_dependency 'opentelemetry-resource-detector-azure', '~> 0.3.0'
-  spec.add_development_dependency 'opentelemetry-resource-detector-container', '~> 0.3.0'
-  spec.add_development_dependency 'opentelemetry-resource-detector-google_cloud_platform', '~> 0.4.0'
-  spec.add_development_dependency 'opentelemetry-sdk', '~> 1.12'
-
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
     spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/otelconfig"
