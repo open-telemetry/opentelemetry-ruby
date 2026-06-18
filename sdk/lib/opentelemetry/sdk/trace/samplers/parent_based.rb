@@ -18,12 +18,12 @@ module OpenTelemetry
         #   * Local parent (!SpanContext.remote? with trace_flags.sampled?)
         #   * Local parent (!SpanContext.remote? with !trace_flags.sampled?)
         class ParentBased
-          def initialize(root, remote_parent_sampled, remote_parent_not_sampled, local_parent_sampled, local_parent_not_sampled)
-            @root = root
-            @remote_parent_sampled = remote_parent_sampled
-            @remote_parent_not_sampled = remote_parent_not_sampled
-            @local_parent_sampled = local_parent_sampled
-            @local_parent_not_sampled = local_parent_not_sampled
+          def initialize(root = nil, remote_parent_sampled = nil, remote_parent_not_sampled = nil, local_parent_sampled = nil, local_parent_not_sampled = nil)
+            @root = root || Samplers::ALWAYS_ON
+            @remote_parent_sampled = remote_parent_sampled || Samplers::ALWAYS_ON
+            @remote_parent_not_sampled = remote_parent_not_sampled || Samplers::ALWAYS_OFF
+            @local_parent_sampled = local_parent_sampled || Samplers::ALWAYS_ON
+            @local_parent_not_sampled = local_parent_not_sampled || Samplers::ALWAYS_OFF
           end
 
           def ==(other)
