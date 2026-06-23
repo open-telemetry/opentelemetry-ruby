@@ -21,11 +21,13 @@ module OpenTelemetry
         # @param [String] version Instrumentation package version
         #
         # @return [Meter]
-        def initialize(name, version, meter_provider)
+        def initialize(name, version, schema_url, attributes, meter_provider)
           @mutex = Mutex.new
           @instrument_registry = {}
           @instrumentation_scope = InstrumentationScope.new(name, version)
           @meter_provider = meter_provider
+          @schema_url = schema_url
+          @attributes = attributes
         end
 
         # Multiple-instrument callbacks

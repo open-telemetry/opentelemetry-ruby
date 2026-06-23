@@ -14,7 +14,7 @@ module OpenTelemetry
       # @param [optional String] version Instrumentation package version
       #
       # @return [Meter]
-      def meter(name, version: nil)
+      def meter(name, version: nil, schema_url: nil, attributes: {})
         @meter ||= Meter.new
       end
     end
