@@ -11,9 +11,5 @@ Metrics/CyclomaticComplexity:
 
 Naming/MethodParameterName:
   Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
 Naming/PredicateMethod:
   Enabled: false

@@ -82,7 +82,7 @@ module OpenTelemetry
       #
       # @return [String]
       def truncate(string, size)
-        string.size > size ? "#{string[0...size - 3]}..." : string
+        string.size > size ? "#{string[0...(size - 3)]}..." : string
       end
 
       def truncate_attribute_value(value, limit)

@@ -15,9 +15,5 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/SuppressedExceptionInNumberConversion:
-  Enabled: false
 Minitest/SkipEnsure:
   Enabled: false

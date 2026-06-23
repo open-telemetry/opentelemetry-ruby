@@ -39,7 +39,7 @@ module OpenTelemetry
 
         def to_zipkin_span(span_d, resource)
           start_time = span_d.start_timestamp / 1_000
-          duration = span_d.end_timestamp / 1_000 - start_time
+          duration = (span_d.end_timestamp / 1_000) - start_time
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
           resource.attribute_enumerator.select do |key, value|

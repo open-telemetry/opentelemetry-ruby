@@ -6,11 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 1
-Lint/FloatComparison:
-  Exclude:
-    - 'lib/opentelemetry/sdk/trace/samplers/trace_id_ratio_based.rb'
-
 # Offense count: 2
 # Configuration parameters: AllowedMethods, AllowedPatterns.
 Metrics/CyclomaticComplexity:

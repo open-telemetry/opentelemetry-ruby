@@ -8,4 +8,5 @@ Metrics/CyclomaticComplexity:
   Max: 20
 
 Lint/EmptyClass:
-  Enabled: false
+  Exclude:
+    - 'lib/opentelemetry/logs/log_record.rb'

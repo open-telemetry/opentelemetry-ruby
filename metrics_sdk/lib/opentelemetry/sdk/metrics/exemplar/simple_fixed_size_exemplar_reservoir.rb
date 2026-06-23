@@ -47,7 +47,7 @@ module OpenTelemetry
           end
 
           def find_histogram_bucket
-            @num_measurements_seen < @max_size ? @num_measurements_seen : rand(0..@num_measurements_seen - 1)
+            @num_measurements_seen < @max_size ? @num_measurements_seen : rand(0..(@num_measurements_seen - 1))
           end
         end
       end

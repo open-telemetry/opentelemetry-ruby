@@ -8,15 +8,9 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/AmbiguousRange:
-  Enabled: false
 Naming/BlockForwarding:
   Enabled: false
 Naming/PredicateMethod:
   Enabled: false
 Performance/CollectionLiteralInLoop:
-  Enabled: false
-Lint/SymbolConversion:
   Enabled: false
