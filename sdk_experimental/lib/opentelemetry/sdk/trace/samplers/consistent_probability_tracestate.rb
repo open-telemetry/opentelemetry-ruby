@@ -33,6 +33,7 @@ module OpenTelemetry
           def sanitized_tracestate(trace_id, span_context)
             sampled = span_context.trace_flags.sampled?
             tracestate = span_context.tracestate
+            # rubocop:disable Lint/DuplicateBranch
             parse_ot_vendor_tag(tracestate) do |p, r, rest|
               if !r.nil? && r > 62
                 p = r = nil
@@ -49,6 +50,7 @@ module OpenTelemetry
               end
               update_tracestate(tracestate, p, r, rest)
             end
+            # rubocop:enable Lint/DuplicateBranch
           end
 
           # parse_ot_vendor_tag parses the 'ot' vendor tag of the tracestate.
