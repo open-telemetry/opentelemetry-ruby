@@ -1,4 +1,4 @@
-name: Conventional Commits Validation
+name: PR Validation
 
 on:
   workflow_dispatch:
@@ -8,25 +8,55 @@ on:
       - synchronize
       - reopened
       - edited
+  merge_group:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}  # Ensure that only one instance of this workflow is running per Pull Request
-  cancel-in-progress: true  # Cancel any previous runs of this workflow
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request or ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow
 
 jobs:
   validate-commits:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
-    name: Conventional Commits Validation
+    name: PR Title
     runs-on: ubuntu-24.04
     steps:
-      - uses: dev-build-deploy/commit-me@27d14296ec218488c543616d9128d7e75ab7463a # v1.5.3
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      # restrict checks to pull requests to avoid issues blocking the merge queue
+      - name: Validate conventional commit style title
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        id: lint_pr_title
         env:
-          FORCE_COLOR: 3
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          include-commits: false
-          update-labels: false
-          config: ".commit-me.json"
+          types: |
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            release
+            revert
+            squash
+            style
+            test
+      - name: Extract PR Title
+        id: pr
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Title: $TITLE" > pr_title.md
+      - name: Check PR Title spelling
+        uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
+        with:
+          config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true
+          incremental_files_only: false
+          files: |
+            pr_title.md

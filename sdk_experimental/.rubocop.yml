@@ -9,9 +9,5 @@ Metrics/PerceivedComplexity:
 Metrics/CyclomaticComplexity:
   Max: 20
 
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
 Style/NegatedIfElseCondition:
   Enabled: false
