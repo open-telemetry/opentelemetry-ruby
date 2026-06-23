@@ -34,7 +34,7 @@ module OpenTelemetry
           return if baggage.nil? || baggage.empty?
 
           encoded_baggage = encode(baggage)
-          setter.set(carrier, BAGGAGE_KEY, encoded_baggage) unless encoded_baggage&.empty?
+          setter.set(carrier, BAGGAGE_KEY, encoded_baggage) if encoded_baggage && !encoded_baggage.empty?
           nil
         end
 

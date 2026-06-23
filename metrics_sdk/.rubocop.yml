@@ -8,10 +8,6 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Lint/AmbiguousRange:
-  Enabled: false
 Naming/BlockForwarding:
   Enabled: false
 Naming/PredicateMethod:
@@ -29,6 +25,4 @@ Style/MapIntoArray:
 Style/NilLambda:
   Enabled: false
 Style/SuperArguments:
-  Enabled: false
-Lint/SymbolConversion:
   Enabled: false

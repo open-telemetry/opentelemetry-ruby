@@ -4,8 +4,6 @@ Gemspec/DevelopmentDependencies:
  Enabled: false
 Style/ExplicitBlockArgument:
   Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
 Minitest/AssertPredicate:
   Enabled: false
 Minitest/RefutePredicate:

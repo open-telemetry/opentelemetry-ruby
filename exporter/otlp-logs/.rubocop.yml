@@ -5,8 +5,3 @@ AllCops:
   Exclude:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
-
-Lint/DuplicateBranch:
-  Enabled: false
-Lint/SuppressedExceptionInNumberConversion:
-  Enabled: false

@@ -13,7 +13,3 @@ Metrics/MethodLength:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
-Lint/SuppressedExceptionInNumberConversion:
-  Enabled: false

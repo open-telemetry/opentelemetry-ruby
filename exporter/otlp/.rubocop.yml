@@ -5,9 +5,5 @@ AllCops:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
 
-Lint/DuplicateBranch:
-  Enabled: false
-Lint/SuppressedExceptionInNumberConversion:
-  Enabled: false
 Style/ObjectThen:
   Enabled: false
