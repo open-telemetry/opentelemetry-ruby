@@ -4,12 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'simplecov'
 require 'opentelemetry-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  SimpleCov.start
-  SimpleCov.minimum_coverage 85
-end
