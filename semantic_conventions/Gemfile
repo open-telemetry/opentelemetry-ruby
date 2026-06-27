@@ -12,7 +12,7 @@ group :development, :test do
   gem 'minitest', '~> 6.0.0'
   gem 'mutex_m' if RUBY_VERSION >= '3.4'
   gem 'rake', '~> 13.4.0'
-  gem 'rubocop', '~> 1.87.0'
+  gem 'rubocop', '~> 1.88.0'
   gem 'rubocop-minitest', '~> 0.39.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'rubocop-rake', '~> 0.7.1'
