@@ -7,11 +7,6 @@
 # versions of RuboCop, may require this file to be generated again.
 
 # Offense count: 1
-Lint/MixedRegexpCaptureTypes:
-  Exclude:
-    - 'lib/opentelemetry/propagator/jaeger/text_map_propagator.rb'
-
-# Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/SlicingWithRange:
   Exclude:

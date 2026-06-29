@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.10.0 / 2026-06-16
+
+* BREAKING CHANGE: Metrics cardinality limit (#1909)
+* ADDED: Metrics cardinality limit (#1909)
+
 ### v0.9.1 / 2026-06-02
 
 * FIXED: `URI.join` dropping path prefix in logs and metrics exporters (#2158)

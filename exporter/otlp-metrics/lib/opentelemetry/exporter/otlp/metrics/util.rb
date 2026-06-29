@@ -9,7 +9,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # Util module provide essential functionality for exporter
-        module Util # rubocop:disable Metrics/ModuleLength
+        module Util
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
@@ -95,11 +95,7 @@ module OpenTelemetry
             sleep_interval = nil
             unless retry_after.nil?
               sleep_interval =
-                begin
-                  Integer(retry_after)
-                rescue ArgumentError
-                  nil
-                end
+                Integer(retry_after, exception: false)
               sleep_interval ||=
                 begin
                   Time.httpdate(retry_after) - Time.now
