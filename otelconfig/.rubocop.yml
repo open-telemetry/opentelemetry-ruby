@@ -1,0 +1,25 @@
+inherit_from: ../contrib/rubocop.yml
+
+Metrics/AbcSize:
+  Max: 30
+Metrics/MethodLength:
+  Max: 50
+Metrics/PerceivedComplexity:
+  Max: 30
+Metrics/CyclomaticComplexity:
+  Max: 20
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Max: 150
+Style/DocumentationMethod:
+  Exclude:
+    - lib/opentelemetry/constants/generated_constants.rb
+Naming/MethodParameterName:
+  Exclude:
+    - lib/opentelemetry/constants/generated_constants.rb
+Lint/StructNewOverride:
+  Exclude:
+    - lib/opentelemetry/constants/generated_constants.rb
