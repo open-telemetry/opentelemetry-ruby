@@ -28,21 +28,31 @@ module OpenTelemetry
         value.instance_of?(String) || boolean?(value) || numeric?(value) || value.nil?
       end
 
-      def valid_array_value?(value)
-        return false unless value.is_a?(Array)
-
-        value.all? { |v| valid_value?(v) }
-      end
-
-      def valid_mapping_value?(value)
-        return false unless value.is_a?(Hash)
-        return false unless value.keys.all? { |k| valid_key?(k) }
-
-        value.values.all? { |v| valid_value?(v) }
-      end
-
       def valid_value?(value)
-        valid_simple_value?(value) || valid_array_value?(value) || valid_mapping_value?(value)
+        to_check = [value]
+        seen = Set.new
+        until to_check.empty?
+          current = to_check.pop
+          next if valid_simple_value?(current)
+
+          return false if seen.include?(current.object_id)
+
+          seen << current.object_id
+
+          case current
+          when Array
+            current.each { |v| to_check << v }
+          when Hash
+            current.each do |k, v|
+              return false unless valid_key?(k)
+
+              to_check << v
+            end
+          else
+            return false
+          end
+        end
+        true
       end
 
       def valid_attributes?(owner, kind, attrs)
