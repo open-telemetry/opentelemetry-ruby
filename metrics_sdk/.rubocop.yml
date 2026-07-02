@@ -14,17 +14,3 @@ Naming/PredicateMethod:
   Enabled: false
 Performance/CollectionLiteralInLoop:
   Enabled: false
-Style/ArgumentsForwarding:
-  Enabled: false
-Style/CollectionQuerying:
-  Enabled: false
-Style/EmptyClassDefinition:
-  Enabled: false
-Style/FetchEnvVar:
-  Enabled: false
-Style/MapIntoArray:
-  Enabled: false
-Style/NilLambda:
-  Enabled: false
-Style/SuperArguments:
-  Enabled: false

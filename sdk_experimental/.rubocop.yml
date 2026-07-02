@@ -13,5 +13,3 @@ Naming/MethodParameterName:
   Enabled: false
 Naming/PredicateMethod:
   Enabled: false
-Style/NegatedIfElseCondition:
-  Enabled: false

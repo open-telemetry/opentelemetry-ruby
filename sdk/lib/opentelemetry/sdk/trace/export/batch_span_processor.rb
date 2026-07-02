@@ -210,9 +210,11 @@ module OpenTelemetry
           end
 
           def lock
+            # rubocop:disable Style/ExplicitBlockArgument
             @mutex.synchronize do
               yield
             end
+            # rubocop:enable Style/ExplicitBlockArgument
           end
         end
       end

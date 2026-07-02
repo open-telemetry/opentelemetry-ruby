@@ -360,7 +360,7 @@ module OpenTelemetry
               )
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
-            status: span_data.status&.yield_self do |status|
+            status: span_data.status&.then do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
                 code: as_otlp_status_code(status.code),
                 message: status.description
