@@ -28,7 +28,7 @@ module OpenTelemetry
         #
         # Application developers are encouraged to set `service.criticality` to express the operational importance of their services. Telemetry consumers MAY use this attribute to optimize telemetry collection or improve user experience.
         #
-        # @note Stability Level: development
+        # @note Stability Level: alpha
         SERVICE_CRITICALITY = 'service.criticality'
 
         # The string ID of the service instance.
