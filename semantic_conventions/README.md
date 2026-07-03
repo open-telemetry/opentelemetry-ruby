@@ -55,12 +55,19 @@ These constants will be preserved to avoid breaking changes for users who rely
 on the old constants. These constants do not differentiate between stable and
 unstable constants. New constants will not be added to this namespace.
 
-We recommend you require only the files that contain the constants you are going
-to use. For example, if you were creating instrumentation for an HTTP Client
-that emits only stable conventions, you would likely require:
+Require the gem once and reference any constant directly. Each namespace is
+registered with Ruby's `autoload`, so the file backing a namespace is only loaded
+the first time you reference one of its constants — you don't pay to load
+conventions you never use.
 
 ```rb
-require 'opentelemetry/semconv/http'
+require 'opentelemetry-semantic_conventions'
+
+# Stable
+OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD            # => 'http.request.method'
+
+# Incubating (experimental/deprecated)
+OpenTelemetry::SemConv::Incubating::GEN_AI::GEN_AI_SYSTEM
 ```
 
 If you want to require all of the 1.11.0 constants, you can use:
