@@ -81,6 +81,8 @@ module OpenTelemetry
           OpenTelemetry.logger.info "Instrumentation: #{instrumentation.name} was successfully installed with the following options #{instrumentation.config}"
         elsif !instrumentation.enabled?(config)
           OpenTelemetry.logger.info "Instrumentation: #{instrumentation.name} was not installed, because it is not enabled"
+        elsif !instrumentation.compatible?(config)
+          OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} failed to install: compatibility issue"
         else
           OpenTelemetry.logger.warn "Instrumentation: #{instrumentation.name} failed to install"
         end
