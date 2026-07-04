@@ -57,6 +57,10 @@ For more information about the approver role, see the [community repository](htt
 For more information about the emeritus role, see the
 [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
+### Thanks to all the people who have contributed
+
+[![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-ruby)](https://github.com/open-telemetry/opentelemetry-ruby/graphs/contributors)
+
 ## Contrib Repository
 
 The [opentelemetry-ruby-contrib repository][contrib-repo] contains instrumentation libraries for many popular Ruby gems, including Rails, Rack, Sinatra, and others, so you can start using OpenTelemetry with minimal changes to your application. See the [contrib README][contrib-repo] for more details.
