@@ -26,12 +26,12 @@ module OpenTelemetry
 
         # The number of pipeline runs currently active in the system by state.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RUN_ACTIVE = 'cicd.pipeline.run.active'
 
         # Duration of a pipeline run grouped by pipeline, state and result.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RUN_DURATION = 'cicd.pipeline.run.duration'
 
         # The number of errors encountered in pipeline runs (eg. compile, test failures).
@@ -39,19 +39,19 @@ module OpenTelemetry
         # There might be errors in a pipeline run that are non fatal (eg. they are suppressed) or in a parallel stage multiple stages could have a fatal error.
         # This means that this error count might not be the same as the count of metric `cicd.pipeline.run.duration` with run result `failure`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RUN_ERRORS = 'cicd.pipeline.run.errors'
 
         # The number of errors in a component of the CI/CD system (eg. controller, scheduler, agent).
         #
         # Errors in pipeline run execution are explicitly excluded. Ie a test failure is not counted in this metric.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_SYSTEM_ERRORS = 'cicd.system.errors'
 
         # The number of workers on the CI/CD system by state.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_WORKER_COUNT = 'cicd.worker.count'
 
         # @!endgroup

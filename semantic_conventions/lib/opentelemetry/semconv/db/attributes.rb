@@ -47,9 +47,30 @@ module OpenTelemetry
       # @note Stability Level: stable
       DB_NAMESPACE = 'db.namespace'
 
-      # The number of queries included in a batch operation.
+      # The number of database operations included in a batch operation.
       #
-      # Operations are only considered batches when they contain two or more operations, and so `db.operation.batch.size` SHOULD never be `1`.
+      # Except for empty batch requests described below, a batch operation contains two
+      # or more database operations explicitly submitted as separate operations in a single
+      # client call, protocol message, or database command.
+      #
+      # Requests to batch APIs that contain only one operation SHOULD be modeled as single
+      # operations, not as batch operations.
+      #
+      # A database call is not a batch operation solely because one operation accepts
+      # multiple operands, such as keys, rows, documents, points, or other data elements,
+      # including Redis [`MGET`](https://redis.io/docs/latest/commands/mget/) with
+      # multiple keys.
+      #
+      # In batch APIs that execute the same parameterized operation with parameter sets,
+      # each parameter set represents one database operation for determining whether the
+      # request is a batch operation. Requests with only one parameter set SHOULD be modeled
+      # as single operations, not as batch operations.
+      #
+      # `db.operation.batch.size` SHOULD be set to the number of operations in the batch.
+      # It SHOULD NOT be set for non-batch operations.
+      #
+      # A request to execute a batch operation with no operations SHOULD also be treated
+      # as a batch operation, and `db.operation.batch.size` SHOULD be set to `0`.
       #
       # @note Stability Level: stable
       DB_OPERATION_BATCH_SIZE = 'db.operation.batch.size'
