@@ -2,11 +2,7 @@ inherit_from: ../contrib/rubocop.yml
 
 Style/ExplicitBlockArgument:
   Enabled: false
-Lint/AmbiguousRange:
-  Enabled: false
 Minitest/AssertPredicate:
   Enabled: false
 Minitest/RefutePredicate:
-  Enabled: false
-Performance/MethodObjectAsBlock:
   Enabled: false
