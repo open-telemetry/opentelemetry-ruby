@@ -5,9 +5,5 @@ AllCops:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
 
-Performance/MapCompact:
-  Enabled: false
-Performance/MethodObjectAsBlock:
-  Enabled: false
 Style/ObjectThen:
   Enabled: false

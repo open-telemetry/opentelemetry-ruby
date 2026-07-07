@@ -13,7 +13,3 @@ Metrics/MethodLength:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
-Performance/MapCompact:
-  Enabled: false
-Performance/MethodObjectAsBlock:
-  Enabled: false
