@@ -8,10 +8,6 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Naming/BlockForwarding:
-  Enabled: false
-Naming/PredicateMethod:
-  Enabled: false
 Style/ArgumentsForwarding:
   Enabled: false
 Style/CollectionQuerying:
