@@ -31,6 +31,13 @@ module OpenTelemetry
         # @note Stability Level: development
         GO_CONFIG_GOGC = 'go.config.gogc'
 
+        # Estimated CPU time spent by the Go runtime.
+        #
+        # Computed from `/cpu/classes/...` metrics. This metric is an overestimate, and not directly comparable to system CPU time measurements. Compare only with other `go.cpu.time` metrics.
+        #
+        # @note Stability Level: development
+        GO_CPU_TIME = 'go.cpu.time'
+
         # Count of live goroutines.
         #
         # Computed from `/sched/goroutines:goroutines`.
@@ -52,12 +59,26 @@ module OpenTelemetry
         # @note Stability Level: development
         GO_MEMORY_ALLOCATIONS = 'go.memory.allocations'
 
+        # Number of completed GC cycles.
+        #
+        # Computed from `/gc/cycles/total:gc-cycles`.
+        #
+        # @note Stability Level: development
+        GO_MEMORY_GC_CYCLES = 'go.memory.gc.cycles'
+
         # Heap size target for the end of the GC cycle.
         #
         # Computed from `/gc/heap/goal:bytes`.
         #
         # @note Stability Level: development
         GO_MEMORY_GC_GOAL = 'go.memory.gc.goal'
+
+        # Distribution of individual GC-related stop-the-world pause latencies. This is the time from deciding to stop the world until the world is started again.
+        #
+        # Computed from `/sched/pauses/total/gc:seconds`. Bucket boundaries are provided by the runtime, and are subject to change.
+        #
+        # @note Stability Level: development
+        GO_MEMORY_GC_PAUSE_DURATION = 'go.memory.gc.pause.duration'
 
         # Go runtime memory limit configured by the user, if a limit exists.
         #

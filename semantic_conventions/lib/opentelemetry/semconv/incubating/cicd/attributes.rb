@@ -26,82 +26,84 @@ module OpenTelemetry
 
         # The kind of action a pipeline run is performing.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_ACTION_NAME = 'cicd.pipeline.action.name'
 
         # The human readable name of the pipeline within a CI/CD system.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_NAME = 'cicd.pipeline.name'
 
         # The result of a pipeline run.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RESULT = 'cicd.pipeline.result'
 
         # The unique identifier of a pipeline run within a CI/CD system.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RUN_ID = 'cicd.pipeline.run.id'
 
         # The pipeline run goes through these states during its lifecycle.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RUN_STATE = 'cicd.pipeline.run.state'
 
         # The [URL](https://wikipedia.org/wiki/URL) of the pipeline run, providing the complete address in order to locate and identify the pipeline run.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_RUN_URL_FULL = 'cicd.pipeline.run.url.full'
 
         # The human readable name of a task within a pipeline. Task here most closely aligns with a [computing process](https://wikipedia.org/wiki/Pipeline_(computing)) in a pipeline. Other terms for tasks include commands, steps, and procedures.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_TASK_NAME = 'cicd.pipeline.task.name'
 
         # The unique identifier of a task run within a pipeline.
         #
-        # @note Stability Level: development
+        # For a given pipeline run and task, the `cicd.pipeline.task.run.id` MUST be unique within that run. For the same task across different runs of the same pipeline, the `cicd.pipeline.task.run.id` MAY remain the same, enabling correlation of `cicd.pipeline.task.run.result` values across multiple pipeline runs.
+        #
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_TASK_RUN_ID = 'cicd.pipeline.task.run.id'
 
         # The result of a task run.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_TASK_RUN_RESULT = 'cicd.pipeline.task.run.result'
 
         # The [URL](https://wikipedia.org/wiki/URL) of the pipeline task run, providing the complete address in order to locate and identify the pipeline task run.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_TASK_RUN_URL_FULL = 'cicd.pipeline.task.run.url.full'
 
         # The type of the task within a pipeline.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_PIPELINE_TASK_TYPE = 'cicd.pipeline.task.type'
 
-        # The name of a component of the CICD system.
+        # The name of a component of the CI/CD system.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_SYSTEM_COMPONENT = 'cicd.system.component'
 
-        # The unique identifier of a worker within a CICD system.
+        # The unique identifier of a worker within a CI/CD system.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_WORKER_ID = 'cicd.worker.id'
 
-        # The name of a worker within a CICD system.
+        # The name of a worker within a CI/CD system.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_WORKER_NAME = 'cicd.worker.name'
 
-        # The state of a CICD worker / agent.
+        # The state of a CI/CD worker / agent.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_WORKER_STATE = 'cicd.worker.state'
 
         # The [URL](https://wikipedia.org/wiki/URL) of the worker, providing the complete address in order to locate and identify the worker.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CICD_WORKER_URL_FULL = 'cicd.worker.url.full'
 
         # @!endgroup

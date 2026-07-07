@@ -26,6 +26,8 @@ module OpenTelemetry
 
         # The cloud account ID the resource is assigned to.
         #
+        # For Azure, this is the subscription ID.
+        #
         # @note Stability Level: development
         CLOUD_ACCOUNT_ID = 'cloud.account.id'
 

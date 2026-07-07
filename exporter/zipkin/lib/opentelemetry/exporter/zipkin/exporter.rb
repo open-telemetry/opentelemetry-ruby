@@ -118,7 +118,7 @@ module OpenTelemetry
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-          around_request do # rubocop:disable Metrics/BlockLength
+          around_request do
             request = Net::HTTP::Post.new(@path)
             request.body = JSON.generate(zipkin_spans)
             request.add_field('Content-Type', 'application/json')
@@ -181,11 +181,7 @@ module OpenTelemetry
           sleep_interval = nil
           unless retry_after.nil?
             sleep_interval =
-              begin
-                Integer(retry_after)
-              rescue ArgumentError
-                nil
-              end
+              Integer(retry_after, exception: false)
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now

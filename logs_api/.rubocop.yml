@@ -7,6 +7,8 @@ Metrics/PerceivedComplexity:
 Metrics/CyclomaticComplexity:
   Max: 20
 
-Naming/FileName:
+Lint/EmptyClass:
   Exclude:
-    - "lib/opentelemetry-logs-api.rb"
+    - 'lib/opentelemetry/logs/log_record.rb'
+Style/ReduceToHash:
+  Enabled: false

@@ -1,7 +1,20 @@
 inherit_from: ../contrib/rubocop.yml
 
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-api.rb"
+Gemspec/DevelopmentDependencies:
+ Enabled: false
 Style/ExplicitBlockArgument:
+  Enabled: false
+Minitest/AssertPredicate:
+  Enabled: false
+Minitest/RefutePredicate:
+  Enabled: false
+Style/BitwisePredicate:
+  Enabled: false
+Style/EmptyClassDefinition:
+  Enabled: false
+Style/HashConversion:
+  Enabled: false
+Style/NegatedIfElseCondition:
+  Enabled: false
+Style/OneClassPerFile:
   Enabled: false

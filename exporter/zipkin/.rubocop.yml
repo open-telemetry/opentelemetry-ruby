@@ -15,8 +15,7 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-exporter-zipkin.rb"
 Style/ExplicitBlockArgument:
+  Enabled: false
+Minitest/SkipEnsure:
   Enabled: false

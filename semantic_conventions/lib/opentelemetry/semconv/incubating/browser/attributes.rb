@@ -31,6 +31,11 @@ module OpenTelemetry
         # @note Stability Level: development
         BROWSER_BRANDS = 'browser.brands'
 
+        # Absolute URL of the current browser document according to [RFC3986](https://www.rfc-editor.org/rfc/rfc3986).
+        #
+        # @note Stability Level: development
+        BROWSER_DOCUMENT_URL_FULL = 'browser.document.url.full'
+
         # Preferred language of the user using the browser
         #
         # This value is intended to be taken from the Navigator API `navigator.language`.

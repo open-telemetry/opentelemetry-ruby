@@ -4,8 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require_relative './propagation/rack_env_getter'
-require_relative './propagation/symbol_key_getter'
+require_relative 'propagation/rack_env_getter'
+require_relative 'propagation/symbol_key_getter'
 
 module OpenTelemetry
   module Common

@@ -43,11 +43,10 @@ module OpenTelemetry
         # @deprecated Replaced by `v8js.memory.heap.space.physical_size`.
         V8JS_HEAP_SPACE_PHYSICAL_SIZE = 'v8js.heap.space.physical_size'
 
-        # Total heap memory size pre-allocated.
-        #
-        # The value can be retrieved from value `space_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        # Deprecated, use `v8js.memory.heap.space.size` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `v8js.memory.heap.space.size`.
         V8JS_MEMORY_HEAP_LIMIT = 'v8js.memory.heap.limit'
 
         # Heap space available size.
@@ -64,12 +63,26 @@ module OpenTelemetry
         # @note Stability Level: development
         V8JS_MEMORY_HEAP_SPACE_PHYSICAL_SIZE = 'v8js.memory.heap.space.physical_size'
 
+        # Total heap memory size pre-allocated for a heap space.
+        #
+        # The value can be retrieved from value `space_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        #
+        # @note Stability Level: development
+        V8JS_MEMORY_HEAP_SPACE_SIZE = 'v8js.memory.heap.space.size'
+
         # Heap Memory size allocated.
         #
         # The value can be retrieved from value `space_used_size` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
         #
         # @note Stability Level: development
         V8JS_MEMORY_HEAP_USED = 'v8js.memory.heap.used'
+
+        # Gauge of the active resources that are currently keeping the event loop alive.
+        #
+        # The values can be retrieved from [`process.getActiveResourcesInfo()`](https://nodejs.org/api/process.html#processgetactiveresourcesinfo)
+        #
+        # @note Stability Level: development
+        V8JS_RESOURCE_ACTIVE = 'v8js.resource.active'
 
         # @!endgroup
       end

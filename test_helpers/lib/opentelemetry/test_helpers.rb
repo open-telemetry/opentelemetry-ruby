@@ -11,6 +11,7 @@ module OpenTelemetry
   # OpenTelemetry Ruby gems.
   module TestHelpers
     extend self
+
     NULL_LOGGER = Logger.new(File::NULL)
 
     # reset_opentelemetry is a test helper used to clear
