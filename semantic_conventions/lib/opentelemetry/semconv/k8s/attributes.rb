@@ -122,9 +122,9 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `replicas` with value `1` SHOULD be recorded
+      # - An annotation `replicas` with value `1` SHOULD be recorded
       #   as the `k8s.daemonset.annotation.replicas` attribute with value `"1"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - An annotation `data` with empty string value SHOULD be recorded as
       #   the `k8s.daemonset.annotation.data` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -142,7 +142,7 @@ module OpenTelemetry
       #
       # - A label `app` with value `guestbook` SHOULD be recorded
       #   as the `k8s.daemonset.label.app` attribute with value `"guestbook"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - A label `injected` with empty string value SHOULD be recorded as
       #   the `k8s.daemonset.label.injected` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -168,9 +168,9 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `replicas` with value `1` SHOULD be recorded
+      # - An annotation `replicas` with value `1` SHOULD be recorded
       #   as the `k8s.deployment.annotation.replicas` attribute with value `"1"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - An annotation `data` with empty string value SHOULD be recorded as
       #   the `k8s.deployment.annotation.data` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -186,7 +186,7 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `replicas` with value `0` SHOULD be recorded
+      # - A label `app` with value `guestbook` SHOULD be recorded
       #   as the `k8s.deployment.label.app` attribute with value `"guestbook"`.
       # - A label `injected` with empty string value SHOULD be recorded as
       #   the `k8s.deployment.label.injected` attribute with value `""`.
@@ -214,9 +214,9 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `number` with value `1` SHOULD be recorded
+      # - An annotation `number` with value `1` SHOULD be recorded
       #   as the `k8s.job.annotation.number` attribute with value `"1"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - An annotation `data` with empty string value SHOULD be recorded as
       #   the `k8s.job.annotation.data` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -234,7 +234,7 @@ module OpenTelemetry
       #
       # - A label `jobtype` with value `ci` SHOULD be recorded
       #   as the `k8s.job.label.jobtype` attribute with value `"ci"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - A label `automated` with empty string value SHOULD be recorded as
       #   the `k8s.job.label.automated` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -260,9 +260,9 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `ttl` with value `0` SHOULD be recorded
+      # - An annotation `ttl` with value `0` SHOULD be recorded
       #   as the `k8s.namespace.annotation.ttl` attribute with value `"0"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - An annotation `data` with empty string value SHOULD be recorded as
       #   the `k8s.namespace.annotation.data` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -429,9 +429,9 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `replicas` with value `0` SHOULD be recorded
+      # - An annotation `replicas` with value `0` SHOULD be recorded
       #   as the `k8s.replicaset.annotation.replicas` attribute with value `"0"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - An annotation `data` with empty string value SHOULD be recorded as
       #   the `k8s.replicaset.annotation.data` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -475,9 +475,9 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `replicas` with value `1` SHOULD be recorded
+      # - An annotation `replicas` with value `1` SHOULD be recorded
       #   as the `k8s.statefulset.annotation.replicas` attribute with value `"1"`.
-      # - A label `data` with empty string value SHOULD be recorded as
+      # - An annotation `data` with empty string value SHOULD be recorded as
       #   the `k8s.statefulset.annotation.data` attribute with value `""`.
       #
       # @note Stability Level: stable
@@ -493,7 +493,7 @@ module OpenTelemetry
       #
       # Examples:
       #
-      # - A label `replicas` with value `0` SHOULD be recorded
+      # - A label `app` with value `guestbook` SHOULD be recorded
       #   as the `k8s.statefulset.label.app` attribute with value `"guestbook"`.
       # - A label `injected` with empty string value SHOULD be recorded as
       #   the `k8s.statefulset.label.injected` attribute with value `""`.

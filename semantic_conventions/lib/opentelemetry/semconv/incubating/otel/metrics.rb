@@ -190,6 +190,8 @@ module OpenTelemetry
 
         # The number of created spans with `recording=true` for which the end operation has not been called yet.
         #
+        # Non-recording spans are not counted, hence `otel.span.sampling_result` can only take values `RECORD_ONLY` and `RECORD_AND_SAMPLE`, not `DROP`.
+        #
         # @note Stability Level: development
         OTEL_SDK_SPAN_LIVE = 'otel.sdk.span.live'
 
