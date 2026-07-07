@@ -8,28 +8,64 @@ require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
   describe '#as_encoded_etsr' do
-    it 'handles encoding errors with poise and grace' do
+    it 'handles valid and empty span data' do
+      # Valid span data
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+
+    it 'handles encoding errors gracefully' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        # Encoding error in attributes
         span_data = OpenTelemetry::TestHelpers.create_span_data(
           total_recorded_attributes: 1,
           attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
         )
 
-        OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+        result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
 
         _(log_stream.string).must_match(
           /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
         )
+        _(result).wont_be_nil
+
+        # StandardError during encoding
+        span_data = OpenTelemetry::TestHelpers.create_span_data
+        Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.stub(:encode, ->(_) { raise StandardError, 'encoding failed' }) do
+          result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+          _(result).must_be_nil
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_etsr/)
+        end
       end
     end
   end
 
   describe '#as_etsr' do
-    it 'batches per resource' do
-      resource_one = OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1')
-      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_one)
+    it 'handles valid and empty span data' do
+      # Valid span data
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      _(result).must_be_kind_of(Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest)
+      _(result.resource_spans).wont_be_empty
 
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_etsr([])
+      _(result).must_be_kind_of(Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest)
+      _(result.resource_spans).must_be_empty
+    end
+
+    it 'batches per resource and instrumentation scope' do
+      # Test resource batching
+      resource_one = OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1')
       resource_two = OpenTelemetry::SDK::Resources::Resource.create('k2' => 'v2')
+      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_one)
       span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
       span_data3 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
 
@@ -38,6 +74,18 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(etsr.resource_spans.length).must_equal(2)
       _(etsr.resource_spans[0].scope_spans[0].spans.length).must_equal(1)
       _(etsr.resource_spans[1].scope_spans[0].spans.length).must_equal(2)
+
+      # Test scope batching
+      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'test')
+      scope1 = OpenTelemetry::SDK::InstrumentationScope.new('scope1', '1.0.0')
+      scope2 = OpenTelemetry::SDK::InstrumentationScope.new('scope2', '2.0.0')
+      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource, instrumentation_scope: scope1)
+      span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: resource, instrumentation_scope: scope2)
+      span_data3 = OpenTelemetry::TestHelpers.create_span_data(resource: resource, instrumentation_scope: scope1)
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data1, span_data2, span_data3])
+      _(etsr.resource_spans.length).must_equal(1)
+      _(etsr.resource_spans[0].scope_spans.length).must_equal(2)
     end
 
     it 'translates all the things' do
@@ -216,6 +264,84 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       )
 
       _(encoded_etsr).must_equal(expected_encoded_etsr)
+    end
+  end
+
+  describe 'integration tests' do
+    it 'handles complex spans with all features' do
+      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(
+        resource: OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'test-service', 'service.version' => '1.0.0')
+      )
+
+      tracer = OpenTelemetry.tracer_provider.tracer('test-tracer', '1.0.0')
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      span_id = OpenTelemetry::Trace.generate_span_id
+
+      span = OpenTelemetry::TestHelpers.with_ids(trace_id, span_id) { tracer.start_root_span('complex-span', kind: :server) }
+      span['string_attr'] = 'value'
+      span['int_attr'] = 42
+      span['float_attr'] = 3.14
+      span['bool_attr'] = true
+      span['array_attr'] = [1, 2, 3]
+      span.add_event('event1', attributes: { 'event_attr' => 'event_value' })
+      span.add_event('event2')
+      span.status = OpenTelemetry::Trace::Status.error('Test error')
+      span.finish
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span.to_span_data])
+
+      _(etsr.resource_spans.length).must_equal(1)
+      _(etsr.resource_spans.first.resource.attributes.length).must_equal(2)
+      _(etsr.resource_spans.first.scope_spans.first.scope.name).must_equal('test-tracer')
+      _(etsr.resource_spans.first.scope_spans.first.scope.version).must_equal('1.0.0')
+
+      otlp_span = etsr.resource_spans.first.scope_spans.first.spans.first
+      _(otlp_span.name).must_equal('complex-span')
+      _(otlp_span.kind).must_equal(:SPAN_KIND_SERVER)
+      _(otlp_span.attributes.length).must_equal(5)
+      _(otlp_span.events.length).must_equal(2)
+      _(otlp_span.status.code).must_equal(:STATUS_CODE_ERROR)
+      _(otlp_span.status.message).must_equal('Test error')
+    end
+
+    it 'handles multiple resources, scopes, and attributes' do
+      resource1 = OpenTelemetry::SDK::Resources::Resource.create('service' => 'service1')
+      resource2 = OpenTelemetry::SDK::Resources::Resource.create('service' => 'service2')
+      scope1 = OpenTelemetry::SDK::InstrumentationScope.new('scope1', '1.0')
+      scope2 = OpenTelemetry::SDK::InstrumentationScope.new('scope2', '2.0')
+
+      spans = [
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource1, instrumentation_scope: scope1),
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource1, instrumentation_scope: scope2),
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource2, instrumentation_scope: scope1),
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource2, instrumentation_scope: scope2)
+      ]
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr(spans)
+      _(etsr.resource_spans.length).must_equal(2)
+      _(etsr.resource_spans[0].scope_spans.length).must_equal(2)
+      _(etsr.resource_spans[1].scope_spans.length).must_equal(2)
+
+      # Test resource attributes preservation
+      resource = OpenTelemetry::SDK::Resources::Resource.create(
+        'service.name' => 'my-service', 'service.version' => '1.2.3', 'deployment.environment' => 'production'
+      )
+      span_data = OpenTelemetry::TestHelpers.create_span_data(resource: resource)
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+
+      resource_attrs = etsr.resource_spans.first.resource.attributes
+      _(resource_attrs.length).must_equal(3)
+      attr_map = resource_attrs.to_h { |kv| [kv.key, kv.value.string_value] }
+      _(attr_map['service.name']).must_equal('my-service')
+      _(attr_map['service.version']).must_equal('1.2.3')
+      _(attr_map['deployment.environment']).must_equal('production')
+
+      # Test scope without version
+      scope = OpenTelemetry::SDK::InstrumentationScope.new('test-scope', nil)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(instrumentation_scope: scope)
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      _(etsr.resource_spans.first.scope_spans.first.scope.name).must_equal('test-scope')
+      _(etsr.resource_spans.first.scope_spans.first.scope.version).must_be_empty
     end
   end
 end

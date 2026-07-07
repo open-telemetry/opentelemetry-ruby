@@ -1,7 +1,7 @@
 # OpenTelemetry Ruby
 
 [![Slack channel][slack-image]][slack-url]
-[![CI][ci-image]][ci-image]
+[![CI][ci-image]][ci-url]
 [![Apache License][license-image]][license-image]
 
 The Ruby [OpenTelemetry](https://opentelemetry.io/) client.
@@ -76,7 +76,8 @@ the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 
 Apache 2.0 - See [LICENSE][license-url] for more information.
 
-[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/workflows/CI/badge.svg?event=push
+[ci-image]: https://github.com/open-telemetry/opentelemetry-ruby/actions/workflows/ci.yml/badge.svg?event=push
+[ci-url]: https://github.com/open-telemetry/opentelemetry-ruby/actions/workflows/ci.yml
 [contrib-repo]: https://github.com/open-telemetry/opentelemetry-ruby-contrib
 [contrib-instrumentations]: https://github.com/open-telemetry/opentelemetry-ruby-contrib/tree/main/instrumentation
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples

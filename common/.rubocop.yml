@@ -6,5 +6,3 @@ Minitest/AssertPredicate:
   Enabled: false
 Minitest/RefutePredicate:
   Enabled: false
-Performance/MethodObjectAsBlock:
-  Enabled: false

@@ -9,7 +9,3 @@ Metrics/CyclomaticComplexity:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Performance/MapCompact:
-  Enabled: false
-Performance/MethodObjectAsBlock:
-  Enabled: false

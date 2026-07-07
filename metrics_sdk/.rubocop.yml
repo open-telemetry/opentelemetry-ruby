@@ -8,8 +8,6 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-Performance/CollectionLiteralInLoop:
-  Enabled: false
 Style/ArgumentsForwarding:
   Enabled: false
 Style/CollectionQuerying:
