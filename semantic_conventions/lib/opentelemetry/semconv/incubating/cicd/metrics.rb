@@ -42,14 +42,14 @@ module OpenTelemetry
         # @note Stability Level: development
         CICD_PIPELINE_RUN_ERRORS = 'cicd.pipeline.run.errors'
 
-        # The number of errors in a component of the CICD system (eg. controller, scheduler, agent).
+        # The number of errors in a component of the CI/CD system (eg. controller, scheduler, agent).
         #
         # Errors in pipeline run execution are explicitly excluded. Ie a test failure is not counted in this metric.
         #
         # @note Stability Level: development
         CICD_SYSTEM_ERRORS = 'cicd.system.errors'
 
-        # The number of workers on the CICD system by state.
+        # The number of workers on the CI/CD system by state.
         #
         # @note Stability Level: development
         CICD_WORKER_COUNT = 'cicd.worker.count'

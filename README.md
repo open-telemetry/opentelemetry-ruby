@@ -105,5 +105,4 @@ Apache 2.0 - See [LICENSE][license-url] for more information.
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
 [slack-image]: https://img.shields.io/badge/slack-@cncf/%23otel--ruby-purple.svg
 [slack-url]: https://cloud-native.slack.com/archives/C01NWKKMKMY
-[discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [otel-versioning]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/versioning-and-stability.md
