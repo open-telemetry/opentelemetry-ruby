@@ -100,6 +100,11 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_LIMIT = 'system.filesystem.limit'
 
+        # Filesystem lock counts.
+        #
+        # @note Stability Level: development
+        SYSTEM_FILESYSTEM_LOCK_COUNT = 'system.filesystem.lock.count'
+
         # Reports a filesystem's space usage across different states.
         #
         # The sum of all `system.filesystem.usage` values over the different `system.filesystem.state` attributes

@@ -26,7 +26,7 @@ module OpenTelemetry
 
         # This attribute represents the state of the application.
         #
-        # The Android lifecycle states are defined in [Activity lifecycle callbacks](https://developer.android.com/guide/components/activities/activity-lifecycle#lc), and from which the `OS identifiers` are derived.
+        # The Android lifecycle states are defined in [Activity lifecycle callbacks](https://developer.android.com/guide/components/activities/activity-lifecycle#lifecycle-callbacks), and from which the `OS identifiers` are derived.
         #
         # @note Stability Level: development
         ANDROID_APP_STATE = 'android.app.state'
