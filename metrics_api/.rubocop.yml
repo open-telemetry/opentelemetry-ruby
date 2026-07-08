@@ -1,6 +1,8 @@
 inherit_from:
   - ../contrib/rubocop.yml
 
+Metrics/CyclomaticComplexity:
+  Max: 9
 Minitest/AssertKindOf:
   Enabled: false
 Style/EmptyClassDefinition:

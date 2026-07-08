@@ -5,5 +5,12 @@ AllCops:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
 
+Metrics/CyclomaticComplexity:
+  Max: 16
+Metrics/MethodLength:
+  Max: 35
+Metrics/PerceivedComplexity:
+  Max: 16
+
 Style/ObjectThen:
   Enabled: false

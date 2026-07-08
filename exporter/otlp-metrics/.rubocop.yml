@@ -4,3 +4,12 @@ AllCops:
   Exclude:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
+
+Metrics/CyclomaticComplexity:
+  Max: 23
+Metrics/PerceivedComplexity:
+  Max: 20
+Metrics/MethodLength:
+  Max: 84
+Metrics/ClassLength:
+  Max: 310

@@ -6,7 +6,14 @@ AllCops:
   Exclude:
     - "thrift/**/*"
     - "vendor/**/*"
-
+Metrics/ModuleLength:
+  Max: 118
+Metrics/MethodLength:
+  Max: 24
+Metrics/PerceivedComplexity:
+  Max: 13
+Metrics/CyclomaticComplexity:
+  Max: 16
 Style/ExplicitBlockArgument:
   Enabled: false
 Minitest/SkipEnsure:
