@@ -39,7 +39,7 @@ module OpenTelemetry
                          schedule_delay: Float(ENV.fetch('OTEL_BLRP_SCHEDULE_DELAY', 1000)),
                          max_queue_size: Integer(ENV.fetch('OTEL_BLRP_MAX_QUEUE_SIZE', 2048)),
                          max_export_batch_size: Integer(ENV.fetch('OTEL_BLRP_MAX_EXPORT_BATCH_SIZE', 512)),
-                         start_thread_on_boot: String(ENV['OTEL_RUBY_BLRP_START_THREAD_ON_BOOT']) !~ /false/i)
+                         start_thread_on_boot: String(ENV.fetch('OTEL_RUBY_BLRP_START_THREAD_ON_BOOT') !~ /false/i)
             unless max_export_batch_size <= max_queue_size
               raise ArgumentError,
                     'max_export_batch_size much be less than or equal to max_queue_size'
@@ -208,8 +208,8 @@ module OpenTelemetry
             log_records.shift(@batch_size).map!(&:to_log_record_data)
           end
 
-          def lock(&block)
-            @mutex.synchronize(&block)
+          def lock(&)
+            @mutex.synchronize(&)
           end
         end
       end

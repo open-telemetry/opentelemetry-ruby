@@ -1,5 +1,9 @@
 inherit_from: ../contrib/rubocop.yml
 
+Lint/EmptyClass:
+  Exclude:
+    - 'test/opentelemetry/sdk/logs/export/batch_log_record_processor_test.rb'
+
 Metrics/AbcSize:
   Max: 30
 Metrics/MethodLength:
@@ -8,3 +12,5 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
+Minitest/AssertWithExpectedArgument:
+Minitest/UselessAssertion:
