@@ -175,7 +175,7 @@
       "description": "Update Semantic Conventions version in Rake files",
       "managerFilePatterns": [
         "/^semantic_conventions/Rakefile$/",
-        "/^semantic_conventions/semconv.yaml"$/"
+        "/^semantic_conventions/semconv.yaml$/"
       ],
       "matchStrings": [
         "SPEC_VERSION = '(?<currentValue>.*?)'",
