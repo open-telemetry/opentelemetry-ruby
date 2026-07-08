@@ -114,11 +114,11 @@ describe OpenTelemetry::SDK::Trace::Span do
       end
     end
 
-    it 'reports an error for a NilClass value, which is invalid' do
+    it 'does not report an error for a NilClass value, as empty values are valid' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         span.set_attribute('foo', nil)
         span.finish
-        _(log_stream.string).must_match(/invalid span attribute value type NilClass for key 'foo' on span 'name'/)
+        _(log_stream.string.length).must_equal(0)
       end
     end
 
@@ -223,12 +223,12 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal(attrs)
     end
 
-    it 'does not keep nil-valued attributes' do
+    it 'keeps nil-valued attributes' do
       attrs = { 'foo' => nil }
       span.add_event('added', attributes: attrs)
       events = span.events
       _(events.size).must_equal(1)
-      _(events.first.attributes).must_equal({})
+      _(events.first.attributes).must_equal({ 'foo' => nil })
     end
 
     it 'accepts array-valued attributes' do
@@ -247,12 +247,12 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(events.first.attributes).must_equal({})
     end
 
-    it 'does not accept array-valued attributes if the elements are different types' do
+    it 'accepts array-valued attributes even if the elements are different types' do
       attrs = { 'foo' => [1, 2, 'bar'] }
       span.add_event('added', attributes: attrs)
       events = span.events
       _(events.size).must_equal(1)
-      _(events.first.attributes).must_equal({})
+      _(events.first.attributes).must_equal({ 'foo' => [1, 2, 'bar'] })
     end
 
     it 'accepts array-valued attributes if the elements are true and false' do

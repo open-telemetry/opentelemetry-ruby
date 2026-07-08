@@ -25,27 +25,34 @@ module OpenTelemetry
       end
 
       def valid_simple_value?(value)
-        value.instance_of?(String) || boolean?(value) || numeric?(value)
-      end
-
-      def valid_array_value?(value)
-        return false unless value.is_a?(Array)
-        return true if value.empty?
-
-        case value.first
-        when String
-          value.all? { |v| v.instance_of?(String) }
-        when TrueClass, FalseClass
-          value.all? { |v| boolean?(v) }
-        when Numeric
-          value.all? { |v| numeric?(v) }
-        else
-          false
-        end
+        value.instance_of?(String) || boolean?(value) || numeric?(value) || value.nil?
       end
 
       def valid_value?(value)
-        valid_simple_value?(value) || valid_array_value?(value)
+        to_check = [value]
+        seen = Set.new
+        until to_check.empty?
+          current = to_check.pop
+          next if valid_simple_value?(current)
+
+          return false if seen.include?(current.object_id)
+
+          seen << current.object_id
+
+          case current
+          when Array
+            current.each { |v| to_check << v }
+          when Hash
+            current.each do |k, v|
+              return false unless valid_key?(k)
+
+              to_check << v
+            end
+          else
+            return false
+          end
+        end
+        true
       end
 
       def valid_attributes?(owner, kind, attrs)
