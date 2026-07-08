@@ -8,8 +8,3 @@ Metrics/PerceivedComplexity:
   Max: 30
 Metrics/CyclomaticComplexity:
   Max: 20
-
-Naming/MethodParameterName:
-  Enabled: false
-Naming/PredicateMethod:
-  Enabled: false

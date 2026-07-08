@@ -66,9 +66,9 @@ module OpenTelemetry
         # @note Stability Level: development
         NETWORK_INTERFACE_NAME = 'network.interface.name'
 
-        # The network IO operation direction.
+        # The direction of traffic from the perspective of the observing host's physical or virtual network interface. It should not be used to represent the logical direction of a stateful connection or network flow.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         NETWORK_IO_DIRECTION = 'network.io.direction'
 
         # Local address of the network connection - IP address or Unix domain socket name.

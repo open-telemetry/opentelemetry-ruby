@@ -26,7 +26,7 @@ module OpenTelemetry
 
         # The disk IO operation direction.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         DISK_IO_DIRECTION = 'disk.io.direction'
 
         # @!endgroup
