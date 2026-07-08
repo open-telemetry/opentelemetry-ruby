@@ -173,9 +173,13 @@
     {
       "customType": "regex",
       "description": "Update Semantic Conventions version in Rake files",
-      "managerFilePatterns": ["/^semantic_conventions/Rakefile$/"],
+      "managerFilePatterns": [
+        "/^semantic_conventions/Rakefile$/",
+        "/^semantic_conventions/semconv.yaml"$/"
+      ],
       "matchStrings": [
-        "SPEC_VERSION = '(?<currentValue>.*?)'"
+        "SPEC_VERSION = '(?<currentValue>.*?)'",
+        "spec_version: '(?<currentValue>.*?)'"
       ],
       "depNameTemplate": "open-telemetry/semantic-conventions",
       "datasourceTemplate": "github-releases",
