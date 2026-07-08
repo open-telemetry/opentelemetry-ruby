@@ -6,6 +6,7 @@ AllCops:
   Exclude:
     - "thrift/**/*"
     - "vendor/**/*"
+
 Metrics/ModuleLength:
   Max: 118
 Metrics/MethodLength:
