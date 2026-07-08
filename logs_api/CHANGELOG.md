@@ -2,7 +2,7 @@
 
 ### v0.4.1 / 2026-07-08
 
-* No significant updates.
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
 
 ### v0.4.0 / 2026-05-12
 
