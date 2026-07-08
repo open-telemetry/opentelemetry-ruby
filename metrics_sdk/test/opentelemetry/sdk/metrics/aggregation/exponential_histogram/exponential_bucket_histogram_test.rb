@@ -316,7 +316,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
           hdp = local_data_points[{}]
           # Simulate the effect of the mocked increment
-          hdp.instance_variable_set(:@count, hdp.count + increment - 1) if hdp.count > 0
+          hdp.instance_variable_set(:@count, hdp.count + increment - 1) if hdp.any?
           hdp.instance_variable_set(:@sum, hdp.sum + (value * increment) - value) if hdp.sum > 0
         end
 

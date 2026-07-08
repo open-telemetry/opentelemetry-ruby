@@ -11,7 +11,7 @@ describe OpenTelemetry::SDK do
   describe '#periodic_metric_reader' do
     before do
       reset_metrics_sdk
-      @original_temp = ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE']
+      @original_temp = ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil)
       ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
     end
 

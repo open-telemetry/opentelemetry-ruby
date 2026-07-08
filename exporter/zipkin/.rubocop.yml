@@ -15,7 +15,5 @@ Metrics/PerceivedComplexity:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Style/ExplicitBlockArgument:
-  Enabled: false
 Minitest/SkipEnsure:
   Enabled: false
