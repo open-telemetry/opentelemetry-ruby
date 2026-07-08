@@ -4,8 +4,3 @@ AllCops:
   Exclude:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
-
-Metrics/CyclomaticComplexity:
-  Enabled: false
-Metrics/PerceivedComplexity:
-  Enabled: false
