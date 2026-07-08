@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.12.1 / 2026-07-08
+
+* No significant updates.
+
 ### v1.12.0 / 2026-05-12
 
 * ADDED: Add git tag to source URI in gemspec (#2101)
