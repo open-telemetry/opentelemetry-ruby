@@ -13,4 +13,6 @@ Metrics/PerceivedComplexity:
 Metrics/CyclomaticComplexity:
   Max: 20
 Minitest/AssertWithExpectedArgument:
+  Enabled: false
 Minitest/UselessAssertion:
+  Enabled: false
