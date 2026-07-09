@@ -4,14 +4,12 @@ Lint/EmptyClass:
   Exclude:
     - 'test/opentelemetry/sdk/logs/export/batch_log_record_processor_test.rb'
 
-Metrics/AbcSize:
-  Max: 30
 Metrics/MethodLength:
-  Max: 50
+  Max: 23
 Metrics/PerceivedComplexity:
-  Max: 30
+  Max: 10
 Metrics/CyclomaticComplexity:
-  Max: 20
+  Max: 10
 Minitest/AssertWithExpectedArgument:
   Enabled: false
 Minitest/UselessAssertion:

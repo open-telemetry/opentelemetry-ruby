@@ -1,11 +1,7 @@
 inherit_from:
   - ../contrib/rubocop.yml
 
-Metrics/MethodLength:
-  Max: 50
-Metrics/PerceivedComplexity:
-  Max: 30
 Metrics/CyclomaticComplexity:
-  Max: 20
+  Max: 9
 Minitest/AssertKindOf:
   Enabled: false
