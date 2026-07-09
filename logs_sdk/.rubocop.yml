@@ -3,11 +3,9 @@ inherit_from: ../contrib/rubocop.yml
 AllCops:
   NewCops: disable
 
-Metrics/AbcSize:
-  Max: 30
 Metrics/MethodLength:
-  Max: 50
+  Max: 23
 Metrics/PerceivedComplexity:
-  Max: 30
+  Max: 10
 Metrics/CyclomaticComplexity:
-  Max: 20
+  Max: 10

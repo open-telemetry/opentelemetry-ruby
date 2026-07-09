@@ -6,8 +6,8 @@ AllCops:
     - "vendor/**/*"
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Max: 16
 Metrics/MethodLength:
-  Enabled: false
+  Max: 35
 Metrics/PerceivedComplexity:
-  Enabled: false
+  Max: 16
