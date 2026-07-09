@@ -4,6 +4,3 @@ AllCops:
   Exclude:
     - "lib/opentelemetry/proto/**/*"
     - "vendor/**/*"
-
-Style/ObjectThen:
-  Enabled: false

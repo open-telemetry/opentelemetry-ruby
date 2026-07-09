@@ -9,5 +9,3 @@ Metrics/CyclomaticComplexity:
   Max: 20
 Minitest/AssertKindOf:
   Enabled: false
-Style/EmptyClassDefinition:
-  Enabled: false
