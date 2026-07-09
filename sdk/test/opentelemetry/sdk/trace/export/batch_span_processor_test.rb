@@ -69,7 +69,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   class TestSpan
-    def initialize(id = nil, recording = true)
+    def initialize(id = nil, recording: true)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
       @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
       @id = id
@@ -314,7 +314,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       bsp = BatchSpanProcessor.new(te, max_queue_size: 6, max_export_batch_size: 3)
 
-      tss = [TestSpan.new, TestSpan.new(nil, false)]
+      tss = [TestSpan.new, TestSpan.new(nil, recording: false)]
       tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 

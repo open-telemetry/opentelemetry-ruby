@@ -11,6 +11,3 @@ Metrics/MethodLength:
   Max: 35
 Metrics/PerceivedComplexity:
   Max: 16
-
-Style/ObjectThen:
-  Enabled: false

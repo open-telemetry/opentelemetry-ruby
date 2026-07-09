@@ -4,6 +4,3 @@ Metrics/PerceivedComplexity:
   Max: 14
 Metrics/CyclomaticComplexity:
   Max: 13
-
-Style/NegatedIfElseCondition:
-  Enabled: false

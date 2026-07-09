@@ -23,7 +23,7 @@ module OpenTelemetry
     # ConfigurationError is an exception type used to wrap configuration errors
     # passed to OpenTelemetry.error_handler. This can be used to distinguish
     # errors reported during SDK configuration.
-    ConfigurationError = Class.new(OpenTelemetry::Error)
+    ConfigurationError = Class.new(OpenTelemetry::Error) # rubocop:disable Style/EmptyClassDefinition
 
     # Configures SDK and instrumentation
     #

@@ -13,7 +13,7 @@ module OpenTelemetry
         # Potentially useful for exploratory purposes.
         class ConsoleMetricPullExporter < MetricReader
           def initialize(aggregation_cardinality_limit: nil)
-            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
+            super
             @stopped = false
           end
 
