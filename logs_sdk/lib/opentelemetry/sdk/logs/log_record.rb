@@ -117,7 +117,7 @@ module OpenTelemetry
         def to_integer_nanoseconds(timestamp)
           return unless timestamp.is_a?(Time)
 
-          (timestamp.to_r * 10**9).to_i
+          (timestamp.to_r * (10**9)).to_i
         end
 
         def trim_attributes(attributes)
@@ -146,11 +146,11 @@ module OpenTelemetry
           attrs.keep_if do |k, v|
             if !Internal.valid_key?(k)
               OpenTelemetry.handle_error(message: "Invalid log record attribute key type #{k.class} for " \
-                "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
+                                                  "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
               return false
             elsif !Internal.valid_value?(v)
               OpenTelemetry.handle_error(message: "Invalid log record attribute value type #{v.class} for key '#{k}' " \
-                "on record: '#{body}'. Dropping attribute.")
+                                                  "on record: '#{body}'. Dropping attribute.")
               return false
             end
 

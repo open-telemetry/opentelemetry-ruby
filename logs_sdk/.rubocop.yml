@@ -1,7 +1,8 @@
 inherit_from: ../contrib/rubocop.yml
 
-AllCops:
-  NewCops: disable
+Lint/EmptyClass:
+  Exclude:
+    - 'test/opentelemetry/sdk/logs/export/batch_log_record_processor_test.rb'
 
 Metrics/MethodLength:
   Max: 23
@@ -9,3 +10,7 @@ Metrics/PerceivedComplexity:
   Max: 10
 Metrics/CyclomaticComplexity:
   Max: 10
+Minitest/AssertWithExpectedArgument:
+  Enabled: false
+Minitest/UselessAssertion:
+  Enabled: false
