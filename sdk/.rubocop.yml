@@ -6,5 +6,3 @@ Lint/EmptyClass:
     - 'test/opentelemetry/sdk/trace/export/batch_span_processor_test.rb'
 Metrics/CyclomaticComplexity:
   Max: 9
-Minitest/UselessAssertion:
-  Enabled: false
