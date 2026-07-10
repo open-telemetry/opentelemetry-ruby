@@ -174,7 +174,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'does not spawn a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is false' do
       mock = Minitest::Mock.new
-      mock.expect(:call, nil) { assert false }
+      mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
@@ -185,7 +185,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'prefers explicit start_thread_on_boot parameter rather than the environment' do
       mock = Minitest::Mock.new
-      mock.expect(:call, nil) { assert false }
+      mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do

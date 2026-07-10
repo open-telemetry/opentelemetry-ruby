@@ -14,5 +14,3 @@ Metrics/PerceivedComplexity:
   Max: 13
 Metrics/CyclomaticComplexity:
   Max: 16
-Minitest/SkipEnsure:
-  Enabled: false
