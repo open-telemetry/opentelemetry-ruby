@@ -1012,7 +1012,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       result = exporter.export([log_record_data])
 
       _(result).must_equal(FAILURE)
-      _(log_stream.string).must_match(/body truncated due to size limit/)
+      _(log_stream.string).must_match(/oversized error response body/)
     ensure
       OpenTelemetry.logger = logger
     end
@@ -1028,6 +1028,157 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
 
       _(result).must_equal(FAILURE)
       _(log_stream.string).must_match(/unexpected error decoding rpc.Status/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+  end
+
+  describe 'response body reading with real sockets' do
+    # These tests use a real TCPServer instead of WebMock to verify
+    # behavior against actual Net::HTTP socket I/O. WebMock's patching
+    # of Net::HTTP changes how read_body works, so it doesn't exercise
+    # the same code paths as real Net::HTTP.
+
+    def with_fake_server(response_body_size: nil, status: 400, handler: nil)
+      server = TCPServer.new('127.0.0.1', 0)
+      port = server.addr[1]
+      handler ||= ->(srv, stat) { handle_fake_request(srv, 'X' * response_body_size, stat) }
+
+      server_thread = Thread.new { handler.call(server, status) }
+
+      WebMock::HttpLibAdapters::NetHttpAdapter.disable!
+      yield port
+    ensure
+      WebMock::HttpLibAdapters::NetHttpAdapter.enable!
+      server&.close
+      server_thread&.join(2)
+    end
+
+    def handle_fake_request(server, body, status)
+      client = server.accept
+      content_length = read_content_length(client)
+      client.read(content_length) if content_length > 0
+
+      client.print "HTTP/1.1 #{status} Bad Request\r\n"
+      client.print "Content-Type: application/x-protobuf\r\n"
+      client.print "Content-Length: #{body.bytesize}\r\n"
+      client.print "Connection: close\r\n"
+      client.print "\r\n"
+      client.write body
+      client.close
+    rescue StandardError
+      # client may disconnect early
+    end
+
+    # Sends only headers announcing an oversized Content-Length, then closes
+    # without ever writing a body — proves the exporter short-circuits on
+    # Content-Length rather than attempting to stream-read the body.
+    def handle_fake_headers_only_request(server, declared_content_length, status)
+      client = server.accept
+      content_length = read_content_length(client)
+      client.read(content_length) if content_length > 0
+
+      client.print "HTTP/1.1 #{status} Bad Request\r\n"
+      client.print "Content-Type: application/x-protobuf\r\n"
+      client.print "Content-Length: #{declared_content_length}\r\n"
+      client.print "Connection: close\r\n"
+      client.print "\r\n"
+      client.close
+    rescue StandardError
+      # client may disconnect early
+    end
+
+    # Writes body using chunked transfer-encoding with no Content-Length
+    # header, the common shape of a real collector's error response.
+    def handle_fake_chunked_request(server, body, status)
+      client = server.accept
+      content_length = read_content_length(client)
+      client.read(content_length) if content_length > 0
+
+      client.print "HTTP/1.1 #{status} Bad Request\r\n"
+      client.print "Content-Type: application/x-protobuf\r\n"
+      client.print "Transfer-Encoding: chunked\r\n"
+      client.print "Connection: close\r\n"
+      client.print "\r\n"
+
+      chunk_size = 65_536
+      offset = 0
+      while offset < body.bytesize
+        chunk = body.byteslice(offset, chunk_size)
+        client.print "#{chunk.bytesize.to_s(16)}\r\n#{chunk}\r\n"
+        offset += chunk_size
+      end
+      client.print "0\r\n\r\n"
+      client.close
+    rescue StandardError
+      # client may disconnect early
+    end
+
+    def read_content_length(client)
+      content_length = 0
+      while (line = client.gets) && line != "\r\n"
+        content_length = line.split(': ', 2).last.to_i if line.start_with?('Content-Length')
+      end
+      content_length
+    end
+
+    it 'limits error response body read to 4 MB against a real HTTP server' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      with_fake_server(response_body_size: 5_000_000) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/logs"
+        )
+        result = exporter.export([OpenTelemetry::TestHelpers.create_log_record_data])
+
+        _(result).must_equal(FAILURE)
+        _(log_stream.string).must_match(/oversized error response body/)
+        _(log_stream.string).wont_match(/unexpected error decoding/)
+        _(log_stream.string).wont_match(/read_body called twice/)
+      end
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'skips reading the body when Content-Length already exceeds the limit' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      handler = ->(server, status) { handle_fake_headers_only_request(server, 5_000_000, status) }
+      with_fake_server(handler: handler) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/logs"
+        )
+        result = exporter.export([OpenTelemetry::TestHelpers.create_log_record_data])
+
+        _(result).must_equal(FAILURE)
+        _(log_stream.string).must_match(/oversized error response body/)
+        _(log_stream.string).wont_match(/error reading response body/)
+      end
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'limits chunked (no Content-Length) response bodies to 4 MB' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      large_body = 'X' * 5_000_000
+      handler = ->(server, status) { handle_fake_chunked_request(server, large_body, status) }
+      with_fake_server(handler: handler) do |port|
+        exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(
+          endpoint: "http://127.0.0.1:#{port}/v1/logs"
+        )
+        result = exporter.export([OpenTelemetry::TestHelpers.create_log_record_data])
+
+        _(result).must_equal(FAILURE)
+        _(log_stream.string).must_match(/oversized error response body/)
+        _(log_stream.string).wont_match(/unexpected error decoding/)
+      end
     ensure
       OpenTelemetry.logger = logger
     end

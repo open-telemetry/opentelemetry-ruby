@@ -258,6 +258,7 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP exporter received an oversized error response body (truncated at #{RESPONSE_BODY_LIMIT} bytes) for uri=#{@uri}")
             return
           end
+          return if body.nil? || body.empty?
 
           status = Google::Rpc::Status.decode(body)
           details = status.details.map do |detail|
@@ -272,8 +273,15 @@ module OpenTelemetry
         def read_response_body(response)
           return ['', false] if response.nil?
 
+          content_length = response['content-length']&.to_i
+          if content_length && content_length > RESPONSE_BODY_LIMIT
+            @http.finish
+            return ['', true]
+          end
+
           body, truncated = collect_response_chunks(response)
           body.force_encoding('UTF-8')
+          body.scrub! if truncated # truncation may have split a multi-byte character
           [body, truncated]
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'error reading response body')

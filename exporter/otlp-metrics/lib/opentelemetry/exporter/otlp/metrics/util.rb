@@ -116,45 +116,58 @@ module OpenTelemetry
             true
           end
 
-          def log_status(body)
-            truncation_note = @body_truncated ? ' (body truncated due to size limit)' : ''
+          def log_status(body, truncated: false)
+            if truncated
+              OpenTelemetry.handle_error(message: "OTLP metrics_exporter received an oversized error response body (truncated at #{RESPONSE_BODY_LIMIT} bytes)")
+              return
+            end
+            return if body.nil? || body.empty?
+
             status = Google::Rpc::Status.decode(body)
             details = status.details.map do |detail|
               type_name = detail.type_url.to_s.split('/').last.to_s
               klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(type_name)&.msgclass
               detail.unpack(klass_or_nil) if klass_or_nil
             end.compact
-            OpenTelemetry.handle_error(message: "OTLP metrics_exporter received rpc.Status{message=#{status.message}, details=#{details}}#{truncation_note}")
+            OpenTelemetry.handle_error(message: "OTLP metrics_exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e, message: "unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status#{truncation_note}")
-          ensure
-            @body_truncated = false
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
           end
 
           def read_response_body(response)
-            return '' if response.nil?
+            return ['', false] if response.nil?
+
+            content_length = response['content-length']&.to_i
+            if content_length && content_length > RESPONSE_BODY_LIMIT
+              @http.finish # closes socket without reading any of the oversized body
+              return ['', true]
+            end
 
             # Stream read with 4 MB limit
             body = +''
             truncated = false
 
             response.read_body do |chunk|
-              if body.bytesize + chunk.bytesize <= RESPONSE_BODY_LIMIT
-                body << chunk
-              else
-                remaining = RESPONSE_BODY_LIMIT - body.bytesize
-                body << chunk.byteslice(0, remaining) if remaining > 0
+              remaining = RESPONSE_BODY_LIMIT - body.bytesize
+              body << chunk.byteslice(0, remaining)
+
+              if chunk.bytesize > remaining
                 truncated = true
+                @http.finish # closes socket, nil's the body or else net/http will attempt to read the rest of the response
                 break
               end
             end
 
             body.force_encoding('UTF-8')
-            @body_truncated = truncated
-            body
+            body.scrub! if truncated # truncation may have split a multi-byte character
+            [body, truncated]
+          rescue IOError
+            raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
+
+            [body || '', truncated]
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
-            ''
+            ['', false]
           end
 
           def handle_redirect(location); end
