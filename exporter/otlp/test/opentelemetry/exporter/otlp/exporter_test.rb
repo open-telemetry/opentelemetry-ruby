@@ -1320,7 +1320,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       result = exporter.export([span_data])
 
       _(result).must_equal(FAILURE)
-    ensure
+    ensure # rubocop:disable Minitest/SkipEnsure
       OpenTelemetry.logger = logger
     end
 

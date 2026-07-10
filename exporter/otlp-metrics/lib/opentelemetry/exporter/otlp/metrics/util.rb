@@ -9,7 +9,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # Util module provide essential functionality for exporter
-        module Util
+        module Util # rubocop:disable Metrics/ModuleLength
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
           RESPONSE_BODY_LIMIT = 4_194_304 # 4 MB

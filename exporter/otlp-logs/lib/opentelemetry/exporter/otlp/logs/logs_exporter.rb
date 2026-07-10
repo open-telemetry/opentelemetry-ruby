@@ -308,7 +308,7 @@ module OpenTelemetry
             ['', false]
           end
 
-          def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
             return false if retry_count > RETRY_COUNT
 
             sleep_interval = nil
