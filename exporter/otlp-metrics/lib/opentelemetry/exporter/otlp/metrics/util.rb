@@ -131,6 +131,11 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
           end
 
+          # Drains and discards the body without buffering it, preserving keep-alive.
+          def drain_body(response)
+            response.read_body { |_| } # rubocop:disable Lint/EmptyBlock
+          end
+
           def read_response_body(response)
             return ['', false] if response.nil?
 

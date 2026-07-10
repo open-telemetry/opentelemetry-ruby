@@ -174,20 +174,20 @@ module OpenTelemetry
               @http.request(request) do |response|
                 case response
                 when Net::HTTPSuccess
-                  response.read_body { |_| } # Drain and discard, preserves keep-alive
+                  drain_body(response)
                   result = SUCCESS
                 when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                  response.read_body { |_| }
+                  drain_body(response)
                   handle_http_error(response)
                   should_redo = backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1)
                   result = FAILURE
                 when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                  response.read_body { |_| }
+                  drain_body(response)
                   handle_http_error(response)
                   should_redo = backoff?(retry_count: retry_count += 1)
                   result = FAILURE
                 when Net::HTTPNotFound
-                  response.read_body { |_| }
+                  drain_body(response)
                   handle_http_error(response)
                   result = FAILURE
                 when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
@@ -195,12 +195,12 @@ module OpenTelemetry
                   log_status(body, truncated: truncated)
                   result = FAILURE
                 when Net::HTTPRedirection
-                  response.read_body { |_| }
+                  drain_body(response)
                   @http.finish
                   handle_redirect(response['location'])
                   should_redo = backoff?(retry_after: 0, retry_count: retry_count += 1)
                 else
-                  response.read_body { |_| }
+                  drain_body(response)
                   @http.finish
                   handle_http_error(response)
                   result = FAILURE
@@ -266,6 +266,11 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP logs exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          end
+
+          # Drains and discards the body without buffering it, preserving keep-alive.
+          def drain_body(response)
+            response.read_body { |_| } # rubocop:disable Lint/EmptyBlock
           end
 
           def read_response_body(response) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity

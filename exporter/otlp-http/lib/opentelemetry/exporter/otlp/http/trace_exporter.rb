@@ -39,7 +39,8 @@ module OpenTelemetry
                          ssl_verify_mode: fetch_ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         metrics_reporter: nil)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             @uri = prepare_endpoint(endpoint)
@@ -50,6 +51,7 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
             @shutdown = false
           end
 
@@ -150,35 +152,36 @@ module OpenTelemetry
               result = nil
               should_redo = false
 
-              measure_request_duration do # rubocop:disable Metrics/BlockLength
-                @http.request(request) do |response| # rubocop:disable Metrics/BlockLength
+              measure_request_duration do
+                @http.request(request) do |response|
                   case response
                   when Net::HTTPSuccess
-                    response.read_body { |_| } # Drain and discard, preserves keep-alive
+                    drain_body(response)
                     result = SUCCESS
                   when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                    response.read_body { |_| }
+                    drain_body(response)
                     should_redo = backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
                     result = FAILURE
                   when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                    response.read_body { |_| }
+                    drain_body(response)
                     should_redo = backoff?(retry_count: retry_count += 1, reason: response.code)
                     result = FAILURE
                   when Net::HTTPNotFound
+                    drain_body(response)
                     log_request_failure(response.code)
-                    FAILURE
+                    result = FAILURE
                   when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
                     body, truncated = read_response_body(response)
                     log_status(body, truncated: truncated)
                     @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
                     result = FAILURE
                   when Net::HTTPRedirection
-                    response.read_body { |_| }
+                    drain_body(response)
                     @http.finish
                     handle_redirect(response['location'])
                     should_redo = backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
                   else
-                    response.read_body { |_| }
+                    drain_body(response)
                     @http.finish
                     result = FAILURE
                   end
@@ -238,6 +241,11 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          end
+
+          # Drains and discards the body without buffering it, preserving keep-alive.
+          def drain_body(response)
+            response.read_body { |_| } # rubocop:disable Lint/EmptyBlock
           end
 
           def read_response_body(response) # rubocop:disable Metrics/MethodLength

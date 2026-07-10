@@ -127,20 +127,20 @@ module OpenTelemetry
               @http.request(request) do |response|
                 case response
                 when Net::HTTPSuccess
-                  response.read_body { |_| } # Drain and discard, preserves keep-alive
+                  drain_body(response)
                   result = SUCCESS
                 when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                  response.read_body { |_| }
+                  drain_body(response)
                   should_redo = backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
                   OpenTelemetry.logger.warn('Net::HTTPServiceUnavailable/Net::HTTPTooManyRequests in MetricsExporter#send_bytes')
                   result = FAILURE
                 when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                  response.read_body { |_| }
+                  drain_body(response)
                   should_redo = backoff?(retry_count: retry_count += 1, reason: response.code)
                   OpenTelemetry.logger.warn('Net::HTTPRequestTimeOut/Net::HTTPGatewayTimeOut/Net::HTTPBadGateway in MetricsExporter#send_bytes')
                   result = FAILURE
                 when Net::HTTPNotFound
-                  response.read_body { |_| }
+                  drain_body(response)
                   OpenTelemetry.handle_error(message: "OTLP metrics_exporter received http.code=404 for uri: '#{@path}'")
                   result = FAILURE
                 when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
@@ -149,12 +149,12 @@ module OpenTelemetry
                   OpenTelemetry.logger.warn('Net::HTTPBadRequest/Net::HTTPClientError/Net::HTTPServerError in MetricsExporter#send_bytes')
                   result = FAILURE
                 when Net::HTTPRedirection
-                  response.read_body { |_| }
+                  drain_body(response)
                   @http.finish
                   handle_redirect(response['location'])
                   should_redo = backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
                 else
-                  response.read_body { |_| }
+                  drain_body(response)
                   @http.finish
                   OpenTelemetry.logger.warn("Unexpected error in OTLP::MetricsExporter#send_bytes - #{response.message}")
                   result = FAILURE
