@@ -91,7 +91,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(metric_data.data_points.first.attributes).must_equal(attributes)
 
       # Test empty collection when callback returns nil
-      empty_callback = [proc { nil }]
+      empty_callback = [proc {}]
       empty_stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,

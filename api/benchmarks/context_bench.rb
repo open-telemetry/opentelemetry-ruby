@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'benchmark/ipsa'
+require 'benchmark/ips'
 require 'concurrent-ruby'
 require 'opentelemetry'
 
@@ -94,7 +94,7 @@ class FiberLocalVarContext
     FiberLocalVarContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberLocalVarContext.new(@entries.merge(values))
   end
 
@@ -188,7 +188,7 @@ class FiberAttributeContext
     FiberAttributeContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberAttributeContext.new(@entries.merge(values))
   end
 
@@ -287,7 +287,7 @@ class LinkedListContext
     LinkedListContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     LinkedListContext.new(@entries.merge(values))
   end
 
@@ -379,7 +379,7 @@ class FiberLocalLinkedListContext < Hash
     new_entries
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     merge(values)
   end
 
@@ -472,7 +472,7 @@ class ArrayContext
     ArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     ArrayContext.new(@entries.merge(values))
   end
 
@@ -498,10 +498,10 @@ class FiberLocalArrayContext
     end
 
     def correct_owner!
-      if @owner != Fiber.current
-        Fiber[STACK_KEY] = self.class.new.replace(self)
-      else
+      if @owner == Fiber.current
         self
+      else
+        Fiber[STACK_KEY] = self.class.new.replace(self)
       end
     end
   end
@@ -591,7 +591,7 @@ class FiberLocalArrayContext
     FiberLocalArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberLocalArrayContext.new(@entries.merge(values))
   end
 
@@ -684,7 +684,7 @@ class ImmutableArrayContext
     ImmutableArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     ImmutableArrayContext.new(@entries.merge(values))
   end
 
@@ -777,14 +777,14 @@ class FiberLocalImmutableArrayContext
     FiberLocalImmutableArrayContext.new(new_entries)
   end
 
-  def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+  def set_values(values) # rubocop:disable Naming/AccessorMethodName
     FiberLocalImmutableArrayContext.new(@entries.merge(values))
   end
 
   ROOT = empty.freeze
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   x.report 'FiberAttributeContext.with_value' do
     FiberAttributeContext.with_value('key', 'value') { |ctx, _| ctx }
   end
@@ -820,7 +820,7 @@ Benchmark.ipsa do |x|
   x.compare!
 end
 
-Benchmark.ipsa do |x| # rubocop:disable Metrics/BlockLength
+Benchmark.ips do |x|
   x.report 'LinkedListContext.with_value recursive' do
     LinkedListContext.with_value('key', 'value') do
       LinkedListContext.with_value('key', 'value') do

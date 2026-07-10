@@ -33,20 +33,10 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'opentelemetry-semantic_conventions'
   spec.add_dependency 'thrift'
 
-  spec.add_development_dependency 'minitest', '~> 5.0'
-  spec.add_development_dependency 'opentelemetry-test-helpers'
-  spec.add_development_dependency 'rake', '~> 13.3'
-  spec.add_development_dependency 'rspec-mocks'
-  spec.add_development_dependency 'rubocop', '~> 1.65'
-  spec.add_development_dependency 'simplecov', '~> 0.17'
-  spec.add_development_dependency 'webmock', '~> 3.24'
-  spec.add_development_dependency 'yard', '~> 0.9'
-  spec.add_development_dependency 'yard-doctest', '~> 0.1.6'
-
   if spec.respond_to?(:metadata)
-    spec.metadata['changelog_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-jaeger/v#{OpenTelemetry::Exporter::Jaeger::VERSION}/file.CHANGELOG.html"
-    spec.metadata['source_code_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/tree/main/exporter/jaeger'
+    spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/exporter/jaeger"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
-    spec.metadata['documentation_uri'] = "https://open-telemetry.github.io/opentelemetry-ruby/opentelemetry-exporter-jaeger/v#{OpenTelemetry::Exporter::Jaeger::VERSION}"
+    spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
 end

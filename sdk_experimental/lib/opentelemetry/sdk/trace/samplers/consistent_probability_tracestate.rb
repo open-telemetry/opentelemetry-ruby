@@ -33,6 +33,7 @@ module OpenTelemetry
           def sanitized_tracestate(trace_id, span_context)
             sampled = span_context.trace_flags.sampled?
             tracestate = span_context.tracestate
+            # rubocop:disable Lint/DuplicateBranch
             parse_ot_vendor_tag(tracestate) do |p, r, rest|
               if !r.nil? && r > 62
                 p = r = nil
@@ -49,6 +50,7 @@ module OpenTelemetry
               end
               update_tracestate(tracestate, p, r, rest)
             end
+            # rubocop:enable Lint/DuplicateBranch
           end
 
           # parse_ot_vendor_tag parses the 'ot' vendor tag of the tracestate.
@@ -77,7 +79,7 @@ module OpenTelemetry
             yield(p, r, rest)
           end
 
-          def update_tracestate(tracestate, p, r, rest)
+          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/MethodParameterName
             if p.nil? && r.nil? && rest.nil?
               tracestate.delete('ot')
             elsif p.nil? && r.nil?
@@ -97,7 +99,7 @@ module OpenTelemetry
             end
           end
 
-          def invariant(p, r, sampled)
+          def invariant(p, r, sampled) # rubocop:disable Naming/MethodParameterName
             ((p <= r) == sampled) || (sampled && (p == 63))
           end
 

@@ -35,13 +35,13 @@ jobs:
           - opentelemetry-semantic_conventions
           - opentelemetry-test-helpers
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-24.04
+          - macos-26
+          - windows-2025
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -56,13 +56,13 @@ jobs:
           rubocop: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
       - name: "Test truffleruby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -82,17 +82,17 @@ jobs:
           - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-24.04
+          - macos-26
+          - windows-2025
         exclude:
          # Windows runs Ruby 3.4, which isn't compatible with this gem
-          - os: windows-latest
+          - os: windows-2025
             gem: opentelemetry-exporter-otlp-grpc
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -107,7 +107,7 @@ jobs:
           rubocop: true
           build: true
       - name: "Test Zipkin with JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -121,7 +121,7 @@ jobs:
           # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
           true
       - name: "Test truffleruby"
-        if: "${{ matrix.os == 'ubuntu-latest' && steps.truffleruby_skip.outputs.skip == 'false' }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && steps.truffleruby_skip.outputs.skip == 'false' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -136,13 +136,13 @@ jobs:
           - opentelemetry-propagator-b3
           - opentelemetry-propagator-jaeger
         os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
+          - ubuntu-24.04
+          - macos-26
+          - windows-2025
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: "Test Ruby 3.4"
         uses: ./.github/actions/test_gem
         with:
@@ -157,13 +157,13 @@ jobs:
           rubocop: true
           build: true
       - name: "Test JRuby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
       - name: "Test truffleruby"
-        if: "${{ matrix.os == 'ubuntu-latest' }}"
+        if: startsWith(matrix.os, 'ubuntu')
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
@@ -172,10 +172,10 @@ jobs:
   spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: Spelling Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: streetsidesoftware/cspell-action@9cd41bb518a24fefdafd9880cbab8f0ceba04d28 # v8.3.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
         with:
           use_cspell_files: true
           config: .cspell.yml

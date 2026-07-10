@@ -5,11 +5,14 @@ plugins:
   - rubocop-performance
 
 AllCops:
-  NewCops: disable
-  SuggestExtensions: false
+  NewCops: enable
+  SuggestExtensions: true
   TargetRubyVersion: "3.3"
   Exclude:
     - "vendor/**/*"
+
+Bundler/OrderedGems:
+  Enabled: false
 
 Layout/LineLength:
   Enabled: false
@@ -17,6 +20,9 @@ Layout/LineLength:
 Lint/ConstantDefinitionInBlock:
   Exclude:
     - "test/**/*"
+Lint/EmptyBlock:
+  Exclude:
+    - "**/*test.rb"
 Lint/MissingSuper:
   Enabled: false
 Lint/UnusedMethodArgument:
@@ -24,15 +30,49 @@ Lint/UnusedMethodArgument:
 
 Metrics/AbcSize:
   Enabled: false
+Metrics/BlockLength:
+  Enabled: false
 Metrics/MethodLength:
   Max: 21
 Metrics/ParameterLists:
   Enabled: false
 
+Naming/FileName:
+  Exclude:
+    - "**/opentelemetry-*"
+
+Style/Documentation:
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
+Style/DocumentationMethod:
+  Enabled: true
+  Severity: info
+  Exclude:
+    - "**/test/**/*"
+    - "**/*test*"
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - "**/gemfiles/*"
 Style/ModuleFunction:
   Enabled: false
 Style/NumericPredicate:
   Enabled: false
+Style/RedundantConstantBase:
+  Enabled: false
+Style/RedundantRegexpEscape:
+  Enabled: false
 Style/StringConcatenation:
   Exclude:
     - "test/**/*"
+Style/StringLiterals:
+  Exclude:
+    - "**/gemfiles/*"
+
+Gemspec/RequireMFA:
+  # We probably want to figure out how to set this up for the organization
+  Enabled: false
+
+# we need to review the below
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false

@@ -13,7 +13,7 @@ module OpenTelemetry
         private_constant(:Key)
 
         UNEXPECTED_ERROR_MESSAGE = 'unexpected error in ' \
-          'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
+                                   'OpenTelemetry::SDK::Logs::LoggerProvider#%s'
 
         private_constant :UNEXPECTED_ERROR_MESSAGE
 
@@ -46,7 +46,7 @@ module OpenTelemetry
 
           if !name.is_a?(String) || name.empty?
             OpenTelemetry.logger.warn('LoggerProvider#logger called with an ' \
-              "invalid name. Name provided: #{name.inspect}")
+                                      "invalid name. Name provided: #{name.inspect}")
           end
 
           @registry_mutex.synchronize do
@@ -63,7 +63,7 @@ module OpenTelemetry
           @mutex.synchronize do
             if @stopped
               OpenTelemetry.logger.warn('calling LoggerProvider#' \
-                'add_log_record_processor after shutdown.')
+                                        'add_log_record_processor after shutdown.')
               return
             end
             @log_record_processors = @log_record_processors.dup.push(log_record_processor)
@@ -136,6 +136,7 @@ module OpenTelemetry
                     severity_number: nil,
                     body: nil,
                     attributes: nil,
+                    event_name: nil,
                     trace_id: nil,
                     span_id: nil,
                     trace_flags: nil,
@@ -149,6 +150,7 @@ module OpenTelemetry
                                      severity_number: severity_number,
                                      body: body,
                                      attributes: attributes,
+                                     event_name: event_name,
                                      trace_id: trace_id,
                                      span_id: span_id,
                                      trace_flags: trace_flags,

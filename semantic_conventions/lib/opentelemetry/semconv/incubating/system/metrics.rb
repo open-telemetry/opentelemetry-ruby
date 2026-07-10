@@ -53,7 +53,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_CPU_UTILIZATION = 'system.cpu.utilization'
 
-        # TODO.
+        # Disk bytes transferred.
         #
         # @note Stability Level: development
         SYSTEM_DISK_IO = 'system.disk.io'
@@ -75,7 +75,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_DISK_LIMIT = 'system.disk.limit'
 
-        # TODO.
+        # The number of disk reads/writes merged into single physical disk access operations.
         #
         # @note Stability Level: development
         SYSTEM_DISK_MERGED = 'system.disk.merged'
@@ -90,7 +90,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_DISK_OPERATION_TIME = 'system.disk.operation_time'
 
-        # TODO.
+        # Disk operations count.
         #
         # @note Stability Level: development
         SYSTEM_DISK_OPERATIONS = 'system.disk.operations'
@@ -100,6 +100,11 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_LIMIT = 'system.filesystem.limit'
 
+        # Filesystem lock counts.
+        #
+        # @note Stability Level: development
+        SYSTEM_FILESYSTEM_LOCK_COUNT = 'system.filesystem.lock.count'
+
         # Reports a filesystem's space usage across different states.
         #
         # The sum of all `system.filesystem.usage` values over the different `system.filesystem.state` attributes
@@ -108,10 +113,27 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_USAGE = 'system.filesystem.usage'
 
-        # TODO.
+        # Fraction of filesystem bytes used.
         #
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_UTILIZATION = 'system.filesystem.utilization'
+
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.available`.
+        SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
+
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.slab.usage`.
+        SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
+
+        # Total virtual memory available in the system.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
 
         # An estimate of how much memory is available for starting new applications, without causing swapping.
         #
@@ -122,21 +144,45 @@ module OpenTelemetry
         # See also `MemAvailable` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
         #
         # @note Stability Level: development
-        SYSTEM_LINUX_MEMORY_AVAILABLE = 'system.linux.memory.available'
+        SYSTEM_MEMORY_LINUX_AVAILABLE = 'system.memory.linux.available'
 
-        # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
-        #
-        # The sum over the `reclaimable` and `unreclaimable` state values in `linux.memory.slab.usage` SHOULD be equal to the total slab memory available on the system.
-        # Note that the total slab memory is not constant and may vary over time.
-        # See also the [Slab allocator](https://blogs.oracle.com/linux/post/understanding-linux-kernel-memory-statistics) and `Slab` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
+        # Total number of hugepages available.
         #
         # @note Stability Level: development
-        SYSTEM_LINUX_MEMORY_SLAB_USAGE = 'system.linux.memory.slab.usage'
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_LIMIT = 'system.memory.linux.hugepages.limit'
 
-        # Total virtual memory available in the system.
+        # System hugepage size in bytes.
         #
         # @note Stability Level: development
-        SYSTEM_MEMORY_LIMIT = 'system.memory.limit'
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_PAGE_SIZE = 'system.memory.linux.hugepages.page_size'
+
+        # Number of reserved hugepages.
+        #
+        # Hugepages for which a commitment to allocate has been made, but no allocation has yet been made.
+        # This is reported as a separate metric rather than a `usage` state because reserved pages are already counted in `free` pages.
+        # They represent a subset of free pages that cannot be used for non-reserved allocations.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_RESERVED = 'system.memory.linux.hugepages.reserved'
+
+        # Number of surplus hugepages.
+        #
+        # Overcommitted hugepages beyond the persistent pool.
+        # This is reported as a separate metric rather than a `usage` state because surplus pages can be in either `used` or `free` state.
+        # Including them in `usage` would break the convention that `usage` states sum to the `limit`.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_SURPLUS = 'system.memory.linux.hugepages.surplus'
+
+        # Number of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_USAGE = 'system.memory.linux.hugepages.usage'
+
+        # Percentage of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_UTILIZATION = 'system.memory.linux.hugepages.utilization'
 
         # Shared memory used (mostly by tmpfs).
         #
@@ -144,6 +190,21 @@ module OpenTelemetry
         # `Shmem` from [`/proc/meminfo`](https://man7.org/linux/man-pages/man5/proc.5.html)"
         #
         # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_SHARED = 'system.memory.linux.shared'
+
+        # Reports the memory used by the Linux kernel for managing caches of frequently used objects.
+        #
+        # The sum over the `reclaimable` and `unreclaimable` state values in `memory.linux.slab.usage` SHOULD be equal to the total slab memory available on the system.
+        # Note that the total slab memory is not constant and may vary over time.
+        # See also the [Slab allocator](https://blogs.oracle.com/linux/post/understanding-linux-kernel-memory-statistics) and `Slab` in [/proc/meminfo](https://man7.org/linux/man-pages/man5/proc.5.html).
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_SLAB_USAGE = 'system.memory.linux.slab.usage'
+
+        # Deprecated, use `system.memory.linux.shared` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.memory.linux.shared`.
         SYSTEM_MEMORY_SHARED = 'system.memory.shared'
 
         # Reports memory in use by state.
@@ -151,12 +212,12 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_MEMORY_USAGE = 'system.memory.usage'
 
-        # TODO.
+        # Percentage of memory bytes in use.
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_UTILIZATION = 'system.memory.utilization'
 
-        # TODO.
+        # The number of connections.
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_CONNECTION_COUNT = 'system.network.connection.count'
@@ -166,6 +227,18 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `system.network.connection.count`.
         SYSTEM_NETWORK_CONNECTIONS = 'system.network.connections'
+
+        # Count of packets that are dropped or discarded even though there was no error.
+        #
+        # Measured as:
+        #
+        # - Linux: the `drop` column in `/proc/dev/net` ([source](https://web.archive.org/web/20180321091318/http://www.onlamp.com/pub/a/linux/2000/11/16/LinuxAdmin.html))
+        # - Windows: [`InDiscards`/`OutDiscards`](https://docs.microsoft.com/windows/win32/api/netioapi/ns-netioapi-mib_if_row2)
+        #   from [`GetIfEntry2`](https://docs.microsoft.com/windows/win32/api/netioapi/nf-netioapi-getifentry2)
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.network.packet.dropped`.
+        SYSTEM_NETWORK_DROPPED = 'system.network.dropped'
 
         # Count of network errors detected.
         #
@@ -178,12 +251,12 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_NETWORK_ERRORS = 'system.network.errors'
 
-        # TODO.
+        # The number of bytes transmitted and received.
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_IO = 'system.network.io'
 
-        # TODO.
+        # The number of packets transferred.
         #
         # @note Stability Level: development
         SYSTEM_NETWORK_PACKET_COUNT = 'system.network.packet.count'
@@ -199,12 +272,18 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_NETWORK_PACKET_DROPPED = 'system.network.packet.dropped'
 
-        # TODO.
+        # The number of packets transferred.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `system.network.packet.count`.
+        SYSTEM_NETWORK_PACKETS = 'system.network.packets'
+
+        # The number of page faults.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_FAULTS = 'system.paging.faults'
 
-        # TODO.
+        # The number of paging operations.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_OPERATIONS = 'system.paging.operations'
@@ -214,7 +293,7 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_PAGING_USAGE = 'system.paging.usage'
 
-        # TODO.
+        # Swap (unix) or pagefile (windows) utilization.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_UTILIZATION = 'system.paging.utilization'

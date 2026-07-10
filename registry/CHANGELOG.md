@@ -1,4 +1,16 @@
-# Release History: opentelemetry-instrumentation-registry
+# Release History: opentelemetry-registry
+
+### v0.6.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
+### v0.6.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.5.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
 
 ### v0.4.0 / 2025-02-25
 

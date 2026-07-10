@@ -69,7 +69,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
   end
 
   class TestSpan
-    def initialize(id = nil, recording = true)
+    def initialize(id = nil, recording: true)
       trace_flags = recording ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
       @context = OpenTelemetry::Trace::SpanContext.new(trace_flags: trace_flags)
       @id = id
@@ -174,7 +174,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'does not spawn a thread on boot if OTEL_RUBY_BSP_START_THREAD_ON_BOOT is false' do
       mock = Minitest::Mock.new
-      mock.expect(:call, nil) { assert false }
+      mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false') do
@@ -185,7 +185,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
     it 'prefers explicit start_thread_on_boot parameter rather than the environment' do
       mock = Minitest::Mock.new
-      mock.expect(:call, nil) { assert false }
+      mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'true') do
@@ -314,7 +314,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       bsp = BatchSpanProcessor.new(te, max_queue_size: 6, max_export_batch_size: 3)
 
-      tss = [TestSpan.new, TestSpan.new(nil, false)]
+      tss = [TestSpan.new, TestSpan.new(nil, recording: false)]
       tss.each { |ts| bsp.on_finish(ts) }
       bsp.shutdown
 
@@ -384,6 +384,27 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       _(metrics_reporter.reported_metrics['otel.bsp.error']).wont_be_nil
       _(metrics_reporter.reported_metrics['otel.bsp.error'][0][0]).must_equal(1)
       _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal('reason' => 'RuntimeError')
+    end
+  end
+
+  describe 'dropped spans metrics' do
+    let(:metrics_reporter) { TestMetricsReporter.new }
+
+    it 'reports consistent label keys' do
+      exporter = TestExporter.new(status_codes: [FAILURE])
+      bsp = BatchSpanProcessor.new(exporter,
+                                   metrics_reporter: metrics_reporter,
+                                   max_queue_size: 1,
+                                   max_export_batch_size: 1)
+
+      bsp.on_finish(TestSpan.new('dropped-because-buffer-full'))
+      bsp.on_finish(TestSpan.new('causes-export-failure'))
+      bsp.shutdown # triggers export failure, no function associated
+
+      dropped = metrics_reporter.reported_metrics['otel.bsp.dropped_spans']
+      _(dropped).wont_be_nil
+      dropped_buffer_full_label_names, dropped_export_failure_label_names = dropped.map { |_count, labels| labels.keys.sort }
+      _(dropped_buffer_full_label_names).must_equal(dropped_export_failure_label_names)
     end
   end
 

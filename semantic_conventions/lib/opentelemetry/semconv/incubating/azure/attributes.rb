@@ -41,7 +41,7 @@ module OpenTelemetry
 
         # List of regions contacted during operation in the order that they were contacted. If there is more than one region listed, it indicates that the operation was performed on multiple regions i.e. cross-regional call.
         #
-        # Region name matches the format of `displayName` in [Azure Location API](https://learn.microsoft.com/rest/api/subscription/subscriptions/list-locations?view=rest-subscription-2021-10-01&tabs=HTTP#location)
+        # Region name matches the format of `displayName` in [Azure Location API](https://learn.microsoft.com/rest/api/resources/subscriptions/list-locations)
         #
         # @note Stability Level: development
         AZURE_COSMOSDB_OPERATION_CONTACTED_REGIONS = 'azure.cosmosdb.operation.contacted_regions'
@@ -60,6 +60,11 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         AZURE_COSMOSDB_RESPONSE_SUB_STATUS_CODE = 'azure.cosmosdb.response.sub_status_code'
+
+        # The name of the Azure [resource group](https://learn.microsoft.com/azure/azure-resource-manager/management/manage-resource-groups-portal) the resource belongs to.
+        #
+        # @note Stability Level: development
+        AZURE_RESOURCE_GROUP_NAME = 'azure.resource_group.name'
 
         # [Azure Resource Provider Namespace](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers) as recognized by the client.
         #

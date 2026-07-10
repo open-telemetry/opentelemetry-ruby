@@ -12,9 +12,13 @@ module OpenTelemetry
         #
         # The MetricStream class provides SDK internal functionality that is not a part of the
         # public API.
+        #
         # rubocop:disable Metrics/ClassLength
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
+          attr_writer :cardinality_limit
+
+          DEFAULT_CARDINALITY_LIMIT = 2000
 
           def initialize(
             name,
@@ -51,10 +55,14 @@ module OpenTelemetry
               return metric_data if empty_data_point?
 
               if @registered_views.empty?
-                metric_data << aggregate_metric_data(start_time, end_time)
+                metric_data << aggregate_metric_data(start_time,
+                                                     end_time)
               else
                 @registered_views.each do |view, data_points|
-                  metric_data << aggregate_metric_data(start_time, end_time, aggregation: view.aggregation, data_points: data_points)
+                  metric_data << aggregate_metric_data(start_time,
+                                                       end_time,
+                                                       aggregation: view.aggregation,
+                                                       data_points: data_points)
                 end
               end
 
@@ -62,20 +70,29 @@ module OpenTelemetry
             end
           end
 
+          # view has the cardinality, pass to aggregation update
+          # to determine if aggregation have the cardinality
+          # if the aggregation does not have the cardinality, then it will be default 2000
+          # it better to move overflowed data_points during update because if do it in collect,
+          # then we need to sort the entire data_points (~ 2000) based on time, which is time-consuming
+          # view will modify the data_point that is not suitable when there are multiple views
           def update(value, attributes)
             if @registered_views.empty?
+              resolved_cardinality_limit = resolve_cardinality_limit(nil)
               @mutex.synchronize do
                 exemplar_offer = should_offer_exemplar?(value, attributes)
-                @default_aggregation.update(value, attributes, @data_points, exemplar_offer: exemplar_offer)
+                @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
               end
             else
               @registered_views.each do |view, data_points|
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
                 @mutex.synchronize do
                   attributes ||= {}
                   attributes.merge!(view.attribute_keys)
+
                   if view.valid_aggregation?
                     exemplar_offer = should_offer_exemplar?(value, attributes)
-                    view.aggregation.update(value, attributes, data_points, exemplar_offer: exemplar_offer)
+                    view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
                   end
                 end
               end
@@ -119,7 +136,14 @@ module OpenTelemetry
             end
           end
 
+          def resolve_cardinality_limit(view)
+            cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+            [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
+          end
+
           def should_offer_exemplar?(value, attributes)
+            return false if @exemplar_reservoir&.noop?
+
             context = OpenTelemetry::Context.current
             time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
             @exemplar_filter&.should_sample?(value, time, attributes, context)

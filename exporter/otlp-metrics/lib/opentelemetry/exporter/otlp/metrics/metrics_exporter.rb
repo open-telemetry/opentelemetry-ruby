@@ -19,7 +19,7 @@ require 'opentelemetry/proto/collector/metrics/v1/metrics_service_pb'
 require 'opentelemetry/metrics'
 require 'opentelemetry/sdk/metrics'
 
-require_relative './util'
+require_relative 'util'
 
 module OpenTelemetry
   module Exporter
@@ -35,6 +35,7 @@ module OpenTelemetry
           FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
 
+          # rubocop:disable Lint/DuplicateBranch
           def self.ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
@@ -44,6 +45,7 @@ module OpenTelemetry
               OpenSSL::SSL::VERIFY_PEER
             end
           end
+          # rubocop:enable Lint/DuplicateBranch
 
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/metrics'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
@@ -52,14 +54,16 @@ module OpenTelemetry
                          ssl_verify_mode: MetricsExporter.ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         aggregation_cardinality_limit: nil)
             raise ArgumentError, "invalid url for OTLP::MetricsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             # create the MetricStore object
-            super()
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
 
             @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+                     endpoint += '/' unless endpoint.end_with?('/')
                      URI.join(endpoint, 'v1/metrics')
                    else
                      URI(endpoint)

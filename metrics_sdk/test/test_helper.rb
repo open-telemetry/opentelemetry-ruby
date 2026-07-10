@@ -11,7 +11,6 @@
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-require 'pry'
 
 # reset_metrics_sdk is a test helper used to clear
 # SDK configuration state between calls
@@ -72,6 +71,3 @@ def right_boundary(scale, index)
 
   result
 end
-
-# Suppress warn-level logs about a missing OTEL_METRICS_EXEMPLAR_FILTER for exemplars
-ENV['OTEL_METRICS_EXEMPLAR_FILTER'] = 'always_off'

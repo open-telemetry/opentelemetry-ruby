@@ -55,6 +55,15 @@ logger.on_emit(
 )
 
 logger_provider.shutdown
+
+# You can also use your Logger to emit an event
+logger.on_emit(
+  timestamp: Time.now,
+  severity_text: 'INFO',
+  body: 'Picea sitchensis',
+  attributes: { 'spruce' => true },
+  event_name: 'TreeSpecies'
+)
 ```
 
 For additional examples, see the [examples on github][examples-github].

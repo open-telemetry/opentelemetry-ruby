@@ -24,24 +24,27 @@ jobs:
       contents: write # required for creating releases
       pull-requests: write # required for updating label on PR, posting comments
       issues: write # required for creating new issues on failed releases
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install Ruby
-        uses: ruby/setup-ruby@e65c17d16e57e481586a6a5a0282698790062f92 # v1.300.0
+        uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9 # v1.316.0
         with:
-          ruby-version: "4.0"
+          ruby-version: "4.0.5"
           bundler-cache: true
       - name: Perform release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+          RELEASE_FLAGS: ${{ github.event.inputs.flags }}
+          RELEASE_NAME: ${{ github.event.inputs.name }}
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
         run: |
           bundle exec toys release perform --yes --verbose \
             "--release-ref=${{ github.sha }}" \
-            ${{ github.event.inputs.flags }} \
-            "${{ github.event.inputs.name }}" "${{ github.event.inputs.version }}" \
+            $RELEASE_FLAGS \
+            "$RELEASE_NAME" "$RELEASE_VERSION" \
             < /dev/null

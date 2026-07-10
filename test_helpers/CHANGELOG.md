@@ -1,5 +1,18 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.9.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
+### v0.9.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.8.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
 ### v0.7.0 / 2025-10-14
 
 * ADDED: Use common method for returning timestamp in nanoseconds

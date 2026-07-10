@@ -11,6 +11,7 @@ module OpenTelemetry
   # OpenTelemetry Ruby gems.
   module TestHelpers
     extend self
+
     NULL_LOGGER = Logger.new(File::NULL)
 
     # reset_opentelemetry is a test helper used to clear
@@ -79,6 +80,7 @@ module OpenTelemetry
                                severity_number: nil,
                                body: nil,
                                attributes: nil,
+                               event_name: nil,
                                trace_id: OpenTelemetry::Trace.generate_trace_id,
                                span_id: OpenTelemetry::Trace.generate_span_id,
                                trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
@@ -93,6 +95,7 @@ module OpenTelemetry
         severity_number,
         body,
         attributes,
+        event_name,
         trace_id,
         span_id,
         trace_flags,

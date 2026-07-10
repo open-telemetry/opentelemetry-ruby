@@ -19,6 +19,7 @@ module OpenTelemetry
                       :severity_number,
                       :body,
                       :attributes,
+                      :event_name,
                       :trace_id,
                       :span_id,
                       :trace_flags,
@@ -43,6 +44,8 @@ module OpenTelemetry
         # @param [optional Hash{String => String, Numeric, Boolean,
         #   Array<String, Numeric, Boolean>}] attributes Attributes to associate
         #   with the {LogRecord}.
+        # @param [optional String] event_name A name that identifies the class
+        #   or the type of the event.
         # @param [optional String] trace_id The trace ID associated with the
         #   current context.
         # @param [optional String] span_id The span ID associated with the
@@ -65,6 +68,7 @@ module OpenTelemetry
           severity_number: nil,
           body: nil,
           attributes: nil,
+          event_name: nil,
           trace_id: nil,
           span_id: nil,
           trace_flags: nil,
@@ -77,7 +81,8 @@ module OpenTelemetry
           @severity_text = severity_text
           @severity_number = severity_number
           @body = body
-          @attributes = attributes.nil? ? nil : Hash[attributes] # We need a mutable copy of attributes
+          @attributes = attributes&.to_h # We need a mutable copy of attributes
+          @event_name = event_name
           @trace_id = trace_id
           @span_id = span_id
           @trace_flags = trace_flags
@@ -97,6 +102,7 @@ module OpenTelemetry
             @severity_number,
             @body,
             @attributes,
+            @event_name,
             @trace_id,
             @span_id,
             @trace_flags,
@@ -111,7 +117,7 @@ module OpenTelemetry
         def to_integer_nanoseconds(timestamp)
           return unless timestamp.is_a?(Time)
 
-          (timestamp.to_r * 10**9).to_i
+          (timestamp.to_r * (10**9)).to_i
         end
 
         def trim_attributes(attributes)
@@ -140,11 +146,11 @@ module OpenTelemetry
           attrs.keep_if do |k, v|
             if !Internal.valid_key?(k)
               OpenTelemetry.handle_error(message: "Invalid log record attribute key type #{k.class} for " \
-                "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
+                                                  "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
               return false
             elsif !Internal.valid_value?(v)
               OpenTelemetry.handle_error(message: "Invalid log record attribute value type #{v.class} for key '#{k}' " \
-                "on record: '#{body}'. Dropping attribute.")
+                                                  "on record: '#{body}'. Dropping attribute.")
               return false
             end
 

@@ -67,14 +67,20 @@ ignoreWords:
   - Rubyish
   - rolldice
   - codegen
+  - Dockerfiles
+  - opentelemetrybot
+  - otelbot
 words:
+  - autocorrection
+  - bigdecimal
+  - cadvisor
+  - configurator
+  - confluentinc
+  - environtment # temporary, just to get through first renovate semconv release.
+  - linkspector
+  - loggregator
   - LOGRECORD
+  - SARIF
+  - semconv
   - traceid
   - tracestate
-  - loggregator
-  - configurator
-
-  - autocorrection
-
-  - linkspector
-  - SARIF

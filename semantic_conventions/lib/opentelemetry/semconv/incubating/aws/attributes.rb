@@ -313,7 +313,7 @@ module OpenTelemetry
         # @note Stability Level: development
         AWS_S3_UPLOAD_ID = 'aws.s3.upload_id'
 
-        # The ARN of the Secret stored in the Secrets Mangger
+        # The ARN of the Secret stored in the Secrets Manager
         #
         # @note Stability Level: development
         AWS_SECRETSMANAGER_SECRET_ARN = 'aws.secretsmanager.secret.arn'
