@@ -34,6 +34,7 @@ jobs:
           - opentelemetry-sdk-experimental
           - opentelemetry-semantic_conventions
           - opentelemetry-test-helpers
+          - opentelemetry-types-otlp
         os:
           - ubuntu-24.04
           - macos-26

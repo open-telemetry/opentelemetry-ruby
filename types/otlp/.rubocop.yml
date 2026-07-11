@@ -1,0 +1,6 @@
+inherit_from: ../../contrib/rubocop.yml
+
+AllCops:
+  Exclude:
+    - "lib/opentelemetry/proto/**/*"
+    - "vendor/**/*"

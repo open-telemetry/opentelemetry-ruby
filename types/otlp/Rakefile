@@ -1,0 +1,51 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'bundler/gem_tasks'
+require 'rake/testtask'
+require 'yard'
+
+require 'rubocop/rake_task'
+RuboCop::RakeTask.new
+YARD::Rake::YardocTask.new
+
+Rake::TestTask.new :test do |t|
+  t.libs << 'test'
+  t.libs << 'lib'
+  t.libs << '../../api/lib'
+  t.libs << '../../sdk/lib'
+  t.test_files = FileList['test/**/*_test.rb']
+end
+
+default_tasks =
+  if RUBY_ENGINE == 'truffleruby'
+    %i[test]
+  else
+    %i[test rubocop yard]
+  end
+
+task default: default_tasks
+
+PROTO_VERSION = 'v1.8.0'
+PROTOBUF_FILES = [
+  'collector/logs/v1/logs_service.proto',
+  'collector/metrics/v1/metrics_service.proto',
+  'collector/trace/v1/trace_service.proto',
+  'common/v1/common.proto',
+  'logs/v1/logs.proto',
+  'metrics/v1/metrics.proto',
+  'resource/v1/resource.proto',
+  'trace/v1/trace.proto'
+].freeze
+
+desc 'Update probobuf'
+task :update_protobuf do
+  system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
+  PROTOBUF_FILES.each do |file|
+    system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
+  end
+  system('rm -rf opentelemetry-proto')
+end
