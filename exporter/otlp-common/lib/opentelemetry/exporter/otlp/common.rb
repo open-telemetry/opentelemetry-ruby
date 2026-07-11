@@ -35,6 +35,23 @@ module OpenTelemetry
           nil
         end
 
+        # As JSON etsr (ExportTraceServiceRequest)
+        #
+        # Serializes to spec-compliant OTLP/JSON: trace/span ids as hex strings and
+        # enum values as integers.
+        #
+        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
+        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
+        #   encoded.
+        #
+        # @return [String] returns a JSON encoded ETSR of the provided span data
+        def as_json_etsr(span_data)
+          as_etsr(span_data, json: true).to_json(format_enums_as_integers: true)
+        rescue StandardError => e
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_json_etsr')
+          nil
+        end
+
         # As etsr (ExportTraceServiceRequest)
         #
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
@@ -43,7 +60,7 @@ module OpenTelemetry
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
         #   returns an ETSR of the provided span data
-        def as_etsr(span_data)
+        def as_etsr(span_data, json: false)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
                             .group_by(&:resource)
@@ -60,7 +77,7 @@ module OpenTelemetry
                                                    name: il.name,
                                                    version: il.version
                                                  ),
-                                                 spans: sds.map { |sd| as_otlp_span(sd) }
+                                                 spans: sds.map { |sd| as_otlp_span(sd, json: json) }
                                                )
                                              end
                               )
@@ -70,36 +87,22 @@ module OpenTelemetry
 
         private
 
-        def as_otlp_span(span_data)
+        def as_otlp_span(span_data, json: false)
+          parent_span_id = span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id
           Opentelemetry::Proto::Trace::V1::Span.new(
-            trace_id: span_data.trace_id,
-            span_id: span_data.span_id,
+            trace_id: format_id(span_data.trace_id, json: json),
+            span_id: format_id(span_data.span_id, json: json),
             trace_state: span_data.tracestate.to_s,
-            parent_span_id: span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id,
+            parent_span_id: format_id(parent_span_id, json: json),
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
             start_time_unix_nano: span_data.start_timestamp,
             end_time_unix_nano: span_data.end_timestamp,
             attributes: span_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
             dropped_attributes_count: span_data.total_recorded_attributes - span_data.attributes&.size.to_i,
-            events: span_data.events&.map do |event|
-              Opentelemetry::Proto::Trace::V1::Span::Event.new(
-                time_unix_nano: event.timestamp,
-                name: event.name,
-                attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) }
-                # TODO: track dropped_attributes_count in Span#append_event
-              )
-            end,
+            events: span_data.events&.map { |event| as_otlp_span_event(event) },
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
-            links: span_data.links&.map do |link|
-              Opentelemetry::Proto::Trace::V1::Span::Link.new(
-                trace_id: link.span_context.trace_id,
-                span_id: link.span_context.span_id,
-                trace_state: link.span_context.tracestate.to_s,
-                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
-                # TODO: track dropped_attributes_count in Span#trim_links
-              )
-            end,
+            links: span_data.links&.map { |link| as_otlp_span_link(link, json: json) },
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.then do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
@@ -108,6 +111,35 @@ module OpenTelemetry
               )
             end
           )
+        end
+
+        def as_otlp_span_event(event)
+          Opentelemetry::Proto::Trace::V1::Span::Event.new(
+            time_unix_nano: event.timestamp,
+            name: event.name,
+            attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) }
+            # TODO: track dropped_attributes_count in Span#append_event
+          )
+        end
+
+        def as_otlp_span_link(link, json: false)
+          Opentelemetry::Proto::Trace::V1::Span::Link.new(
+            trace_id: format_id(link.span_context.trace_id, json: json),
+            span_id: format_id(link.span_context.span_id, json: json),
+            trace_state: link.span_context.tracestate.to_s,
+            attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
+            # TODO: track dropped_attributes_count in Span#trim_links
+          )
+        end
+
+        # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
+        # For the JSON path, applying initial base64 decoding to the hex string
+        # yields bytes that protobuf re-encodes back into that hex string.
+        def format_id(id_bytes, json:)
+          return id_bytes unless json
+          return id_bytes if id_bytes.nil? || id_bytes.empty?
+
+          id_bytes.unpack1('H*').unpack1('m0')
         end
 
         def as_otlp_status_code(code)

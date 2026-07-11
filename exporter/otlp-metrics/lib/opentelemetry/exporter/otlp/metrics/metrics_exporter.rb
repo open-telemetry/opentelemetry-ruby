@@ -185,10 +185,11 @@ module OpenTelemetry
           end
 
           def encode(metrics_data)
-            request = as_export_metrics_service_request(metrics_data)
-            return request.to_json if @content_type == 'application/json'
-
-            Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(request)
+            if @content_type == 'application/json'
+              as_export_metrics_service_request(metrics_data, json: true).to_json(format_enums_as_integers: true)
+            else
+              Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(as_export_metrics_service_request(metrics_data))
+            end
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::MetricsExporter#encode')
             nil
@@ -201,7 +202,7 @@ module OpenTelemetry
             URI.join(endpoint, 'v1/metrics')
           end
 
-          def as_export_metrics_service_request(metrics_data)
+          def as_export_metrics_service_request(metrics_data, json: false)
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
               resource_metrics: metrics_data.group_by(&:resource).map do |resource, scope_metrics|
                 Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
@@ -214,7 +215,7 @@ module OpenTelemetry
                         name: instrumentation_scope.name,
                         version: instrumentation_scope.version
                       ),
-                      metrics: metrics.map { |sd| as_otlp_metrics(sd) }
+                      metrics: metrics.map { |sd| as_otlp_metrics(sd, json: json) }
                     )
                   end
                 )
@@ -226,7 +227,7 @@ module OpenTelemetry
           # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram, :gauge -> :gauge
           #
           # metrics [MetricData]
-          def as_otlp_metrics(metrics)
+          def as_otlp_metrics(metrics, json: false)
             case metrics.instrument_kind
             when :observable_gauge, :gauge
               Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -235,7 +236,7 @@ module OpenTelemetry
                 unit: metrics.unit,
                 gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
                   data_points: metrics.data_points.map do |ndp|
-                    number_data_point(ndp)
+                    number_data_point(ndp, json: json)
                   end
                 )
               )
@@ -247,15 +248,13 @@ module OpenTelemetry
                 unit: metrics.unit,
                 sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
                   aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |ndp|
-                    number_data_point(ndp)
-                  end,
+                  data_points: metrics.data_points.map { |ndp| number_data_point(ndp, json: json) },
                   is_monotonic: metrics.is_monotonic
                 )
               )
 
             when :histogram
-              histogram_data_point(metrics)
+              histogram_data_point(metrics, json: json)
 
             end
           end
@@ -268,7 +267,7 @@ module OpenTelemetry
             end
           end
 
-          def histogram_data_point(metrics)
+          def histogram_data_point(metrics, json: false)
             return if metrics.data_points.empty?
 
             if metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
@@ -278,9 +277,7 @@ module OpenTelemetry
                 unit: metrics.unit,
                 exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
                   aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |ehdp|
-                    exponential_histogram_data_point(ehdp)
-                  end
+                  data_points: metrics.data_points.map { |ehdp| exponential_histogram_data_point(ehdp, json: json) },
                 )
               )
             elsif metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::HistogramDataPoint)
@@ -290,15 +287,13 @@ module OpenTelemetry
                 unit: metrics.unit,
                 histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
                   aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |hdp|
-                    explicit_histogram_data_point(hdp)
-                  end
+                  data_points: metrics.data_points.map { |hdp| explicit_histogram_data_point(hdp, json: json) },
                 )
               )
             end
           end
 
-          def explicit_histogram_data_point(hdp)
+          def explicit_histogram_data_point(hdp, json: false)
             Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
               attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: hdp.start_time_unix_nano,
@@ -307,13 +302,13 @@ module OpenTelemetry
               sum: hdp.sum,
               bucket_counts: hdp.bucket_counts,
               explicit_bounds: hdp.explicit_bounds,
-              exemplars: as_otlp_exemplars(hdp.exemplars),
+              exemplars: as_otlp_exemplars(hdp.exemplars, json: json),
               min: hdp.min,
               max: hdp.max
             )
           end
 
-          def exponential_histogram_data_point(ehdp)
+          def exponential_histogram_data_point(ehdp, json: false)
             Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
               attributes: ehdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ehdp.start_time_unix_nano,
@@ -331,19 +326,19 @@ module OpenTelemetry
                 bucket_counts: ehdp.negative.counts
               ),
               flags: ehdp.flags,
-              exemplars: as_otlp_exemplars(ehdp.exemplars),
+              exemplars: as_otlp_exemplars(ehdp.exemplars, json: json),
               min: ehdp.min,
               max: ehdp.max,
               zero_threshold: ehdp.zero_threshold
             )
           end
 
-          def number_data_point(ndp)
+          def number_data_point(ndp, json: false)
             args = {
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
-              exemplars: as_otlp_exemplars(ndp.exemplars)
+              exemplars: as_otlp_exemplars(ndp.exemplars, json: json)
             }
 
             if ndp.value.is_a?(Float)
@@ -355,15 +350,15 @@ module OpenTelemetry
             Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
           end
 
-          def as_otlp_exemplars(exemplars)
-            exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
+          def as_otlp_exemplars(exemplars, json: false)
+            exemplars&.map { |ex| as_otlp_exemplar(ex, json: json) } || []
           end
 
-          def as_otlp_exemplar(exemplar)
+          def as_otlp_exemplar(exemplar, json: false)
             args = {
               time_unix_nano: exemplar.time_unix_nano,
-              span_id: exemplar.span_id,
-              trace_id: exemplar.trace_id
+              span_id: format_id(exemplar.span_id, json: json),
+              trace_id: format_id(exemplar.trace_id, json: json)
             }
 
             # Add filtered_attributes if present
@@ -377,6 +372,16 @@ module OpenTelemetry
             end
 
             Opentelemetry::Proto::Metrics::V1::Exemplar.new(**args)
+          end
+
+          # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
+          # For the JSON path, applying initial base64 decoding to the hex string
+          # yields bytes that protobuf re-encodes back into that hex string.
+          def format_id(id_bytes, json:)
+            return id_bytes unless json
+            return id_bytes if id_bytes.nil? || id_bytes.empty?
+
+            id_bytes.unpack1('H*').unpack1('m0')
           end
 
           # may not need this

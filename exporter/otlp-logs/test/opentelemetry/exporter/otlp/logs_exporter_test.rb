@@ -568,15 +568,26 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
 
     it 'encodes as JSON when protocol is http/json' do
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(protocol: 'http/json', compression: 'none')
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      span_id = OpenTelemetry::Trace.generate_span_id
+      parsed = nil
       stub_post = stub_request(:post, 'http://localhost:4318/v1/logs').to_return do |request|
+        _(request.headers['Content-Type']).must_equal('application/json')
         parsed = JSON.parse(request.body)
         _(parsed.keys).must_include('resourceLogs')
         { status: 200 }
       end
-      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(severity_number: 9, trace_id: trace_id, span_id: span_id)
       result = exp.export([log_record_data])
       _(result).must_equal(SUCCESS)
       assert_requested(stub_post)
+
+      log_record = parsed['resourceLogs'][0]['scopeLogs'][0]['logRecords'][0]
+      _(log_record['traceId']).must_equal(trace_id.unpack1('H*'))
+      _(log_record['spanId']).must_equal(span_id.unpack1('H*'))
+      _(log_record['traceId']).must_match(/\A[0-9a-f]{32}\z/)
+      _(log_record['spanId']).must_match(/\A[0-9a-f]{16}\z/)
+      _(log_record['severityNumber']).must_be_kind_of(Integer)
     end
 
     { 'Net::HTTPServiceUnavailable' => 503,

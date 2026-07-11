@@ -563,15 +563,30 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
     it 'encodes as JSON when protocol is http/json' do
       exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(protocol: 'http/json', compression: 'none')
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      span_id = OpenTelemetry::Trace.generate_span_id
+      exemplar = OpenTelemetry::SDK::Metrics::Exemplar::Exemplar.new({}, 1, 0, span_id, trace_id)
+      data_points = [OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new(attributes: {}, start_time_unix_nano: 0, time_unix_nano: 0, value: 1, exemplars: [exemplar])]
+      parsed = nil
       stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return do |request|
+        _(request.headers['Content-Type']).must_equal('application/json')
         parsed = JSON.parse(request.body)
         _(parsed.keys).must_include('resourceMetrics')
         { status: 200 }
       end
-      metrics_data = create_metrics_data
+      metrics_data = create_metrics_data(data_points: data_points)
       result = exp.export([metrics_data])
       _(result).must_equal(METRICS_SUCCESS)
       assert_requested(stub_post)
+
+      sum = parsed['resourceMetrics'][0]['scopeMetrics'][0]['metrics'][0]['sum']
+      _(sum['aggregationTemporality']).must_be_kind_of(Integer)
+
+      otlp_exemplar = sum['dataPoints'][0]['exemplars'][0]
+      _(otlp_exemplar['traceId']).must_equal(trace_id.unpack1('H*'))
+      _(otlp_exemplar['spanId']).must_equal(span_id.unpack1('H*'))
+      _(otlp_exemplar['traceId']).must_match(/\A[0-9a-f]{32}\z/)
+      _(otlp_exemplar['spanId']).must_match(/\A[0-9a-f]{16}\z/)
     end
 
     it 'returns TIMEOUT on timeout after retrying' do

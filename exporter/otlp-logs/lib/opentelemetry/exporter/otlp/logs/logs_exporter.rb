@@ -276,16 +276,17 @@ module OpenTelemetry
           end
 
           def encode(log_record_data)
-            request = as_export_logs_service_request(log_record_data)
-            return request.to_json if @content_type == 'application/json'
-
-            Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(request)
+            if @content_type == 'application/json'
+              as_export_logs_service_request(log_record_data, json: true).to_json(format_enums_as_integers: true)
+            else
+              Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(as_export_logs_service_request(log_record_data))
+            end
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
             nil
           end
 
-          def as_export_logs_service_request(log_record_data)
+          def as_export_logs_service_request(log_record_data, json: false)
             Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
               resource_logs: log_record_data.group_by(&:resource).map do |resource, log_record_datas|
                 Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
@@ -298,7 +299,7 @@ module OpenTelemetry
                         name: il.name,
                         version: il.version
                       ),
-                      log_records: lrd.map { |lr| as_otlp_log_record(lr) }
+                      log_records: lrd.map { |lr| as_otlp_log_record(lr, json: json) }
                     )
                   end
                 )
@@ -306,7 +307,7 @@ module OpenTelemetry
             )
           end
 
-          def as_otlp_log_record(log_record_data)
+          def as_otlp_log_record(log_record_data, json: false)
             Opentelemetry::Proto::Logs::V1::LogRecord.new(
               time_unix_nano: log_record_data.timestamp,
               observed_time_unix_nano: log_record_data.observed_timestamp,
@@ -317,9 +318,19 @@ module OpenTelemetry
               dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
               event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
-              trace_id: log_record_data.trace_id,
-              span_id: log_record_data.span_id
+              trace_id: format_id(log_record_data.trace_id, json: json),
+              span_id: format_id(log_record_data.span_id, json: json)
             )
+          end
+
+          # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
+          # For the JSON path, applying initial base64 decoding to the hex string
+          # yields bytes that protobuf re-encodes back into that hex string.
+          def format_id(id_bytes, json:)
+            return id_bytes unless json
+            return id_bytes if id_bytes.nil? || id_bytes.empty?
+
+            id_bytes.unpack1('H*').unpack1('m0')
           end
 
           def as_otlp_key_value(key, value)

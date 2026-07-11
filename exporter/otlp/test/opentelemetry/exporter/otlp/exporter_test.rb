@@ -610,15 +610,27 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'encodes as JSON when protocol is http/json' do
       exp = OpenTelemetry::Exporter::OTLP::Exporter.new(protocol: 'http/json', compression: 'none')
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      span_id = OpenTelemetry::Trace.generate_span_id
+      parsed = nil
       stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
+        _(request.headers['Content-Type']).must_equal('application/json')
         parsed = JSON.parse(request.body)
         _(parsed.keys).must_include('resourceSpans')
         { status: 200 }
       end
-      span_data = OpenTelemetry::TestHelpers.create_span_data
+      span_data = OpenTelemetry::TestHelpers.create_span_data(kind: :server, status: OpenTelemetry::Trace::Status.error, trace_id: trace_id, span_id: span_id)
       result = exp.export([span_data])
       _(result).must_equal(SUCCESS)
       assert_requested(stub_post)
+
+      span = parsed['resourceSpans'][0]['scopeSpans'][0]['spans'][0]
+      _(span['traceId']).must_equal(trace_id.unpack1('H*'))
+      _(span['spanId']).must_equal(span_id.unpack1('H*'))
+      _(span['traceId']).must_match(/\A[0-9a-f]{32}\z/)
+      _(span['spanId']).must_match(/\A[0-9a-f]{16}\z/)
+      _(span['kind']).must_be_kind_of(Integer)
+      _(span['status']['code']).must_be_kind_of(Integer)
     end
 
     it 'returns TIMEOUT on timeout after retrying' do
