@@ -57,23 +57,20 @@ module OpenTelemetry
                          ssl_verify_mode: LogsExporter.ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         protocol: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
             raise ArgumentError, "invalid url for OTLP::Logs::LogsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+            raise ArgumentError, "unsupported protocol #{protocol}" unless %w[http/json http/protobuf].include?(protocol)
 
-            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                     endpoint += '/' unless endpoint.end_with?('/')
-                     URI.join(endpoint, 'v1/logs')
-                   else
-                     URI(endpoint)
-                   end
-
+            @uri = prepare_endpoint(endpoint)
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
             @path = @uri.path
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
 
@@ -151,7 +148,7 @@ module OpenTelemetry
             end
 
             request.body = body
-            request.add_field('Content-Type', 'application/x-protobuf')
+            request.add_field('Content-Type', @content_type)
             @headers.each { |key, value| request.add_field(key, value) }
 
             retry_count = 0
@@ -234,6 +231,13 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
+          def prepare_endpoint(endpoint)
+            return URI(endpoint) unless endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+
+            endpoint += '/' unless endpoint.end_with?('/')
+            URI.join(endpoint, 'v1/logs')
+          end
+
           def handle_redirect(location)
             # TODO: figure out destination and reinitialize @http and @path
           end
@@ -271,34 +275,35 @@ module OpenTelemetry
             true
           end
 
-          def encode(log_record_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
-            Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(
-              Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
-                resource_logs: log_record_data
-                               .group_by(&:resource)
-                               .map do |resource, log_record_datas|
-                                 Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
-                                   resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                                     attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                                   ),
-                                   scope_logs: log_record_datas
-                                               .group_by(&:instrumentation_scope)
-                                               .map do |il, lrd|
-                                                 Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
-                                                   scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                                                     name: il.name,
-                                                     version: il.version
-                                                   ),
-                                                   log_records: lrd.map { |lr| as_otlp_log_record(lr) }
-                                                 )
-                                               end
-                                 )
-                               end
-              )
-            )
+          def encode(log_record_data)
+            request = as_export_logs_service_request(log_record_data)
+            return request.to_json if @content_type == 'application/json'
+
+            Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(request)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
             nil
+          end
+
+          def as_export_logs_service_request(log_record_data)
+            Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
+              resource_logs: log_record_data.group_by(&:resource).map do |resource, log_record_datas|
+                Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
+                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                  ),
+                  scope_logs: log_record_datas.group_by(&:instrumentation_scope).map do |il, lrd|
+                    Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
+                      scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                        name: il.name,
+                        version: il.version
+                      ),
+                      log_records: lrd.map { |lr| as_otlp_log_record(lr) }
+                    )
+                  end
+                )
+              end
+            )
           end
 
           def as_otlp_log_record(log_record_data)

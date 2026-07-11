@@ -55,26 +55,23 @@ module OpenTelemetry
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                         aggregation_cardinality_limit: nil)
+                         aggregation_cardinality_limit: nil,
+                         protocol: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
             raise ArgumentError, "invalid url for OTLP::MetricsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+            raise ArgumentError, "unsupported protocol #{protocol}" unless %w[http/json http/protobuf].include?(protocol)
 
             # create the MetricStore object
             super(aggregation_cardinality_limit: aggregation_cardinality_limit)
 
-            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                     endpoint += '/' unless endpoint.end_with?('/')
-                     URI.join(endpoint, 'v1/metrics')
-                   else
-                     URI(endpoint)
-                   end
-
+            @uri = prepare_endpoint(endpoint)
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
             @path = @uri.path
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
             @mutex = Mutex.new
             @shutdown = false
           end
@@ -106,7 +103,7 @@ module OpenTelemetry
             end
 
             request.body = body
-            request.add_field('Content-Type', 'application/x-protobuf')
+            request.add_field('Content-Type', @content_type)
             @headers.each { |key, value| request.add_field(key, value) }
 
             retry_count = 0
@@ -188,33 +185,41 @@ module OpenTelemetry
           end
 
           def encode(metrics_data)
-            Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
-              Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
-                resource_metrics: metrics_data
-                                  .group_by(&:resource)
-                                  .map do |resource, scope_metrics|
-                                    Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
-                                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                                      ),
-                                      scope_metrics: scope_metrics
-                                                     .group_by(&:instrumentation_scope)
-                                                     .map do |instrumentation_scope, metrics|
-                                                       Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
-                                                         scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                                                           name: instrumentation_scope.name,
-                                                           version: instrumentation_scope.version
-                                                         ),
-                                                         metrics: metrics.map { |sd| as_otlp_metrics(sd) }
-                                                       )
-                                                     end
-                                    )
-                                  end
-              )
-            )
+            request = as_export_metrics_service_request(metrics_data)
+            return request.to_json if @content_type == 'application/json'
+
+            Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(request)
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::MetricsExporter#encode')
             nil
+          end
+
+          def prepare_endpoint(endpoint)
+            return URI(endpoint) unless endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+
+            endpoint += '/' unless endpoint.end_with?('/')
+            URI.join(endpoint, 'v1/metrics')
+          end
+
+          def as_export_metrics_service_request(metrics_data)
+            Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
+              resource_metrics: metrics_data.group_by(&:resource).map do |resource, scope_metrics|
+                Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
+                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                  ),
+                  scope_metrics: scope_metrics.group_by(&:instrumentation_scope).map do |instrumentation_scope, metrics|
+                    Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
+                      scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                        name: instrumentation_scope.name,
+                        version: instrumentation_scope.version
+                      ),
+                      metrics: metrics.map { |sd| as_otlp_metrics(sd) }
+                    )
+                  end
+                )
+              end
+            )
           end
 
           # metrics_pb has following type of data: :gauge, :sum, :histogram, :exponential_histogram, :summary

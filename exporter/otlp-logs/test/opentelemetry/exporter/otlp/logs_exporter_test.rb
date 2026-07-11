@@ -82,6 +82,31 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       end
     end
 
+    it 'only allows http/protobuf or http/json protocol' do
+      assert_raises ArgumentError do
+        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(protocol: 'grpc')
+      end
+
+      %w[http/protobuf http/json].each do |protocol|
+        exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(protocol: protocol)
+        expected_content_type = protocol == 'http/protobuf' ? 'application/x-protobuf' : 'application/json'
+        _(exp.instance_variable_get(:@content_type)).must_equal(expected_content_type)
+      end
+
+      [
+        { envar: 'OTEL_EXPORTER_OTLP_PROTOCOL', value: 'http/protobuf' },
+        { envar: 'OTEL_EXPORTER_OTLP_PROTOCOL', value: 'http/json' },
+        { envar: 'OTEL_EXPORTER_OTLP_LOGS_PROTOCOL', value: 'http/protobuf' },
+        { envar: 'OTEL_EXPORTER_OTLP_LOGS_PROTOCOL', value: 'http/json' }
+      ].each do |example|
+        OpenTelemetry::TestHelpers.with_env(example[:envar] => example[:value]) do
+          exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
+          expected_content_type = example[:value] == 'http/protobuf' ? 'application/x-protobuf' : 'application/json'
+          _(exp.instance_variable_get(:@content_type)).must_equal(expected_content_type)
+        end
+      end
+    end
+
     it 'sets parameters from the environment' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
                                                 'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar/cacert',
@@ -115,6 +140,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                                                 'OTEL_EXPORTER_OTLP_CLIENT_KEY' => CLIENT_CERT_A_PATH,
                                                 'OTEL_EXPORTER_OTLP_HEADERS' => 'a:b,c:d',
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'flate',
+                                                'OTEL_EXPORTER_OTLP_PROTOCOL' => 'grpc',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true',
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://localhost:4321',
@@ -123,6 +149,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                                                               client_key_file: CLIENT_CERT_B_PATH,
                                                               headers: { 'x' => 'y' },
                                                               compression: 'gzip',
+                                                              protocol: 'http/json',
                                                               ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
                                                               timeout: 12)
       end
@@ -130,6 +157,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
       _(exp.instance_variable_get(:@path)).must_equal ''
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
+      _(exp.instance_variable_get(:@content_type)).must_equal 'application/json'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
       # equality check fails in JRuby
@@ -524,6 +552,31 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       )
     ensure
       OpenTelemetry.logger = logger
+    end
+
+    it 'encodes as protobuf by default' do
+      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(compression: 'none')
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/logs').to_return do |request|
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.decode(request.body)
+        { status: 200 }
+      end
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      result = exp.export([log_record_data])
+      _(result).must_equal(SUCCESS)
+      assert_requested(stub_post)
+    end
+
+    it 'encodes as JSON when protocol is http/json' do
+      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(protocol: 'http/json', compression: 'none')
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/logs').to_return do |request|
+        parsed = JSON.parse(request.body)
+        _(parsed.keys).must_include('resourceLogs')
+        { status: 200 }
+      end
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      result = exp.export([log_record_data])
+      _(result).must_equal(SUCCESS)
+      assert_requested(stub_post)
     end
 
     { 'Net::HTTPServiceUnavailable' => 503,

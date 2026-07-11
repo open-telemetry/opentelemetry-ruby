@@ -55,10 +55,12 @@ module OpenTelemetry
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                       metrics_reporter: nil)
+                       metrics_reporter: nil,
+                       protocol: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
           @uri = prepare_endpoint(endpoint)
 
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+          raise ArgumentError, "unsupported protocol #{protocol}" unless %w[http/json http/protobuf].include?(protocol)
 
           @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
@@ -66,6 +68,7 @@ module OpenTelemetry
           @headers = prepare_headers(headers)
           @timeout = timeout.to_f
           @compression = compression
+          @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
           @shutdown = false
         end
@@ -161,7 +164,7 @@ module OpenTelemetry
             body = bytes
           end
           request.body = body
-          request.add_field('Content-Type', 'application/x-protobuf')
+          request.add_field('Content-Type', @content_type)
           @headers.each { |key, value| request.add_field(key, value) }
 
           retry_count = 0
@@ -293,32 +296,13 @@ module OpenTelemetry
           true
         end
 
-        def encode(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+        def encode(span_data)
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
-            Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
-              resource_spans: span_data
-                              .group_by(&:resource)
-                              .map do |resource, span_datas|
-                                Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
-                                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                                  ),
-                                  scope_spans: span_datas
-                                               .group_by(&:instrumentation_scope)
-                                               .map do |il, sds|
-                                                 Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
-                                                   scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                                                     name: il.name,
-                                                     version: il.version
-                                                   ),
-                                                   spans: sds.map { |sd| as_otlp_span(sd) }
-                                                 )
-                                               end
-                                )
-                              end
-            )
-          )
+          request = as_trace_service_request(span_data)
+
+          return request.to_json if @content_type == 'application/json'
+
+          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(request)
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
@@ -327,6 +311,27 @@ module OpenTelemetry
           duration_ms = 1000.0 * (stop - start)
           @metrics_reporter.record_value('otel.otlp_exporter.encode_duration',
                                          value: duration_ms)
+        end
+
+        def as_trace_service_request(span_data)
+          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
+            resource_spans: span_data.group_by(&:resource).map do |resource, span_datas|
+              Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
+                resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                  attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                ),
+                scope_spans: span_datas.group_by(&:instrumentation_scope).map do |il, sds|
+                  Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                    scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                      name: il.name,
+                      version: il.version
+                    ),
+                    spans: sds.map { |sd| as_otlp_span(sd) }
+                  )
+                end
+              )
+            end
+          )
         end
 
         def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
