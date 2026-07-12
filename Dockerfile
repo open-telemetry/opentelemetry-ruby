@@ -33,6 +33,7 @@ ARG PACKAGES="\
     libxslt-dev \
     mariadb-dev \
     openssl \
+    protoc \
     postgresql-dev \
     tzdata \
     util-linux \
