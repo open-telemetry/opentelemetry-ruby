@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'google-protobuf', '>= 3.18'
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-common', '~> 0.20'
+  spec.add_dependency 'opentelemetry-exporter-otlp-common'
   spec.add_dependency 'opentelemetry-logs-api', '~> 0.1'
   spec.add_dependency 'opentelemetry-logs-sdk', '~> 0.1'
   spec.add_dependency 'opentelemetry-sdk'

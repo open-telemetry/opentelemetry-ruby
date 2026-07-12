@@ -23,6 +23,7 @@ group :test, :development do
   gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-api', path: '../../api', require: false
   gem 'opentelemetry-common', path: '../../common', require: false
+  gem 'opentelemetry-exporter-otlp-common', path: '../otlp-common', require: false
   gem 'opentelemetry-logs-api', path: '../../logs_api', require: false
   gem 'opentelemetry-logs-sdk', path: '../../logs_sdk', require: false
   gem 'opentelemetry-registry', path: '../../registry', require: false
