@@ -45,10 +45,8 @@ describe OpenTelemetry::Exporter::OTLP::Common do
         end
       end
     end
-  end
 
-  describe '#as_json_etsr' do
-    it 'encodes ids as hex strings and enums as integers' do
+    it 'encodes json with hex ids and integer enums' do
       trace_id = OpenTelemetry::Trace.generate_trace_id
       span_id = OpenTelemetry::Trace.generate_span_id
       parent_span_id = OpenTelemetry::Trace.generate_span_id
@@ -60,7 +58,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
         parent_span_id: parent_span_id
       )
 
-      result = OpenTelemetry::Exporter::OTLP::Common.as_json_etsr([span_data])
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data], format: :json)
       _(result).must_be_kind_of(String)
 
       span = JSON.parse(result)['resourceSpans'][0]['scopeSpans'][0]['spans'][0]
@@ -80,18 +78,18 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(span['status']['code']).must_equal(Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR)
     end
 
-    it 'encodes nested link ids as hex strings' do
+    it 'encodes nested json link ids as hex strings' do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
 
-      trace_id = OpenTelemetry::Trace.generate_trace_id
+      link_trace_id = OpenTelemetry::Trace.generate_trace_id
       linked_span_id = OpenTelemetry::Trace.generate_span_id
-      linked = OpenTelemetry::TestHelpers.with_ids(trace_id, linked_span_id) { tracer.start_root_span('linked') }
-      span = tracer.start_root_span('span', links: [OpenTelemetry::Trace::Link.new(linked.context)])
-      span.finish
+      linked = OpenTelemetry::TestHelpers.with_ids(link_trace_id, linked_span_id) { tracer.start_root_span('linked') }
+      linking_span = tracer.start_root_span('span', links: [OpenTelemetry::Trace::Link.new(linked.context)])
+      linking_span.finish
 
-      result = OpenTelemetry::Exporter::OTLP::Common.as_json_etsr([span.to_span_data])
-      link = JSON.parse(result)['resourceSpans'][0]['scopeSpans'][0]['spans'][0]['links'][0]
+      link_result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([linking_span.to_span_data], format: :json)
+      link = JSON.parse(link_result)['resourceSpans'][0]['scopeSpans'][0]['spans'][0]['links'][0]
 
       _(link['traceId']).must_match(/\A[0-9a-f]{32}\z/)
       _(link['spanId']).must_match(/\A[0-9a-f]{16}\z/)
@@ -102,9 +100,9 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         span_data = OpenTelemetry::TestHelpers.create_span_data
         Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.stub(:new, ->(*) { raise StandardError, 'boom' }) do
-          result = OpenTelemetry::Exporter::OTLP::Common.as_json_etsr([span_data])
+          result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data], format: :json)
           _(result).must_be_nil
-          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_json_etsr/)
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_etsr/)
         end
       end
     end

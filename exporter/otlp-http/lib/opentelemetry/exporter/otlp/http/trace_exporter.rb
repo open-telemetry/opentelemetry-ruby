@@ -50,6 +50,7 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @format = protocol == 'http/json' ? :json : :protobuf
             @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
@@ -64,11 +65,7 @@ module OpenTelemetry
           def export(span_data, timeout: nil)
             return FAILURE if @shutdown
 
-            bytes = if @content_type == 'application/json'
-                      OpenTelemetry::Exporter::OTLP::Common.as_json_etsr(span_data)
-                    else
-                      OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data)
-                    end
+            bytes = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data, format: @format)
             send_bytes(bytes, timeout: timeout)
           end
 

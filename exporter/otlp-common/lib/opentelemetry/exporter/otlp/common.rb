@@ -26,29 +26,21 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format to encode to, either +:protobuf+
+        #   (default, protobuf-encoded) or +:json+ (spec-compliant OTLP/JSON with
+        #   hex ids and integer enums).
         #
         # @return [String] returns an encoded ETSR of the provided span data
-        def as_encoded_etsr(span_data)
-          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(as_etsr(span_data))
+        def as_encoded_etsr(span_data, format: :protobuf)
+          etsr = as_etsr(span_data, format:)
+          if format == :json
+            # Spec-compliant OTLP/JSON: hex ids (see #format_id) and integer enums.
+            etsr.to_json(format_enums_as_integers: true)
+          else
+            Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(etsr)
+          end
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_etsr')
-          nil
-        end
-
-        # As JSON etsr (ExportTraceServiceRequest)
-        #
-        # Serializes to spec-compliant OTLP/JSON: trace/span ids as hex strings and
-        # enum values as integers.
-        #
-        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
-        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
-        #   encoded.
-        #
-        # @return [String] returns a JSON encoded ETSR of the provided span data
-        def as_json_etsr(span_data)
-          as_etsr(span_data, json: true).to_json(format_enums_as_integers: true)
-        rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_json_etsr')
           nil
         end
 
@@ -57,10 +49,13 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format the ETSR is destined for, either
+        #   +:protobuf+ (default) or +:json+. Controls how ids are formatted
+        #   (binary for protobuf, hex for JSON).
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
         #   returns an ETSR of the provided span data
-        def as_etsr(span_data, json: false)
+        def as_etsr(span_data, format: :protobuf)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
                             .group_by(&:resource)
@@ -77,7 +72,7 @@ module OpenTelemetry
                                                    name: il.name,
                                                    version: il.version
                                                  ),
-                                                 spans: sds.map { |sd| as_otlp_span(sd, json: json) }
+                                                 spans: sds.map { |sd| as_otlp_span(sd, format) }
                                                )
                                              end
                               )
@@ -87,13 +82,13 @@ module OpenTelemetry
 
         private
 
-        def as_otlp_span(span_data, json: false)
+        def as_otlp_span(span_data, format)
           parent_span_id = span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id
           Opentelemetry::Proto::Trace::V1::Span.new(
-            trace_id: format_id(span_data.trace_id, json: json),
-            span_id: format_id(span_data.span_id, json: json),
+            trace_id: format_id(span_data.trace_id, format),
+            span_id: format_id(span_data.span_id, format),
             trace_state: span_data.tracestate.to_s,
-            parent_span_id: format_id(parent_span_id, json: json),
+            parent_span_id: format_id(parent_span_id, format),
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
             start_time_unix_nano: span_data.start_timestamp,
@@ -102,7 +97,7 @@ module OpenTelemetry
             dropped_attributes_count: span_data.total_recorded_attributes - span_data.attributes&.size.to_i,
             events: span_data.events&.map { |event| as_otlp_span_event(event) },
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
-            links: span_data.links&.map { |link| as_otlp_span_link(link, json: json) },
+            links: span_data.links&.map { |link| as_otlp_span_link(link, format) },
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.then do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
@@ -122,10 +117,10 @@ module OpenTelemetry
           )
         end
 
-        def as_otlp_span_link(link, json: false)
+        def as_otlp_span_link(link, format)
           Opentelemetry::Proto::Trace::V1::Span::Link.new(
-            trace_id: format_id(link.span_context.trace_id, json: json),
-            span_id: format_id(link.span_context.span_id, json: json),
+            trace_id: format_id(link.span_context.trace_id, format),
+            span_id: format_id(link.span_context.span_id, format),
             trace_state: link.span_context.tracestate.to_s,
             attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
             # TODO: track dropped_attributes_count in Span#trim_links
@@ -135,8 +130,8 @@ module OpenTelemetry
         # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
         # For the JSON path, applying initial base64 decoding to the hex string
         # yields bytes that protobuf re-encodes back into that hex string.
-        def format_id(id_bytes, json:)
-          return id_bytes unless json
+        def format_id(id_bytes, format)
+          return id_bytes unless format == :json
           return id_bytes if id_bytes.nil? || id_bytes.empty?
 
           id_bytes.unpack1('H*').unpack1('m0')

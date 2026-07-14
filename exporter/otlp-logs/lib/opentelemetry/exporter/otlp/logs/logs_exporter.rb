@@ -50,6 +50,7 @@ module OpenTelemetry
           end
           # rubocop:enable Lint/DuplicateBranch
 
+          # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/logs'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                          client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
@@ -63,7 +64,13 @@ module OpenTelemetry
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
             raise ArgumentError, "unsupported protocol #{protocol}" unless %w[http/json http/protobuf].include?(protocol)
 
-            @uri = prepare_endpoint(endpoint)
+            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
+                     endpoint += '/' unless endpoint.end_with?('/')
+                     URI.join(endpoint, 'v1/logs')
+                   else
+                     URI(endpoint)
+                   end
+
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
             @path = @uri.path
@@ -73,6 +80,7 @@ module OpenTelemetry
             @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
+          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
           # Called to export sampled {OpenTelemetry::SDK::Logs::LogRecordData} structs.
           #
@@ -231,13 +239,6 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
-          def prepare_endpoint(endpoint)
-            return URI(endpoint) unless endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-
-            endpoint += '/' unless endpoint.end_with?('/')
-            URI.join(endpoint, 'v1/logs')
-          end
-
           def handle_redirect(location)
             # TODO: figure out destination and reinitialize @http and @path
           end
@@ -276,17 +277,19 @@ module OpenTelemetry
           end
 
           def encode(log_record_data)
-            if @content_type == 'application/json'
-              as_export_logs_service_request(log_record_data, json: true).to_json(format_enums_as_integers: true)
+            json = @content_type == 'application/json'
+            payload = as_export_logs_service_request(log_record_data, json)
+            if json
+              payload.to_json(format_enums_as_integers: true)
             else
-              Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(as_export_logs_service_request(log_record_data))
+              Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(payload)
             end
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
             nil
           end
 
-          def as_export_logs_service_request(log_record_data, json: false)
+          def as_export_logs_service_request(log_record_data, json)
             Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
               resource_logs: log_record_data.group_by(&:resource).map do |resource, log_record_datas|
                 Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
@@ -299,7 +302,7 @@ module OpenTelemetry
                         name: il.name,
                         version: il.version
                       ),
-                      log_records: lrd.map { |lr| as_otlp_log_record(lr, json: json) }
+                      log_records: lrd.map { |lr| as_otlp_log_record(lr, json) }
                     )
                   end
                 )
@@ -307,7 +310,7 @@ module OpenTelemetry
             )
           end
 
-          def as_otlp_log_record(log_record_data, json: false)
+          def as_otlp_log_record(log_record_data, json)
             Opentelemetry::Proto::Logs::V1::LogRecord.new(
               time_unix_nano: log_record_data.timestamp,
               observed_time_unix_nano: log_record_data.observed_timestamp,
@@ -318,15 +321,15 @@ module OpenTelemetry
               dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
               event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
-              trace_id: format_id(log_record_data.trace_id, json: json),
-              span_id: format_id(log_record_data.span_id, json: json)
+              trace_id: format_id(log_record_data.trace_id, json),
+              span_id: format_id(log_record_data.span_id, json)
             )
           end
 
           # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
           # For the JSON path, applying initial base64 decoding to the hex string
           # yields bytes that protobuf re-encodes back into that hex string.
-          def format_id(id_bytes, json:)
+          def format_id(id_bytes, json)
             return id_bytes unless json
             return id_bytes if id_bytes.nil? || id_bytes.empty?
 
