@@ -42,7 +42,7 @@ class FakeInstrumentation
 
   def install(config)
     # lets branches in the install_instrumentation method that occur after
-    # the install check to be evaluted (ex. enabled?, compatible?)
+    # the install check be evaluated (ex. enabled?, compatible?)
     return false unless @installable
 
     @install = true
