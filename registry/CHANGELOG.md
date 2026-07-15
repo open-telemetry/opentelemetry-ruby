@@ -1,5 +1,9 @@
 # Release History: opentelemetry-registry
 
+### v0.6.3 / 2026-07-15
+
+* FIXED: Remove config argument from compatible? (#2253)
+
 ### v0.6.2 / 2026-07-14
 
 * FIXED: Do not report disabled instrumentations as failures (#2216)
