@@ -9,12 +9,15 @@ require 'test_helper'
 class FakeInstrumentation
   attr_reader :name, :version, :config
 
-  def initialize(name, version, present: true)
+  def initialize(name, version, present: true, enabled: true, compatible: true, installable: true)
     @name = name
     @version = version
     @install = false
     @config = nil
     @present = present
+    @enabled = enabled
+    @compatible = compatible
+    @installable = installable
   end
 
   def instance
@@ -29,7 +32,19 @@ class FakeInstrumentation
     @install == true
   end
 
+  def enabled?(_config = nil)
+    @enabled
+  end
+
+  def compatible?
+    @compatible
+  end
+
   def install(config)
+    # lets branches in the install_instrumentation method that occur after
+    # the install check to be evaluted (ex. enabled?, compatible?)
+    return false unless @installable
+
     @install = true
     @config = config
   end
@@ -170,6 +185,78 @@ describe OpenTelemetry::Instrumentation::Registry do
 
         _(instrumentation2).must_be :installed?
         _(instrumentation2.config).must_equal(b: 'b')
+      end
+    end
+
+    describe 'given an instrumentation that is not present' do
+      let(:instrumentation1) do
+        FakeInstrumentation.new('TestInstrumentation1', '0.1.1', present: false)
+      end
+
+      before do
+        @log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(@log_stream)
+      end
+
+      it 'skips install and logs a debug message' do
+        registry.install(%w[TestInstrumentation1])
+
+        _(instrumentation1).wont_be :installed?
+        _(@log_stream.string).must_match(/TestInstrumentation1 skipping install given corresponding dependency not found/)
+      end
+    end
+
+    describe 'given an instrumentation that is not enabled' do
+      let(:instrumentation1) do
+        FakeInstrumentation.new('TestInstrumentation1', '0.1.1', installable: false, enabled: false)
+      end
+
+      before do
+        @log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(@log_stream)
+      end
+
+      it 'does not install and logs that it was not enabled' do
+        registry.install(%w[TestInstrumentation1])
+
+        _(instrumentation1).wont_be :installed?
+        _(@log_stream.string).must_match(/TestInstrumentation1 was not installed because it is not enabled/)
+      end
+    end
+
+    describe 'given an instrumentation that is not compatible' do
+      let(:instrumentation1) do
+        FakeInstrumentation.new('TestInstrumentation1', '0.1.1', installable: false, enabled: true, compatible: false)
+      end
+
+      before do
+        @log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(@log_stream)
+      end
+
+      it 'does not install and logs a compatibility issue' do
+        registry.install(%w[TestInstrumentation1])
+
+        _(instrumentation1).wont_be :installed?
+        _(@log_stream.string).must_match(/TestInstrumentation1 failed to install: compatibility issue/)
+      end
+    end
+
+    describe 'given an instrumentation that fails to install for an unknown reason' do
+      let(:instrumentation1) do
+        FakeInstrumentation.new('TestInstrumentation1', '0.1.1', installable: false, enabled: true, compatible: true)
+      end
+
+      before do
+        @log_stream = StringIO.new
+        OpenTelemetry.logger = ::Logger.new(@log_stream)
+      end
+
+      it 'does not install and logs a generic failure' do
+        registry.install(%w[TestInstrumentation1])
+
+        _(instrumentation1).wont_be :installed?
+        _(@log_stream.string).must_match(/Instrumentation: TestInstrumentation1 failed to install\n/)
       end
     end
   end
