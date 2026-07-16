@@ -201,7 +201,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
 
     it 'prefers keyword arguments over positional arguments' do
       tracer1 = tracer_provider.tracer('positional', '1.0')
-      tracer2 = tracer_provider.tracer('keyword', '2.0', name: 'keyword', version: '2.0')
+      tracer2 = tracer_provider.tracer('positional', '1.0', name: 'keyword', version: '2.0')
       _(tracer1).wont_equal(tracer2)
     end
 
