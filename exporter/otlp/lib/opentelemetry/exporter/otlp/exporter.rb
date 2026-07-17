@@ -35,6 +35,7 @@ module OpenTelemetry
 
         DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
+        # rubocop:disable Lint/DuplicateBranch
         def self.ssl_verify_mode
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
@@ -44,6 +45,7 @@ module OpenTelemetry
             OpenSSL::SSL::VERIFY_PEER
           end
         end
+        # rubocop:enable Lint/DuplicateBranch
 
         def initialize(endpoint: nil,
                        certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
@@ -241,10 +243,11 @@ module OpenTelemetry
 
         def log_status(body)
           status = Google::Rpc::Status.decode(body)
-          details = status.details.map do |detail|
-            klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
-            detail.unpack(klass_or_nil) if klass_or_nil
-          end.compact
+          pool = ::Google::Protobuf::DescriptorPool.generated_pool
+          details = status.details.filter_map do |detail|
+            klass = pool.lookup(detail.type_name).msgclass
+            detail.unpack(klass) if klass
+          end
           OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{@uri}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
@@ -268,18 +271,14 @@ module OpenTelemetry
           end
         end
 
-        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
           return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
           unless retry_after.nil?
             sleep_interval =
-              begin
-                Integer(retry_after)
-              rescue ArgumentError
-                nil
-              end
+              Integer(retry_after, exception: false)
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now
@@ -362,7 +361,7 @@ module OpenTelemetry
               )
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
-            status: span_data.status&.yield_self do |status|
+            status: span_data.status&.then do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
                 code: as_otlp_status_code(status.code),
                 message: status.description
@@ -450,7 +449,7 @@ module OpenTelemetry
           raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
           entries.each_with_object({}) do |entry, headers|
-            k, v = entry.split('=', 2).map(&URI.method(:decode_uri_component))
+            k, v = entry.split('=', 2).map { |part| URI.decode_uri_component(part) }
             begin
               k = k.to_s.strip
               v = v.to_s.strip

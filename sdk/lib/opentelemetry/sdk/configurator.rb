@@ -193,11 +193,11 @@ module OpenTelemetry
           when 'otlp'
             otlp_protocol = ENV['OTEL_EXPORTER_OTLP_TRACES_PROTOCOL'] || ENV['OTEL_EXPORTER_OTLP_PROTOCOL'] || 'http/protobuf'
 
-            if otlp_protocol != 'http/protobuf'
+            if otlp_protocol == 'http/protobuf'
+              fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
+            else
               OpenTelemetry.logger.warn "The #{otlp_protocol} transport protocol is not supported by the OTLP exporter, spans will not be exported."
               nil
-            else
-              fetch_exporter(exporter, 'OpenTelemetry::Exporter::OTLP::Exporter')
             end
           when 'jaeger' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Jaeger::CollectorExporter')
           when 'zipkin' then fetch_exporter(exporter, 'OpenTelemetry::Exporter::Zipkin::Exporter')

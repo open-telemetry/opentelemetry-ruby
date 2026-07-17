@@ -101,7 +101,7 @@ module OpenTelemetry
         end
 
         def around_request
-          OpenTelemetry::Common::Utilities.untraced { yield }
+          OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
         end
 
         def valid_headers?(headers)
@@ -181,11 +181,7 @@ module OpenTelemetry
           sleep_interval = nil
           unless retry_after.nil?
             sleep_interval =
-              begin
-                Integer(retry_after)
-              rescue ArgumentError
-                nil
-              end
+              Integer(retry_after, exception: false)
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now

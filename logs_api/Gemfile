@@ -11,14 +11,14 @@ gemspec
 group :test, :development do
   gem 'benchmark-ips', '~> 2.15.0'
   gem 'logger', '~> 1.7.0' # should move to appraisals
-  gem 'minitest', '~> 5.27.0'
+  gem 'minitest', '~> 6.0.0'
   gem 'rake', '~> 13.4.0'
-  gem 'rubocop', '~> 1.87.0'
+  gem 'rubocop', '~> 1.88.0'
   gem 'rubocop-minitest', '~> 0.39.0'
   gem 'rubocop-performance', '~> 1.26.0'
   gem 'rubocop-rake', '~> 0.7.1'
   gem 'rubocop-rspec', '~> 3.10.0'
-  gem 'simplecov', '~> 0.22.0'
+  gem 'simplecov', '~> 1.0.0'
   gem 'yard', '~> 0.9.0'
   gem 'yard-doctest', '~> 0.1.6'
   gem 'opentelemetry-logs-sdk', path: '../logs_sdk', require: false

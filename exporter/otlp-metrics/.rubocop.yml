@@ -6,18 +6,10 @@ AllCops:
     - "vendor/**/*"
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Max: 23
 Metrics/PerceivedComplexity:
-  Enabled: false
+  Max: 20
 Metrics/MethodLength:
-  Enabled: false
+  Max: 84
 Metrics/ClassLength:
-  Enabled: false
-Lint/DuplicateBranch:
-  Enabled: false
-Lint/SuppressedExceptionInNumberConversion:
-  Enabled: false
-Performance/MapCompact:
-  Enabled: false
-Performance/MethodObjectAsBlock:
-  Enabled: false
+  Max: 310

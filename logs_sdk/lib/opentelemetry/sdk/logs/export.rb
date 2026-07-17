@@ -10,7 +10,7 @@ module OpenTelemetry
       # The Export module contains the built-in exporters and log record
       # processors for the OpenTelemetry reference implementation.
       module Export
-        ExportError = Class.new(OpenTelemetry::Error)
+        ExportError = Class.new(OpenTelemetry::Error) # rubocop:disable Style/EmptyClassDefinition
         # The operation finished successfully.
         SUCCESS = 0
 

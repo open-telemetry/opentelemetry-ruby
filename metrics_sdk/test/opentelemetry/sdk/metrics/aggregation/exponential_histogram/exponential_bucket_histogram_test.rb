@@ -277,9 +277,11 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
     end
 
     it 'test_ascending_sequence' do
-      [3, 4, 6, 9].each do |max_size|
+      MAX_SIZES = [3, 4, 6, 9].freeze
+      INIT_SCALES = [0, 4].freeze
+      MAX_SIZES.each do |max_size|
         (-5..5).each do |offset|
-          [0, 4].each do |init_scale|
+          INIT_SCALES.each do |init_scale|
             ascending_sequence_test(max_size, offset, init_scale)
           end
         end
@@ -314,7 +316,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
 
           hdp = local_data_points[{}]
           # Simulate the effect of the mocked increment
-          hdp.instance_variable_set(:@count, hdp.count + increment - 1) if hdp.count > 0
+          hdp.instance_variable_set(:@count, hdp.count + increment - 1) if hdp.any?
           hdp.instance_variable_set(:@sum, hdp.sum + (value * increment) - value) if hdp.sum > 0
         end
 
@@ -408,7 +410,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       expbh.update(2**100, {}, data_points, cardinality_limit)
 
       hdp = data_points[{}]
-      expected_sum = 2**100 + 2**-100
+      expected_sum = (2**100) + (2**-100)
       _(hdp.sum).must_be_within_epsilon(expected_sum, 1e-5)
       _(hdp.count).must_equal(2)
       _(hdp.scale).must_equal(-7)
@@ -995,9 +997,9 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
           metric_data = metrics_data[0]
 
           _(metric_data.start_time_unix_nano).must_equal(start_time_unix_nano)
-          _(metric_data.min).must_equal(TEST_VALUES[0..index + 1].min)
-          _(metric_data.max).must_equal(TEST_VALUES[0..index + 1].max)
-          _(metric_data.sum).must_be_within_epsilon(TEST_VALUES[0..index + 1].sum, 1e-10)
+          _(metric_data.min).must_equal(TEST_VALUES[0..(index + 1)].min)
+          _(metric_data.max).must_equal(TEST_VALUES[0..(index + 1)].max)
+          _(metric_data.sum).must_be_within_epsilon(TEST_VALUES[0..(index + 1)].sum, 1e-10)
         end
 
         expected_bucket_counts = [

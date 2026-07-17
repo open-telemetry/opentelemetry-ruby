@@ -18,7 +18,7 @@ module OpenTelemetry
             @probability = probability || Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0))
             raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).cover?(@probability)
 
-            @id_upper_bound = (probability * (2**64 - 1)).ceil
+            @id_upper_bound = (probability * ((2**64) - 1)).ceil
             @description = format('TraceIdRatioBased{%.6f}', probability)
           end
 
@@ -41,7 +41,9 @@ module OpenTelemetry
           private
 
           def sample?(trace_id)
+            # rubocop:disable Lint/FloatComparison
             @probability == 1.0 || trace_id[8, 8].unpack1('Q>') < @id_upper_bound
+            # rubocop:enable Lint/FloatComparison
           end
         end
       end

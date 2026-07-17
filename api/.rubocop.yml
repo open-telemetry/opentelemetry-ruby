@@ -2,23 +2,9 @@ inherit_from: ../contrib/rubocop.yml
 
 Gemspec/DevelopmentDependencies:
  Enabled: false
-Style/ExplicitBlockArgument:
-  Enabled: false
-Lint/AmbiguousOperatorPrecedence:
-  Enabled: false
-Minitest/AssertPredicate:
-  Enabled: false
-Minitest/RefutePredicate:
-  Enabled: false
-Performance/MethodObjectAsBlock:
-  Enabled: false
-Style/BitwisePredicate:
-  Enabled: false
 Style/EmptyClassDefinition:
-  Enabled: false
-Style/HashConversion:
-  Enabled: false
-Style/NegatedIfElseCondition:
-  Enabled: false
+  Exclude:
+    - 'benchmarks/context_bench.rb'
 Style/OneClassPerFile:
-  Enabled: false
+  Exclude:
+    - 'benchmarks/context_bench.rb'
