@@ -25,10 +25,13 @@ jobs:
         gem:
           - opentelemetry-api
           - opentelemetry-common
+          - opentelemetry-exporter-zipkin
           - opentelemetry-logs-api
           - opentelemetry-logs-sdk
           - opentelemetry-metrics-api
           - opentelemetry-metrics-sdk
+          - opentelemetry-propagator-b3
+          - opentelemetry-propagator-jaeger
           - opentelemetry-registry
           - opentelemetry-sdk
           - opentelemetry-sdk-experimental
@@ -78,7 +81,6 @@ jobs:
           - opentelemetry-exporter-otlp-common
           - opentelemetry-exporter-otlp-grpc
           - opentelemetry-exporter-otlp-http
-          - opentelemetry-exporter-zipkin
           - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
         os:
@@ -106,64 +108,8 @@ jobs:
           yard: true
           rubocop: true
           build: true
-      - name: "Test Zipkin with JRuby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') && matrix.gem == 'opentelemetry-exporter-zipkin' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "jruby"
-      - name: "Truffleruby Filter"
-        id: truffleruby_skip
-        shell: bash
-        run: |
-          echo "skip=false" >> $GITHUB_OUTPUT
-          [[ "${{ matrix.gem }}" == "opentelemetry-exporter-otlp-grpc" ]] && echo "skip=true" >> $GITHUB_OUTPUT
-          # This is essentially a bash script getting evaluated, so we need to return true or the whole job fails.
-          true
       - name: "Test truffleruby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') && steps.truffleruby_skip.outputs.skip == 'false' }}"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "truffleruby"
-
-  propagators:
-    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        gem:
-          - opentelemetry-propagator-b3
-          - opentelemetry-propagator-jaeger
-        os:
-          - ubuntu-24.04
-          - macos-26
-          - windows-2025
-    name: ${{ matrix.gem }} / ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.4"
-      - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "3.3"
-          yard: true
-          rubocop: true
-          build: true
-      - name: "Test JRuby"
-        if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
-        with:
-          gem: "${{ matrix.gem }}"
-          ruby: "jruby"
-      - name: "Test truffleruby"
-        if: startsWith(matrix.os, 'ubuntu')
+        if: "${{ startsWith(matrix.os, 'ubuntu') && matrix.gem != 'opentelemetry-exporter-otlp-grpc' }}"
         uses: ./.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
