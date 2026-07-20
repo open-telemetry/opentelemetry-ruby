@@ -115,10 +115,13 @@ runs:
 
     - name: Coverage
       shell: bash
+      env:
+        GEM_DIR: "${{ steps.setup.outputs.gem_dir }}"
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["SIMPLECOV_MINIMUM_LINE_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
+      run: |
+        bundle install --quiet --jobs=3 --retry=4
+        bundle exec rake collate_simplecov["${GEM_DIR}"]
 
     - name: Rubocop
       shell: bash

@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require 'dotenv'
-Dotenv.load(File.expand_path('.env', __dir__))
-
 SimpleCov.finalize_merge false if ENV['SIMPLECOV_FINALIZE_MERGE'] == 'false'
 SimpleCov.minimum_coverage line: 85
 SimpleCov.minimum_coverage branch: ENV['SIMPLECOV_MINIMUM_BRANCH_COVERAGE'].to_i if ENV['SIMPLECOV_MINIMUM_BRANCH_COVERAGE']

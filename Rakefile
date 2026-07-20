@@ -35,6 +35,20 @@ task each: 'each:default'
 
 task default: [:each]
 
+task :collate_simplecov, [:dir] do |t, args|
+  if RUBY_ENGINE == 'truffleruby'
+    exit 0
+  end
+
+  puts "dir is: '#{args[:dir]}'"
+  require 'dotenv'
+  Dotenv.load(File.expand_path(".env", "#{args[:dir]}/test"))
+
+  require 'simplecov'
+  SimpleCov.start
+  SimpleCov.collate Dir["#{args[:dir]}/coverage/**/.resultset.json"]
+end
+
 def foreach_gem(cmd)
   Dir.glob("**/opentelemetry-*.gemspec") do |gemspec|
     name = File.basename(gemspec, ".gemspec")
