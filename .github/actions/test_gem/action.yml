@@ -14,11 +14,6 @@ inputs:
     required: false
     type: boolean
     default: false
-  minimum_coverage:
-    description: Minimum test coverage
-    required: false
-    type: string
-    default: 85
   rubocop:
     description: Run Rubocop
     required: false
@@ -93,6 +88,8 @@ runs:
 
     - name: Test Gem
       shell: bash
+      env:
+        SIMPLECOV_FINALIZE_MERGE: false
       run: |
         # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
@@ -118,17 +115,9 @@ runs:
 
     - name: Coverage
       shell: bash
-      if: "${{!startsWith(inputs.ruby, 'truffleruby')}}"
       # This starts a new simplecov run which tracks nothing of its own,
       # but merges with the existing coverage reports generated during testing.
-      env:
-        MINIMUM_COVERAGE: ${{ inputs.minimum_coverage || 85 }}
-      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["MINIMUM_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
-      working-directory: "${{ steps.setup.outputs.gem_dir }}"
-
-    - name: Cleanup coverage artifacts
-      shell: bash
-      run: rm -rf coverage
+      run: 'bundle exec ruby -e ''require "simplecov"; SimpleCov.minimum_coverage(ENV["SIMPLECOV_MINIMUM_LINE_COVERAGE"].to_i); SimpleCov.collate Dir["coverage/**/.resultset.json"];'''
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
     - name: Rubocop

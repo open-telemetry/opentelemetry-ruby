@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
-require 'digest'
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
 
-digest = Digest::MD5.new
-digest.update('test')
-digest.update(ENV.fetch('BUNDLE_GEMFILE', 'gemfile')) if ENV['APPRAISAL_INITIALIZED']
+SimpleCov.finalize_merge false if ENV['SIMPLECOV_FINALIZE_MERGE'] == 'false'
+SimpleCov.minimum_coverage line: 85
+SimpleCov.minimum_coverage branch: ENV['SIMPLECOV_MINIMUM_BRANCH_COVERAGE'].to_i if ENV['SIMPLECOV_MINIMUM_BRANCH_COVERAGE']
+SimpleCov.minimum_coverage line: ENV['SIMPLECOV_MINIMUM_LINE_COVERAGE'].to_i if ENV['SIMPLECOV_MINIMUM_LINE_COVERAGE']
+SimpleCov.minimum_coverage method: ENV['SIMPLECOV_MINIMUM_METHOD_COVERAGE'].to_i if ENV['SIMPLECOV_MINIMUM_METHOD_COVERAGE']
 
-ENV['ENABLE_COVERAGE'] ||= '1'
-
-if ENV['ENABLE_COVERAGE'].to_i.positive?
-  SimpleCov.command_name(ENV['SIMPLECOV_COMMAND_NAME'] || digest.hexdigest)
-  SimpleCov.start do
-    add_filter %r{^/test/}
-  end
-end
+SimpleCov.enable_coverage :branch
+SimpleCov.enable_coverage :method
