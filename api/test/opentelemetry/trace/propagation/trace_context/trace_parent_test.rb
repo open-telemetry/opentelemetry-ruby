@@ -78,9 +78,9 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TraceParent do
 
     it 'must ignore flags it doesn\'t know (use the mask)' do
       value = '00-0000000000000000000000000000000a-000000000000000a-ff'
-      assert TraceParent.from_string(value).sampled?
+      assert_predicate TraceParent.from_string(value), :sampled?
       value = '00-0000000000000000000000000000000a-000000000000000a-04'
-      refute TraceParent.from_string(value).sampled?
+      refute_predicate TraceParent.from_string(value), :sampled?
     end
 
     it 'must have a trace id of 16 hex bytes' do

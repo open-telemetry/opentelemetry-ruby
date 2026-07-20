@@ -7,6 +7,11 @@ on:
         description: Components to release (leave blank to release all components)
         required: false
         default: ""
+  push:
+    branches:
+      - main
+    paths:
+      - "semantic_conventions/semconv.yaml"
 
 permissions:
   contents: read
@@ -22,23 +27,28 @@ jobs:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
       - name: Checkout repo
-        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Install Ruby
-        uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
+        uses: ruby/setup-ruby@8e41b362d2589a22a44c1cfa214b3c83052c195b # v1.318.0
         with:
-          ruby-version: "4.0.5"
+          ruby-version: "4.0.6"
           bundler-cache: true
       - name: Create otelbot app token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         id: app-token
         with:
-          client-id: ${{ vars.OTELBOT_RUBY_APP_ID }}
+          client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
           private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
+      - name: Determine releases
+        id: detect
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "components=opentelemetry-semantic_conventions" >> $GITHUB_OUTPUT
       - name: Open release pull request
         env:
           # Use an app token instead of GITHUB_TOKEN to trigger workflows
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-          RELEASE_NAMES: ${{ github.event.inputs.names }}
+          RELEASE_NAMES: ${{ github.event.inputs.names || steps.detect.outputs.components }}
           TARGET_BRANCH: ${{ github.ref }}
         run: |
           bundle exec toys release request --yes --verbose \

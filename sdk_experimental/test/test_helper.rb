@@ -9,7 +9,7 @@ require 'opentelemetry-sdk-experimental'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
 
-def call_sampler(sampler, trace_id: nil, parent_context: OpenTelemetry::Context.current, links: nil, name: nil, kind: nil, attributes: nil)
+def call_sampler?(sampler, trace_id: nil, parent_context: OpenTelemetry::Context.current, links: nil, name: nil, kind: nil, attributes: nil)
   sampler.should_sample?(
     trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
     parent_context: parent_context,
@@ -26,7 +26,7 @@ def trace_id(id)
   [first, second].pack('Q>Q>')
 end
 
-def parent_context(trace_id: nil, sampled: false, ot: nil)
+def parent_context(trace_id: nil, sampled: false, ot: nil) # rubocop:disable Naming/MethodParameterName
   span_context = OpenTelemetry::Trace::SpanContext.new(
     trace_id: trace_id || OpenTelemetry::Trace.generate_trace_id,
     trace_flags: sampled ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT,

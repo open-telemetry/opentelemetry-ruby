@@ -66,7 +66,7 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
+      uses: ruby/setup-ruby@8e41b362d2589a22a44c1cfa214b3c83052c195b # v1.318.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
@@ -77,7 +77,7 @@ runs:
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
+      uses: ruby/setup-ruby@8e41b362d2589a22a44c1cfa214b3c83052c195b # v1.318.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         bundler: "latest"
