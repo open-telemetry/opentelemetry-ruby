@@ -1,9 +1,5 @@
 # Release History: opentelemetry-metrics-sdk
 
-### v0.16.0 / 2026-07-21
-
-* ADDED: Add attributes support to instrumentation scope for tracers (#2094)
-
 ### v0.15.0 / 2026-06-16
 
 * BREAKING CHANGE: Metrics cardinality limit (#1909)
