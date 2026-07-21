@@ -76,6 +76,22 @@ describe OpenTelemetry::Common::Utilities do
       assert_equal('?', common_utils.utf8_encode(time_bomb, placeholder: '?'))
     end
 
+    it 'preserves valid UTF-8 bytes from a binary-encoded string' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      encoded = common_utils.utf8_encode(city)
+
+      assert_equal('Montréal', encoded)
+      assert_equal(::Encoding::UTF_8, encoded.encoding)
+      assert_equal(::Encoding::ASCII_8BIT, city.encoding)
+    end
+
+    it 'does not validate an already UTF-8-tagged string' do
+      invalid = "\xC3".dup.force_encoding(::Encoding::UTF_8)
+
+      assert_same(invalid, common_utils.utf8_encode(invalid, placeholder: '?'))
+    end
+
     it 'with binary data' do
       byte_array = (+"keep what\xC2 is valid").force_encoding(::Encoding::ASCII_8BIT)
 
