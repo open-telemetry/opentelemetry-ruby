@@ -156,12 +156,15 @@ module OpenTelemetry
             return OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id))
           end
 
+          # Samplers observe the caller's attributes and links unchanged. Normalize only after sampling,
+          # when the values become recorded SDK state.
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           span_id = @id_generator.generate_span_id
           if result.recording? && !@stopped
             trace_flags = result.sampled? ? OpenTelemetry::Trace::TraceFlags::SAMPLED : OpenTelemetry::Trace::TraceFlags::DEFAULT
             context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id, trace_flags: trace_flags, tracestate: result.tracestate)
             attributes = attributes&.merge(result.attributes) || result.attributes.dup
+            attributes = Internal.normalize_attributes(name, 'span', attributes)
             Span.new(
               context,
               parent_context,

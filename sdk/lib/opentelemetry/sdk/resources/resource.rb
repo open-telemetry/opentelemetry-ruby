@@ -24,7 +24,12 @@ module OpenTelemetry
               raise ArgumentError, 'attribute keys must be strings' unless k.is_a?(String)
               raise ArgumentError, 'attribute values must be (array of) strings, integers, floats, or booleans' unless Internal.valid_value?(v)
 
-              memo[-k] = v.freeze
+              normalized_key = Internal.normalize_attribute_value(k)
+              normalized_value = Internal.normalize_attribute_value(v)
+              raise ArgumentError, 'attribute keys must contain valid UTF-8' if normalized_key.nil?
+              raise ArgumentError, 'attribute string values must contain valid UTF-8' if normalized_value.nil?
+
+              memo[-normalized_key] = normalized_value.freeze
             end.freeze
 
             new(frozen_attributes)

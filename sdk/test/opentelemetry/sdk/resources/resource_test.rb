@@ -16,6 +16,25 @@ describe OpenTelemetry::SDK::Resources::Resource do
   end
 
   describe '.create' do
+    it 'normalizes valid UTF-8 bytes from a binary-encoded string' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      resource = Resource.create('city' => city)
+      value = resource.attribute_enumerator.to_h['city']
+
+      _(value).must_equal('Montréal')
+      _(value.encoding).must_equal(::Encoding::UTF_8)
+      _(city.encoding).must_equal(::Encoding::ASCII_8BIT)
+    end
+
+    it 'rejects binary-encoded strings that are not valid UTF-8' do
+      invalid = "\xC3".dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      error = _ { Resource.create('invalid' => invalid) }.must_raise(ArgumentError)
+
+      _(error.message).must_match(/valid UTF-8/)
+    end
+
     it 'can be initialized with attributes' do
       expected_attributes = { 'k1' => 'v1', 'k2' => 'v2' }
       resource = Resource.create(expected_attributes)
