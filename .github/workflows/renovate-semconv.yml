@@ -22,6 +22,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          # zizmor: ignore[artipacked] Credentials are required by the Renovate branch push below.
+          persist-credentials: true
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@a30dfa457ad68707b8b910ac3a244714b61c0626 # v1.320.0
@@ -47,17 +49,10 @@ jobs:
         working-directory: semantic_conventions
         run: bundle exec rake generate
 
-      - name: Create otelbot app token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        id: app-token
-        with:
-          client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
-          private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
-
       - name: Commit and push changes
         if: steps.check_changes.outputs.changed == 'true'
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           git config user.name "otelbot"
           git config user.email "197425009+otelbot@users.noreply.github.com"
@@ -66,5 +61,5 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore: regenerate semantic conventions"
-            git push
+            git push origin "HEAD:${HEAD_REF}"
           fi
