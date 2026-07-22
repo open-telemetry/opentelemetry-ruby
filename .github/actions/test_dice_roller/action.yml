@@ -30,7 +30,8 @@ runs:
         OTEL_METRICS_EXPORTER: none
         OTEL_LOGS_EXPORTER: none
         OTEL_SERVICE_NAME: dice_roller_ci
-      run: | # zizmor: ignore[github-env] APP_PID is the shell-generated numeric process ID.
+      run: # zizmor: ignore[github-env] APP_PID is the shell-generated numeric process ID.
+        |
         # 🎲 Start dice roller ($VERSION) 🎲
         ruby app.rb &
         echo "APP_PID=$!" >> "$GITHUB_ENV"

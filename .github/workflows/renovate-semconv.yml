@@ -18,10 +18,18 @@ jobs:
     if: startsWith(github.head_ref, 'renovate/')
     runs-on: ubuntu-24.04
     steps:
+      - name: Create otelbot app token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
+          private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
+          permission-contents: write
+
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: ${{ github.head_ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           # zizmor: ignore[artipacked] Credentials are required by the Renovate branch push below.
           persist-credentials: true
 
