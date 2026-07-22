@@ -24,6 +24,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       # restrict checks to pull requests to avoid issues blocking the merge queue
       - name: Validate conventional commit style title
         if: ${{ github.event_name == 'pull_request' }}
