@@ -199,10 +199,7 @@ Treat workflow and release automation changes as security-sensitive.
 
 ## Changelog
 
-Update the affected gem's `CHANGELOG.md` when required by existing repository
-or maintainer conventions. Do not invent a new section or release format.
-Changelogs are also generated from conventional commit messages during the
-release process, so accurate commit messages matter.
+Do no update a `CHANGELOG.md` file directly. Do not invent a new section or release format. Changelogs are generated from conventional commit messages during the release process, so accurate commit messages matter.
 
 ## Pull requests and commits
 
