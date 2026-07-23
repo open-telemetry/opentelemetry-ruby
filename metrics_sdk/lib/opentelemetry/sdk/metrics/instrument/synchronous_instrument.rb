@@ -44,6 +44,7 @@ module OpenTelemetry
           private
 
           def update(value, attributes)
+            attributes = Internal.normalize_attributes(@name, 'metric', attributes)
             @metric_streams.each { |ms| ms.update(value, attributes) }
           end
         end

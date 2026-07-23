@@ -82,7 +82,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling set_attribute on an ended Span.')
             else
               @attributes ||= {}
-              @attributes[key] = value
+              @attributes.merge!(Internal.normalize_attributes(name, 'span', { key => value }))
               trim_span_attributes(@attributes)
               @total_recorded_attributes += 1
             end
@@ -110,7 +110,7 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling add_attributes on an ended Span.')
             else
               @attributes ||= {}
-              @attributes.merge!(attributes)
+              @attributes.merge!(Internal.normalize_attributes(name, 'span', attributes))
               trim_span_attributes(@attributes)
               @total_recorded_attributes += attributes.size
             end
@@ -142,7 +142,11 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
             else
               @links ||= []
-              @links = trim_links(@links << link, @span_limits.link_count_limit, @span_limits.link_attribute_count_limit)
+              normalized_link = OpenTelemetry::Trace::Link.new(
+                link.span_context,
+                Internal.normalize_attributes(name, 'link', link.attributes)
+              )
+              @links = trim_links(@links << normalized_link, @span_limits.link_count_limit, @span_limits.link_attribute_count_limit)
               @total_recorded_links += 1
             end
           end
@@ -168,6 +172,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_event(name, attributes: nil, timestamp: nil)
+          attributes = Internal.normalize_attributes(self.name, 'event', attributes)
           event = Event.new(name, truncate_attribute_values(attributes, @span_limits.event_attribute_length_limit), relative_timestamp(timestamp))
 
           @mutex.synchronize do
@@ -334,9 +339,12 @@ module OpenTelemetry
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
           @total_recorded_attributes = attributes&.size || 0
-          @attributes = attributes
+          @attributes = Internal.normalize_attributes(name, 'span', attributes)
           trim_span_attributes(@attributes)
           @events = nil
+          links = links&.map do |link|
+            OpenTelemetry::Trace::Link.new(link.span_context, Internal.normalize_attributes(name, 'link', link.attributes))
+          end
           @links = trim_links(links, span_limits.link_count_limit, span_limits.link_attribute_count_limit)
 
           # Times are hard. Whenever an explicit timestamp is provided
