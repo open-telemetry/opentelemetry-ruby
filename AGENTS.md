@@ -156,11 +156,11 @@ apply, but keep the same discipline around scope, verification, and conventions.
 
 - **Style.** RuboCop is the source of truth. The shared config lives in
   [`contrib/rubocop.yml`](contrib/rubocop.yml) and each gem inherits from it via
-  its own `.rubocop.yml`. The target Ruby version is `3.3`. Do not disable cops
+  its own `.rubocop.yml`. Do not disable cops
   inline to silence a legitimate failure — fix the code instead.
 - **Ruby support.** Preserve the Ruby engines and operating systems exercised
   for the affected gem by [CI](.github/workflows/ci.yml). The main matrix uses
-  MRI 3.3 and 3.4, with JRuby and TruffleRuby where supported. Avoid
+  MRI Ruby, with JRuby and TruffleRuby where supported. Avoid
   engine-specific behavior unless it is guarded and tested.
 - **Documentation.** Use [YARD](https://yardoc.org/). Public methods and their
   arguments should include type annotations; markdown is allowed in doc
