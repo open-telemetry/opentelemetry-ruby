@@ -88,14 +88,16 @@ runs:
 
     - name: Test Gem
       shell: bash
+      env:
+        SIMPLECOV_FINALIZE_MERGE: false
       run: |
         # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
           for i in `bundle exec appraisal list | sed 's/-/_/g' `; do
             echo "::group::🔎 Appraising ${i}"
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
-            BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
+            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle install --quiet --jobs=3 --retry=4 && \
+            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle show && \
+            SIMPLECOV_COMMAND_NAME="appraisal_${i}" BUNDLE_GEMFILE=gemfiles/${i}.gemfile bundle exec rake test
             echo "::endgroup::"
           done
         else
@@ -110,6 +112,16 @@ runs:
         # 📄 Yard Docs 📄
         bundle exec rake yard
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+    - name: Coverage
+      shell: bash
+      env:
+        GEM_DIR: "${{ steps.setup.outputs.gem_dir }}"
+      # This starts a new simplecov run which tracks nothing of its own,
+      # but merges with the existing coverage reports generated during testing.
+      run: |
+        bundle install --quiet --jobs=3 --retry=4
+        bundle exec rake collate_simplecov["${GEM_DIR}"]
 
     - name: Rubocop
       shell: bash

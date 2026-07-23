@@ -4,9 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# require 'simplecov'
-# # SimpleCov.start
-# # SimpleCov.minimum_coverage 85
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
+
+require 'simplecov'
+SimpleCov.start
 
 require 'opentelemetry-sdk-experimental'
 require 'opentelemetry-test-helpers'
