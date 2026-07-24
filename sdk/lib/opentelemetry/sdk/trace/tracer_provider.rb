@@ -27,21 +27,28 @@ module OpenTelemetry
         # @param [optional SpanLimits] span_limits The limits to apply to attribute,
         #   event and link counts for Spans created by Tracers created by this
         #   TracerProvider
+        # @param [optional SpanProcessors] span_processors The span span processors to be used to,
+        #   process & export traces to a backend.
+        # @param [optional TracerProviderConfig] tracer_provider_config The configuration block used to
+        #   configure the tracer provider which includes the config for tracers as well as plugins.
         #
         # @return [TracerProvider]
-        def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)),
+        def initialize(sampler: nil,
                        resource: OpenTelemetry::SDK::Resources::Resource.create,
-                       id_generator: OpenTelemetry::Trace,
-                       span_limits: SpanLimits::DEFAULT)
+                       id_generator: nil,
+                       span_limits: nil,
+                       span_processors: nil,
+                       tracer_provider_config: nil)
           @mutex = Mutex.new
           @registry = {}
           @registry_mutex = Mutex.new
           @span_processors = []
-          @span_limits = span_limits
-          @sampler = sampler
-          @id_generator = id_generator
+          @span_limits = span_limits || tracer_provider_config&.limits || SpanLimits::DEFAULT
+          @sampler = sampler || tracer_provider_config&.samplar ? sampler_from_config(tracer_provider_config&.sampler) : sampler_from_environment
+          @id_generator = id_generator || OpenTelemetry::Trace
           @stopped = false
           @resource = resource
+          Array(span_processors).each { |p| add_span_processor(p) }
         end
 
         # Returns a {Tracer} instance.
@@ -184,10 +191,33 @@ module OpenTelemetry
 
         private
 
-        def sampler_from_environment(default_sampler)
-          case ENV.fetch('OTEL_TRACES_SAMPLER', nil)
+        def sampler_from_config(sampler_config) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          ivar = sampler_config.instance_variables.first
+          sampler_name = ivar.to_s.delete_prefix('@')
+          config = obj.instance_variable_get(ivar)
+
+          if sampler_config.parent_based&.root&.always_off
+            root = Samplers::ALWAYS_OFF
+          elsif sampler_config.parent_based&.root&.always_on
+            root = Samplers::ALWAYS_ON
+          elsif sampler_config.parent_based # this acts as a default
+            root = TraceIdRatioBased.new(probability: sampler_config.parent_based.root&.trace_id_ratio_based&.ratio || 1.0)
+          end
+
+          build_sampler(sampler_name, config, root)
+        end # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+
+        def sampler_from_environment
+          build_sampler(ENV.fetch('OTEL_TRACES_SAMPLER', nil))
+        end
+
+        def build_sampler(sampler, config = nil, root = nil) # rubocop:disable Metrics/CyclomaticComplexity
+          default_sampler = Samplers.parent_based(root: Samplers::ALWAYS_ON)
+          case sampler
           when 'always_on' then Samplers::ALWAYS_ON
           when 'always_off' then Samplers::ALWAYS_OFF
+          when 'trace_id_ratio_based' then TraceIdRatioBased.new(probability: config&.ratio || 1.0)
+          when 'parent_based' then ParentBased.new(root)
           when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0)))
           when 'parentbased_always_on' then Samplers.parent_based(root: Samplers::ALWAYS_ON)
           when 'parentbased_always_off' then Samplers.parent_based(root: Samplers::ALWAYS_OFF)
@@ -197,7 +227,7 @@ module OpenTelemetry
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: "installing default sampler #{default_sampler.description}")
           default_sampler
-        end
+        end # rubocop:enable Metrics/CyclomaticComplexity
       end
     end
   end
