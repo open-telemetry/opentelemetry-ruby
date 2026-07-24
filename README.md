@@ -74,6 +74,30 @@ OpenTelemetry Ruby follows the [versioning and stability document][otel-versioni
 OpenTelemetry Ruby ensures compatibility with the current supported versions of
 the [Ruby language](https://www.ruby-lang.org/en/downloads/branches/).
 
+## Custom error handling
+
+OpenTelemetry reports internal API, SDK, exporter, and configuration errors
+through `OpenTelemetry.error_handler`. The handler must respond to `#call` and
+accept the keyword arguments `exception:` and `message:`.
+
+Set a global handler directly:
+
+```ruby
+OpenTelemetry.error_handler = lambda do |exception: nil, message: nil|
+  OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
+end
+```
+
+Or configure the handler during SDK setup:
+
+```ruby
+OpenTelemetry::SDK.configure do |c|
+  c.error_handler = lambda do |exception: nil, message: nil|
+    OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
+  end
+end
+```
+
 ## Useful links
 
 - For more information on OpenTelemetry, visit: <https://opentelemetry.io/>
