@@ -24,7 +24,19 @@ module OpenTelemetry
   @mutex = Mutex.new
   @tracer_provider = Internal::ProxyTracerProvider.new
 
-  attr_writer :propagation, :logger, :error_handler
+  attr_writer :propagation, :logger
+
+  # @!attribute [w] error_handler
+  #   Configures error handler used by {handle_error}.
+  #
+  #   Assigned object must respond to +#call+ and accept the keyword
+  #   arguments +exception:+ and +message:+.
+  #
+  #   @example Log OpenTelemetry errors with a custom prefix
+  #     OpenTelemetry.error_handler = lambda do |exception: nil, message: nil|
+  #       OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
+  #     end
+  attr_writer :error_handler
 
   # @return [Object, Logger] configured Logger or a default STDOUT Logger.
   def logger
