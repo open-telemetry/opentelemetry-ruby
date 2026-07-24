@@ -71,6 +71,7 @@ ignoreWords:
   - opentelemetrybot
   - otelbot
 words:
+  - artipacked
   - autocorrection
   - bigdecimal
   - cadvisor
