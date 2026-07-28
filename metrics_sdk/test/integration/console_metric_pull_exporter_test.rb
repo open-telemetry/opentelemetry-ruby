@@ -61,7 +61,7 @@ describe OpenTelemetry::SDK do
       _(output).must_match(/name="counter"/)
       _(output).must_match(/unit="smidgen"/)
       _(output).must_match(/description="a small amount of something"/)
-      _(output).must_match(/OpenTelemetry::SDK::InstrumentationScope name="test"/)
+      _(output).must_match(/OpenTelemetry::SDK::InstrumentationScope\s+name="test"/)
       _(output).must_match(/#<struct OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint/)
     end
 

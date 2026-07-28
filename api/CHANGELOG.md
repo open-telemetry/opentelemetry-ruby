@@ -1,5 +1,9 @@
 # Release History: opentelemetry-api
 
+### v1.11.0 / 2026-07-21
+
+* ADDED: Add attributes support to instrumentation scope for tracers (#2094)
+
 ### v1.10.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
