@@ -20,12 +20,8 @@ group :test, :development do
   gem 'yard', '0.9.44'
 
   # Local path overrides for gems developed in this monorepo
-  gem 'opentelemetry-api',                       path: '../api',                       require: false
-  gem 'opentelemetry-common',                    path: '../common',                    require: false
-  gem 'opentelemetry-exporter-otlp',             path: '../exporter/otlp',             require: false
   gem 'opentelemetry-exporter-otlp-common',      path: '../exporter/otlp-common',      require: false
   gem 'opentelemetry-registry',                  path: '../registry',                  require: false
-  gem 'opentelemetry-sdk',                       path: '../sdk',                       require: false
   gem 'opentelemetry-test-helpers',              path: '../test_helpers',              require: false
 
   gem 'opentelemetry-instrumentation-all',                      '0.94.0'
