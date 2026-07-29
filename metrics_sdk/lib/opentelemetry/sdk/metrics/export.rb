@@ -8,7 +8,7 @@ module OpenTelemetry
   module SDK
     module Metrics
       module Export
-        ExportError = Class.new(OpenTelemetry::Error)
+        ExportError = Class.new(OpenTelemetry::Error) # rubocop:disable Style/EmptyClassDefinition
 
         # The operation finished successfully.
         SUCCESS = 0

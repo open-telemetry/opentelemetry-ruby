@@ -27,6 +27,7 @@ module OpenTelemetry
         # GenAI operation duration.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_CLIENT_OPERATION_DURATION = 'gen_ai.client.operation.duration'
 
         # Time per output chunk, recorded for each chunk received after the first one, measured as the time elapsed from the end of the previous chunk to the end of the current chunk.
@@ -34,6 +35,7 @@ module OpenTelemetry
         # This metrics SHOULD be reported for streaming calls and SHOULD NOT be reported otherwise.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_CLIENT_OPERATION_TIME_PER_OUTPUT_CHUNK = 'gen_ai.client.operation.time_per_output_chunk'
 
         # Time to receive the first chunk, measured from when the client issues the generation request to when the first chunk is received in the response stream.
@@ -41,26 +43,31 @@ module OpenTelemetry
         # This metrics SHOULD be reported for streaming calls and SHOULD NOT be reported otherwise.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_CLIENT_OPERATION_TIME_TO_FIRST_CHUNK = 'gen_ai.client.operation.time_to_first_chunk'
 
         # Number of input and output tokens used.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_CLIENT_TOKEN_USAGE = 'gen_ai.client.token.usage'
 
         # Generative AI server request duration such as time-to-last byte or last output token.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_SERVER_REQUEST_DURATION = 'gen_ai.server.request.duration'
 
         # Time per output token generated after the first token for successful responses.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_SERVER_TIME_PER_OUTPUT_TOKEN = 'gen_ai.server.time_per_output_token'
 
         # Time to generate first token for successful responses.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         GEN_AI_SERVER_TIME_TO_FIRST_TOKEN = 'gen_ai.server.time_to_first_token'
 
         # @!endgroup

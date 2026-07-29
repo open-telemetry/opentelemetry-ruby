@@ -45,16 +45,16 @@ module OpenTelemetry
             when 'otlp'
               otlp_protocol = ENV['OTEL_EXPORTER_OTLP_LOGS_PROTOCOL'] || ENV['OTEL_EXPORTER_OTLP_PROTOCOL'] || 'http/protobuf'
 
-              if otlp_protocol != 'http/protobuf'
-                OpenTelemetry.logger.warn "The #{otlp_protocol} transport protocol is not supported by the OTLP exporter, log_records will not be exported."
-                nil
-              else
+              if otlp_protocol == 'http/protobuf'
                 begin
                   Logs::Export::BatchLogRecordProcessor.new(OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new)
                 rescue NameError
                   OpenTelemetry.logger.warn 'The otlp logs exporter cannot be configured - please add opentelemetry-exporter-otlp-logs to your Gemfile. Logs will not be exported'
                   nil
                 end
+              else
+                OpenTelemetry.logger.warn "The #{otlp_protocol} transport protocol is not supported by the OTLP exporter, log_records will not be exported."
+                nil
               end
             else
               OpenTelemetry.logger.warn "The #{exporter} exporter is unknown and cannot be configured, log records will not be exported"

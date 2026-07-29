@@ -1,6 +1,5 @@
 inherit_from:
   - ../../contrib/rubocop.yml
-  - .rubocop_todo.yml
 
 AllCops:
   Exclude:
@@ -8,14 +7,10 @@ AllCops:
     - "vendor/**/*"
 
 Metrics/ModuleLength:
-  Max: 130
+  Max: 118
 Metrics/MethodLength:
-  Max: 25
+  Max: 24
 Metrics/PerceivedComplexity:
-  Enabled: false
+  Max: 13
 Metrics/CyclomaticComplexity:
-  Enabled: false
-Style/ExplicitBlockArgument:
-  Enabled: false
-Minitest/SkipEnsure:
-  Enabled: false
+  Max: 16

@@ -32,7 +32,7 @@ module OpenTelemetry
             true
           end
 
-          def name_match(stream_name)
+          def name_match(stream_name) # rubocop:disable Naming/PredicateMethod
             !!@regex&.match(stream_name)
           end
 

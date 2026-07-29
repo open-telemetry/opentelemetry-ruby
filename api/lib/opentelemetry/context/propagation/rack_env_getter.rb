@@ -26,7 +26,7 @@ module OpenTelemetry
         # form to the original. The resulting keys will be lowercase and
         # underscores will be replaced with dashes.
         def keys(carrier)
-          carrier.keys.map(&method(:from_rack_key))
+          carrier.keys.map { |k| from_rack_key(k) }
         end
 
         private

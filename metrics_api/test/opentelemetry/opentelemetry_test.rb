@@ -18,7 +18,7 @@ describe OpenTelemetry do
 
   describe '#meter_provider and #meter_provider=' do
     it 'initializes with a global instance of ProxyMeterProvider' do
-      assert(OpenTelemetry.meter_provider.is_a?(OpenTelemetry::Internal::ProxyMeterProvider))
+      assert_kind_of(OpenTelemetry::Internal::ProxyMeterProvider, OpenTelemetry.meter_provider)
     end
 
     it 'sets global MeterProvider to the given meter_provider' do

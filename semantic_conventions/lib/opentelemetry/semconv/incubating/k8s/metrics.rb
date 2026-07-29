@@ -102,17 +102,24 @@ module OpenTelemetry
 
         # Maximum ephemeral storage resource limit set for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_EPHEMERAL_STORAGE_LIMIT = 'k8s.container.ephemeral_storage.limit'
 
         # Ephemeral storage resource requested for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_EPHEMERAL_STORAGE_REQUEST = 'k8s.container.ephemeral_storage.request'
+
+        # The ephemeral storage used by a container.
+        #
+        # The value for this metric can be compared against `metric.k8s.container.ephemeral_storage.request` and `metric.k8s.container.ephemeral_storage.limit`.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_EPHEMERAL_STORAGE_USAGE = 'k8s.container.ephemeral_storage.usage'
 
         # Deprecated, use `k8s.container.memory.limit.desired` and `k8s.container.memory.limit.current` instead.
         #
@@ -173,7 +180,7 @@ module OpenTelemetry
         # Indicates whether the container is currently marked as ready to accept traffic, based on its readiness probe (1 = ready, 0 = not ready).
         #
         # This metric SHOULD reflect the value of the `ready` field in the
-        # [K8s ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#containerstatus-v1-core).
+        # [K8s ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core).
         #
         # @note Stability Level: development
         K8S_CONTAINER_READY = 'k8s.container.ready'
@@ -207,14 +214,14 @@ module OpenTelemetry
 
         # Maximum storage resource limit set for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_STORAGE_LIMIT = 'k8s.container.storage.limit'
 
         # Storage resource requested for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#resourcerequirements-v1-core for details.
+        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_STORAGE_REQUEST = 'k8s.container.storage.request'
@@ -222,7 +229,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.cronjob.job.active` instead.
         #
         # This metric aligns with the `active` field of the
-        # [K8s CronJobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#cronjobstatus-v1-batch).
+        # [K8s CronJobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#cronjobstatus-v1-batch).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.cronjob.job.active`.
@@ -231,7 +238,7 @@ module OpenTelemetry
         # The number of actively running jobs for a cronjob.
         #
         # This metric aligns with the `active` field of the
-        # [K8s CronJobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#cronjobstatus-v1-batch).
+        # [K8s CronJobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#cronjobstatus-v1-batch).
         #
         # @note Stability Level: development
         K8S_CRONJOB_JOB_ACTIVE = 'k8s.cronjob.job.active'
@@ -239,7 +246,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.daemonset.node.current_scheduled` instead.
         #
         # This metric aligns with the `currentNumberScheduled` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.daemonset.node.current_scheduled`.
@@ -248,7 +255,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.daemonset.node.desired_scheduled` instead.
         #
         # This metric aligns with the `desiredNumberScheduled` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.daemonset.node.desired_scheduled`.
@@ -257,7 +264,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.daemonset.node.misscheduled` instead.
         #
         # This metric aligns with the `numberMisscheduled` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.daemonset.node.misscheduled`.
@@ -266,7 +273,7 @@ module OpenTelemetry
         # Number of nodes that are running at least 1 daemon pod and are supposed to run the daemon pod.
         #
         # This metric aligns with the `currentNumberScheduled` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_DAEMONSET_NODE_CURRENT_SCHEDULED = 'k8s.daemonset.node.current_scheduled'
@@ -274,7 +281,7 @@ module OpenTelemetry
         # Number of nodes that should be running the daemon pod (including nodes currently running the daemon pod).
         #
         # This metric aligns with the `desiredNumberScheduled` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_DAEMONSET_NODE_DESIRED_SCHEDULED = 'k8s.daemonset.node.desired_scheduled'
@@ -282,7 +289,7 @@ module OpenTelemetry
         # Number of nodes that are running the daemon pod, but are not supposed to run the daemon pod.
         #
         # This metric aligns with the `numberMisscheduled` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_DAEMONSET_NODE_MISSCHEDULED = 'k8s.daemonset.node.misscheduled'
@@ -290,7 +297,7 @@ module OpenTelemetry
         # Number of nodes that should be running the daemon pod and have one or more of the daemon pod running and ready.
         #
         # This metric aligns with the `numberReady` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_DAEMONSET_NODE_READY = 'k8s.daemonset.node.ready'
@@ -298,7 +305,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.daemonset.node.ready` instead.
         #
         # This metric aligns with the `numberReady` field of the
-        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#daemonsetstatus-v1-apps).
+        # [K8s DaemonSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#daemonsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.daemonset.node.ready`.
@@ -307,7 +314,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.deployment.pod.available` instead.
         #
         # This metric aligns with the `availableReplicas` field of the
-        # [K8s DeploymentStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#deploymentstatus-v1-apps).
+        # [K8s DeploymentStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#deploymentstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.deployment.pod.available`.
@@ -316,7 +323,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.deployment.pod.desired` instead.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s DeploymentSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#deploymentspec-v1-apps).
+        # [K8s DeploymentSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#deploymentspec-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.deployment.pod.desired`.
@@ -325,7 +332,7 @@ module OpenTelemetry
         # Total number of available replica pods (ready for at least minReadySeconds) targeted by this deployment.
         #
         # This metric aligns with the `availableReplicas` field of the
-        # [K8s DeploymentStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#deploymentstatus-v1-apps).
+        # [K8s DeploymentStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#deploymentstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_DEPLOYMENT_POD_AVAILABLE = 'k8s.deployment.pod.available'
@@ -333,7 +340,7 @@ module OpenTelemetry
         # Number of desired replica pods in this deployment.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s DeploymentSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#deploymentspec-v1-apps).
+        # [K8s DeploymentSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#deploymentspec-v1-apps).
         #
         # @note Stability Level: development
         K8S_DEPLOYMENT_POD_DESIRED = 'k8s.deployment.pod.desired'
@@ -341,7 +348,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.hpa.pod.current` instead.
         #
         # This metric aligns with the `currentReplicas` field of the
-        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerstatus-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerstatus-v2-autoscaling)
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.hpa.pod.current`.
@@ -350,7 +357,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.hpa.pod.desired` instead.
         #
         # This metric aligns with the `desiredReplicas` field of the
-        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerstatus-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerstatus-v2-autoscaling)
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.hpa.pod.desired`.
@@ -359,7 +366,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.hpa.pod.max` instead.
         #
         # This metric aligns with the `maxReplicas` field of the
-        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerspec-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerspec-v2-autoscaling)
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.hpa.pod.max`.
@@ -368,7 +375,7 @@ module OpenTelemetry
         # Target average utilization, in percentage, for CPU resource in HPA config.
         #
         # This metric aligns with the `averageUtilization` field of the
-        # [K8s HPA MetricTarget](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#metrictarget-v2-autoscaling).
+        # [K8s HPA MetricTarget](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#metrictarget-v2-autoscaling).
         # If the type of the metric is [`ContainerResource`](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis),
         # the `k8s.container.name` attribute MUST be set to identify the specific container within the pod to which the metric applies.
         #
@@ -378,7 +385,7 @@ module OpenTelemetry
         # Target average value for CPU resource in HPA config.
         #
         # This metric aligns with the `averageValue` field of the
-        # [K8s HPA MetricTarget](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#metrictarget-v2-autoscaling).
+        # [K8s HPA MetricTarget](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#metrictarget-v2-autoscaling).
         # If the type of the metric is [`ContainerResource`](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis),
         # the `k8s.container.name` attribute MUST be set to identify the specific container within the pod to which the metric applies.
         #
@@ -388,7 +395,7 @@ module OpenTelemetry
         # Target value for CPU resource in HPA config.
         #
         # This metric aligns with the `value` field of the
-        # [K8s HPA MetricTarget](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#metrictarget-v2-autoscaling).
+        # [K8s HPA MetricTarget](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#metrictarget-v2-autoscaling).
         # If the type of the metric is [`ContainerResource`](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-metrics-apis),
         # the `k8s.container.name` attribute MUST be set to identify the specific container within the pod to which the metric applies.
         #
@@ -398,7 +405,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.hpa.pod.min` instead.
         #
         # This metric aligns with the `minReplicas` field of the
-        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerspec-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerspec-v2-autoscaling)
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.hpa.pod.min`.
@@ -407,7 +414,7 @@ module OpenTelemetry
         # Current number of replica pods managed by this horizontal pod autoscaler, as last seen by the autoscaler.
         #
         # This metric aligns with the `currentReplicas` field of the
-        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerstatus-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerstatus-v2-autoscaling)
         #
         # @note Stability Level: development
         K8S_HPA_POD_CURRENT = 'k8s.hpa.pod.current'
@@ -415,7 +422,7 @@ module OpenTelemetry
         # Desired number of replica pods managed by this horizontal pod autoscaler, as last calculated by the autoscaler.
         #
         # This metric aligns with the `desiredReplicas` field of the
-        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerstatus-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerstatus-v2-autoscaling)
         #
         # @note Stability Level: development
         K8S_HPA_POD_DESIRED = 'k8s.hpa.pod.desired'
@@ -423,7 +430,7 @@ module OpenTelemetry
         # The upper limit for the number of replica pods to which the autoscaler can scale up.
         #
         # This metric aligns with the `maxReplicas` field of the
-        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerspec-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerspec-v2-autoscaling)
         #
         # @note Stability Level: development
         K8S_HPA_POD_MAX = 'k8s.hpa.pod.max'
@@ -431,7 +438,7 @@ module OpenTelemetry
         # The lower limit for the number of replica pods to which the autoscaler can scale down.
         #
         # This metric aligns with the `minReplicas` field of the
-        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#horizontalpodautoscalerspec-v2-autoscaling)
+        # [K8s HorizontalPodAutoscalerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#horizontalpodautoscalerspec-v2-autoscaling)
         #
         # @note Stability Level: development
         K8S_HPA_POD_MIN = 'k8s.hpa.pod.min'
@@ -439,7 +446,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.job.pod.active` instead.
         #
         # This metric aligns with the `active` field of the
-        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobstatus-v1-batch).
+        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobstatus-v1-batch).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.job.pod.active`.
@@ -448,7 +455,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.job.pod.desired_successful` instead.
         #
         # This metric aligns with the `completions` field of the
-        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobspec-v1-batch)..
+        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobspec-v1-batch)..
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.job.pod.desired_successful`.
@@ -457,7 +464,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.job.pod.failed` instead.
         #
         # This metric aligns with the `failed` field of the
-        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobstatus-v1-batch).
+        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobstatus-v1-batch).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.job.pod.failed`.
@@ -466,7 +473,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.job.pod.max_parallel` instead.
         #
         # This metric aligns with the `parallelism` field of the
-        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobspec-v1-batch).
+        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobspec-v1-batch).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.job.pod.max_parallel`.
@@ -475,7 +482,7 @@ module OpenTelemetry
         # The number of pending and actively running pods for a job.
         #
         # This metric aligns with the `active` field of the
-        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobstatus-v1-batch).
+        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobstatus-v1-batch).
         #
         # @note Stability Level: development
         K8S_JOB_POD_ACTIVE = 'k8s.job.pod.active'
@@ -483,7 +490,7 @@ module OpenTelemetry
         # The desired number of successfully finished pods the job should be run with.
         #
         # This metric aligns with the `completions` field of the
-        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobspec-v1-batch)..
+        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobspec-v1-batch)..
         #
         # @note Stability Level: development
         K8S_JOB_POD_DESIRED_SUCCESSFUL = 'k8s.job.pod.desired_successful'
@@ -491,7 +498,7 @@ module OpenTelemetry
         # The number of pods which reached phase Failed for a job.
         #
         # This metric aligns with the `failed` field of the
-        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobstatus-v1-batch).
+        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobstatus-v1-batch).
         #
         # @note Stability Level: development
         K8S_JOB_POD_FAILED = 'k8s.job.pod.failed'
@@ -499,7 +506,7 @@ module OpenTelemetry
         # The max desired number of pods the job should run at any given time.
         #
         # This metric aligns with the `parallelism` field of the
-        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobspec-v1-batch).
+        # [K8s JobSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobspec-v1-batch).
         #
         # @note Stability Level: development
         K8S_JOB_POD_MAX_PARALLEL = 'k8s.job.pod.max_parallel'
@@ -507,7 +514,7 @@ module OpenTelemetry
         # The number of pods which reached phase Succeeded for a job.
         #
         # This metric aligns with the `succeeded` field of the
-        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobstatus-v1-batch).
+        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobstatus-v1-batch).
         #
         # @note Stability Level: development
         K8S_JOB_POD_SUCCESSFUL = 'k8s.job.pod.successful'
@@ -515,7 +522,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.job.pod.successful` instead.
         #
         # This metric aligns with the `succeeded` field of the
-        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#jobstatus-v1-batch).
+        # [K8s JobStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#jobstatus-v1-batch).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.job.pod.successful`.
@@ -566,7 +573,7 @@ module OpenTelemetry
         #
         # Total CPU time consumed by the specific Node on all available CPU cores
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_CPU_TIME = 'k8s.node.cpu.time'
 
         # Node's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
@@ -753,7 +760,7 @@ module OpenTelemetry
         #
         # Total CPU time consumed by the specific Pod on all available CPU cores
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_CPU_TIME = 'k8s.pod.cpu.time'
 
         # Pod's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
@@ -935,7 +942,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.replicaset.pod.available` instead.
         #
         # This metric aligns with the `availableReplicas` field of the
-        # [K8s ReplicaSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#replicasetstatus-v1-apps).
+        # [K8s ReplicaSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#replicasetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.replicaset.pod.available`.
@@ -944,7 +951,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.replicaset.pod.desired` instead.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s ReplicaSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#replicasetspec-v1-apps).
+        # [K8s ReplicaSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#replicasetspec-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.replicaset.pod.desired`.
@@ -953,7 +960,7 @@ module OpenTelemetry
         # Total number of available replica pods (ready for at least minReadySeconds) targeted by this replicaset.
         #
         # This metric aligns with the `availableReplicas` field of the
-        # [K8s ReplicaSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#replicasetstatus-v1-apps).
+        # [K8s ReplicaSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#replicasetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_REPLICASET_POD_AVAILABLE = 'k8s.replicaset.pod.available'
@@ -961,7 +968,7 @@ module OpenTelemetry
         # Number of desired replica pods in this replicaset.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s ReplicaSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#replicasetspec-v1-apps).
+        # [K8s ReplicaSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#replicasetspec-v1-apps).
         #
         # @note Stability Level: development
         K8S_REPLICASET_POD_DESIRED = 'k8s.replicaset.pod.desired'
@@ -993,7 +1000,7 @@ module OpenTelemetry
         # Total number of available replica pods (ready for at least minReadySeconds) targeted by this replication controller.
         #
         # This metric aligns with the `availableReplicas` field of the
-        # [K8s ReplicationControllerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#replicationcontrollerstatus-v1-core)
+        # [K8s ReplicationControllerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#replicationcontrollerstatus-v1-core)
         #
         # @note Stability Level: development
         K8S_REPLICATIONCONTROLLER_POD_AVAILABLE = 'k8s.replicationcontroller.pod.available'
@@ -1001,7 +1008,7 @@ module OpenTelemetry
         # Number of desired replica pods in this replication controller.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s ReplicationControllerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#replicationcontrollerspec-v1-core)
+        # [K8s ReplicationControllerSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#replicationcontrollerspec-v1-core)
         #
         # @note Stability Level: development
         K8S_REPLICATIONCONTROLLER_POD_DESIRED = 'k8s.replicationcontroller.pod.desired'
@@ -1010,7 +1017,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_CPU_LIMIT_HARD = 'k8s.resourcequota.cpu.limit.hard'
@@ -1019,7 +1026,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_CPU_LIMIT_USED = 'k8s.resourcequota.cpu.limit.used'
@@ -1028,7 +1035,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_CPU_REQUEST_HARD = 'k8s.resourcequota.cpu.request.hard'
@@ -1037,7 +1044,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_CPU_REQUEST_USED = 'k8s.resourcequota.cpu.request.used'
@@ -1046,7 +1053,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_EPHEMERAL_STORAGE_LIMIT_HARD = 'k8s.resourcequota.ephemeral_storage.limit.hard'
@@ -1055,7 +1062,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_EPHEMERAL_STORAGE_LIMIT_USED = 'k8s.resourcequota.ephemeral_storage.limit.used'
@@ -1064,7 +1071,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_EPHEMERAL_STORAGE_REQUEST_HARD = 'k8s.resourcequota.ephemeral_storage.request.hard'
@@ -1073,7 +1080,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_EPHEMERAL_STORAGE_REQUEST_USED = 'k8s.resourcequota.ephemeral_storage.request.used'
@@ -1082,7 +1089,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_HUGEPAGE_COUNT_REQUEST_HARD = 'k8s.resourcequota.hugepage_count.request.hard'
@@ -1091,7 +1098,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_HUGEPAGE_COUNT_REQUEST_USED = 'k8s.resourcequota.hugepage_count.request.used'
@@ -1100,7 +1107,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_MEMORY_LIMIT_HARD = 'k8s.resourcequota.memory.limit.hard'
@@ -1109,7 +1116,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_MEMORY_LIMIT_USED = 'k8s.resourcequota.memory.limit.used'
@@ -1118,7 +1125,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_MEMORY_REQUEST_HARD = 'k8s.resourcequota.memory.request.hard'
@@ -1127,7 +1134,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_MEMORY_REQUEST_USED = 'k8s.resourcequota.memory.request.used'
@@ -1136,7 +1143,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_OBJECT_COUNT_HARD = 'k8s.resourcequota.object_count.hard'
@@ -1145,7 +1152,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # @note Stability Level: development
         K8S_RESOURCEQUOTA_OBJECT_COUNT_USED = 'k8s.resourcequota.object_count.used'
@@ -1154,7 +1161,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # The `k8s.storageclass.name` should be required when a resource quota is defined for a specific
         # storage class.
@@ -1166,7 +1173,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # The `k8s.storageclass.name` should be required when a resource quota is defined for a specific
         # storage class.
@@ -1178,7 +1185,7 @@ module OpenTelemetry
         # The value represents the configured quota limit of the resource in the namespace.
         #
         # This metric is retrieved from the `hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # The `k8s.storageclass.name` should be required when a resource quota is defined for a specific
         # storage class.
@@ -1190,7 +1197,7 @@ module OpenTelemetry
         # The value represents the current observed total usage of the resource in the namespace.
         #
         # This metric is retrieved from the `used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core).
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core).
         #
         # The `k8s.storageclass.name` should be required when a resource quota is defined for a specific
         # storage class.
@@ -1244,7 +1251,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.statefulset.pod.current` instead.
         #
         # This metric aligns with the `currentReplicas` field of the
-        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetstatus-v1-apps).
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.statefulset.pod.current`.
@@ -1253,7 +1260,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.statefulset.pod.desired` instead.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s StatefulSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetspec-v1-apps).
+        # [K8s StatefulSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetspec-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.statefulset.pod.desired`.
@@ -1262,7 +1269,7 @@ module OpenTelemetry
         # The number of replica pods created by the statefulset controller from the statefulset version indicated by currentRevision.
         #
         # This metric aligns with the `currentReplicas` field of the
-        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetstatus-v1-apps).
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_STATEFULSET_POD_CURRENT = 'k8s.statefulset.pod.current'
@@ -1270,7 +1277,7 @@ module OpenTelemetry
         # Number of desired replica pods in this statefulset.
         #
         # This metric aligns with the `replicas` field of the
-        # [K8s StatefulSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetspec-v1-apps).
+        # [K8s StatefulSetSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetspec-v1-apps).
         #
         # @note Stability Level: development
         K8S_STATEFULSET_POD_DESIRED = 'k8s.statefulset.pod.desired'
@@ -1278,7 +1285,7 @@ module OpenTelemetry
         # The number of replica pods created for this statefulset with a Ready Condition.
         #
         # This metric aligns with the `readyReplicas` field of the
-        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetstatus-v1-apps).
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_STATEFULSET_POD_READY = 'k8s.statefulset.pod.ready'
@@ -1286,7 +1293,7 @@ module OpenTelemetry
         # Number of replica pods created by the statefulset controller from the statefulset version indicated by updateRevision.
         #
         # This metric aligns with the `updatedReplicas` field of the
-        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetstatus-v1-apps).
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
         #
         # @note Stability Level: development
         K8S_STATEFULSET_POD_UPDATED = 'k8s.statefulset.pod.updated'
@@ -1294,7 +1301,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.statefulset.pod.ready` instead.
         #
         # This metric aligns with the `readyReplicas` field of the
-        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetstatus-v1-apps).
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.statefulset.pod.ready`.
@@ -1303,7 +1310,7 @@ module OpenTelemetry
         # Deprecated, use `k8s.statefulset.pod.updated` instead.
         #
         # This metric aligns with the `updatedReplicas` field of the
-        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#statefulsetstatus-v1-apps).
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
         #
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.statefulset.pod.updated`.

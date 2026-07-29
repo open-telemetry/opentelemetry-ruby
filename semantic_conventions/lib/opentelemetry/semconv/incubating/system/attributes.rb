@@ -89,7 +89,7 @@ module OpenTelemetry
 
         # The paging fault type
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_PAGING_FAULT_TYPE = 'system.paging.fault.type'
 
         # The memory paging state

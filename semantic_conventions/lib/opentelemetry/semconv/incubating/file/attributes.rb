@@ -87,6 +87,21 @@ module OpenTelemetry
         # @note Stability Level: development
         FILE_INODE = 'file.inode'
 
+        # The lock mechanism such as noted by [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html)
+        #
+        # @note Stability Level: development
+        FILE_LOCK_MECHANISM = 'file.lock.mechanism'
+
+        # Mode of lock or operation such as documented by [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html)
+        #
+        # @note Stability Level: development
+        FILE_LOCK_MODE = 'file.lock.mode'
+
+        # The lock type as represented by i.e. [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html)'s l_type.
+        #
+        # @note Stability Level: development
+        FILE_LOCK_TYPE = 'file.lock.type'
+
         # Mode of the file in octal representation.
         #
         # @note Stability Level: development

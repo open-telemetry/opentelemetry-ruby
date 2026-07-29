@@ -106,7 +106,7 @@ module OpenTelemetry
           baggage_key_prefix = 'uberctx-'
           OpenTelemetry::Baggage.build(context: context) do |b|
             getter.keys(carrier).each do |carrier_key|
-              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
+              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..]
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
@@ -129,7 +129,7 @@ module OpenTelemetry
         end
 
         def to_trace_flags(sampling_flags)
-          if (sampling_flags & SAMPLED_FLAG_BIT) != 0
+          if sampling_flags.anybits?(SAMPLED_FLAG_BIT)
             Trace::TraceFlags::SAMPLED
           else
             Trace::TraceFlags::DEFAULT

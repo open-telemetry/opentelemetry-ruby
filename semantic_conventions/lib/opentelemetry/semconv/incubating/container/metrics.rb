@@ -24,11 +24,11 @@ module OpenTelemetry
       module CONTAINER
         # @!group Metrics Names
 
-        # Total CPU time consumed.
+        # CPU time consumed.
         #
-        # Total CPU time consumed by the specific container on all available CPU cores
+        # CPU time consumed by the specific container on all available CPU cores
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CONTAINER_CPU_TIME = 'container.cpu.time'
 
         # Container's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.

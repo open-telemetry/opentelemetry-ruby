@@ -79,7 +79,7 @@ module OpenTelemetry
             yield(p, r, rest)
           end
 
-          def update_tracestate(tracestate, p, r, rest)
+          def update_tracestate(tracestate, p, r, rest) # rubocop:disable Naming/MethodParameterName
             if p.nil? && r.nil? && rest.nil?
               tracestate.delete('ot')
             elsif p.nil? && r.nil?
@@ -99,7 +99,7 @@ module OpenTelemetry
             end
           end
 
-          def invariant(p, r, sampled)
+          def invariant(p, r, sampled) # rubocop:disable Naming/MethodParameterName
             ((p <= r) == sampled) || (sampled && (p == 63))
           end
 

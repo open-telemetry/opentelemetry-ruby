@@ -46,7 +46,7 @@ module OpenTelemetry
             invoke_callback(@timeout, @attributes)
 
             # Call parent collect method for the core collection logic
-            super(start_time, end_time)
+            super
           end
 
           def invoke_callback(timeout, attributes)

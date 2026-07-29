@@ -104,7 +104,7 @@ module OpenTelemetry
       def untraced(context = Context.current)
         context = context.set_value(UNTRACED_KEY, true)
         if block_given?
-          Context.with_current(context) { |ctx| yield ctx }
+          Context.with_current(context) { |ctx| yield ctx } # rubocop:disable Style/ExplicitBlockArgument
         else
           context
         end

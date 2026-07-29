@@ -61,6 +61,11 @@ module OpenTelemetry
         # @note Stability Level: development
         AZURE_COSMOSDB_RESPONSE_SUB_STATUS_CODE = 'azure.cosmosdb.response.sub_status_code'
 
+        # The name of the Azure [resource group](https://learn.microsoft.com/azure/azure-resource-manager/management/manage-resource-groups-portal) the resource belongs to.
+        #
+        # @note Stability Level: development
+        AZURE_RESOURCE_GROUP_NAME = 'azure.resource_group.name'
+
         # [Azure Resource Provider Namespace](https://learn.microsoft.com/azure/azure-resource-manager/management/azure-services-resource-providers) as recognized by the client.
         #
         # @note Stability Level: development

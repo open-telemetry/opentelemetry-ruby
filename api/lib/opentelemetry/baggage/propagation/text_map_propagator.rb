@@ -63,7 +63,7 @@ module OpenTelemetry
               # the W3C spec where it's referred to as properties. We preserve
               # the properties (as-is) so that they can be propagated elsewhere.
               kv, meta = entry.split(';', 2)
-              k, v = kv.split('=').map!(&URI.method(:decode_uri_component))
+              k, v = kv.split('=').map! { |part| URI.decode_uri_component(part) }
               builder.set_value(k, v, metadata: meta)
             end
           end
