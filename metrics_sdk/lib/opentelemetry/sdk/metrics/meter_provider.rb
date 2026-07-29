@@ -39,7 +39,6 @@ module OpenTelemetry
         # @return [Meter]
         def meter(name, version: nil, attributes: nil)
           version ||= ''
-          # TODO: DO we need to check attributes here?
           attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
 
           if @stopped
