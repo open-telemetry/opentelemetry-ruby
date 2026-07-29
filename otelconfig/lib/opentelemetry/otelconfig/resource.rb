@@ -42,18 +42,18 @@ module OpenTelemetry
       def coerce_attribute_value(value, type)
         case type
         when 'string'       then value.to_s
-        when 'bool'         then coerce_bool(value)
+        when 'bool'         then coerce_bool?(value)
         when 'int'          then Integer(value)
         when 'double'       then Float(value)
         when 'string_array' then Array(value).map(&:to_s)
-        when 'bool_array'   then Array(value).map { |v| coerce_bool(v) }
+        when 'bool_array'   then Array(value).map { |v| coerce_bool?(v) }
         when 'int_array'    then Array(value).map { |v| Integer(v) }
         when 'double_array' then Array(value).map { |v| Float(v) }
         else value # no type field → use the YAML-parsed value as-is
         end
       end
 
-      def coerce_bool(value)
+      def coerce_bool?(value)
         case value
         when true,  'true',  1 then true
         when false, 'false', 0 then false
@@ -116,8 +116,8 @@ module OpenTelemetry
       end
 
       # Looks up a resource detector class by fully-qualified name and calls detect.
-      def detect_resource(class_name, *args)
-        Kernel.const_get(class_name).detect(*args)
+      def detect_resource(class_name, *)
+        Kernel.const_get(class_name).detect(*)
       rescue NameError
         OpenTelemetry.logger.warn("OtelConfig: resource detector '#{class_name}' is not available — is the gem installed?")
         OpenTelemetry::SDK::Resources::Resource.create({})

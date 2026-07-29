@@ -56,7 +56,7 @@ module SchemaReader
 
   # Loads and returns the parsed YAML document at +path+.
   def self.load_yaml(path)
-    YAML.safe_load(File.read(path))
+    YAML.safe_load_file(path)
   end
 
   # Returns a single Hash mapping every definition name to its schema body.
@@ -85,7 +85,7 @@ module SchemaReader
     end
 
     # The root configuration object itself.
-    defs['OpenTelemetryConfiguration'] = root.reject { |k, _| k == '$defs' }
+    defs['OpenTelemetryConfiguration'] = root.except('$defs')
     defs
   end
 end
@@ -190,9 +190,29 @@ module ConstantsGenerator
   # Generates the full Ruby source for all object struct definitions in +defs+.
   def generate(defs)
     names = defs.keys.select { |n| struct?(defs, n) }.sort
-    parts = [header(names.size)]
-    names.each { |name| parts << render_struct(name, defs[name], defs) }
-    parts.join("\n")
+    body = names.map { |name| render_struct(name, defs[name], defs) }.join("\n")
+    header(names.size) + wrap_in_namespace(body)
+  end
+
+  # Indents every non-blank line of +text+ by +spaces+ spaces.
+  def indent(text, spaces)
+    pad = ' ' * spaces
+    text.each_line.map { |line| line.strip.empty? ? line : "#{pad}#{line}" }.join
+  end
+
+  # Nests the generated struct definitions under OpenTelemetry::OtelConfig::Model
+  # so they don't leak unqualified constant names into the host application.
+  def wrap_in_namespace(body)
+    <<~RUBY
+      module OpenTelemetry
+        module OtelConfig
+          # Generated struct definitions mirroring the OpenTelemetry configuration schema.
+          module Model
+      #{indent(body.rstrip, 6)}
+          end
+        end
+      end
+    RUBY
   end
 
   # Returns the frozen-string-literal header comment for the generated file.
@@ -215,7 +235,7 @@ end
 namespace :generate do
   desc "Download OTel configuration schema (#{SCHEMA_VERSION}) and regenerate lib/opentelemetry/constants/generated_constants.rb"
   task :constants do
-    schema_dir = ENV['SCHEMA_DIR']
+    schema_dir = ENV.fetch('SCHEMA_DIR', nil)
 
     if schema_dir
       puts "Using local schema directory: #{schema_dir}"

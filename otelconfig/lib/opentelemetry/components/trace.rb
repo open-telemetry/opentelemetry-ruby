@@ -95,7 +95,7 @@ module OpenTelemetry
           endpoint: cfg.endpoint,
           headers: headers.empty? ? nil : headers,
           compression: cfg.compression,
-          timeout: cfg.timeout && cfg.timeout / 1000.0 # YAML ms → Ruby seconds
+          timeout: cfg.timeout && (cfg.timeout / 1000.0) # YAML ms → Ruby seconds
         }.compact
 
         OpenTelemetry::Exporter::OTLP::Exporter.new(**opts)

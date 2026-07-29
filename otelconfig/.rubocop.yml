@@ -14,6 +14,9 @@ Metrics/ClassLength:
   Enabled: false
 Metrics/ModuleLength:
   Max: 150
+  Exclude:
+    - lib/tasks/generate_constants.rake
+    - lib/opentelemetry/constants/generated_constants.rb
 Style/DocumentationMethod:
   Exclude:
     - lib/opentelemetry/constants/generated_constants.rb
@@ -23,3 +26,6 @@ Naming/MethodParameterName:
 Lint/StructNewOverride:
   Exclude:
     - lib/opentelemetry/constants/generated_constants.rb
+Style/OneClassPerFile:
+  Exclude:
+    - lib/tasks/generate_constants.rake

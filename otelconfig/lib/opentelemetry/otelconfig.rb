@@ -58,7 +58,7 @@ module OpenTelemetry
 
           configure_instrumentation(config.instrumentation_development)
 
-          RubySDK.new(
+          OpenTelemetry::OtelConfig::RubySDK.new(
             tracer_provider: tracer_provider,
             propagator: propagators,
             resource: resource
@@ -68,7 +68,7 @@ module OpenTelemetry
 
       def parse_config_file(path)
         content = File.read(path)
-        OpenTelemetryConfiguration.from_hash(YAML.safe_load(content, permitted_classes: [Date, Time]))
+        OpenTelemetry::OtelConfig::Model::OpenTelemetryConfiguration.from_hash(YAML.safe_load(content, permitted_classes: [Date, Time]))
       rescue Errno::ENOENT => e
         OpenTelemetry.logger.error("Config file not found: #{e.message}")
         nil
