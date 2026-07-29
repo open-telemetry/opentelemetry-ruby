@@ -10,7 +10,7 @@ require 'bundler/setup'
 require 'net/http'
 require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'
-require 'opentelemetry_otelconfig'
+require 'opentelemetry-otelconfig'
 
 sdk = OpenTelemetry::OtelConfig.configure
 OpenTelemetry.tracer_provider = sdk.tracer_provider

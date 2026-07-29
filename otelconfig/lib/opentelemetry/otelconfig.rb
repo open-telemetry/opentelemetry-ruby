@@ -21,7 +21,7 @@ module OpenTelemetry
     class << self
       # Entry point
       def configure
-        config_path = ENV[ENV_CONFIG_FILE]
+        config_path = ENV.fetch(ENV_CONFIG_FILE, nil)
 
         if config_path.to_s.empty?
           OpenTelemetry.logger.info('No OTEL_CONFIG_FILE defined.')
@@ -40,30 +40,43 @@ module OpenTelemetry
       private
 
       def apply(config)
-        return if config.nil?
+        return noop_sdk if config.nil?
 
         unless defined?(OpenTelemetry::SDK)
           warn '[opentelemetry-otelconfig] opentelemetry-sdk is not loaded. ' \
                'Add `gem "opentelemetry-sdk"` to your Gemfile.'
-          return
+          return noop_sdk
         end
 
         if config.disabled
           OpenTelemetry.logger.info('OpenTelemetry SDK disabled by configuration.')
+          noop_sdk
         else
           resource = build_resource(config.resource)
+
+          # tracer_provider will be noop if opentelemetry-sdk is not installed
           tracer_provider = Trace.build_tracer_provider(config.tracer_provider, resource)
 
           propagators = configure_propagation(config.propagator)
 
           configure_instrumentation(config.instrumentation_development)
 
-          OpenTelemetry::OtelConfig::RubySDK.new(
+          RubySDK.new(
             tracer_provider: tracer_provider,
             propagator: propagators,
             resource: resource
           )
         end
+      end
+
+      # A RubySDK backed entirely by no-op components, returned whenever
+      # configuration is absent, invalid, disabled, or the SDK gem isn't loaded.
+      def noop_sdk
+        RubySDK.new(
+          tracer_provider: OpenTelemetry::Trace::TracerProvider.new,
+          propagator: OpenTelemetry::Context::Propagation::NoopTextMapPropagator.new,
+          resource: defined?(OpenTelemetry::SDK) ? OpenTelemetry::SDK::Resources::Resource.create({}) : nil
+        )
       end
 
       def parse_config_file(path)
