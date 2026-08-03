@@ -17,14 +17,16 @@ module OpenTelemetry
         #
         # Returns a new {Meter} instance.
         #
-        # @param [String] name Instrumentation package name
-        # @param [String] version Instrumentation package version
+        # @param [String] name Instrumentation scope name
+        # @param [String] version Instrumentation scope version
+        # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Meter]
-        def initialize(name, version, meter_provider)
+        def initialize(name, version, meter_provider, attributes: nil)
           @mutex = Mutex.new
           @instrument_registry = {}
-          @instrumentation_scope = InstrumentationScope.new(name, version)
+          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
           @meter_provider = meter_provider
         end
 
