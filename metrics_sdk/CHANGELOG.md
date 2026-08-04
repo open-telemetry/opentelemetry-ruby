@@ -2,7 +2,6 @@
 
 ### v0.16.0 / 2026-08-04
 
-* ADDED: Add attributes support to instrumentation scope for tracers (#2094)
 * ADDED: Add attributes to Meter InstrumentationScope (#2273)
 
 ### v0.15.0 / 2026-06-16
