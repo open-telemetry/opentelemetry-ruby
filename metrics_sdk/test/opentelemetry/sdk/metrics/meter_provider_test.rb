@@ -33,6 +33,49 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
       _(meter_a).must_equal(meter_b)
     end
+
+    it 'accepts attributes' do
+      meter = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value' })
+
+      _(meter).must_be_instance_of(OpenTelemetry::SDK::Metrics::Meter)
+    end
+
+    it 'returns the same meter for the same name, version, and attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: { 'key' => 'value' })
+      meter_b = OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: { 'key' => 'value' })
+
+      _(meter_a).must_equal(meter_b)
+    end
+
+    it 'returns different meters for different attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value1' })
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value2' })
+
+      _(meter_a).wont_equal(meter_b)
+    end
+
+    it 'returns different meters for attributes vs no attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test')
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value' })
+
+      _(meter_a).wont_equal(meter_b)
+    end
+
+    it 'treats nil attributes the same as no attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test')
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: nil)
+
+      _(meter_a).must_equal(meter_b)
+    end
+
+    it 'does not allow mutation of attributes after meter creation' do
+      attrs = { 'key' => 'value' }
+      meter_a = OpenTelemetry.meter_provider.meter('test', attributes: attrs)
+      attrs['key'] = 'mutated'
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value' })
+
+      _(meter_a).must_equal(meter_b)
+    end
   end
 
   describe '#shutdown' do
