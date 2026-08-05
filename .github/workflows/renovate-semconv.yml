@@ -6,7 +6,6 @@ on:
     paths:
       - '.github/workflows/renovate-semconv.yml'
       - 'semantic_conventions/compose.yml'
-      - 'semantic_conventions/Rakefile'
     branches:
       - main
 
