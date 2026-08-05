@@ -61,11 +61,13 @@ module OpenTelemetry
 
           configure_instrumentation(config.instrumentation_development)
 
-          RubySDK.new(
+          ruby_sdk = RubySDK.new(
             tracer_provider: tracer_provider,
             propagator: propagators,
             resource: resource
           )
+          init_otel_sdk(ruby_sdk)
+          ruby_sdk
         end
       end
 
@@ -88,6 +90,11 @@ module OpenTelemetry
       rescue Psych::SyntaxError => e
         OpenTelemetry.logger.error("YAML parse error: #{e.message}")
         nil
+      end
+
+      def init_otel_sdk(ruby_sdk)
+        OpenTelemetry.tracer_provider = ruby_sdk.tracer_provider if ruby_sdk.tracer_provider
+        OpenTelemetry.propagation = ruby_sdk.propagator if ruby_sdk.propagator
       end
     end
   end

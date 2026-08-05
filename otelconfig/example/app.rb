@@ -12,10 +12,7 @@ require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'
 require 'opentelemetry-otelconfig'
 
-sdk = OpenTelemetry::OtelConfig.configure
-OpenTelemetry.tracer_provider = sdk.tracer_provider
-OpenTelemetry.propagation = sdk.propagator if sdk&.propagator
-
+OpenTelemetry::OtelConfig.configure
 tracer = OpenTelemetry.tracer_provider.tracer('otelconfig-example', '1.0.0')
 
 tracer.in_span('process-order', attributes: { 'order.id' => 'ORD-001', 'order.items' => 3 }) do |span|
