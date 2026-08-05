@@ -48,6 +48,8 @@ desc 'update semantic conventions'
 task generate: %i[update_spec_version_constant generate_require_rollups generate_autoload_manifest]
 
 SPEC_VERSION = '1.43.0'
+semconv_source_dir = Pathname.new('./tmp/semconvrepo')
+semconv_output_dir = Pathname.new('./lib/opentelemetry/semconv')
 
 desc 'Run safe autocorrect on Rubocop to fix spacing issues'
 task :rubocop_autocorrect do
