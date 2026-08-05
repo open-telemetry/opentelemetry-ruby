@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, edited]
     paths:
+      - '.github/workflows/renovate-semconv.yml'
+      - 'semantic_conventions/compose.yml'
       - 'semantic_conventions/Rakefile'
     branches:
       - main
@@ -53,7 +55,6 @@ jobs:
           fi
 
       - name: Regenerate semantic conventions
-        if: steps.check_changes.outputs.changed == 'true'
         working-directory: semantic_conventions
         run: bundle exec rake generate
 
