@@ -31,7 +31,22 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :propagators, :error_handler, :id_generator
+      attr_writer :propagators, :id_generator
+
+      # @!attribute [w] error_handler
+      #   Configures the error handler that will be installed on
+      #   OpenTelemetry during SDK configuration.
+      #
+      #   Assigned object must respond to +#call+ and accept the keyword
+      #   arguments +exception:+ and +message:+.
+      #
+      #   @example Configure a custom error handler during SDK setup
+      #     OpenTelemetry::SDK.configure do |c|
+      #       c.error_handler = lambda do |exception: nil, message: nil|
+      #         OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
+      #       end
+      #     end
+      attr_writer :error_handler
 
       def initialize
         @instrumentation_names = []
