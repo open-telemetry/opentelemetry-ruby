@@ -7,9 +7,10 @@ services:
       - ./templates:/templates:ro
       - ./:/output
     working_dir: /output
-    entrypoint: ["registry", "generate"]
     command:
       [
+        "registry",
+        "generate",
         "--registry=/source",
         "--templates=/templates",
         "ruby",
