@@ -18,9 +18,28 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
 
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Create otelbot app token
+        if: ${{ github.event.pull_request.head.repo.fork == false }}
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
+          private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
+          permission-contents: write
+
+      - name: Fork checkout
+        if: ${{ github.event.pull_request.head.repo.fork == false }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref }}
+          token: ${{ steps.app-token.outputs.token }}
+          # zizmor: ignore[artipacked] Credentials are required by the Renovate branch push below.
+          persist-credentials: true
+
+      - name: Local checkout
+        if: ${{ github.event.pull_request.head.repo.fork == true }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
           persist-credentials: false
 
       - name: Set up Ruby
@@ -54,7 +73,17 @@ jobs:
           fi
 
       - name: Log changes
-        if: steps.changes.outputs.spec_version == 'false' && steps.changes.outputs.files == 'true'
+        if: ${{ steps.changes.outputs.spec_version == 'false' && steps.changes.outputs.files == 'true' }}
         run: |
           git diff --cached
           return 1
+
+      - name: Commit and push changes
+        if: ${{ steps.changes.outputs.spec_version == 'true' && steps.changes.outputs.files == 'true' }}
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          git config user.name "otelbot"
+          git config user.email "197425009+otelbot@users.noreply.github.com"
+          git commit -m "chore: regenerate semantic conventions"
+          git push origin "HEAD:${HEAD_REF}"
