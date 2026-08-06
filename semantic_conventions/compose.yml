@@ -13,6 +13,7 @@ services:
         "generate",
         "--registry=/source",
         "--templates=/templates",
+        "--v2=true",
         "ruby",
         "/output/lib/opentelemetry/semconv"
       ]
