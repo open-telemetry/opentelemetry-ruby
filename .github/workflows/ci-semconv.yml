@@ -7,6 +7,8 @@ on:
       - '.github/workflows/ci-semconv.yml'
       - 'semantic_conventions/compose.yml'
       - 'semantic_conventions/Rakefile'
+      - 'semantic_conventions/lib/**'
+      - 'semantic_conventions/templates/**'
     branches:
       - main
 
@@ -76,6 +78,7 @@ jobs:
         if: ${{ steps.changes.outputs.spec_version == 'false' && steps.changes.outputs.files == 'true' }}
         run: |
           git diff --cached
+          echo "::error:: The semantic convention files are out of date. If the file changes are intended, commit the updated files locally."
           return 1
 
       - name: Commit and push changes
