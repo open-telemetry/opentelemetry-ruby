@@ -9,11 +9,13 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # Util module provide essential functionality for exporter
-        module Util
+        module Util # rubocop:disable Metrics/ModuleLength
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
+          RESPONSE_BODY_LIMIT = 4_194_304 # 4 MB
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           DEFAULT_USER_AGENT = "OTel-OTLP-MetricsExporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
+          private_constant(:RESPONSE_BODY_LIMIT)
 
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
             http = Net::HTTP.new(uri.hostname, uri.port)
@@ -110,7 +112,13 @@ module OpenTelemetry
             true
           end
 
-          def log_status(body)
+          def log_status(body, truncated: false)
+            if truncated
+              OpenTelemetry.handle_error(message: "OTLP metrics_exporter received an oversized error response body (truncated at #{RESPONSE_BODY_LIMIT} bytes)")
+              return
+            end
+            return if body.nil? || body.empty?
+
             status = Google::Rpc::Status.decode(body)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
@@ -121,6 +129,47 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP metrics_exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
+          end
+
+          # Drains and discards the body without buffering it, preserving keep-alive.
+          def drain_body(response)
+            response.read_body { |_| } # rubocop:disable Lint/EmptyBlock
+          end
+
+          def read_response_body(response)
+            return ['', false] if response.nil?
+
+            content_length = response['content-length']&.to_i
+            if content_length && content_length > RESPONSE_BODY_LIMIT
+              @http.finish # closes socket without reading any of the oversized body
+              return ['', true]
+            end
+
+            # Stream read with 4 MB limit
+            body = +''
+            truncated = false
+
+            response.read_body do |chunk|
+              remaining = RESPONSE_BODY_LIMIT - body.bytesize
+              body << chunk.byteslice(0, remaining)
+
+              if chunk.bytesize > remaining
+                truncated = true
+                @http.finish # closes socket, nil's the body or else net/http will attempt to read the rest of the response
+                break
+              end
+            end
+
+            body.force_encoding('UTF-8')
+            body.scrub! if truncated # truncation may have split a multi-byte character
+            [body, truncated]
+          rescue IOError
+            raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
+
+            [body || '', truncated]
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
+            ['', false]
           end
 
           def handle_redirect(location); end

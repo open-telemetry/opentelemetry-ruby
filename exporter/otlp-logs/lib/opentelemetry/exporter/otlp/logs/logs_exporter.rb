@@ -31,7 +31,8 @@ module OpenTelemetry
           # Default timeouts in seconds.
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
-          private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
+          RESPONSE_BODY_LIMIT = 4_194_304 # 4 MB
+          private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :RESPONSE_BODY_LIMIT)
 
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
@@ -167,37 +168,48 @@ module OpenTelemetry
               @http.read_timeout = remaining_timeout
               @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
-              response = @http.request(request)
+              result = nil
+              should_redo = false
 
-              case response
-              when Net::HTTPSuccess
-                response.body # Read and discard body
-                SUCCESS
-              when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                response.body # Read and discard body
-                handle_http_error(response)
-                redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1)
-                FAILURE
-              when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                response.body # Read and discard body
-                handle_http_error(response)
-                redo if backoff?(retry_count: retry_count += 1)
-                FAILURE
-              when Net::HTTPNotFound
-                handle_http_error(response)
-                FAILURE
-              when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-                log_status(response.body)
-                FAILURE
-              when Net::HTTPRedirection
-                @http.finish
-                handle_redirect(response['location'])
-                redo if backoff?(retry_after: 0, retry_count: retry_count += 1)
-              else
-                @http.finish
-                handle_http_error(response)
-                FAILURE
+              @http.request(request) do |response|
+                case response
+                when Net::HTTPSuccess
+                  drain_body(response)
+                  result = SUCCESS
+                when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
+                  drain_body(response)
+                  handle_http_error(response)
+                  should_redo = backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1)
+                  result = FAILURE
+                when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
+                  drain_body(response)
+                  handle_http_error(response)
+                  should_redo = backoff?(retry_count: retry_count += 1)
+                  result = FAILURE
+                when Net::HTTPNotFound
+                  drain_body(response)
+                  handle_http_error(response)
+                  result = FAILURE
+                when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+                  body, truncated = read_response_body(response)
+                  log_status(body, truncated: truncated)
+                  result = FAILURE
+                when Net::HTTPRedirection
+                  drain_body(response)
+                  @http.finish
+                  handle_redirect(response['location'])
+                  should_redo = backoff?(retry_after: 0, retry_count: retry_count += 1)
+                else
+                  drain_body(response)
+                  @http.finish
+                  handle_http_error(response)
+                  result = FAILURE
+                end
               end
+
+              redo if should_redo
+
+              result
             rescue Net::OpenTimeout, Net::ReadTimeout => e
               OpenTelemetry.handle_error(exception: e)
               retry if backoff?(retry_count: retry_count += 1)
@@ -238,7 +250,13 @@ module OpenTelemetry
             # TODO: figure out destination and reinitialize @http and @path
           end
 
-          def log_status(body)
+          def log_status(body, truncated: false)
+            if truncated
+              OpenTelemetry.handle_error(message: "OTLP logs exporter received an oversized error response body (truncated at #{RESPONSE_BODY_LIMIT} bytes)")
+              return
+            end
+            return if body.nil? || body.empty?
+
             status = Google::Rpc::Status.decode(body)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
@@ -248,6 +266,46 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP logs exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          end
+
+          # Drains and discards the body without buffering it, preserving keep-alive.
+          def drain_body(response)
+            response.read_body { |_| } # rubocop:disable Lint/EmptyBlock
+          end
+
+          def read_response_body(response) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+            return ['', false] if response.nil?
+
+            content_length = response['content-length']&.to_i
+            if content_length && content_length > RESPONSE_BODY_LIMIT
+              @http.finish # closes socket without reading any of the oversized body
+              return ['', true]
+            end
+
+            body = +''
+            truncated = false
+
+            response.read_body do |chunk|
+              remaining = RESPONSE_BODY_LIMIT - body.bytesize
+              body << chunk.byteslice(0, remaining)
+
+              if chunk.bytesize > remaining
+                truncated = true
+                @http.finish # closes socket, nil's the body or else net/http will attempt to read the rest of the response
+                break
+              end
+            end
+
+            body.force_encoding('UTF-8')
+            body.scrub! if truncated # truncation may have split a multi-byte character
+            [body, truncated]
+          rescue IOError
+            raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
+
+            [body || '', truncated]
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
+            ['', false]
           end
 
           def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
