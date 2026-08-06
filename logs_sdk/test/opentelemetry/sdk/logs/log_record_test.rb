@@ -154,6 +154,36 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
       end
     end
 
+    describe '#attributes=' do
+      it 'updates total_recorded_attributes when reassigned' do
+        log_record = Logs::LogRecord.new(attributes: { 'key1' => 'value1' })
+        assert_equal(1, log_record.instance_variable_get(:@total_recorded_attributes))
+
+        log_record.attributes = { 'key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3' }
+
+        assert_equal(3, log_record.instance_variable_get(:@total_recorded_attributes))
+        assert_equal(3, log_record.to_log_record_data.total_recorded_attributes)
+      end
+
+      it 'sets total_recorded_attributes to 0 when set to nil' do
+        log_record = Logs::LogRecord.new(attributes: { 'key1' => 'value1' })
+
+        log_record.attributes = nil
+
+        assert_equal(0, log_record.instance_variable_get(:@total_recorded_attributes))
+        assert_nil(log_record.attributes)
+      end
+
+      it 'applies attribute count limits when reassigned' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 1)
+        log_record = Logs::LogRecord.new(log_record_limits: limits, attributes: { 'a' => 'a' })
+
+        log_record.attributes = { 'old' => 'old', 'new' => 'new' }
+
+        assert_equal({ 'new' => 'new' }, log_record.attributes)
+      end
+    end
+
     describe 'attribute value limit' do
       it 'truncates the values that are too long' do
         length_limit = 32
