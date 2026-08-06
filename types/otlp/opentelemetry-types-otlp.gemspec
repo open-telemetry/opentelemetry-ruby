@@ -6,16 +6,16 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/exporter/otlp/version'
+require 'opentelemetry/types/otlp/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-exporter-otlp'
-  spec.version     = OpenTelemetry::Exporter::OTLP::VERSION
+  spec.name        = 'opentelemetry-types-otlp'
+  spec.version     = OpenTelemetry::Types::OTLP::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
-  spec.summary     = 'OTLP exporter for the OpenTelemetry framework'
-  spec.description = 'OTLP exporter for the OpenTelemetry framework'
+  spec.summary     = 'Common types for OTLP'
+  spec.description = 'Common types for OTLP'
   spec.homepage    = 'https://github.com/open-telemetry/opentelemetry-ruby'
   spec.license     = 'Apache-2.0'
 
@@ -26,16 +26,11 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'googleapis-common-protos-types', '~> 1.3'
-  spec.add_dependency 'google-protobuf', '>= 3.18'
-  spec.add_dependency 'opentelemetry-api', '~> 1.1'
-  spec.add_dependency 'opentelemetry-common', '~> 0.20'
-  spec.add_dependency 'opentelemetry-exporter-otlp-common'
-  spec.add_dependency 'opentelemetry-sdk', '~> 1.10'
-  spec.add_dependency 'opentelemetry-semantic_conventions'
+  spec.add_dependency 'google-protobuf', '~> 3.19'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/exporter/otlp"
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/types/otlp"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
