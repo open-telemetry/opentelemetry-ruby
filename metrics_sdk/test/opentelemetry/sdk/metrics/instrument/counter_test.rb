@@ -30,4 +30,28 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Counter do
     _(last_snapshot[0].data_points[0].attributes).must_equal('foo' => 'bar')
     _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
+
+  it 'normalizes valid UTF-8 bytes in attributes' do
+    city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+    counter.add(1, attributes: { 'city' => city })
+    metric_exporter.pull
+    value = metric_exporter.metric_snapshots[0].data_points[0].attributes['city']
+
+    _(value).must_equal('Montréal')
+    _(value.encoding).must_equal(::Encoding::UTF_8)
+    _(city.encoding).must_equal(::Encoding::ASCII_8BIT)
+  end
+
+  it 'drops attributes that are not valid UTF-8' do
+    invalid = "\xC3".dup.force_encoding(::Encoding::ASCII_8BIT)
+
+    OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+      counter.add(1, attributes: { 'invalid' => invalid })
+      metric_exporter.pull
+
+      _(metric_exporter.metric_snapshots[0].data_points[0].attributes).must_be_empty
+      _(log_stream.string).must_match(/invalid UTF-8 encoding.*invalid.*Dropping attribute/)
+    end
+  end
 end
