@@ -1,5 +1,10 @@
 # Release History: opentelemetry-semantic_conventions
 
+### v1.44.0 / 2026-08-07
+
+* ADDED: Weaver provided by docker compose (#2280)
+* ADDED: Update dependency open-telemetry/semantic-conventions to v1.44.0 (#2279)
+
 ### v1.43.0 / 2026-07-08
 
 * ADDED: Update dependency open-telemetry/semantic-conventions to v1.43.0 (#2218)
