@@ -77,10 +77,13 @@ The collector exporter can be configured explicitly in code, or via environment 
 | `headers:`                | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
 | `compression:`            | `OTEL_EXPORTER_OTLP_COMPRESSION`             | `"gzip"`                            |
 | `timeout:`                | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                |
+| `protocol:`               | `OTEL_EXPORTER_OTLP_PROTOCOL`                | `"http/protobuf"`                   |
 | `ssl_verify_mode:`        | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER`          |
 |                           | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                     |
 
 `ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.5.1/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
+
+`protocol:` selects the OTLP encoding: `"http/protobuf"` (the default) sends binary Protobuf, and `"http/json"` sends spec-compliant OTLP/JSON.
 
 ## How can I get involved?
 

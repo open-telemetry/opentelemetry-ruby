@@ -37,8 +37,10 @@ module OpenTelemetry
                          ssl_verify_mode: fetch_ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         protocol: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+            raise ArgumentError, "unsupported protocol #{protocol}" unless %w[http/json http/protobuf].include?(protocol)
 
             @uri = prepare_endpoint(endpoint)
 
@@ -48,6 +50,8 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @format = protocol == 'http/json' ? :json : :protobuf
+            @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
 
@@ -61,7 +65,8 @@ module OpenTelemetry
           def export(span_data, timeout: nil)
             return FAILURE if @shutdown
 
-            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data), timeout: timeout)
+            bytes = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data, format: @format)
+            send_bytes(bytes, timeout: timeout)
           end
 
           # Called when {OpenTelemetry::SDK::Trace::TracerProvider#force_flush} is called, if
@@ -135,7 +140,7 @@ module OpenTelemetry
                        bytes
                      end
               request.body = body
-              request.add_field('Content-Type', 'application/x-protobuf')
+              request.add_field('Content-Type', @content_type)
               @headers.each { |key, value| request.add_field(key, value) }
 
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
