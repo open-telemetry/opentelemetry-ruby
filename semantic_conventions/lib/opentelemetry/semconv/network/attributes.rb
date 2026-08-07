@@ -23,7 +23,7 @@ module OpenTelemetry
     module NETWORK
       # @!group Attribute Names
 
-      # Local address of the network connection - IP address or Unix domain socket name.
+      # Local address of the network connection - IP address or UNIX domain socket name.
       #
       # @note Stability Level: stable
       NETWORK_LOCAL_ADDRESS = 'network.local.address'
@@ -33,7 +33,7 @@ module OpenTelemetry
       # @note Stability Level: stable
       NETWORK_LOCAL_PORT = 'network.local.port'
 
-      # Peer address of the network connection - IP address or Unix domain socket name.
+      # Peer address of the network connection - IP address or UNIX domain socket name.
       #
       # @note Stability Level: stable
       NETWORK_PEER_ADDRESS = 'network.peer.address'
