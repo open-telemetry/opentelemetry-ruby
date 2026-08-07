@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/common'
+require 'opentelemetry/exporter/otlp/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
@@ -56,10 +57,9 @@ module OpenTelemetry
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                        metrics_reporter: nil)
-          @uri = prepare_endpoint(endpoint)
-
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
+          @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/traces', 'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
           @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
           @path = @uri.path
@@ -414,21 +414,6 @@ module OpenTelemetry
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           end
           result
-        end
-
-        def prepare_endpoint(endpoint)
-          endpoint ||= ENV.fetch('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', nil)
-          if endpoint.nil?
-            endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
-            endpoint += '/' unless endpoint.end_with?('/')
-            URI.join(endpoint, 'v1/traces')
-          elsif endpoint.strip.empty?
-            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
-          else
-            URI(endpoint)
-          end
-        rescue URI::InvalidURIError
-          raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
         end
 
         def prepare_headers(config_headers)
