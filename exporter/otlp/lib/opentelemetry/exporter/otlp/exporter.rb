@@ -55,12 +55,14 @@ module OpenTelemetry
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                       metrics_reporter: nil)
+                       metrics_reporter: nil,
+                       proxy_address: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_PROXY_ADDRESS', 'OTEL_EXPORTER_OTLP_PROXY_ADDRESS'),
+                       proxy_port: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_PROXY_PORT', 'OTEL_EXPORTER_OTLP_PROXY_PORT'))
           @uri = prepare_endpoint(endpoint)
 
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-          @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+          @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file, proxy_address: proxy_address, proxy_port: proxy_port)
 
           @path = @uri.path
           @headers = prepare_headers(headers)
@@ -125,8 +127,8 @@ module OpenTelemetry
           flags
         end
 
-        def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-          http = Net::HTTP.new(uri.hostname, uri.port)
+        def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file, proxy_address: nil, proxy_port: nil)
+          http = Net::HTTP.new(uri.hostname, uri.port, proxy_address, proxy_port)
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = ssl_verify_mode
           http.ca_file = certificate_file unless certificate_file.nil?
