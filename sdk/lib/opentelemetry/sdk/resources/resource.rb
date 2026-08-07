@@ -15,7 +15,7 @@ module OpenTelemetry
 
           # Returns a newly created {Resource} with the specified attributes
           #
-          # @param [Hash{String => String, Numeric, Boolean} attributes Hash of key-value pairs to be used
+          # @param [Hash{String => String, Numeric, Boolean}] attributes Hash of key-value pairs to be used
           #   as attributes for this resource
           # @raise [ArgumentError] If attribute keys and values are not strings
           # @return [Resource]
@@ -30,10 +30,16 @@ module OpenTelemetry
             new(frozen_attributes)
           end
 
+          # Returns the default resource for the current process and SDK.
+          #
+          # @return [Resource]
           def default
             @default ||= create(SemanticConventions::Resource::SERVICE_NAME => 'unknown_service').merge(process).merge(telemetry_sdk).merge(service_name_from_env)
           end
 
+          # Returns a resource describing this telemetry SDK.
+          #
+          # @return [Resource]
           def telemetry_sdk
             resource_attributes = {
               SemanticConventions::Resource::TELEMETRY_SDK_NAME => 'opentelemetry',
@@ -53,6 +59,9 @@ module OpenTelemetry
             create(resource_attributes)
           end
 
+          # Returns a resource describing the current process.
+          #
+          # @return [Resource]
           def process
             resource_attributes = {
               SemanticConventions::Resource::PROCESS_PID => Process.pid,
