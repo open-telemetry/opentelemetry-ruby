@@ -7,7 +7,9 @@
     <meta http-equiv="refresh" content="0; url=https://opentelemetry.io/ecosystem/registry/?language=ruby">
 
     <script>
-      window.location.href = "https://opentelemetry.io/ecosystem/registry/?language=ruby";
+      const m = location.pathname.match(/^\/opentelemetry-ruby\/([\w-]+)\/(v[0-9.])*/);
+      location.replace(m ? `https://rubydoc.info/gems/${m[1]}/${m[2]}` :
+        'https://opentelemetry.io/ecosystem/registry/?language=ruby');
     </script>
     <title>Redirecting…</title>
   </head>
