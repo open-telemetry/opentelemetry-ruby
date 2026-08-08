@@ -8,8 +8,7 @@
 
     <script>
       const m = location.pathname.match(/^\/opentelemetry-ruby\/([\w-]+)(\/)?(v[0-9.])*/);
-      const n = m[2] ? m[2] : '';
-      location.replace(m ? `https://rubydoc.info/gems/${m[1]}/${n}` :
+      location.replace(m ? `https://rubydoc.info/gems/${m[1]}` :
         'https://opentelemetry.io/ecosystem/registry/?language=ruby');
     </script>
     <title>Redirecting…</title>
