@@ -33,6 +33,9 @@ module OpenTelemetry
 
       attr_writer :propagators, :error_handler, :id_generator
 
+      Components = Struct.new(:tracer_provider, :propagators, keyword_init: true)
+      Config = Struct.new(:propagator, :tracer_provider, keyword_init: true)
+
       def initialize
         @instrumentation_names = []
         @instrumentation_config_map = {}
@@ -142,12 +145,12 @@ module OpenTelemetry
       #   - setup tracer_provider, meter_provider, and logger_provider
       #   - install instrumentation
       def configure
+        configuration = parse(ENV.fetch('OTEL_CONFIG_FILE', ''))
         OpenTelemetry.logger = logger
         OpenTelemetry.error_handler = error_handler
-        configure_propagation
-        configure_span_processors
-        tracer_provider.id_generator = @id_generator
-        OpenTelemetry.tracer_provider = tracer_provider
+        components = create(configuration)
+        OpenTelemetry.propagation = Context::Propagation::CompositeTextMapPropagator.compose_propagators(components.propagators.compact)
+        OpenTelemetry.tracer_provider = components.tracer_provider
         metrics_configuration_hook
         logs_configuration_hook
         install_instrumentation
@@ -160,7 +163,7 @@ module OpenTelemetry
       def logs_configuration_hook; end
 
       def tracer_provider
-        @tracer_provider ||= Trace::TracerProvider.new(resource: @resource)
+        @tracer_provider ||= Trace::TracerProviderConfig.new
       end
 
       def check_use_mode!(mode)
@@ -178,8 +181,8 @@ module OpenTelemetry
       end
 
       def configure_span_processors
-        processors = @span_processors.empty? ? wrapped_exporters_from_env.compact : @span_processors
-        processors.each { |p| tracer_provider.add_span_processor(p) }
+        @span_processors += tracer_provider&.span_processors || []
+        @span_processors.empty? ? wrapped_exporters_from_env.compact : @span_processors
       end
 
       def wrapped_exporters_from_env # rubocop:disable Metrics/CyclomaticComplexity
@@ -206,8 +209,20 @@ module OpenTelemetry
         end
       end
 
-      def configure_propagation # rubocop:disable Metrics/CyclomaticComplexity
-        propagators = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',').uniq.collect do |propagator|
+      def configure_propagation(propagator_config)
+        if propagator_config
+          propagator_list = propagator_config.composite_list&.split(',') || []
+          Array(propagator_config.composite&.instance_variables).each do |propagator|
+            propagatorList << propagator.to_s.delete_prefix('@').strip
+          end
+        else
+          propagator_list = ENV.fetch('OTEL_PROPAGATORS', 'tracecontext,baggage').split(',')
+        end
+        build_propagators(propagator_list)
+      end
+
+      def build_propagators(propagator_list) # rubocop:disable Metrics/CyclomaticComplexity
+        propagator_list.uniq.collect do |propagator|
           case propagator
           when 'tracecontext' then OpenTelemetry::Trace::Propagation::TraceContext.text_map_propagator
           when 'baggage' then OpenTelemetry::Baggage::Propagation.text_map_propagator
@@ -222,7 +237,6 @@ module OpenTelemetry
             NoopTextMapPropagator.new
           end
         end
-        OpenTelemetry.propagation = Context::Propagation::CompositeTextMapPropagator.compose_propagators((@propagators || propagators).compact)
       end
 
       def fetch_propagator(name, class_name, gem_suffix = name)
@@ -237,6 +251,24 @@ module OpenTelemetry
       rescue NameError
         OpenTelemetry.logger.warn "The #{name} exporter cannot be configured - please add opentelemetry-exporter-#{name} to your Gemfile, spans will not be exported"
         nil
+      end
+
+      def parse(filepath)
+        Config.new
+      end
+
+      def create(config)
+        Components.new.tap do |c|
+          c.tracer_provider = Trace::TracerProvider.new(
+            sampler: tracer_provider&.sampler,
+            resource: @resource,
+            id_generator: @id_generator || tracer_provider&.id_generator,
+            span_limits: tracer_provider&.span_limits,
+            span_processors: configure_span_processors,
+            tracer_provider_config: config&.tracer_provider
+          )
+          c.propagators = @propagators || configure_propagation(config&.propagator)
+        end
       end
     end
   end
