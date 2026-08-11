@@ -12,7 +12,12 @@ require 'opentelemetry-sdk'
 require 'opentelemetry-instrumentation-all'
 require 'opentelemetry-otelconfig'
 
-OpenTelemetry::OtelConfig.configure
+sdk = OpenTelemetry::OtelConfig.install(
+  OpenTelemetry::OtelConfig.create(
+    OpenTelemetry::OtelConfig.parse(ENV.fetch('OTEL_CONFIG_FILE', nil))
+  )
+)
+
 tracer = OpenTelemetry.tracer_provider.tracer('otelconfig-example', '1.0.0')
 
 tracer.in_span('process-order', attributes: { 'order.id' => 'ORD-001', 'order.items' => 3 }) do |span|
@@ -54,4 +59,4 @@ tracer.in_span('http-requests') do
   end
 end
 
-OpenTelemetry.tracer_provider.shutdown
+sdk.shutdown

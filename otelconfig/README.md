@@ -30,7 +30,7 @@ Or, if you use [bundler][bundler-home], include `opentelemetry-otelconfig` in yo
 
 ### Automatic configuration via environment variable
 
-Set `OTEL_CONFIG_FILE` to the path of your YAML config file. Call `OpenTelemetry::OtelConfig.configure` early in your application; it returns a `RubySDK` value that you wire into the global OpenTelemetry state yourself.
+Set `OTEL_CONFIG_FILE` to the path of your YAML config file. Call `OpenTelemetry::OtelConfig.configure` early in your application; it installs the configured components as the global OpenTelemetry state and returns a `RubySDK` handle you can use to shut them down.
 
 ```sh
 OTEL_CONFIG_FILE=/path/to/otel-config.yaml bundle exec ruby app.rb
@@ -41,8 +41,7 @@ require 'opentelemetry-sdk'
 require 'opentelemetry-otelconfig'
 
 sdk = OpenTelemetry::OtelConfig.configure
-OpenTelemetry.tracer_provider = sdk.tracer_provider
-OpenTelemetry.propagation = sdk.propagator if sdk&.propagator
+at_exit { sdk.shutdown }
 
 tracer = OpenTelemetry.tracer_provider.tracer('my_app', '1.0.0')
 tracer.in_span('my-operation') do |span|
@@ -54,8 +53,25 @@ If you have a config file path at hand, call `configure_from_file` instead:
 
 ```ruby
 sdk = OpenTelemetry::OtelConfig.configure_from_file('/path/to/otel-config.yaml')
-OpenTelemetry.tracer_provider = sdk.tracer_provider
-OpenTelemetry.propagation = sdk.propagator if sdk&.propagator
+```
+
+### Parse, create, and install
+
+`configure` is a convenience wrapper around the three [SDK operations][sdk-operations]. Call them individually when you need to inspect the configuration model or delay installing the global state:
+
+```ruby
+config = OpenTelemetry::OtelConfig.parse(ENV['OTEL_CONFIG_FILE']) # => configuration model
+sdk    = OpenTelemetry::OtelConfig.create(config)                 # => RubySDK, no globals touched
+OpenTelemetry::OtelConfig.install(sdk)                            # => assigns the globals
+```
+
+Or
+```ruby
+sdk = OpenTelemetry::OtelConfig.install(
+  OpenTelemetry::OtelConfig.create(
+    OpenTelemetry::OtelConfig.parse(ENV.fetch('OTEL_CONFIG_FILE', nil))
+  )
+)
 ```
 
 ## YAML configuration reference
@@ -167,6 +183,7 @@ The `opentelemetry-otelconfig` gem is distributed under the Apache 2.0 license. 
 
 [opentelemetry-home]: https://opentelemetry.io
 [bundler-home]: https://bundler.io
+[sdk-operations]: https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/configuration/sdk.md#sdk-operations
 [repo-github]: https://github.com/open-telemetry/opentelemetry-ruby
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
