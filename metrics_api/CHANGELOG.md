@@ -1,5 +1,13 @@
 # Release History: opentelemetry-metrics-api
 
+### v0.7.0 / 2026-08-04
+
+* ADDED: Add attributes to Meter InstrumentationScope (#2273)
+
+### v0.6.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
 ### v0.6.0 / 2026-05-12
 
 * ADDED: Add git tag to source URI in gemspec (#2101)

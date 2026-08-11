@@ -59,7 +59,7 @@ module OpenTelemetry
 
         # File extension, excluding the leading dot.
         #
-        # When the file name has multiple extensions (example.tar.gz), only the last one should be captured ("gz", not "tar.gz").
+        # When the filename has multiple extensions (example.tar.gz), only the last one should be captured ("gz", not "tar.gz").
         #
         # @note Stability Level: development
         FILE_EXTENSION = 'file.extension'
@@ -67,7 +67,7 @@ module OpenTelemetry
         # Name of the fork. A fork is additional data associated with a filesystem object.
         #
         # On Linux, a resource fork is used to store additional data with a filesystem object. A file always has at least one fork for the data portion, and additional forks may exist.
-        # On NTFS, this is analogous to an Alternate Data Stream (ADS), and the default data stream for a file is just called $DATA. Zone.Identifier is commonly used by Windows to track contents downloaded from the Internet. An ADS is typically of the form: C:\path\to\filename.extension:some_fork_name, and some_fork_name is the value that should populate `fork_name`. `filename.extension` should populate `file.name`, and `extension` should populate `file.extension`. The full path, `file.path`, will include the fork name.
+        # On NTFS, this is analogous to an Alternate Data Stream (ADS), and the default data stream for a file is just called $DATA. Zone.Identifier is commonly used by Windows to track contents downloaded from the internet. An ADS is typically of the form: C:\path\to\filename.extension:some_fork_name, and some_fork_name is the value that should populate `fork_name`. `filename.extension` should populate `file.name`, and `extension` should populate `file.extension`. The full path, `file.path`, will include the fork name.
         #
         # @note Stability Level: development
         FILE_FORK_NAME = 'file.fork_name'
@@ -86,6 +86,21 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         FILE_INODE = 'file.inode'
+
+        # The lock mechanism such as noted by [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html)
+        #
+        # @note Stability Level: development
+        FILE_LOCK_MECHANISM = 'file.lock.mechanism'
+
+        # Mode of lock or operation such as documented by [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html)
+        #
+        # @note Stability Level: development
+        FILE_LOCK_MODE = 'file.lock.mode'
+
+        # The lock type as represented by i.e. [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/functions/fcntl.html)'s l_type.
+        #
+        # @note Stability Level: development
+        FILE_LOCK_TYPE = 'file.lock.type'
 
         # Mode of the file in octal representation.
         #
@@ -112,7 +127,7 @@ module OpenTelemetry
         # @note Stability Level: development
         FILE_OWNER_NAME = 'file.owner.name'
 
-        # Full path to the file, including the file name. It should include the drive letter, when appropriate.
+        # Full path to the file, including the filename. It should include the drive letter, when appropriate.
         #
         # @note Stability Level: development
         FILE_PATH = 'file.path'

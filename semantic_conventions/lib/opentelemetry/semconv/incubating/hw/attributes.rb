@@ -24,7 +24,7 @@ module OpenTelemetry
       module HW
         # @!group Attribute Names
 
-        # Design capacity in Watts-hours or Amper-hours
+        # Design capacity in Watts-hours or Ampere-hours
         #
         # @note Stability Level: development
         HW_BATTERY_CAPACITY = 'hw.battery.capacity'

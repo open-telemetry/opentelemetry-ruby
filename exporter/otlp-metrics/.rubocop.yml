@@ -6,26 +6,10 @@ AllCops:
     - "vendor/**/*"
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Max: 23
 Metrics/PerceivedComplexity:
-  Enabled: false
+  Max: 20
 Metrics/MethodLength:
-  Enabled: false
+  Max: 84
 Metrics/ClassLength:
-  Enabled: false
-Bundler/OrderedGems:
-  Exclude:
-    - gemfiles/**/*
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - gemfiles/**/*
-Style/ModuleFunction:
-  Enabled: false
-Style/StringLiterals:
-  Exclude:
-    - gemfiles/**/*
-Metrics/BlockLength:
-  Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-exporter-otlp-metrics.rb"
+  Max: 310

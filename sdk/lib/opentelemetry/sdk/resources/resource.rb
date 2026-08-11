@@ -41,7 +41,7 @@ module OpenTelemetry
               SemanticConventions::Resource::TELEMETRY_SDK_VERSION => OpenTelemetry::SDK::VERSION
             }
 
-            resource_pairs = ENV['OTEL_RESOURCE_ATTRIBUTES']
+            resource_pairs = ENV.fetch('OTEL_RESOURCE_ATTRIBUTES', nil)
             return create(resource_attributes) unless resource_pairs.is_a?(String)
 
             resource_pairs.split(',').each do |pair|
@@ -68,7 +68,7 @@ module OpenTelemetry
           private
 
           def service_name_from_env
-            service_name = ENV['OTEL_SERVICE_NAME']
+            service_name = ENV.fetch('OTEL_SERVICE_NAME', nil)
             create(SemanticConventions::Resource::SERVICE_NAME => service_name) unless service_name.nil?
           end
         end

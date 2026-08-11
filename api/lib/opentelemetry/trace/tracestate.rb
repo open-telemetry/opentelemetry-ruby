@@ -18,7 +18,7 @@ module OpenTelemetry
         # @param [String] header Encoding of the tracestate header defined by
         #   the W3C Trace Context specification https://www.w3.org/TR/trace-context/
         # @return [Tracestate] A new Tracestate instance or DEFAULT
-        def from_string(header) # rubocop:disable Metrics/CyclomaticComplexity:
+        def from_string(header) # rubocop:disable Metrics/CyclomaticComplexity
           return DEFAULT if header.nil? || header.empty?
 
           hash = header.split(',').each_with_object({}) do |member, memo|
@@ -75,7 +75,7 @@ module OpenTelemetry
       # @return [Tracestate]
       def initialize(hash)
         excess = hash.size - MAX_MEMBER_COUNT
-        hash = Hash[hash.drop(excess)] if excess.positive?
+        hash = hash.drop(excess).to_h if excess.positive?
         @hash = hash.freeze
       end
 
@@ -105,7 +105,7 @@ module OpenTelemetry
           return self
         end
 
-        h = Hash[@hash]
+        h = @hash.to_h.dup
         h[key] = value
         self.class.create(h)
       end
@@ -118,7 +118,7 @@ module OpenTelemetry
       def delete(key)
         return self unless @hash.key?(key)
 
-        h = Hash[@hash]
+        h = @hash.to_h.dup
         h.delete(key)
         self.class.create(h)
       end

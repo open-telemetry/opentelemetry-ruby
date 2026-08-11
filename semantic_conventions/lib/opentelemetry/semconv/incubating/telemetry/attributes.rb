@@ -29,12 +29,16 @@ module OpenTelemetry
         # Official auto instrumentation agents and distributions SHOULD set the `telemetry.distro.name` attribute to
         # a string starting with `opentelemetry-`, e.g. `opentelemetry-java-instrumentation`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_DISTRO_NAME}.
         TELEMETRY_DISTRO_NAME = 'telemetry.distro.name'
 
         # The version string of the auto instrumentation agent or distribution, if used.
         #
-        # @note Stability Level: development
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::TELEMETRY::TELEMETRY_DISTRO_VERSION}.
         TELEMETRY_DISTRO_VERSION = 'telemetry.distro.version'
 
         # The language of the telemetry SDK.

@@ -100,6 +100,11 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_FILESYSTEM_LIMIT = 'system.filesystem.limit'
 
+        # Filesystem lock counts.
+        #
+        # @note Stability Level: development
+        SYSTEM_FILESYSTEM_LOCK_COUNT = 'system.filesystem.lock.count'
+
         # Reports a filesystem's space usage across different states.
         #
         # The sum of all `system.filesystem.usage` values over the different `system.filesystem.state` attributes
@@ -140,6 +145,44 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_LINUX_AVAILABLE = 'system.memory.linux.available'
+
+        # Total number of hugepages available.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_LIMIT = 'system.memory.linux.hugepages.limit'
+
+        # System hugepage size in bytes.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_PAGE_SIZE = 'system.memory.linux.hugepages.page_size'
+
+        # Number of reserved hugepages.
+        #
+        # Hugepages for which a commitment to allocate has been made, but no allocation has yet been made.
+        # This is reported as a separate metric rather than a `usage` state because reserved pages are already counted in `free` pages.
+        # They represent a subset of free pages that cannot be used for non-reserved allocations.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_RESERVED = 'system.memory.linux.hugepages.reserved'
+
+        # Number of surplus hugepages.
+        #
+        # Overcommitted hugepages beyond the persistent pool.
+        # This is reported as a separate metric rather than a `usage` state because surplus pages can be in either `used` or `free` state.
+        # Including them in `usage` would break the convention that `usage` states sum to the `limit`.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_SURPLUS = 'system.memory.linux.hugepages.surplus'
+
+        # Number of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_USAGE = 'system.memory.linux.hugepages.usage'
+
+        # Percentage of hugepages in use by state.
+        #
+        # @note Stability Level: development
+        SYSTEM_MEMORY_LINUX_HUGEPAGES_UTILIZATION = 'system.memory.linux.hugepages.utilization'
 
         # Shared memory used (mostly by tmpfs).
         #
@@ -245,12 +288,12 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_PAGING_OPERATIONS = 'system.paging.operations'
 
-        # Unix swap or windows pagefile usage.
+        # UNIX swap or windows pagefile usage.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_USAGE = 'system.paging.usage'
 
-        # Swap (unix) or pagefile (windows) utilization.
+        # Swap (UNIX) or pagefile (windows) utilization.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_UTILIZATION = 'system.paging.utilization'
@@ -264,6 +307,15 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_PROCESS_CREATED = 'system.process.created'
+
+        # The maximum number of concurrent processes/tasks allowed by the operating system.
+        #
+        # On Linux, this corresponds to `/proc/sys/kernel/pid_max` or `/proc/sys/kernel/threads-max`.
+        # A per-user process limit may also be retrieved via `getrlimit(RLIMIT_NPROC)`.
+        # On BSD-like systems, this corresponds to `sysctl kern.maxproc`. This metric is unsupported on Windows systems.
+        #
+        # @note Stability Level: development
+        SYSTEM_PROCESS_LIMIT = 'system.process.limit'
 
         # The time the system has been running.
         #

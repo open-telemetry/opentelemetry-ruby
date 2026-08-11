@@ -26,14 +26,14 @@ module OpenTelemetry
 
         # Total CPU time consumed.
         #
-        # Total CPU time consumed by the specific container on all available CPU cores
+        # CPU time consumed by the specific container on all available CPU cores
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CONTAINER_CPU_TIME = 'container.cpu.time'
 
-        # Container's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
+        # Container's CPU usage, measured in CPUs. Range from 0 to the number of allocatable CPUs.
         #
-        # CPU usage of the specific container on all available CPU cores, averaged over the sample window
+        # CPU usage of the specific container on all available CPU cores. It is calculated as the change in cumulative CPU time (container.cpu.time) over a measurement interval, divided by the elapsed time: usageCores = (cpuTimeEnd - cpuTimeStart) / elapsedSeconds
         #
         # @note Stability Level: development
         CONTAINER_CPU_USAGE = 'container.cpu.usage'
@@ -81,40 +81,43 @@ module OpenTelemetry
         #
         # Available memory for use.  This is defined as the memory limit - workingSetBytes. If memory limit is undefined, the available bytes is omitted.
         # In general, this metric can be derived from [cadvisor](https://github.com/google/cadvisor/blob/v0.53.0/docs/storage/prometheus.md#prometheus-container-metrics) and by subtracting the `container_memory_working_set_bytes` metric from the `container_spec_memory_limit_bytes` metric.
-        # In K8s, this metric is derived from the [MemoryStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
+        # In K8s, this metric is derived from the [MemoryStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [ContainerStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#ContainerStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CONTAINER_MEMORY_AVAILABLE = 'container.memory.available'
 
-        # Container memory paging faults.
+        # Deprecated, use `container.paging.faults` instead.
         #
         # In general, this metric can be derived from [cadvisor](https://github.com/google/cadvisor/blob/v0.53.0/docs/storage/prometheus.md#prometheus-container-metrics) and specifically the `container_memory_failures_total{failure_type=pgfault, scope=container}` and `container_memory_failures_total{failure_type=pgmajfault, scope=container}`metric.
         # In K8s, this metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `container.paging.faults`.
         CONTAINER_MEMORY_PAGING_FAULTS = 'container.memory.paging.faults'
 
         # Container memory RSS.
         #
         # In general, this metric can be derived from [cadvisor](https://github.com/google/cadvisor/blob/v0.53.0/docs/storage/prometheus.md#prometheus-container-metrics) and specifically the `container_memory_rss` metric.
-        # In K8s, this metric is derived from the [MemoryStats.RSSBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
+        # In K8s, this metric is derived from the [MemoryStats.RSSBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [ContainerStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#ContainerStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CONTAINER_MEMORY_RSS = 'container.memory.rss'
 
         # Memory usage of the container.
         #
-        # Memory usage of the container.
+        # Current memory usage, including all memory regardless of when it was accessed.
+        # In general, this metric can be derived from [cadvisor](https://github.com/google/cadvisor/blob/v0.53.0/docs/storage/prometheus.md#prometheus-container-metrics) and specifically the `container_memory_usage_bytes` metric.
+        # In K8s, this metric is derived from the [MemoryStats.UsageBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [ContainerStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#ContainerStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CONTAINER_MEMORY_USAGE = 'container.memory.usage'
 
         # Container memory working set.
         #
         # In general, this metric can be derived from [cadvisor](https://github.com/google/cadvisor/blob/v0.53.0/docs/storage/prometheus.md#prometheus-container-metrics) and specifically the `container_memory_working_set_bytes` metric.
-        # In K8s, this metric is derived from the [MemoryStats.WorkingSetBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
+        # In K8s, this metric is derived from the [MemoryStats.WorkingSetBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [ContainerStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#ContainerStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CONTAINER_MEMORY_WORKING_SET = 'container.memory.working_set'
 
         # Network bytes for the container.
@@ -123,6 +126,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         CONTAINER_NETWORK_IO = 'container.network.io'
+
+        # Container memory paging faults.
+        #
+        # In general, this metric can be derived from [cadvisor](https://github.com/google/cadvisor/blob/v0.53.0/docs/storage/prometheus.md#prometheus-container-metrics) and specifically the `container_memory_failures_total{failure_type=pgfault, scope=container}` and `container_memory_failures_total{failure_type=pgmajfault, scope=container}`metric.
+        # In K8s, this metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [ContainerStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#ContainerStats) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        CONTAINER_PAGING_FAULTS = 'container.paging.faults'
 
         # The time the container has been running.
         #

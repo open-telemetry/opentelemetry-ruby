@@ -36,6 +36,11 @@ module OpenTelemetry
         # @note Stability Level: development
         V8JS_HEAP_SPACE_NAME = 'v8js.heap.space.name'
 
+        # The type of resource keeping the event loop active.
+        #
+        # @note Stability Level: development
+        V8JS_RESOURCE_TYPE = 'v8js.resource.type'
+
         # @!endgroup
       end
     end

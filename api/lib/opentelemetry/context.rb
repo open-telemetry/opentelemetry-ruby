@@ -15,7 +15,7 @@ module OpenTelemetry # rubocop:disable Style/Documentation
     EMPTY_ENTRIES = {}.freeze
     private_constant :EMPTY_ENTRIES
 
-    DetachError = Class.new(OpenTelemetry::Error)
+    DetachError = Class.new(OpenTelemetry::Error) # rubocop:disable Style/EmptyClassDefinition
 
     class << self
       # Returns a key used to index a value in a Context
@@ -162,7 +162,7 @@ module OpenTelemetry # rubocop:disable Style/Documentation
     #   entries.
     # @param [Object] value Object to be stored under key
     # @return [Context]
-    def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+    def set_values(values) # rubocop:disable Naming/AccessorMethodName
       Context.new(@entries.merge(values))
     end
 

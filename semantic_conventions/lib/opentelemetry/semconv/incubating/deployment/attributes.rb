@@ -40,10 +40,12 @@ module OpenTelemetry
         # - `service.name=frontend`, `deployment.environment.name=production`
         # - `service.name=frontend`, `deployment.environment.name=staging`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::DEPLOYMENT::DEPLOYMENT_ENVIRONMENT_NAME}.
         DEPLOYMENT_ENVIRONMENT_NAME = 'deployment.environment.name'
 
-        # The id of the deployment.
+        # The ID of the deployment.
         #
         # @note Stability Level: development
         DEPLOYMENT_ID = 'deployment.id'

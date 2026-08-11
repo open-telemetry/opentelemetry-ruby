@@ -20,10 +20,12 @@ module OpenTelemetry
 
       private_constant(:COUNTER, :OBSERVABLE_COUNTER, :HISTOGRAM, :GAUGE, :OBSERVABLE_GAUGE, :UP_DOWN_COUNTER, :OBSERVABLE_UP_DOWN_COUNTER)
 
+      # rubocop:disable Style/EmptyClassDefinition
       DuplicateInstrumentError = Class.new(OpenTelemetry::Error)
       InstrumentNameError = Class.new(OpenTelemetry::Error)
       InstrumentUnitError = Class.new(OpenTelemetry::Error)
       InstrumentDescriptionError = Class.new(OpenTelemetry::Error)
+      # rubocop:enable Style/EmptyClassDefinition
 
       def initialize
         @mutex = Mutex.new

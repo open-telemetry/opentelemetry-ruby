@@ -242,9 +242,30 @@ module OpenTelemetry
         # @deprecated Replaced by `db.operation.name`.
         DB_OPERATION = 'db.operation'
 
-        # The number of queries included in a batch operation.
+        # The number of database operations included in a batch operation.
         #
-        # Operations are only considered batches when they contain two or more operations, and so `db.operation.batch.size` SHOULD never be `1`.
+        # Except for empty batch requests described below, a batch operation contains two
+        # or more database operations explicitly submitted as separate operations in a single
+        # client call, protocol message, or database command.
+        #
+        # Requests to batch APIs that contain only one operation SHOULD be modeled as single
+        # operations, not as batch operations.
+        #
+        # A database call is not a batch operation solely because one operation accepts
+        # multiple operands, such as keys, rows, documents, points, or other data elements,
+        # including Redis [`MGET`](https://redis.io/docs/latest/commands/mget/) with
+        # multiple keys.
+        #
+        # In batch APIs that execute the same parameterized operation with parameter sets,
+        # each parameter set represents one database operation for determining whether the
+        # request is a batch operation. Requests with only one parameter set SHOULD be modeled
+        # as single operations, not as batch operations.
+        #
+        # `db.operation.batch.size` SHOULD be set to the number of operations in the batch.
+        # It SHOULD NOT be set for non-batch operations.
+        #
+        # A request to execute a batch operation with no operations SHOULD also be treated
+        # as a batch operation, and `db.operation.batch.size` SHOULD be set to `0`.
         #
         # @note Stability Level: stable
         #
@@ -305,7 +326,12 @@ module OpenTelemetry
         # up with the parameterized placeholders present in `db.query.text`.
         #
         # It is RECOMMENDED to capture the value as provided by the application
-        # without attempting to do any case normalization.
+        # without attempting to do any case normalization or sanitization.
+        #
+        # Instrumentations SHOULD NOT capture `db.query.parameter.<key>` by default
+        # since values may contain PII or sensitive details.
+        # Application operators are expected to enable specific keys depending
+        # on their privacy and security considerations.
         #
         # `db.query.parameter.<key>` SHOULD NOT be captured on batch operations.
         #
@@ -355,7 +381,7 @@ module OpenTelemetry
         # Deprecated, use `db.namespace` instead.
         #
         # @note Stability Level: development
-        # @deprecated Uncategorized.
+        # @deprecated Replaced by `db.namespace` (string).
         DB_REDIS_DATABASE_INDEX = 'db.redis.database_index'
 
         # Number of rows returned by the operation.

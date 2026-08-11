@@ -31,7 +31,7 @@ module OpenTelemetry
 
         # The mode of the CPU
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         CPU_MODE = 'cpu.mode'
 
         # @!endgroup

@@ -10,12 +10,13 @@
 #
 # The OpenTelemetry module provides global accessors for telemetry objects.
 # See the documentation for the `opentelemetry-api` gem for details.
-require_relative './instrumentation/registry'
+require_relative 'instrumentation/registry'
 
 module OpenTelemetry
   # Instrumentation should be able to handle the case when the library is not installed on a user's system.
   module Instrumentation
     extend self
+
     # @return [Registry] registry containing all known
     #  instrumentation
     def registry
