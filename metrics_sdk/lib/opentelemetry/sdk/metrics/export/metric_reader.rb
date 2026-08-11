@@ -14,8 +14,8 @@ module OpenTelemetry
         class MetricReader
           attr_reader :metric_store
 
-          def initialize
-            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new
+          def initialize(aggregation_cardinality_limit: nil)
+            @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
           end
 
           def collect

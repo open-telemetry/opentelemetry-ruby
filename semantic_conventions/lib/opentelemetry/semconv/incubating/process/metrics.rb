@@ -26,37 +26,47 @@ module OpenTelemetry
 
         # Number of times the process has been context switched.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_CONTEXT_SWITCHES = 'process.context_switches'
 
-        # Total CPU seconds broken down by different states.
+        # Total CPU seconds broken down by different CPU modes.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_CPU_TIME = 'process.cpu.time'
 
         # Difference in process.cpu.time since the last measurement, divided by the elapsed time and number of CPUs available to the process.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_CPU_UTILIZATION = 'process.cpu.utilization'
 
         # Disk bytes transferred.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_DISK_IO = 'process.disk.io'
+
+        # Number of disk operations performed by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_DISK_OPERATIONS = 'process.disk.operations'
 
         # The amount of physical memory in use.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_MEMORY_USAGE = 'process.memory.usage'
+
+        # Percentage of total physical memory that is used by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_MEMORY_UTILIZATION = 'process.memory.utilization'
 
         # The amount of committed virtual memory.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_MEMORY_VIRTUAL = 'process.memory.virtual'
 
         # Network bytes transferred.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_NETWORK_IO = 'process.network.io'
 
         # Deprecated, use `process.unix.file_descriptor.count` instead.
@@ -67,17 +77,22 @@ module OpenTelemetry
 
         # Number of page faults the process has made.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_PAGING_FAULTS = 'process.paging.faults'
+
+        # Number of pending signals for the process.
+        #
+        # @note Stability Level: development
+        PROCESS_SIGNALS_PENDING = 'process.signals_pending'
 
         # Process threads count.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_THREAD_COUNT = 'process.thread.count'
 
-        # Number of unix file descriptors in use by the process.
+        # Number of UNIX file descriptors in use by the process.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_UNIX_FILE_DESCRIPTOR_COUNT = 'process.unix.file_descriptor.count'
 
         # The time the process has been running.
@@ -85,12 +100,12 @@ module OpenTelemetry
         # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
         # The actual accuracy would depend on the instrumentation and operating system.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_UPTIME = 'process.uptime'
 
         # Number of handles held by the process.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         PROCESS_WINDOWS_HANDLE_COUNT = 'process.windows.handle.count'
 
         # @!endgroup

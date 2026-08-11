@@ -34,7 +34,7 @@ module OpenTelemetry
 
         case value.first
         when String
-          value.all? { |v| v.instance_of?(String) }
+          value.all?(String)
         when TrueClass, FalseClass
           value.all? { |v| boolean?(v) }
         when Numeric

@@ -86,6 +86,7 @@ module OpenTelemetry
 
           private
 
+          # rubocop:disable Lint/DuplicateBranch
           def fetch_ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
@@ -95,6 +96,7 @@ module OpenTelemetry
               OpenSSL::SSL::VERIFY_PEER
             end
           end
+          # rubocop:enable Lint/DuplicateBranch
 
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
             http = Net::HTTP.new(uri.hostname, uri.port)
@@ -124,7 +126,7 @@ module OpenTelemetry
             retry_count = 0
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-            around_request do # rubocop:disable Metrics/BlockLength
+            around_request do
               request = Net::HTTP::Post.new(@path)
               body = if @compression == 'gzip'
                        request.add_field('Content-Encoding', 'gzip')
@@ -207,10 +209,11 @@ module OpenTelemetry
 
           def log_status(body)
             status = Google::Rpc::Status.decode(body)
-            details = status.details.map do |detail|
-              klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
-              detail.unpack(klass_or_nil) if klass_or_nil
-            end.compact
+            pool = ::Google::Protobuf::DescriptorPool.generated_pool
+            details = status.details.filter_map do |detail|
+              klass = pool.lookup(detail.type_name).msgclass
+              detail.unpack(klass) if klass
+            end
             OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
@@ -227,11 +230,7 @@ module OpenTelemetry
             sleep_interval = nil
             unless retry_after.nil?
               sleep_interval =
-                begin
-                  Integer(retry_after)
-                rescue ArgumentError
-                  nil
-                end
+                Integer(retry_after, exception: false)
               sleep_interval ||=
                 begin
                   Time.httpdate(retry_after) - Time.now
@@ -260,7 +259,7 @@ module OpenTelemetry
           end
 
           def prepare_endpoint(endpoint)
-            endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
+            endpoint ||= ENV.fetch('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', nil)
             if endpoint.nil?
               endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
               endpoint += '/' unless endpoint.end_with?('/')
@@ -279,7 +278,7 @@ module OpenTelemetry
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
             entries.each_with_object({}) do |entry, headers|
-              k, v = entry.split('=', 2).map(&URI.method(:decode_uri_component))
+              k, v = entry.split('=', 2).map { |part| URI.decode_uri_component(part) }
               begin
                 k = k.to_s.strip
                 v = v.to_s.strip

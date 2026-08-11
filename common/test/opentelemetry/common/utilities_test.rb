@@ -24,14 +24,14 @@ describe OpenTelemetry::Common::Utilities do
 
     it 'returns false outside an untraced block' do
       common_utils.untraced {}
-      refute(common_utils.untraced?)
+      refute_predicate common_utils, :untraced?
     end
 
     it 'supports non block format' do
       token = OpenTelemetry::Context.attach(common_utils.untraced)
-      assert(common_utils.untraced?)
+      assert_predicate common_utils, :untraced?
       OpenTelemetry::Context.detach(token)
-      refute(common_utils.untraced?)
+      refute_predicate common_utils, :untraced?
     end
   end
 

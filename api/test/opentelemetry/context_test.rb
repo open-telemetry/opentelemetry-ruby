@@ -302,7 +302,7 @@ describe OpenTelemetry::Context do
             # Manipulate _this fiber's_ context stack.
             Context.attach(new_context)
           ensure
-            locals.each { |k, _| t2[k] = nil } # rubocop:disable Style/HashEachMethods (locals is not a Hash)
+            locals.each { |k, _| t2[k] = nil } # rubocop:disable Style/HashEachMethods --(locals is not a Hash)
           end.resume
         end
         _(log_stream.string).must_be_empty
@@ -348,7 +348,7 @@ describe OpenTelemetry::Context do
             # Manipulate _this thread's_ context stack.
             Context.attach(new_context)
           ensure
-            locals.each { |k, _| t2[k] = nil } # rubocop:disable Style/HashEachMethods (locals is not a Hash)
+            locals.each { |k, _| t2[k] = nil } # rubocop:disable Style/HashEachMethods --(locals is not a Hash)
           end.join
         end
         _(log_stream.string).must_be_empty

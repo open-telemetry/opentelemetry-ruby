@@ -1,7 +1,10 @@
 inherit_from: ../contrib/rubocop.yml
 
-Naming/FileName:
+Gemspec/DevelopmentDependencies:
+ Enabled: false
+Style/EmptyClassDefinition:
   Exclude:
-    - "lib/opentelemetry-api.rb"
-Style/ExplicitBlockArgument:
-  Enabled: false
+    - 'benchmarks/context_bench.rb'
+Style/OneClassPerFile:
+  Exclude:
+    - 'benchmarks/context_bench.rb'

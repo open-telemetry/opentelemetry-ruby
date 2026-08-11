@@ -26,12 +26,12 @@ module OpenTelemetry
 
         # The number of changes (pull requests/merge requests/changelists) in a repository, categorized by their state (e.g. open or merged).
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_CHANGE_COUNT = 'vcs.change.count'
 
         # The time duration a change (pull request/merge request/changelist) has been in a given state.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_CHANGE_DURATION = 'vcs.change.duration'
 
         # The amount of time since its creation it took a change (pull request/merge request/changelist) to get the first approval.
@@ -46,12 +46,12 @@ module OpenTelemetry
 
         # The number of unique contributors to a repository.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_CONTRIBUTOR_COUNT = 'vcs.contributor.count'
 
         # The number of refs of type branch or tag in a repository.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_REF_COUNT = 'vcs.ref.count'
 
         # The number of lines added/removed in a ref (branch) relative to the ref from the `vcs.ref.base.name` attribute.
@@ -60,7 +60,7 @@ module OpenTelemetry
         # instrumentation SHOULD report two measurements: 3 and 2 (both positive numbers).
         # If number of lines added/removed should be calculated from the start of time, then `vcs.ref.base.name` SHOULD be set to an empty string.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_REF_LINES_DELTA = 'vcs.ref.lines_delta'
 
         # The number of revisions (commits) a ref (branch) is ahead/behind the branch from the `vcs.ref.base.name` attribute.
@@ -68,17 +68,17 @@ module OpenTelemetry
         # This metric should be reported for each `vcs.revision_delta.direction` value. For example if branch `a` is 3 commits behind and 2 commits ahead of `trunk`,
         # instrumentation SHOULD report two measurements: 3 and 2 (both positive numbers) and `vcs.ref.base.name` is set to `trunk`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_REF_REVISIONS_DELTA = 'vcs.ref.revisions_delta'
 
         # Time a ref (branch) created from the default branch (trunk) has existed. The `ref.type` attribute will always be `branch`.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_REF_TIME = 'vcs.ref.time'
 
         # The number of repositories in an organization.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         VCS_REPOSITORY_COUNT = 'vcs.repository.count'
 
         # @!endgroup

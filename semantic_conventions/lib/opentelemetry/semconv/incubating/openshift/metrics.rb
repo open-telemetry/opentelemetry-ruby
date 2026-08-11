@@ -27,7 +27,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -37,7 +37,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -47,7 +47,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -57,7 +57,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -67,7 +67,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -77,7 +77,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -87,7 +87,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -97,7 +97,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -107,7 +107,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -117,7 +117,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -127,7 +127,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -137,7 +137,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -147,7 +147,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -157,7 +157,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -167,7 +167,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -177,7 +177,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -187,7 +187,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -200,7 +200,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -213,7 +213,7 @@ module OpenTelemetry
         # The enforced hard limit of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Hard` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #
@@ -226,7 +226,7 @@ module OpenTelemetry
         # The current observed total usage of the resource across all projects.
         #
         # This metric is retrieved from the `Status.Total.Used` field of the
-        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.32/#resourcequotastatus-v1-core)
+        # [K8s ResourceQuotaStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcequotastatus-v1-core)
         # of the
         # [ClusterResourceQuota](https://docs.redhat.com/en/documentation/openshift_container_platform/4.19/html/schedule_and_quota_apis/clusterresourcequota-quota-openshift-io-v1#status-total).
         #

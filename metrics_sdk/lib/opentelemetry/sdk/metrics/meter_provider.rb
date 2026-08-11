@@ -12,7 +12,9 @@ module OpenTelemetry
       # {MeterProvider} is the SDK implementation of {OpenTelemetry::Metrics::MeterProvider}.
       # rubocop:disable Metrics/ClassLength
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
-        Key = Struct.new(:name, :version)
+        EMPTY_ATTRIBUTES = {}.freeze
+
+        Key = Struct.new(:name, :version, :attributes)
         private_constant(:Key)
 
         attr_reader :resource, :metric_readers, :registered_views, :exemplar_filter
@@ -29,18 +31,22 @@ module OpenTelemetry
 
         # Returns a {Meter} instance.
         #
-        # @param [String] name Instrumentation package name
-        # @param [optional String] version Instrumentation package version
+        # @param [String] name Instrumentation scope name
+        # @param [optional String] version Instrumentation scope version
+        # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Meter]
-        def meter(name, version: nil)
+        def meter(name, version: nil, attributes: nil)
           version ||= ''
+          attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
+
           if @stopped
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
             OpenTelemetry::Metrics::Meter.new
           else
             OpenTelemetry.logger.warn "Invalid meter name provided: #{name.nil? ? 'nil' : 'empty'} value" if name.to_s.empty?
-            @mutex.synchronize { @meter_registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
+            @mutex.synchronize { @meter_registry[Key.new(name, version, attributes)] ||= Meter.new(name, version, self, attributes: attributes) }
           end
         end
 
@@ -131,7 +137,7 @@ module OpenTelemetry
         alias register_asynchronous_instrument register_synchronous_instrument
 
         def exemplar_filter_setup
-          case ENV['OTEL_METRICS_EXEMPLAR_FILTER']
+          case ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)
           when 'always_on'
             @exemplar_filter = Exemplar::AlwaysOnExemplarFilter
           when nil, '', 'trace_based'
@@ -139,7 +145,7 @@ module OpenTelemetry
           when 'always_off'
             @exemplar_filter = Exemplar::AlwaysOffExemplarFilter
           else
-            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV['OTEL_METRICS_EXEMPLAR_FILTER']} is not part of the provided exemplar filters. Using trace_based.")
+            OpenTelemetry.logger.warn("OTEL_METRICS_EXEMPLAR_FILTER #{ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)} is not part of the provided exemplar filters. Using trace_based.")
             @exemplar_filter = Exemplar::TraceBasedExemplarFilter
           end
         end
@@ -177,9 +183,9 @@ module OpenTelemetry
         #
         # @return [nil] returns nil
         #
-        def add_view(name, **options)
+        def add_view(name, **)
           # TODO: add schema_url as part of options
-          @registered_views << View::RegisteredView.new(name, **options)
+          @registered_views << View::RegisteredView.new(name, **)
           nil
         end
       end

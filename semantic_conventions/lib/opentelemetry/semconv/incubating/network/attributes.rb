@@ -51,7 +51,7 @@ module OpenTelemetry
         # @note Stability Level: development
         NETWORK_CONNECTION_STATE = 'network.connection.state'
 
-        # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a wifi connection.
+        # This describes more details regarding the connection.type. It may be the type of cell technology connection, but it could be used for describing details about a Wi-Fi connection.
         #
         # @note Stability Level: development
         NETWORK_CONNECTION_SUBTYPE = 'network.connection.subtype'
@@ -63,15 +63,15 @@ module OpenTelemetry
 
         # The network interface name.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         NETWORK_INTERFACE_NAME = 'network.interface.name'
 
-        # The network IO operation direction.
+        # The direction of traffic from the perspective of the observing host's physical or virtual network interface. It should not be used to represent the logical direction of a stateful connection or network flow.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         NETWORK_IO_DIRECTION = 'network.io.direction'
 
-        # Local address of the network connection - IP address or Unix domain socket name.
+        # Local address of the network connection - IP address or UNIX domain socket name.
         #
         # @note Stability Level: stable
         #
@@ -85,7 +85,7 @@ module OpenTelemetry
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::NETWORK::NETWORK_LOCAL_PORT}.
         NETWORK_LOCAL_PORT = 'network.local.port'
 
-        # Peer address of the network connection - IP address or Unix domain socket name.
+        # Peer address of the network connection - IP address or UNIX domain socket name.
         #
         # @note Stability Level: stable
         #

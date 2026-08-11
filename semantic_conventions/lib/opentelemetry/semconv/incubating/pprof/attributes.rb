@@ -61,12 +61,12 @@ module OpenTelemetry
         # @note Stability Level: development
         PPROF_PROFILE_DOC_URL = 'pprof.profile.doc_url'
 
-        # Frames with Function.function_name fully matching the regexp will be dropped from the samples, along with their successors.
+        # Frames with Function.function_name fully matching the regular expression will be dropped from the samples, along with their successors.
         #
         # @note Stability Level: development
         PPROF_PROFILE_DROP_FRAMES = 'pprof.profile.drop_frames'
 
-        # Frames with Function.function_name fully matching the regexp will be kept, even if it matches drop_frames.
+        # Frames with Function.function_name fully matching the regular expression will be kept, even if it matches drop_frames.
         #
         # @note Stability Level: development
         PPROF_PROFILE_KEEP_FRAMES = 'pprof.profile.keep_frames'
