@@ -68,7 +68,6 @@ ignoreWords:
   - rolldice
   - codegen
   - Dockerfiles
-  - otelconfig
   - opentelemetrybot
   - otelbot
 words:
