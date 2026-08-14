@@ -8,6 +8,7 @@ module OpenTelemetry
   module Config
     class << self
       private
+
       # Configures the global text-map propagator from the propagator_cfg hash.
       def configure_propagation(propagator_cfg)
         return unless propagator_cfg

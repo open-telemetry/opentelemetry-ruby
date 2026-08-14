@@ -5,12 +5,12 @@
 
 require 'date'
 require 'yaml'
-require 'opentelemetry/components/trace'
 
 require_relative 'config/instrumentation'
 require_relative 'config/propagation'
 require_relative 'config/resource'
-require_relative 'constants/constants'
+require_relative 'config/constants'
+require_relative 'config/trace'
 
 module OpenTelemetry
   # Config module handles declarative configuration of OpenTelemetry components

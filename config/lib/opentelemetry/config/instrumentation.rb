@@ -7,6 +7,8 @@ module OpenTelemetry
   # Config module — instrumentation configuration helpers.
   module Config
     class << self
+      private
+
       # Installs instrumentation libraries from the registry.
       #
       # @param config_map [Hash, nil] the map built by {build_instrumentation_config_map}

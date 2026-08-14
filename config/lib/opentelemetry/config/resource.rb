@@ -38,7 +38,6 @@ module OpenTelemetry
         base.merge(custom)
       end
 
-
       # type coercion
       def coerce_attribute_value(value, type)
         case type

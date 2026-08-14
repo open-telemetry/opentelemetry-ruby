@@ -167,25 +167,25 @@ describe OpenTelemetry::Config do
     # build_instrumentation_config_map — nil / invalid inputs
     describe 'build_instrumentation_config_map with invalid inputs' do
       it 'returns {} when config is nil' do
-        _(OpenTelemetry::Config.build_instrumentation_config_map(nil)).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, nil)).must_equal({})
       end
 
       it 'returns {} when config is not a Hash' do
-        _(OpenTelemetry::Config.build_instrumentation_config_map('string')).must_equal({})
-        _(OpenTelemetry::Config.build_instrumentation_config_map(42)).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, 'string')).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, 42)).must_equal({})
       end
 
       it 'returns {} when the ruby key is absent' do
-        _(OpenTelemetry::Config.build_instrumentation_config_map({ 'other' => {} })).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, { 'other' => {} })).must_equal({})
       end
 
       it 'returns {} when ruby is not a Hash' do
-        _(OpenTelemetry::Config.build_instrumentation_config_map({ 'ruby' => 'flat' })).must_equal({})
-        _(OpenTelemetry::Config.build_instrumentation_config_map({ 'ruby' => [] })).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, { 'ruby' => 'flat' })).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, { 'ruby' => [] })).must_equal({})
       end
 
       it 'returns {} when ruby is an empty Hash' do
-        _(OpenTelemetry::Config.build_instrumentation_config_map({ 'ruby' => {} })).must_equal({})
+        _(OpenTelemetry::Config.send(:build_instrumentation_config_map, { 'ruby' => {} })).must_equal({})
       end
     end
 
@@ -195,7 +195,7 @@ describe OpenTelemetry::Config do
         it 'maps the short name to the full class name' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'net_http' => {} } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result.keys).must_include 'OpenTelemetry::Instrumentation::Net::HTTP'
           end
         end
@@ -203,7 +203,7 @@ describe OpenTelemetry::Config do
         it 'symbolizes option keys' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'net_http' => { 'untraced_hosts' => ['localhost'] } } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Net::HTTP']
             _(opts.keys).must_include :untraced_hosts
             _(opts.keys).wont_include 'untraced_hosts'
@@ -213,7 +213,7 @@ describe OpenTelemetry::Config do
         it 'treats nil options as an empty Hash' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'net_http' => nil } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal({})
           end
         end
@@ -221,7 +221,7 @@ describe OpenTelemetry::Config do
         it 'treats non-Hash options as an empty Hash' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'net_http' => 'enabled' } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal({})
           end
         end
@@ -229,7 +229,7 @@ describe OpenTelemetry::Config do
         it 'skips and does not include unknown short names' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'totally_unknown_lib' => { 'opt' => 1 } } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result).must_equal({})
           end
         end
@@ -242,7 +242,7 @@ describe OpenTelemetry::Config do
                 'redis' => { 'peer_service' => 'cache', 'trace_root_spans' => true }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result.size).must_equal 2
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal(untraced_hosts: ['internal.example.com'])
             _(result['OpenTelemetry::Instrumentation::Redis']).must_equal(peer_service: 'cache', trace_root_spans: true)
@@ -255,7 +255,7 @@ describe OpenTelemetry::Config do
         it 'maps untraced_hosts array' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'net_http' => { 'untraced_hosts' => ['metrics.example.com', 'localhost'] } } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result['OpenTelemetry::Instrumentation::Net::HTTP']).must_equal(
               untraced_hosts: ['metrics.example.com', 'localhost']
             )
@@ -277,7 +277,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Rack']
             _(opts[:allowed_request_headers]).must_equal %w[X-Request-ID X-Forwarded-For]
             _(opts[:allowed_response_headers]).must_equal ['X-Response-Time']
@@ -300,7 +300,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Redis']
             _(opts[:peer_service]).must_equal 'redis-primary'
             _(opts[:trace_root_spans]).must_equal false
@@ -325,7 +325,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Sidekiq']
             _(opts[:span_naming]).must_equal 'job_class'
             _(opts[:propagation_style]).must_equal 'child'
@@ -337,7 +337,7 @@ describe OpenTelemetry::Config do
         end
       end
 
-      describe 'active_job options' do
+      describe 'active_job options xuan' do
         it 'maps propagation_style, force_flush, and span_naming' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = {
@@ -349,7 +349,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::ActiveJob']
             _(opts[:propagation_style]).must_equal 'none'
             _(opts[:force_flush]).must_equal true
@@ -370,7 +370,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Faraday']
             _(opts[:span_kind]).must_equal 'internal'
             _(opts[:peer_service]).must_equal 'downstream-api'
@@ -392,7 +392,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Mysql2']
             _(opts[:peer_service]).must_equal 'mysql-primary'
             _(opts[:db_statement]).must_equal 'omit'
@@ -414,7 +414,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::PG']
             _(opts[:peer_service]).must_equal 'postgres-replica'
             _(opts[:db_statement]).must_equal 'include'
@@ -434,7 +434,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::GRPC']
             _(opts[:allowed_metadata_headers]).must_equal %w[x-correlation-id x-tenant-id]
             _(opts[:peer_service]).must_equal 'grpc-backend'
@@ -457,7 +457,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::GraphQL']
             _(opts[:schemas]).must_equal []
             _(opts[:enable_platform_field]).must_equal true
@@ -478,7 +478,7 @@ describe OpenTelemetry::Config do
                 }
               }
             }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             opts = result['OpenTelemetry::Instrumentation::Dalli']
             _(opts[:peer_service]).must_equal 'memcached'
             _(opts[:db_statement]).must_equal 'omit'
@@ -490,7 +490,7 @@ describe OpenTelemetry::Config do
         it 'maps span_naming' do
           with_name_map(FAKE_NAME_MAP) do
             cfg = { 'ruby' => { 'action_pack' => { 'span_naming' => 'class' } } }
-            result = OpenTelemetry::Config.build_instrumentation_config_map(cfg)
+            result = OpenTelemetry::Config.send(:build_instrumentation_config_map, cfg)
             _(result['OpenTelemetry::Instrumentation::ActionPack']).must_equal(span_naming: 'class')
           end
         end
