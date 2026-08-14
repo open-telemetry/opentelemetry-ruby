@@ -21,7 +21,8 @@ module OpenTelemetry
         #
         # @return [Tracer]
         def initialize(name, version, tracer_provider, attributes: nil)
-          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
+          attributes = Internal.normalize_attributes(name, 'instrumentation scope', attributes) || {}
+          @instrumentation_scope = InstrumentationScope.new(name, version, attributes.freeze)
           @tracer_provider = tracer_provider
         end
 

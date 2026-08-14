@@ -59,6 +59,42 @@ describe OpenTelemetry::SDK::Trace::Span do
       _(span.attributes).must_equal('foo' => 'bar')
     end
 
+    it 'normalizes valid UTF-8 bytes from a binary-encoded string' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      span.set_attribute('city', city)
+
+      value = span.attributes['city']
+      _(value).must_equal('Montréal')
+      _(value.encoding).must_equal(::Encoding::UTF_8)
+      _(city.encoding).must_equal(::Encoding::ASCII_8BIT)
+    end
+
+    it 'normalizes valid UTF-8 bytes in attribute keys and arrays' do
+      key = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      values = ['Québec'.dup.force_encoding(::Encoding::ASCII_8BIT)]
+
+      span.set_attribute(key, values)
+
+      normalized_key = span.attributes.keys.first
+      normalized_value = span.attributes.values.first.first
+      _(normalized_key.encoding).must_equal(::Encoding::UTF_8)
+      _(normalized_value.encoding).must_equal(::Encoding::UTF_8)
+      _(key.encoding).must_equal(::Encoding::ASCII_8BIT)
+      _(values.first.encoding).must_equal(::Encoding::ASCII_8BIT)
+    end
+
+    it 'drops binary-encoded strings that are not valid UTF-8' do
+      invalid = "\xC3".dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span.set_attribute('invalid', invalid)
+
+        _(span.attributes).must_be_empty
+        _(log_stream.string).must_match(/invalid UTF-8 encoding.*invalid.*Dropping attribute/)
+      end
+    end
+
     it 'trims the newest attribute' do
       span.set_attribute('old', 'oldbar')
       span.set_attribute('foo', 'bar')
