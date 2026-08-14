@@ -25,6 +25,8 @@ module OpenTelemetry
           # Default timeouts in seconds.
           KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
+          RESPONSE_BODY_LIMIT = 4_194_304 # 4 MB
+          private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :RESPONSE_BODY_LIMIT)
 
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
 
@@ -37,7 +39,8 @@ module OpenTelemetry
                          ssl_verify_mode: fetch_ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         metrics_reporter: nil)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             @uri = prepare_endpoint(endpoint)
@@ -48,6 +51,7 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
             @shutdown = false
           end
 
@@ -145,34 +149,48 @@ module OpenTelemetry
               @http.read_timeout = remaining_timeout
               @http.write_timeout = remaining_timeout
               @http.start unless @http.started?
-              response = @http.request(request)
+              result = nil
+              should_redo = false
 
-              case response
-              when Net::HTTPSuccess
-                response.body # Read and discard body
-                SUCCESS
-              when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
-                response.body # Read and discard body
-                redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
-                FAILURE
-              when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
-                response.body # Read and discard body
-                redo if backoff?(retry_count: retry_count += 1, reason: response.code)
-                FAILURE
-              when Net::HTTPNotFound
-                log_request_failure(response.code)
-                FAILURE
-              when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
-                log_status(response.body)
-                FAILURE
-              when Net::HTTPRedirection
-                @http.finish
-                handle_redirect(response['location'])
-                redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
-              else
-                @http.finish
-                FAILURE
+              measure_request_duration do
+                @http.request(request) do |response|
+                  case response
+                  when Net::HTTPSuccess
+                    drain_body(response)
+                    result = SUCCESS
+                  when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
+                    drain_body(response)
+                    should_redo = backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+                    result = FAILURE
+                  when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
+                    drain_body(response)
+                    should_redo = backoff?(retry_count: retry_count += 1, reason: response.code)
+                    result = FAILURE
+                  when Net::HTTPNotFound
+                    drain_body(response)
+                    log_request_failure(response.code)
+                    result = FAILURE
+                  when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+                    body, truncated = read_response_body(response)
+                    log_status(body, truncated: truncated)
+                    @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => response.code })
+                    result = FAILURE
+                  when Net::HTTPRedirection
+                    drain_body(response)
+                    @http.finish
+                    handle_redirect(response['location'])
+                    should_redo = backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+                  else
+                    drain_body(response)
+                    @http.finish
+                    result = FAILURE
+                  end
+                end
               end
+
+              redo if should_redo
+
+              result
             rescue Net::OpenTimeout, Net::ReadTimeout
               retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
               return FAILURE
@@ -207,7 +225,13 @@ module OpenTelemetry
             # TODO: figure out destination and reinitialize @http and @path
           end
 
-          def log_status(body)
+          def log_status(body, truncated: false)
+            if truncated
+              OpenTelemetry.handle_error(message: "OTLP exporter received an oversized error response body (truncated at #{RESPONSE_BODY_LIMIT} bytes)")
+              return
+            end
+            return if body.nil? || body.empty?
+
             status = Google::Rpc::Status.decode(body)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
@@ -217,6 +241,59 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          end
+
+          # Drains and discards the body without buffering it, preserving keep-alive.
+          def drain_body(response)
+            response.read_body { |_| } # rubocop:disable Lint/EmptyBlock
+          end
+
+          def read_response_body(response) # rubocop:disable Metrics/MethodLength
+            return ['', false] if response.nil?
+
+            content_length = response['content-length']&.to_i
+            if content_length && content_length > RESPONSE_BODY_LIMIT
+              @http.finish # closes socket without reading any of the oversized body
+              return ['', true]
+            end
+
+            body = +''
+            truncated = false
+
+            response.read_body do |chunk|
+              remaining = RESPONSE_BODY_LIMIT - body.bytesize
+              body << chunk.byteslice(0, remaining)
+
+              if chunk.bytesize > remaining
+                truncated = true
+                @http.finish # closes socket, nil's the body or else net/http will attempt to read the rest of the response
+                break
+              end
+            end
+
+            body.force_encoding('UTF-8')
+            body.scrub! if truncated # truncation may have split a multi-byte character
+            [body, truncated]
+          rescue IOError
+            raise unless truncated # we'll handle this when we know net/http is upset trying to read after http.finish
+
+            [body || '', truncated]
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'error reading response body')
+            ['', false]
+          end
+
+          def measure_request_duration
+            start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+            begin
+              response = yield
+            ensure
+              stop = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+              duration_ms = 1000.0 * (stop - start)
+              @metrics_reporter.record_value('otel.otlp_exporter.request_duration',
+                                             value: duration_ms,
+                                             labels: { 'status' => response&.code || 'unknown' })
+            end
           end
 
           def log_request_failure(response_code)
