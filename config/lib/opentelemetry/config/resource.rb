@@ -7,6 +7,8 @@ module OpenTelemetry
   # Config module — resource configuration helpers.
   module Config
     class << self
+      private
+
       # Priority: attributes > attribute_list > detected > base
       def build_resource(resource_cfg)
         base = OpenTelemetry::SDK::Resources::Resource.default
@@ -36,7 +38,6 @@ module OpenTelemetry
         base.merge(custom)
       end
 
-      private
 
       # type coercion
       def coerce_attribute_value(value, type)

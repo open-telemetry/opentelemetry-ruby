@@ -174,5 +174,7 @@ module OpenTelemetry
         headers
       end
     end
+
+    private_constant :Trace
   end
 end

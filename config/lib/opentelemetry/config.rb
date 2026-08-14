@@ -17,6 +17,7 @@ module OpenTelemetry
   # from YAML files.
   module Config
     ENV_CONFIG_FILE = 'OTEL_CONFIG_FILE'
+    private_constant :ENV_CONFIG_FILE
 
     class << self
       # Parses the file referenced by +OTEL_CONFIG_FILE+, creates the components
