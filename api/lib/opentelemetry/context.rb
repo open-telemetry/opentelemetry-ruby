@@ -79,7 +79,6 @@ module OpenTelemetry # rubocop:disable Style/Documentation
 
       # @param [String] key The lookup key
       # @param [Object] value The object stored under key
-      # @param [Callable] Block to execute in a new context
       # @yield [context, value] Yields the newly created context and value to
       #   the block
       def with_value(key, value)
@@ -93,10 +92,8 @@ module OpenTelemetry # rubocop:disable Style/Documentation
       # Execute a block in a new context where its values are merged with the
       # incoming values. Restores the previous context after the block executes.
 
-      # @param [String] key The lookup key
       # @param [Hash] values Will be merged with values of the current context
       #  and returned in a new context
-      # @param [Callable] Block to execute in a new context
       # @yield [context, values] Yields the newly created context and values
       #   to the block
       def with_values(values)
@@ -119,6 +116,9 @@ module OpenTelemetry # rubocop:disable Style/Documentation
         Fiber.current.opentelemetry_context = []
       end
 
+      # Returns an empty context.
+      #
+      # @return [Context]
       def empty
         new(EMPTY_ENTRIES)
       end
@@ -160,7 +160,6 @@ module OpenTelemetry # rubocop:disable Style/Documentation
     #
     # @param [Hash] values The values to be merged with the current context's
     #   entries.
-    # @param [Object] value Object to be stored under key
     # @return [Context]
     def set_values(values) # rubocop:disable Naming/AccessorMethodName
       Context.new(@entries.merge(values))
