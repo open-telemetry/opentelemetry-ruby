@@ -27,8 +27,6 @@ module OpenTelemetry
         TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>(?:[0-9a-f]){1,16}):(?:[0-9a-f]){1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
         ZERO_ID_REGEX = /^0+$/
         BAGGAGE_KEY_PREFIX = 'uberctx-'
-        # The Jaeger format defines no baggage limits, so borrow the W3C Baggage
-        # spec limits (bytes) to bound an unbounded inbound carrier on extract.
         MAX_BAGGAGE_ENTRIES = 180
         MAX_BAGGAGE_ENTRY_BYTES = 4096
         MAX_BAGGAGE_TOTAL_BYTES = 8192
@@ -120,8 +118,7 @@ module OpenTelemetry
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
-              # W3C limits are byte-denominated; measure bytes so a multibyte
-              # value cannot exceed the budget under a smaller character count.
+              # Limits are byte-denominated, not character-denominated.
               entry_bytes = baggage_key.bytesize + raw_value.bytesize
               next unless entry_bytes <= MAX_BAGGAGE_ENTRY_BYTES &&
                           total_bytes + entry_bytes <= MAX_BAGGAGE_TOTAL_BYTES
