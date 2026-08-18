@@ -72,6 +72,22 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     describe 'enforced limits' do
+      it 'does work proportional to the limit, not to the header length' do
+        def allocations_for(entry_count)
+          header = (0...entry_count).map { |i| "k#{i}=v#{i}" }.join(',')
+          carrier = { 'baggage' => header }
+          before = GC.stat[:total_allocated_objects]
+          propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+          GC.stat[:total_allocated_objects] - before
+        end
+
+        small = allocations_for(1_000)
+        large = allocations_for(100_000)
+
+        # A hundredfold longer header must not cost a hundredfold more work.
+        _(large).must_be(:<, small * 2)
+      end
+
       it 'does not materialise every entry of an oversized header' do
         header = (0...50_000).map { |i| "k#{i}=v#{i}" }.join(',')
         carrier = { 'baggage' => header }
