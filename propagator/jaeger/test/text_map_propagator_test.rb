@@ -140,6 +140,49 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       _(OpenTelemetry::Baggage.value('key-2', context: context)).must_equal('value2')
     end
 
+    it 'enforces the max of 180 baggage entries, keeping the first ones' do
+      carrier = { 'uber-trace-id' => '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd1:0:1' }
+      200.times { |i| carrier["uberctx-k#{i}"] = "v#{i}" }
+      context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+      _(OpenTelemetry::Baggage.values(context: context).size).must_equal(180)
+      _(OpenTelemetry::Baggage.value('k0', context: context)).must_equal('v0')
+      _(OpenTelemetry::Baggage.value('k180', context: context)).must_be_nil
+    end
+
+    it 'drops a baggage entry over 4096 bytes, keeping the rest' do
+      carrier = {
+        'uber-trace-id' => '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd1:0:1',
+        'uberctx-ok' => 'value',
+        'uberctx-big' => 'x' * 5000
+      }
+      context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+      _(OpenTelemetry::Baggage.value('ok', context: context)).must_equal('value')
+      _(OpenTelemetry::Baggage.value('big', context: context)).must_be_nil
+    end
+
+    it 'measures the per-entry limit in bytes, not characters' do
+      carrier = {
+        'uber-trace-id' => '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd1:0:1',
+        'uberctx-ok' => 'value',
+        # 2100 multibyte chars = 4200 bytes: under 4096 chars, over 4096 bytes
+        'uberctx-u' => 'é' * 2100
+      }
+      context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+      _(OpenTelemetry::Baggage.value('ok', context: context)).must_equal('value')
+      _(OpenTelemetry::Baggage.value('u', context: context)).must_be_nil
+    end
+
+    it 'enforces the max total of 8192 bytes, keeping the earlier entries' do
+      carrier = { 'uber-trace-id' => '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd1:0:1' }
+      100.times { |i| carrier["uberctx-k#{i}"] = 'y' * 200 } # ~100 * ~205 bytes = ~20k
+      context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+      size = OpenTelemetry::Baggage.values(context: context).size
+      _(size).must_be(:positive?)
+      _(size).must_be(:<, 100)
+      _(OpenTelemetry::Baggage.value('k0', context: context)).wont_be_nil
+      _(OpenTelemetry::Baggage.value('k99', context: context)).must_be_nil
+    end
+
     it 'handles trace ids and span ids that are too long' do
       extracted_context_must_equal_parent_context(
         '80f198ee56343ba864fe8b2a57d3eff7eff7:e457b5a2e4d86bd1:0:1'
