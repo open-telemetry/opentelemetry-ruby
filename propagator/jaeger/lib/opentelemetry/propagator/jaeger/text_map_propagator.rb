@@ -31,10 +31,9 @@ module OpenTelemetry
         MAX_BAGGAGE_ENTRY_BYTES = 4096
         MAX_BAGGAGE_TOTAL_BYTES = 8192
 
-        private_constant \
-          :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT,
-          :FIELDS, :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :BAGGAGE_KEY_PREFIX,
-          :MAX_BAGGAGE_ENTRIES, :MAX_BAGGAGE_ENTRY_BYTES, :MAX_BAGGAGE_TOTAL_BYTES
+        private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT, :FIELDS,
+                         :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :BAGGAGE_KEY_PREFIX,
+                         :MAX_BAGGAGE_ENTRIES, :MAX_BAGGAGE_ENTRY_BYTES, :MAX_BAGGAGE_TOTAL_BYTES
 
         # Extract trace context from the supplied carrier.
         # If extraction fails, the original context will be returned
@@ -118,16 +117,20 @@ module OpenTelemetry
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
-              # Limits are byte-denominated, not character-denominated.
+              next unless raw_value
+
               entry_bytes = baggage_key.bytesize + raw_value.bytesize
-              next unless entry_bytes <= MAX_BAGGAGE_ENTRY_BYTES &&
-                          total_bytes + entry_bytes <= MAX_BAGGAGE_TOTAL_BYTES
+              next unless within_baggage_limits?(entry_bytes, total_bytes)
 
               b.set_value(baggage_key, URI.decode_uri_component(raw_value))
               count += 1
               total_bytes += entry_bytes
             end
           end
+        end
+
+        def within_baggage_limits?(entry_bytes, total_bytes)
+          entry_bytes <= MAX_BAGGAGE_ENTRY_BYTES && total_bytes + entry_bytes <= MAX_BAGGAGE_TOTAL_BYTES
         end
 
         def to_jaeger_flags(context, span_context)

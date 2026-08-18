@@ -183,6 +183,17 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       _(OpenTelemetry::Baggage.value('k99', context: context)).must_be_nil
     end
 
+    it 'skips a baggage header carrying no value' do
+      carrier = {
+        'uber-trace-id' => '80f198ee56343ba864fe8b2a57d3eff7:e457b5a2e4d86bd1:0:1',
+        'uberctx-ok' => 'value',
+        'uberctx-blank' => nil
+      }
+      context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+      _(OpenTelemetry::Baggage.value('ok', context: context)).must_equal('value')
+      _(OpenTelemetry::Baggage.value('blank', context: context)).must_be_nil
+    end
+
     it 'handles trace ids and span ids that are too long' do
       extracted_context_must_equal_parent_context(
         '80f198ee56343ba864fe8b2a57d3eff7eff7:e457b5a2e4d86bd1:0:1'
