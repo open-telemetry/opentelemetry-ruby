@@ -18,13 +18,14 @@ module OpenTelemetry
                       :severity_text,
                       :severity_number,
                       :body,
-                      :attributes,
                       :event_name,
                       :trace_id,
                       :span_id,
                       :trace_flags,
                       :resource,
                       :instrumentation_scope
+
+        attr_reader :attributes
 
         # Creates a new {LogRecord}.
         #
@@ -81,7 +82,6 @@ module OpenTelemetry
           @severity_text = severity_text
           @severity_number = severity_number
           @body = body
-          @attributes = attributes&.to_h # We need a mutable copy of attributes
           @event_name = event_name
           @trace_id = trace_id
           @span_id = span_id
@@ -89,6 +89,18 @@ module OpenTelemetry
           @resource = resource
           @instrumentation_scope = instrumentation_scope
           @log_record_limits = log_record_limits || LogRecordLimits::DEFAULT
+          self.attributes = attributes
+        end
+
+        # Sets the attributes for this {LogRecord}, recalculating the total
+        # recorded attribute count and reapplying the configured attribute
+        # limits.
+        #
+        # @param [optional Hash{String => String, Numeric, Boolean,
+        #   Array<String, Numeric, Boolean>}] new_attributes Attributes to
+        #   associate with the {LogRecord}.
+        def attributes=(new_attributes)
+          @attributes = new_attributes&.to_h # We need a mutable copy of attributes
           @total_recorded_attributes = @attributes&.size || 0
 
           trim_attributes(@attributes)
@@ -115,9 +127,7 @@ module OpenTelemetry
         private
 
         def to_integer_nanoseconds(timestamp)
-          return unless timestamp.is_a?(Time)
-
-          (timestamp.to_r * (10**9)).to_i
+          (timestamp.to_r * (10**9)).to_i if timestamp.is_a?(Time)
         end
 
         def trim_attributes(attributes)
