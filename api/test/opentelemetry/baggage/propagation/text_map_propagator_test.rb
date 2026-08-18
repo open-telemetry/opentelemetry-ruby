@@ -72,6 +72,18 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     describe 'enforced limits' do
+      it 'does not materialise every entry of an oversized header' do
+        header = (0...50_000).map { |i| "k#{i}=v#{i}" }.join(',')
+        carrier = { 'baggage' => header }
+
+        before = GC.stat[:total_allocated_objects]
+        context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+        allocated = GC.stat[:total_allocated_objects] - before
+
+        _(OpenTelemetry::Baggage.values(context: context).size).must_equal(180)
+        _(allocated).must_be(:<, 10_000)
+      end
+
       it 'enforces max of 180 name-value pairs' do
         header = (0..180).map { |i| "k#{i}=v#{i}" }.join(',')
         context = propagator.extract({ header_key => header }, context: Context.empty)

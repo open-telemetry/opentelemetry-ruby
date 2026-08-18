@@ -55,7 +55,7 @@ module OpenTelemetry
           header = getter.get(carrier, BAGGAGE_KEY)
           return context if header.nil? || header.empty?
 
-          entries = header.gsub(/\s/, '').split(',')
+          entries = header.each_line(',', chomp: true).lazy.take(MAX_ENTRIES)
 
           OpenTelemetry::Baggage.build(context: context) do |builder|
             decode_entries(entries, builder)
@@ -76,10 +76,10 @@ module OpenTelemetry
         private
 
         def decode_entries(entries, builder)
-          decoded_count = 0
           decoded_length = 0
-          entries.each do |entry|
-            break unless decoded_count < MAX_ENTRIES
+          entries.each do |raw_entry|
+            entry = raw_entry.gsub(/\s/, '')
+            next if entry.empty?
             next unless entry.size <= MAX_ENTRY_LENGTH &&
                         entry.size + decoded_length <= MAX_TOTAL_LENGTH
 
@@ -89,7 +89,6 @@ module OpenTelemetry
             kv, meta = entry.split(';', 2)
             k, v = kv.split('=').map! { |part| URI.decode_uri_component(part) }
             builder.set_value(k, v, metadata: meta)
-            decoded_count += 1
             decoded_length += entry.size + 1 # +1 for the ',' separator, as in #encode
           end
         end
