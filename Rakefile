@@ -40,7 +40,7 @@ task :collate_simplecov, [:dir] do |t, args|
     exit 0
   end
 
-  puts "dir is: '#{args[:dir]}'"
+  puts "Current directory: '#{args[:dir]}'"
   require 'dotenv'
   Dotenv.load(File.expand_path(".env", "#{args[:dir]}/test"))
 
