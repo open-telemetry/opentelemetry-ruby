@@ -35,16 +35,19 @@ module OpenTelemetry
               @counts = tmp
             end
 
+            # @return [Integer] the index of the first bucket.
             def offset
               @index_start
             end
 
+            # @return [Array<Integer>] bucket counts ordered by bucket index.
             def offset_counts
               bias = @index_base - @index_start
               @counts[-bias..] + @counts[0...-bias]
             end
             alias counts offset_counts
 
+            # @return [Integer] the number of buckets containing the active range.
             def length
               return 0 if @counts.empty?
               return 0 if @index_end == @index_start && counts[0] == 0
@@ -52,6 +55,7 @@ module OpenTelemetry
               @index_end - @index_start + 1
             end
 
+            # @return [Integer] the count for the requested bucket index.
             def get_bucket(key)
               bias = @index_base - @index_start
 
@@ -61,6 +65,7 @@ module OpenTelemetry
               @counts[key]
             end
 
+            # Reduces the bucket resolution by the requested amount.
             def downscale(amount)
               bias = @index_base - @index_start
 
@@ -101,10 +106,12 @@ module OpenTelemetry
               @index_base = @index_start
             end
 
+            # Adds an increment to the bucket at the given index.
             def increment_bucket(bucket_index, increment = 1)
               @counts[bucket_index] += increment
             end
 
+            # @return [Buckets] an empty bucket set with the same range.
             def copy_empty
               new_buckets = self.class.new
               new_buckets.instance_variable_set(:@counts, Array.new(@counts.size, 0))

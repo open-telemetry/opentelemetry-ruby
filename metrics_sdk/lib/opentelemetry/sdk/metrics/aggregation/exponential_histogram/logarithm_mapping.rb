@@ -20,6 +20,7 @@ module OpenTelemetry
               @max_normal_lower_boundary_index = ((IEEE754::MAX_NORMAL_EXPONENT + 1) << @scale) - 1
             end
 
+            # Maps a value to its exponential histogram bucket index.
             def map_to_index(value)
               return @min_normal_lower_boundary_index - 1 if value <= IEEE754::MIN_NORMAL_VALUE
 

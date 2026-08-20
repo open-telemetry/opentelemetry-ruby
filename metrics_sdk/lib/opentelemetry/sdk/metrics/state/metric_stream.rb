@@ -47,6 +47,7 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
+          # Collects metric data for the requested time range.
           def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []
@@ -99,6 +100,7 @@ module OpenTelemetry
             end
           end
 
+          # Builds metric data from an aggregation and its data points.
           def aggregate_metric_data(start_time, end_time, aggregation: nil, data_points: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
@@ -120,12 +122,14 @@ module OpenTelemetry
             )
           end
 
+          # Registers views that match this metric stream.
           def find_registered_view
             return if @meter_provider.nil?
 
             @meter_provider.registered_views.each { |view| @registered_views[view] = {} if view.match_instrument?(self) }
           end
 
+          # @return [Boolean] whether all data point stores are empty.
           def empty_data_point?
             if @registered_views.empty?
               @data_points.empty?
@@ -136,11 +140,13 @@ module OpenTelemetry
             end
           end
 
+          # Resolves the cardinality limit for a view or the default stream limit.
           def resolve_cardinality_limit(view)
             cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
             [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
           end
 
+          # @return [Boolean] whether the measurement should be offered to the reservoir.
           def should_offer_exemplar?(value, attributes)
             return false if @exemplar_reservoir&.noop?
 
@@ -149,6 +155,7 @@ module OpenTelemetry
             @exemplar_filter&.should_sample?(value, time, attributes, context)
           end
 
+          # @return [String] a human-readable representation of the metric stream.
           def to_s
             instrument_info = +''
             instrument_info << "name=#{@name}"

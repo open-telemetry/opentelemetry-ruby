@@ -50,6 +50,7 @@ module OpenTelemetry
           end
         end
 
+        # Unregisters a callback from each supplied instrument.
         def unregister(instruments, callback)
           instruments.each do |instrument|
             instrument.unregister(callback)
@@ -63,6 +64,7 @@ module OpenTelemetry
           end
         end
 
+        # Creates and validates an SDK instrument for the requested kind.
         def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
           raise InstrumentNameError if name.nil?
           raise InstrumentNameError if name.empty?
@@ -83,6 +85,7 @@ module OpenTelemetry
           end
         end
 
+        # @return [Boolean] whether the string contains only UTF-8 BMP characters.
         def utf8mb3_encoding?(string)
           string.force_encoding('UTF-8').valid_encoding? &&
             string.each_char { |c| return false if c.bytesize >= 4 }

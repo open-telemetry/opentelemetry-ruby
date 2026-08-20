@@ -18,14 +18,17 @@ module OpenTelemetry
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
           end
 
+          # Collects metric data from the backing metric store.
           def collect
             @metric_store.collect
           end
 
+          # Shuts down the reader.
           def shutdown(timeout: nil)
             Export::SUCCESS
           end
 
+          # Flushes any pending data in the reader.
           def force_flush(timeout: nil)
             Export::SUCCESS
           end

@@ -10,6 +10,7 @@ module OpenTelemetry
       # The ConfiguratorPatch implements a hook to configure the metrics
       # portion of the SDK.
       module ConfiguratorPatch
+        # Registers a metric reader for the SDK configuration.
         def add_metric_reader(metric_reader)
           @metric_readers << metric_reader
         end

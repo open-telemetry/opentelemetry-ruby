@@ -22,6 +22,7 @@ module OpenTelemetry
             generate_regex_pattern(name)
           end
 
+          # @return [Boolean] whether the view matches the metric stream.
           def match_instrument?(metric_stream)
             return false if @name && !name_match(metric_stream.name)
             return false if @options[:type] && @options[:type] != metric_stream.instrument_kind
@@ -32,10 +33,12 @@ module OpenTelemetry
             true
           end
 
+          # @return [Boolean] whether the stream name matches the view pattern.
           def name_match(stream_name) # rubocop:disable Naming/PredicateMethod
             !!@regex&.match(stream_name)
           end
 
+          # @return [Boolean] whether the configured aggregation belongs to the SDK.
           def valid_aggregation?
             @aggregation.class.name.rpartition('::')[0] == 'OpenTelemetry::SDK::Metrics::Aggregation'
           end

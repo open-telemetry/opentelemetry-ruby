@@ -17,10 +17,12 @@ module OpenTelemetry
             @stopped = false
           end
 
+          # Collects and exports the current metrics to the console.
           def pull
             export(collect)
           end
 
+          # Writes the supplied metrics to the console unless shut down.
           def export(metrics, timeout: nil)
             return FAILURE if @stopped
 
@@ -29,10 +31,12 @@ module OpenTelemetry
             SUCCESS
           end
 
+          # @return [Integer] success because console export needs no flushing.
           def force_flush(timeout: nil)
             SUCCESS
           end
 
+          # Stops this exporter from accepting further exports.
           def shutdown(timeout: nil)
             @stopped = true
             SUCCESS

@@ -67,10 +67,12 @@ module OpenTelemetry
             @temporality = temporality
           end
 
+          # @return [Boolean] whether the temporality is delta.
           def delta?
             @temporality == :delta
           end
 
+          # @return [Boolean] whether the temporality is cumulative.
           def cumulative?
             @temporality == :cumulative
           end

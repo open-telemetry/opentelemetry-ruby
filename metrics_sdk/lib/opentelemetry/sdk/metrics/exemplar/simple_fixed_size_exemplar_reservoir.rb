@@ -41,11 +41,13 @@ module OpenTelemetry
             exemplars
           end
 
+          # Clears the sampled exemplars and measurement counter.
           def reset
             @exemplar_buckets = Array.new(@max_size) { ExemplarBucket.new }
             @num_measurements_seen = 0
           end
 
+          # Selects the bucket that should receive the next exemplar.
           def find_histogram_bucket
             @num_measurements_seen < @max_size ? @num_measurements_seen : rand(0..(@num_measurements_seen - 1))
           end
