@@ -234,7 +234,6 @@ module OpenTelemetry
             nil
           end
 
-          # @return [Symbol] the configured aggregation temporality.
           def aggregation_temporality
             @aggregation_temporality.temporality
           end
