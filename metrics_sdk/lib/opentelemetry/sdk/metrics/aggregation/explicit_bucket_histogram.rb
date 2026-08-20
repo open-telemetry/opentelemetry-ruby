@@ -93,6 +93,7 @@ module OpenTelemetry
               0,                   # :sum
               empty_bucket_counts, # :bucket_counts
               @boundaries,         # :explicit_bounds
+              0,                   # :flags
               nil,                 # :exemplars
               min,                 # :min
               max                  # :max

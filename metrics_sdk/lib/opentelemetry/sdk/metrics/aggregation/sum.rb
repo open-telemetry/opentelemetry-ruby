@@ -83,6 +83,7 @@ module OpenTelemetry
               nil,
               nil,
               0,
+              0,
               nil
             )
           end

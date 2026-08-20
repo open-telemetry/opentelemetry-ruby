@@ -28,6 +28,7 @@ module OpenTelemetry
               0,
               0,
               0,
+              0,
               []
             )
             nil
