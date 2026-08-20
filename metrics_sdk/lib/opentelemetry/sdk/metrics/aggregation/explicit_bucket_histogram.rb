@@ -34,7 +34,6 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
-          # Collects histogram data points for the requested time range.
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
@@ -61,7 +60,6 @@ module OpenTelemetry
             end
           end
 
-          # Records a measurement in the matching histogram data point.
           def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
             hdp = if data_points.key?(attributes)
                     data_points[attributes]
@@ -75,7 +73,6 @@ module OpenTelemetry
             nil
           end
 
-          # @return [Symbol] the configured aggregation temporality.
           def aggregation_temporality
             @aggregation_temporality.temporality
           end

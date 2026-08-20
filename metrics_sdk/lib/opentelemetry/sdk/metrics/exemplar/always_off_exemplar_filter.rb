@@ -11,7 +11,6 @@ module OpenTelemetry
         # AlwaysOffExemplarFilter makes no measurements eligible for being an Exemplar.
         # Using this ExemplarFilter is as good as disabling Exemplar feature.
         class AlwaysOffExemplarFilter < ExemplarFilter
-          # @return [Boolean] always false because sampling is disabled.
           def self.should_sample?(value, timestamp, attributes, context)
             false
           end

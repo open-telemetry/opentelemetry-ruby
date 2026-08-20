@@ -19,7 +19,6 @@ module OpenTelemetry
         @delegate = nil
       end
 
-      # Upgrades the proxy to a concrete instrument from the supplied meter.
       def upgrade_with(meter)
         @delegate = case @kind
                     when :counter, :histogram, :up_down_counter
@@ -29,12 +28,10 @@ module OpenTelemetry
                     end
       end
 
-      # Forwards an add operation to the concrete instrument when available.
       def add(amount, attributes: nil)
         @delegate&.add(amount, attributes: attributes)
       end
 
-      # Forwards a record operation to the concrete instrument when available.
       def record(amount, attributes: nil)
         @delegate&.record(amount, attributes: attributes)
       end

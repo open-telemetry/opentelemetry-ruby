@@ -19,12 +19,10 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
-          # Collects and stores the current metrics snapshot.
           def pull
             export(collect)
           end
 
-          # Appends metrics to the in-memory snapshots.
           def export(metrics, timeout: nil)
             @mutex.synchronize do
               @metric_snapshots.concat(Array(metrics))
@@ -32,14 +30,12 @@ module OpenTelemetry
             SUCCESS
           end
 
-          # Removes all stored metric snapshots.
           def reset
             @mutex.synchronize do
               @metric_snapshots.clear
             end
           end
 
-          # Shuts down the in-memory exporter.
           def shutdown
             SUCCESS
           end

@@ -38,6 +38,7 @@ module OpenTelemetry
         # @return [Meter]
         def meter(name, version: nil, schema_url: nil, attributes: nil)
           version ||= ''
+          schema_url ||= ''
           attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
 
           if @stopped
@@ -135,7 +136,6 @@ module OpenTelemetry
         end
         alias register_asynchronous_instrument register_synchronous_instrument
 
-        # Selects the exemplar filter configured by the environment.
         def exemplar_filter_setup
           case ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)
           when 'always_on'
@@ -180,11 +180,11 @@ module OpenTelemetry
         #     unit: A String matching an instrumentation unit, e.g. 'smidgen'
         #     meter_name: A String matching a meter name, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be 'sample_meter_name'
         #     meter_version: A String matching a meter version, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be '1.2.0'
+        #     meter_schema_url: A String matching a meter schema_url, e.g. meter_provider.meter('sample_meter_name', schema_url: 'https://opentelemetry.io/schemas/1.30.0'), would be 'https://opentelemetry.io/schemas/1.30.0'
         #
         # @return [nil] returns nil
         #
         def add_view(name, **)
-          # TODO: add schema_url as part of options
           @registered_views << View::RegisteredView.new(name, **)
           nil
         end

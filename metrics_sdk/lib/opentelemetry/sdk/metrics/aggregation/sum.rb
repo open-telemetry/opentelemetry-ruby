@@ -27,7 +27,6 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
-          # Collects the accumulated values for the requested time range.
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
@@ -52,7 +51,6 @@ module OpenTelemetry
             end
           end
 
-          # Adds a measurement to the matching sum data point.
           def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
             return if @monotonic && increment < 0
 
@@ -69,12 +67,10 @@ module OpenTelemetry
             nil
           end
 
-          # @return [Boolean] whether negative measurements are rejected.
           def monotonic?
             @monotonic
           end
 
-          # @return [Symbol] the configured aggregation temporality.
           def aggregation_temporality
             @aggregation_temporality.temporality
           end

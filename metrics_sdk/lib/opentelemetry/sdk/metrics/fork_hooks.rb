@@ -10,7 +10,6 @@ module OpenTelemetry
       # ForkHooks implements methods to run callbacks before and after forking a Process by overriding Process::_fork
       # This is used to ensure that the PeriodicMetricReader is restarted after forking
       module ForkHooks
-        # Installs the fork hook on the Process singleton class.
         def self.attach!
           return if @fork_hooks_attached
 
@@ -18,14 +17,12 @@ module OpenTelemetry
           @fork_hooks_attached = true
         end
 
-        # Runs after-fork callbacks on registered metric readers.
         def self.after_fork
           ::OpenTelemetry.meter_provider.metric_readers.each do |reader|
             reader.after_fork if reader.respond_to?(:after_fork)
           end
         end
 
-        # Invokes the original fork implementation and then runs callbacks in the child.
         def _fork
           parent_pid = Process.pid
           super.tap do

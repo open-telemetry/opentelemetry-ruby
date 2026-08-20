@@ -6,7 +6,6 @@
 
 require_relative 'bench_helper'
 
-# Builds a histogram instrument using the supplied aggregation.
 def histogram_with_agg(aggregation)
   provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
   provider.add_view('bench.agg.histogram', aggregation: aggregation)

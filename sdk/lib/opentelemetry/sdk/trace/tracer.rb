@@ -21,7 +21,7 @@ module OpenTelemetry
         #
         # @return [Tracer]
         def initialize(name, version, tracer_provider, attributes: nil)
-          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
+          @instrumentation_scope = InstrumentationScope.new(name, version, nil, attributes || {}.freeze)
           @tracer_provider = tracer_provider
         end
 

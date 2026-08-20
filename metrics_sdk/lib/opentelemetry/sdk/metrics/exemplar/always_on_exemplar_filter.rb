@@ -10,7 +10,6 @@ module OpenTelemetry
       module Exemplar
         # AlwaysOnExemplarFilter makes all measurements eligible for being an Exemplar.
         class AlwaysOnExemplarFilter < ExemplarFilter
-          # @return [Boolean] always true because every measurement is eligible.
           def self.should_sample?(value, timestamp, attributes, context)
             true
           end

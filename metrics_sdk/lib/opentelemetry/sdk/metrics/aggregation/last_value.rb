@@ -22,7 +22,6 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
-          # Collects the latest value for each attribute set and clears the store.
           def collect(start_time, end_time, data_points)
             ndps = data_points.values.map! do |ndp|
               ndp.start_time_unix_nano = start_time
@@ -35,7 +34,6 @@ module OpenTelemetry
             ndps
           end
 
-          # Records the latest measurement for the supplied attributes.
           def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
             # Check if we already have this attribute set
             ndp = if data_points.key?(attributes)
