@@ -1,0 +1,50 @@
+name: FOSSA scanning
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  fossa:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "4.0.6"
+      - name: Generate Gemfile.lock
+        run: |
+          echo "Finding all Gemfiles in the project..."
+          echo "======================================="
+          ORIGINAL_DIR=$(pwd)
+
+          find . -type f -name "Gemfile" -not -path "*/example/*" | sort | while read gemfile; do
+              gemfile_dir=$(dirname "$gemfile")
+              
+              # Change to the Gemfile's directory
+              echo "Changing to directory: $gemfile_dir"
+              
+              cd "$gemfile_dir" || continue
+
+              echo "Current directory: $(pwd)"
+              echo "Creating lock file for: $gemfile"
+              
+              # Generate the Gemfile.lock files
+              bundle lock || echo "Warning: Failed to generate lock file for $gemfile, continuing..."
+
+              cd "$ORIGINAL_DIR" || exit 1
+          done
+
+      - uses: fossas/fossa-action@29693cc50323968e039056be419b32989fc5880c # v2.0.0
+        with:
+          api-key: ${{secrets.FOSSA_API_KEY}}
+          team: OpenTelemetry

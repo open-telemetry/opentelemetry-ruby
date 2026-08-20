@@ -18,7 +18,8 @@ module OpenTelemetry
                                 :data_points,               # Hash{Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>} => Numeric}
                                 :aggregation_temporality,   # Symbol
                                 :start_time_unix_nano,      # Integer nanoseconds since Epoch
-                                :time_unix_nano)            # Integer nanoseconds since Epoch
+                                :time_unix_nano,            # Integer nanoseconds since Epoch
+                                :is_monotonic)              # Boolean
       end
     end
   end

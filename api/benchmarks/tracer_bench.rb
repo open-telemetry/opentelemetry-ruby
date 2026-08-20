@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'benchmark/ipsa'
+require 'benchmark/ips'
 require 'opentelemetry'
 
 tracer = OpenTelemetry::Trace::Tracer.new
@@ -26,7 +26,7 @@ links = Array.new(3) do
   )
 end
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   x.report 'start span' do
     span = tracer.start_span('test_span')
     span.finish

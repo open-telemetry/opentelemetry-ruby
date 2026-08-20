@@ -1,19 +1,44 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.9.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
+### v0.9.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.8.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
+### v0.7.0 / 2025-10-14
+
+* ADDED: Use common method for returning timestamp in nanoseconds
+
+### v0.6.0 / 2025-02-25
+
+- ADDED: Support 3.1 Min Version
+
+### v0.5.0 / 2024-12-04
+
+- ADDED: Add OTLP Log Record Exporter
+
 ### v0.4.0 / 2023-06-08
 
-* BREAKING CHANGE: Remove support for EoL Ruby 2.7 
+- BREAKING CHANGE: Remove support for EoL Ruby 2.7
 
-* ADDED: Remove support for EoL Ruby 2.7 
+- ADDED: Remove support for EoL Ruby 2.7
 
 ### v0.3.0 / 2022-09-14
 
-* ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 
+- ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0
 
 ### v0.2.0 / 2022-06-09
 
-* ADDED: Otlp grpc 
+- ADDED: Otlp grpc
 
 ### v0.1.0 / 2022-04-22
 
-* Initial release.
+- Initial release.

@@ -83,15 +83,19 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new
     end
 
-    it 'integrates with collector' do
-      skip unless ENV['TRACING_INTEGRATION_TEST']
-      WebMock.disable_net_connect!(allow: 'localhost')
-      resource = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
-      span_data = create_resource_span_data(name: 'collector-integration-test', resource: resource)
-      result = exporter.export([span_data], timeout: nil)
-      _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
-    ensure
-      WebMock.disable_net_connect!
+    describe 'collector integration' do
+      def teardown
+        WebMock.disable_net_connect!
+      end
+
+      it 'integrates with collector' do
+        skip unless ENV['TRACING_INTEGRATION_TEST']
+        WebMock.disable_net_connect!(allow: 'localhost')
+        resource = OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
+        span_data = create_resource_span_data(name: 'collector-integration-test', resource: resource)
+        result = exporter.export([span_data], timeout: nil)
+        _(result).must_equal(OpenTelemetry::SDK::Trace::Export::SUCCESS)
+      end
     end
 
     it 'retries on timeout' do

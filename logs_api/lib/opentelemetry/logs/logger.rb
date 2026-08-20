@@ -35,6 +35,8 @@ module OpenTelemetry
       # @param [optional Hash{String => String, Numeric, Boolean,
       #   Array<String, Numeric, Boolean>}] attributes Additional information
       #   about the event.
+      # @param [optional String] event_name A name that identifies the class or
+      #   type of the event.
       # @param [optional Context] context The Context to associate with the
       #   LogRecord. Intended default: OpenTelemetry::Context.current
       #
@@ -49,6 +51,7 @@ module OpenTelemetry
         span_id: nil,
         trace_flags: nil,
         attributes: nil,
+        event_name: nil,
         context: nil
       )
       end

@@ -22,7 +22,4 @@
 # rbenv configuration
 .ruby-version
 
-# Python virtual env for codespell
-venv
-
 tags

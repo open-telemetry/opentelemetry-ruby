@@ -3,31 +3,60 @@ name: Open release request
 on:
   workflow_dispatch:
     inputs:
-      gems:
-        description: Gems to release (leave blank to release all gems)
+      names:
+        description: Components to release (leave blank to release all components)
         required: false
         default: ""
+  push:
+    branches:
+      - main
+    paths:
+      - "semantic_conventions/semconv.yaml"
+
+permissions:
+  contents: read
 
 jobs:
   release-request:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      contents: write # required for pushing changes
+      pull-requests: write # required for creating release PRs
+    runs-on: ubuntu-24.04
     env:
-      ruby_version: "3.0"
-    runs-on: ubuntu-latest
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.190.0
-        with:
-          ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates
+          persist-credentials: true
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "4.0.6"
+          bundler-cache: true
+      - name: Create otelbot app token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
+          private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - name: Determine releases
+        id: detect
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "components=opentelemetry-semantic_conventions" >> $GITHUB_OUTPUT
       - name: Open release pull request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Use an app token instead of GITHUB_TOKEN to trigger workflows
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          RELEASE_NAMES: ${{ github.event.inputs.names || steps.detect.outputs.components }}
+          TARGET_BRANCH: ${{ github.ref }}
         run: |
-          toys release request --yes --verbose \
-            "--gems=${{ github.event.inputs.gems }}" \
-            "--release-ref=${{ github.ref }}" \
+          bundle exec toys release request --yes --verbose \
+            "--target-branch=$TARGET_BRANCH" \
+            $RELEASE_NAMES \
             < /dev/null

@@ -39,7 +39,7 @@ module OpenTelemetry
 
         def to_zipkin_span(span_d, resource)
           start_time = span_d.start_timestamp / 1_000
-          duration = span_d.end_timestamp / 1_000 - start_time
+          duration = (span_d.end_timestamp / 1_000) - start_time
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
           resource.attribute_enumerator.select do |key, value|
@@ -115,14 +115,14 @@ module OpenTelemetry
           return if span_data.events.nil? || span_data.events.empty?
 
           events = span_data.events.map do |event|
-            if event.attributes.keys.length.zero?
+            if event.attributes.keys.empty?
               {
-                timestamp: (event.timestamp / 1_000).to_s,
+                timestamp: event.timestamp / 1_000,
                 value: event.name
               }
             else
               {
-                timestamp: (event.timestamp / 1_000).to_s,
+                timestamp: event.timestamp / 1_000,
                 value: { event.name => event.attributes.transform_values(&:to_s) }.to_json
               }
             end

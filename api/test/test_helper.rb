@@ -15,3 +15,5 @@ require 'opentelemetry'
 require 'minitest/autorun'
 
 OpenTelemetry.logger = Logger.new(File::NULL)
+
+Context = OpenTelemetry::Context

@@ -14,6 +14,7 @@ module OpenTelemetry
       # for context propagation in the W3C Trace Context format.
       module TraceContext
         extend self
+
         TEXT_MAP_PROPAGATOR = TextMapPropagator.new
 
         private_constant :TEXT_MAP_PROPAGATOR

@@ -40,15 +40,15 @@ module OpenTelemetry
           # See {Samplers}.
           def should_sample?(trace_id:, parent_context:, links:, name:, kind:, attributes:)
             parent_span_context = OpenTelemetry::Trace.current_span(parent_context).context
-            if !parent_span_context.valid?
-              @root.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
-            else
+            if parent_span_context.valid?
               tracestate = sanitized_tracestate(trace_id, parent_span_context)
               if parent_span_context.trace_flags.sampled?
                 Result.new(decision: Decision::RECORD_AND_SAMPLE, tracestate: tracestate)
               else
                 Result.new(decision: Decision::DROP, tracestate: tracestate)
               end
+            else
+              @root.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
             end
           end
 

@@ -18,6 +18,9 @@ require 'opentelemetry/sdk'
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry-exporter-otlp-metrics'
 
+# this example manually configures the exporter, turn off automatic configuration
+ENV['OTEL_METRICS_EXPORTER'] = 'none'
+
 OpenTelemetry::SDK.configure
 
 otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new

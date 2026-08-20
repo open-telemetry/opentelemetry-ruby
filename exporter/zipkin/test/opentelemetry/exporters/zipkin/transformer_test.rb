@@ -55,10 +55,10 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     annotation_one = encoded_span[:annotations].first
     annotation_two = encoded_span[:annotations][1]
 
-    _(annotation_one[:timestamp]).must_equal((events[0].timestamp / 1_000).to_s)
+    _(annotation_one[:timestamp]).must_equal(events[0].timestamp / 1_000)
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => 'evalue' } }.to_json)
 
-    _(annotation_two[:timestamp]).must_equal((events[1].timestamp / 1_000).to_s)
+    _(annotation_two[:timestamp]).must_equal(events[1].timestamp / 1_000)
     _(annotation_two[:value]).must_equal('event_no_attrib')
 
     tags = encoded_span['tags']
@@ -115,7 +115,7 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     annotation_one = encoded_span[:annotations].first
 
-    _(annotation_one[:timestamp]).must_equal((events[0].timestamp / 1000).to_s)
+    _(annotation_one[:timestamp]).must_equal(events[0].timestamp / 1000)
     _(annotation_one[:value]).must_equal({ 'event_with_attribs' => { 'ekey' => '["evalue"]' } }.to_json)
 
     tags = encoded_span['tags']

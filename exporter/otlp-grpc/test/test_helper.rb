@@ -9,8 +9,6 @@ if RUBY_ENGINE == 'ruby'
   SimpleCov.start
 end
 
-require 'pry'
-
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/otlp/grpc'
 require 'minitest/autorun'

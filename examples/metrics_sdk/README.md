@@ -32,25 +32,21 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: 0.0.0.0:4317
       http:
-      # Default endpoints: 0.0.0.0:4317 for gRPC and 0.0.0.0:4318 for HTTP
+        endpoint: 0.0.0.0:4318
 
 exporters:
   debug:
     verbosity: detailed
 
-processors:
-  batch:
-
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
       exporters: [debug]
     metrics:
       receivers: [otlp]
-      processors: [batch]
       exporters: [debug]
 ```
 

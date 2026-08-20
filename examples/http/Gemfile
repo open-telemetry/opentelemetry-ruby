@@ -2,9 +2,10 @@
 
 source "https://rubygems.org"
 
-gem "faraday", "~> 0.16.1"
+gem "faraday", "~> 2.0"
 gem "opentelemetry-api"
 gem "opentelemetry-common"
 gem "opentelemetry-sdk"
-gem "sinatra", "~> 2.0"
+gem "sinatra", "~> 4.1"
 gem "puma"
+gem "rackup"

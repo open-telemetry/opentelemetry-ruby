@@ -357,6 +357,112 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
   end
 
+  describe 'IPv4/IPv6 compatibility' do
+    it 'handles IPv6 loopback address with brackets' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://[::1]:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
+    it 'handles IPv6 full address with brackets' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://[2001:db8::1]:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '2001:db8::1'
+      _(http.port).must_equal 4318
+    end
+
+    it 'handles IPv6 address with https' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://[::1]:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 4318
+      _(http.use_ssl?).must_equal true
+    end
+
+    it 'handles IPv6 address with custom path' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://[::1]:8080/custom/path')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 8080
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'handles IPv4 loopback address' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://127.0.0.1:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '127.0.0.1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
+    it 'handles IPv4 address with custom port' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://192.168.1.100:8080/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '192.168.1.100'
+      _(http.port).must_equal 8080
+    end
+
+    it 'handles IPv4 address with https' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://10.0.0.1:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '10.0.0.1'
+      _(http.port).must_equal 4318
+      _(http.use_ssl?).must_equal true
+    end
+
+    it 'handles IPv4 address with custom path' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://127.0.0.1:9090/custom/path')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '127.0.0.1'
+      _(http.port).must_equal 9090
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'handles IPv4 address from environment variable' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://192.168.1.1:4318') do
+        OpenTelemetry::Exporter::OTLP::Exporter.new
+      end
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '192.168.1.1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+
+    it 'handles hostnames' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://localhost:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'localhost'
+      _(http.port).must_equal 4318
+    end
+
+    it 'handles fully qualified domain names' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://otel.example.com:4318/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'otel.example.com'
+      _(http.port).must_equal 4318
+    end
+
+    it 'handles hostnames with https' do
+      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://otel-collector.prod.example.com:443/v1/traces')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'otel-collector.prod.example.com'
+      _(http.port).must_equal 443
+      _(http.use_ssl?).must_equal true
+    end
+
+    it 'handles IPv6 address from environment variable' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://[::1]:4318') do
+        OpenTelemetry::Exporter::OTLP::Exporter.new
+      end
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
+    end
+  end
+
   describe 'ssl_verify_mode:' do
     it 'can be set to VERIFY_NONE by an envvar' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true') do
@@ -508,7 +614,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
-      span_data = OpenTelemetry::TestHelpers.create_span_data(total_recorded_attributes: 1, attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) })
+      span_data = OpenTelemetry::TestHelpers.create_span_data(total_recorded_attributes: 1, attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
 
       result = exporter.export([span_data])
 
@@ -672,6 +778,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
@@ -684,6 +794,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT,
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -696,6 +810,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER,
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -740,11 +858,19 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                           span_id: root_span_id,
                           attributes: [
                             Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 4))
-                          ]
+                          ],
+                          flags: (
+                            Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                            1
+                          )
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     )
                   ]
@@ -762,6 +888,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER,
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -777,6 +907,138 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       assert_requested(:post, 'http://localhost:4318/v1/traces') do |req|
         Zlib.gunzip(req.body) == encoded_etsr
       end
+    end
+  end
+
+  describe 'span flags' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Exporter.new }
+    let(:trace_id) { OpenTelemetry::Trace.generate_trace_id }
+    let(:span_id) { OpenTelemetry::Trace.generate_span_id }
+    let(:parent_span_id) { OpenTelemetry::Trace.generate_span_id }
+    let(:resource) { OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'test-service') }
+    let(:instrumentation_scope) { OpenTelemetry::SDK::InstrumentationScope.new('test-lib', '1.0.0') }
+
+    describe 'build_span_flags' do
+      it 'sets flags to HAS_IS_REMOTE for local parent span context' do
+        flags = exporter.send(:build_span_flags, false, OpenTelemetry::Trace::TraceFlags::DEFAULT)
+        _(flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+
+      it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
+        flags = exporter.send(:build_span_flags, true, OpenTelemetry::Trace::TraceFlags::DEFAULT)
+        _(flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+
+      it 'preserves base trace flags' do
+        flags = exporter.send(:build_span_flags, false, OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(flags).must_equal(
+          0x01 |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    describe 'as_otlp_span with flags' do
+      it 'sets flags to HAS_IS_REMOTE for local parent span context' do
+        span_data = create_span_data(parent_span_is_remote: false)
+        span = exporter.send(:as_otlp_span, span_data)
+        _(span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+
+      it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
+        span_data = create_span_data(parent_span_is_remote: true)
+        span = exporter.send(:as_otlp_span, span_data)
+        _(span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    describe 'as_otlp_span with link flags' do
+      it 'sets link flags to HAS_IS_REMOTE for local link context' do
+        local_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: false)
+        local_link = create_link(local_span_context)
+        span_data = create_span_data(links: [local_link])
+        span = exporter.send(:as_otlp_span, span_data)
+        _(span.links.first.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+
+      it 'sets link flags to HAS_IS_REMOTE | IS_REMOTE for remote link context' do
+        remote_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: true)
+        remote_link = create_link(remote_span_context)
+        span_data = create_span_data(links: [remote_link])
+        span = exporter.send(:as_otlp_span, span_data)
+        _(span.links.first.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    describe 'export with flags' do
+      it 'includes flags in exported spans' do
+        span_data = create_span_data(parent_span_is_remote: true)
+        encoded_data = exporter.send(:encode, [span_data])
+        decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+        exported_span = decoded.resource_spans.first.scope_spans.first.spans.first
+        _(exported_span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+
+      it 'includes flags in exported links' do
+        remote_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: true)
+        remote_link = create_link(remote_span_context)
+        span_data = create_span_data(links: [remote_link])
+        encoded_data = exporter.send(:encode, [span_data])
+        decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+        exported_link = decoded.resource_spans.first.scope_spans.first.spans.first.links.first
+        _(exported_link.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    private
+
+    def create_span_data(parent_span_is_remote: false, links: [])
+      OpenTelemetry::SDK::Trace::SpanData.new(
+        'test-span',                    # name
+        :internal,                      # kind
+        OpenTelemetry::Trace::Status.ok, # status
+        parent_span_id, # parent_span_id
+        0,                             # total_recorded_attributes
+        0,                             # total_recorded_events
+        links.size,                    # total_recorded_links
+        Time.now.to_i * 1_000_000_000, # start_timestamp
+        Time.now.to_i * 1_000_000_000, # end_timestamp
+        {},                            # attributes
+        links,                         # links
+        [],                            # events
+        resource,                      # resource
+        instrumentation_scope,         # instrumentation_scope
+        span_id,                       # span_id
+        trace_id,                      # trace_id
+        OpenTelemetry::Trace::TraceFlags::DEFAULT, # trace_flags
+        OpenTelemetry::Trace::Tracestate::DEFAULT, # tracestate
+        parent_span_is_remote # parent_span_is_remote
+      )
+    end
+
+    def create_link(span_context)
+      OpenTelemetry::Trace::Link.new(span_context, { 'link-attribute' => 'link-value' })
     end
   end
 end

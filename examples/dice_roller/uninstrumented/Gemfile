@@ -1,0 +1,9 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+ruby ">= 3.2.0"
+
+gem "puma"
+gem "rackup"
+gem "sinatra", "~> 4.0"

@@ -18,7 +18,7 @@ describe OpenTelemetry do
 
   describe '#meter_provider and #meter_provider=' do
     it 'initializes with a global instance of ProxyMeterProvider' do
-      assert(OpenTelemetry.meter_provider.is_a?(OpenTelemetry::Internal::ProxyMeterProvider))
+      assert_kind_of(OpenTelemetry::Internal::ProxyMeterProvider, OpenTelemetry.meter_provider)
     end
 
     it 'sets global MeterProvider to the given meter_provider' do
@@ -39,7 +39,7 @@ describe OpenTelemetry do
 
           assert_same(proxy_meter_provider.instance_variable_get(:@delegate), new_meter_provider)
           assert_same(OpenTelemetry.meter_provider, new_meter_provider)
-          assert(log_stream.string.match?(/Upgrading default proxy meter provider to #{new_meter_provider.class}/i))
+          assert_match(/Upgrading default proxy meter provider to #{new_meter_provider.class}/i, log_stream.string)
         end
       end
     end

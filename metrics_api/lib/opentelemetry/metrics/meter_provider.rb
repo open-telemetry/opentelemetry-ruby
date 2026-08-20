@@ -10,8 +10,10 @@ module OpenTelemetry
     class MeterProvider
       # Returns a {Meter} instance.
       #
-      # @param [String] name Instrumentation package name
-      # @param [optional String] version Instrumentation package version
+      # @param [String] name Instrumentation scope name
+      # @param [optional String] version Instrumentation scope version
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+      #   Instrumentation scope attributes
       #
       # @return [Meter]
       def meter(name, version: nil, schema_url: nil, attributes: {})

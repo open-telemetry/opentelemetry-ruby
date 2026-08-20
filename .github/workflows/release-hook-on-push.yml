@@ -5,24 +5,32 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   release-update-open-requests:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      contents: write # required for pushing changes
+      pull-requests: write # required for updating open release PRs
+    runs-on: ubuntu-24.04
     env:
-      ruby_version: "3.0"
-    runs-on: ubuntu-latest
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
-      - name: Install Ruby ${{ env.ruby_version }}
-        uses: ruby/setup-ruby@v1.190.0
-        with:
-          ruby-version: ${{ env.ruby_version }}
       - name: Checkout repo
-        uses: actions/checkout@v2
-      - name: Install Toys
-        run: "gem install --no-document toys -v 0.15.5"
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates when auto-requesting releases
+          persist-credentials: true
+      - name: Install Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        with:
+          ruby-version: "4.0.6"
+          bundler-cache: true
       - name: Update open releases
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          toys release _onpush --verbose \
+          bundle exec toys release _onpush --verbose \
             < /dev/null

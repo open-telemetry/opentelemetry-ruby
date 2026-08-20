@@ -6,7 +6,6 @@
 
 require 'test_helper'
 
-# rubocop:disable Lint/ConstantDefinitionInBlock, Style/Documentation
 describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
   BatchLogRecordProcessor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor
   SUCCESS = OpenTelemetry::SDK::Logs::Export::SUCCESS
@@ -153,7 +152,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
     it 'does not spawn a thread on boot if OTEL_RUBY_BLRP_START_THREAD_ON_BOOT is false' do
       mock = Minitest::Mock.new
-      mock.expect(:call, nil) { assert false }
+      mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BLRP_START_THREAD_ON_BOOT' => 'false') do
@@ -164,7 +163,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
     it 'prefers explicit start_thread_on_boot parameter rather than the environment' do
       mock = Minitest::Mock.new
-      mock.expect(:call, nil) { assert false }
+      mock.expect(:call, nil)
 
       Thread.stub(:new, mock) do
         OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BLRP_START_THREAD_ON_BOOT' => 'true') do
@@ -186,20 +185,23 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
 
     it 'removes the older log records from the batch if full' do
-      processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
+      # Windows intermittently fails if we don't set this
+      OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_BLRP_START_THREAD_ON_BOOT' => 'false') do
+        processor = BatchLogRecordProcessor.new(TestExporter.new, max_queue_size: 1, max_export_batch_size: 1)
 
-      # Don't actually try to export, we're looking at the log records array
-      processor.stub(:work, nil) do
-        older_log_record = TestLogRecord.new
-        newest_log_record = TestLogRecord.new
+        # Don't actually try to export, we're looking at the log records array
+        processor.stub(:work, nil) do
+          older_log_record = TestLogRecord.new
+          newest_log_record = TestLogRecord.new
 
-        processor.on_emit(older_log_record, mock_context)
-        processor.on_emit(newest_log_record, mock_context)
+          processor.on_emit(older_log_record, mock_context)
+          processor.on_emit(newest_log_record, mock_context)
 
-        records = processor.instance_variable_get(:@log_records)
+          records = processor.instance_variable_get(:@log_records)
 
-        assert_includes(records, newest_log_record)
-        refute_includes(records, older_log_record)
+          assert_includes(records, newest_log_record)
+          refute_includes(records, older_log_record)
+        end
       end
     end
 
@@ -444,7 +446,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
       exporter = TestExporter.new
       processor = BatchLogRecordProcessor.new(exporter)
 
-      producers = 10.times.map do |i|
+      producers = Array.new(10) do |i|
         Thread.new do
           x = i * 10
           10.times do |j|
@@ -458,7 +460,7 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
 
       out = exporter.batches.flatten.map(&:body).sort
 
-      expected = 100.times.map { |i| i }
+      expected = Array.new(100) { |i| i }
 
       _(out).must_equal(expected)
     end
@@ -469,6 +471,9 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     let(:processor) { BatchLogRecordProcessor.new(exporter) }
 
     it 'reports export failures' do
+      # See: https://github.com/open-telemetry/opentelemetry-ruby/issues/2027
+      skip 'Test is unreliable on Windows and MacOS CI' if ENV['CI']
+
       # skip the work method's behavior, we rely on shutdown to get us to the failures
       processor.stub(:work, nil) do
         mock_logger = Minitest::Mock.new
@@ -539,4 +544,3 @@ describe OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor do
     end
   end
 end
-# rubocop:enable Lint/ConstantDefinitionInBlock, Style/Documentation

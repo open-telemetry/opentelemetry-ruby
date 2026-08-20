@@ -10,6 +10,8 @@ require 'bundler/setup'
 require 'sinatra/base'
 # Require otel-ruby
 require 'opentelemetry/sdk'
+require 'opentelemetry/semconv/http'
+require 'opentelemetry/semconv/url'
 
 # Export traces to console by default
 ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
@@ -38,7 +40,7 @@ class OpenTelemetryMiddleware
     span_name = env['PATH_INFO']
 
     # For attribute naming, see
-    # https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md#http-server
+    # https://github.com/open-telemetry/semantic-conventions/blob/main/docs/http/http-spans.md#http-server
 
     # Activate the extracted context
     OpenTelemetry::Context.with_current(context) do
@@ -46,17 +48,17 @@ class OpenTelemetryMiddleware
       @tracer.in_span(
         span_name,
         attributes: {
-          'component' => 'http',
-          'http.method' => env['REQUEST_METHOD'],
-          'http.route' => env['PATH_INFO'],
-          'http.url' => env['REQUEST_URI'],
+          OpenTelemetry::SemConv::URL::URL_SCHEME => 'http',
+          OpenTelemetry::SemConv::HTTP::HTTP_REQUEST_METHOD => env['REQUEST_METHOD'],
+          OpenTelemetry::SemConv::HTTP::HTTP_ROUTE => env['PATH_INFO'],
+          OpenTelemetry::SemConv::URL::URL_PATH => env['REQUEST_URI'],
         },
         kind: :server
       ) do |span|
         # Run application stack
         status, headers, response_body = @app.call(env)
 
-        span.set_attribute('http.status_code', status)
+        span.set_attribute(OpenTelemetry::SemConv::HTTP::HTTP_RESPONSE_STATUS_CODE, status)
       end
     end
 

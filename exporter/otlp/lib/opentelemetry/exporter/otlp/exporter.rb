@@ -35,6 +35,7 @@ module OpenTelemetry
 
         DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
+        # rubocop:disable Lint/DuplicateBranch
         def self.ssl_verify_mode
           if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
             OpenSSL::SSL::VERIFY_PEER
@@ -44,6 +45,7 @@ module OpenTelemetry
             OpenSSL::SSL::VERIFY_PEER
           end
         end
+        # rubocop:enable Lint/DuplicateBranch
 
         def initialize(endpoint: nil,
                        certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
@@ -103,8 +105,28 @@ module OpenTelemetry
 
         private
 
+        # Builds span flags based on whether the parent span context is remote.
+        # This follows the OTLP specification for span flags.
+        def build_span_flags(parent_span_is_remote, base_flags)
+          # Extract integer value from TraceFlags object if needed
+          # Derive the low 8-bit W3C trace flags using the public API.
+          base_flags_int =
+            if base_flags.sampled?
+              1
+            else
+              0
+            end
+
+          has_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+          is_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+
+          flags = base_flags_int | has_remote_mask
+          flags |= is_remote_mask if parent_span_is_remote
+          flags
+        end
+
         def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-          http = Net::HTTP.new(uri.host, uri.port)
+          http = Net::HTTP.new(uri.hostname, uri.port)
           http.use_ssl = uri.scheme == 'https'
           http.verify_mode = ssl_verify_mode
           http.ca_file = certificate_file unless certificate_file.nil?
@@ -157,7 +179,7 @@ module OpenTelemetry
             response = measure_request_duration { @http.request(request) }
 
             case response
-            when Net::HTTPOK
+            when Net::HTTPSuccess
               response.body # Read and discard body
               SUCCESS
             when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
@@ -221,10 +243,11 @@ module OpenTelemetry
 
         def log_status(body)
           status = Google::Rpc::Status.decode(body)
-          details = status.details.map do |detail|
-            klass_or_nil = ::Google::Protobuf::DescriptorPool.generated_pool.lookup(detail.type_name).msgclass
-            detail.unpack(klass_or_nil) if klass_or_nil
-          end.compact
+          pool = ::Google::Protobuf::DescriptorPool.generated_pool
+          details = status.details.filter_map do |detail|
+            klass = pool.lookup(detail.type_name).msgclass
+            detail.unpack(klass) if klass
+          end
           OpenTelemetry.handle_error(message: "OTLP exporter received rpc.Status{message=#{status.message}, details=#{details}} for uri=#{@uri}")
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
@@ -248,18 +271,14 @@ module OpenTelemetry
           end
         end
 
-        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def backoff?(retry_count:, reason:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
           @metrics_reporter.add_to_counter('otel.otlp_exporter.failure', labels: { 'reason' => reason })
           return false if retry_count > RETRY_COUNT
 
           sleep_interval = nil
           unless retry_after.nil?
             sleep_interval =
-              begin
-                Integer(retry_after)
-              rescue ArgumentError
-                nil
-              end
+              Integer(retry_after, exception: false)
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now
@@ -279,25 +298,25 @@ module OpenTelemetry
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(
             Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
               resource_spans: span_data
-                .group_by(&:resource)
-                .map do |resource, span_datas|
-                  Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
-                    resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                      attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                    ),
-                    scope_spans: span_datas
-                      .group_by(&:instrumentation_scope)
-                      .map do |il, sds|
-                        Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
-                          scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                            name: il.name,
-                            version: il.version
-                          ),
-                          spans: sds.map { |sd| as_otlp_span(sd) }
-                        )
-                      end
-                  )
-                end
+                              .group_by(&:resource)
+                              .map do |resource, span_datas|
+                                Opentelemetry::Proto::Trace::V1::ResourceSpans.new(
+                                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                                  ),
+                                  scope_spans: span_datas
+                                               .group_by(&:instrumentation_scope)
+                                               .map do |il, sds|
+                                                 Opentelemetry::Proto::Trace::V1::ScopeSpans.new(
+                                                   scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                     name: il.name,
+                                                     version: il.version
+                                                   ),
+                                                   spans: sds.map { |sd| as_otlp_span(sd) }
+                                                 )
+                                               end
+                                )
+                              end
             )
           )
         rescue StandardError => e
@@ -336,17 +355,19 @@ module OpenTelemetry
                 trace_id: link.span_context.trace_id,
                 span_id: link.span_context.span_id,
                 trace_state: link.span_context.tracestate.to_s,
-                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
+                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
                 # TODO: track dropped_attributes_count in Span#trim_links
+                flags: build_span_flags(link.span_context.remote?, link.span_context.trace_flags)
               )
             end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
-            status: span_data.status&.yield_self do |status|
+            status: span_data.status&.then do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
                 code: as_otlp_status_code(status.code),
                 message: status.description
               )
-            end
+            end,
+            flags: build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
           )
         end
 
@@ -396,7 +417,7 @@ module OpenTelemetry
         end
 
         def prepare_endpoint(endpoint)
-          endpoint ||= ENV['OTEL_EXPORTER_OTLP_TRACES_ENDPOINT']
+          endpoint ||= ENV.fetch('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', nil)
           if endpoint.nil?
             endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
             endpoint += '/' unless endpoint.end_with?('/')
@@ -428,7 +449,7 @@ module OpenTelemetry
           raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
 
           entries.each_with_object({}) do |entry, headers|
-            k, v = entry.split('=', 2).map(&CGI.method(:unescape))
+            k, v = entry.split('=', 2).map { |part| URI.decode_uri_component(part) }
             begin
               k = k.to_s.strip
               v = v.to_s.strip

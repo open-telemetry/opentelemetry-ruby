@@ -47,8 +47,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator do
       ctx = propagator.extract(carrier, context: context) { |c, k| c[k] }
       span_context = OpenTelemetry::Trace.current_span(ctx).context
       _(span_context).must_be :remote?
-      _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
-      _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
+      _(span_context.trace_id).must_equal((("\0" * 15) + "\xaa").b)
+      _(span_context.span_id).must_equal((("\0" * 7) + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
       _(span_context.tracestate).must_equal(tracestate)
     end
@@ -57,8 +57,8 @@ describe OpenTelemetry::Trace::Propagation::TraceContext::TextMapPropagator do
       ctx = propagator.extract(carrier, context: context)
       span_context = OpenTelemetry::Trace.current_span(ctx).context
       _(span_context).must_be :remote?
-      _(span_context.trace_id).must_equal(("\0" * 15 + "\xaa").b)
-      _(span_context.span_id).must_equal(("\0" * 7 + "\xea").b)
+      _(span_context.trace_id).must_equal((("\0" * 15) + "\xaa").b)
+      _(span_context.span_id).must_equal((("\0" * 7) + "\xea").b)
       _(span_context.trace_flags).must_be :sampled?
       _(span_context.tracestate).must_equal(tracestate)
     end

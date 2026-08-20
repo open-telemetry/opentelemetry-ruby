@@ -2,16 +2,27 @@ name: Markdown Link Check
 
 on:
   pull_request:
+    paths:
+      - '**/*.md'
+
+permissions:
+  contents: read
 
 jobs:
   markdown-link-check:
-    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      pull-requests: write # required for posting review comments
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-
-      - name: "Markdown Link Check"
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          config-file: '.markdown-link-check.json'
-          use-quiet-mode: 'yes'
-          use-verbose-mode: 'yes'
+          persist-credentials: false
+
+      # equivalent cli: linkspector check
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@568ec8d29fa92b31fd9ea5381e155c51e922af83 # v1.5.5
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-review
+          fail_on_error: true

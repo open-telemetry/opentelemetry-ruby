@@ -84,7 +84,7 @@ describe OpenTelemetry::Exporter::Jaeger::AgentExporter do
       socket = UDPSocket.new
       socket.bind('127.0.0.1', 0)
       exporter = OpenTelemetry::Exporter::Jaeger::AgentExporter.new(host: '127.0.0.1', port: socket.addr[1], max_packet_size: 128)
-      span_data = 3.times.map { create_span_data }
+      span_data = Array.new(3) { create_span_data }
       result = exporter.export(span_data)
       packet1 = socket.recvfrom(65_000)
       packet2 = socket.recvfrom(65_000)

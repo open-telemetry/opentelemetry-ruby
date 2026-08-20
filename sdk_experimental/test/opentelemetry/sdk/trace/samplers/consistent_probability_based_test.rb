@@ -17,13 +17,13 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
 
   describe '#should_sample?' do
     it 'populates tracestate for a sampled root span' do
-      result = call_sampler(subject, trace_id: trace_id(1), parent_context: OpenTelemetry::Context::ROOT)
+      result = call_sampler?(subject, trace_id: trace_id(1), parent_context: OpenTelemetry::Context::ROOT)
       _(result.tracestate['ot']).must_equal('p:1;r:62')
       _(result).must_be :sampled?
     end
 
     it 'populates tracestate for an unsampled root span' do
-      result = call_sampler(subject, trace_id: trace_id(-1), parent_context: OpenTelemetry::Context::ROOT)
+      result = call_sampler?(subject, trace_id: trace_id(-1), parent_context: OpenTelemetry::Context::ROOT)
       _(result.tracestate['ot']).must_equal('r:0')
       _(result).wont_be :sampled?
     end
@@ -32,14 +32,14 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash({ 'foo' => 'bar' })
       parent_span_context = OpenTelemetry::Trace::SpanContext.new(tracestate: tracestate)
       parent_context = OpenTelemetry::Trace.context_with_span(OpenTelemetry::Trace::Span.new(span_context: parent_span_context))
-      result = call_sampler(subject, trace_id: trace_id(1), parent_context: parent_context)
+      result = call_sampler?(subject, trace_id: trace_id(1), parent_context: parent_context)
       _(result.tracestate['foo']).must_equal('bar')
     end
 
     it 'populates tracestate with the parent r for a sampled child span' do
       tid = trace_id(1)
       ctx = parent_context(trace_id: tid, ot: 'p:1;r:1')
-      result = call_sampler(subject, trace_id: tid, parent_context: ctx)
+      result = call_sampler?(subject, trace_id: tid, parent_context: ctx)
       _(result.tracestate['ot']).must_equal('p:1;r:1')
       _(result).must_be :sampled?
     end
@@ -47,7 +47,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
     it 'populates tracestate without p for an unsampled child span' do
       tid = trace_id(-1)
       ctx = parent_context(trace_id: tid, ot: 'p:0;r:0')
-      result = call_sampler(subject, trace_id: tid, parent_context: ctx)
+      result = call_sampler?(subject, trace_id: tid, parent_context: ctx)
       _(result.tracestate['ot']).must_equal('r:0')
       _(result).wont_be :sampled?
     end
@@ -55,7 +55,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
     it 'generates a new r if r is missing in the parent tracestate' do
       tid = trace_id(1)
       ctx = parent_context(trace_id: tid, ot: 'p:1')
-      result = call_sampler(subject, trace_id: tid, parent_context: ctx)
+      result = call_sampler?(subject, trace_id: tid, parent_context: ctx)
       _(result.tracestate['ot']).must_equal('p:1;r:62')
       _(result).must_be :sampled?
     end
@@ -63,7 +63,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
     it 'generates a new r if r is invalid in the parent tracestate' do
       tid = trace_id(1)
       ctx = parent_context(trace_id: tid, ot: 'p:1;r:63')
-      result = call_sampler(subject, trace_id: tid, parent_context: ctx)
+      result = call_sampler?(subject, trace_id: tid, parent_context: ctx)
       _(result.tracestate['ot']).must_equal('p:1;r:62')
       _(result).must_be :sampled?
     end
@@ -117,7 +117,7 @@ describe OpenTelemetry::SDK::Trace::Samplers::ConsistentProbabilityBased do
       p_ceil = sampler.instance_variable_get(:@p_ceil)
       # Verify that the sampling probability encoded in each `p` adds up to the probability
       # in the the initializer argument
-      _((2**-p_ceil * ceil_prob) + (2**-p_floor * floor_prob)).must_be_within_epsilon(0.1)
+      _(((2**(-p_ceil)) * ceil_prob) + ((2**(-p_floor)) * floor_prob)).must_be_within_epsilon(0.1)
     end
   end
 end

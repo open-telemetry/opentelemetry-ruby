@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'cgi'
+require 'uri'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
@@ -24,7 +24,7 @@ module OpenTelemetry
         SAMPLED_FLAG_BIT = 0x01
         DEBUG_FLAG_BIT   = 0x02
         FIELDS = [IDENTITY_KEY].freeze
-        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>([0-9a-f]){1,16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
+        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>(?:[0-9a-f]){1,16}):(?:[0-9a-f]){1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
         ZERO_ID_REGEX = /^0+$/
 
         private_constant \
@@ -47,8 +47,8 @@ module OpenTelemetry
           header = getter.get(carrier, IDENTITY_KEY)
           return context unless header
           return context unless (match = header.match(TRACE_SPAN_IDENTITY_REGEX))
-          return context if match['trace_id'] =~ ZERO_ID_REGEX
-          return context if match['span_id'] =~ ZERO_ID_REGEX
+          return context if ZERO_ID_REGEX.match?(match['trace_id'])
+          return context if ZERO_ID_REGEX.match?(match['span_id'])
 
           sampling_flags = match['sampling_flags'].to_i
           span = build_span(match, sampling_flags)
@@ -74,8 +74,8 @@ module OpenTelemetry
           ].join(':')
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
           OpenTelemetry::Baggage.values(context: context).each do |key, value|
-            baggage_key = 'uberctx-' + key
-            encoded_value = CGI.escape(value)
+            baggage_key = "uberctx-#{key}"
+            encoded_value = URI.encode_uri_component(value)
             setter.set(carrier, baggage_key, encoded_value)
           end
           carrier
@@ -106,11 +106,11 @@ module OpenTelemetry
           baggage_key_prefix = 'uberctx-'
           OpenTelemetry::Baggage.build(context: context) do |b|
             getter.keys(carrier).each do |carrier_key|
-              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
+              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..]
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
-              value = CGI.unescape(raw_value)
+              value = URI.decode_uri_component(raw_value)
               b.set_value(baggage_key, value)
             end
           end
@@ -129,7 +129,7 @@ module OpenTelemetry
         end
 
         def to_trace_flags(sampling_flags)
-          if (sampling_flags & SAMPLED_FLAG_BIT) != 0
+          if sampling_flags.anybits?(SAMPLED_FLAG_BIT)
             Trace::TraceFlags::SAMPLED
           else
             Trace::TraceFlags::DEFAULT

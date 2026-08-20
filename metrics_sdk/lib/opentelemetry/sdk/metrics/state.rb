@@ -20,3 +20,4 @@ end
 require 'opentelemetry/sdk/metrics/state/metric_data'
 require 'opentelemetry/sdk/metrics/state/metric_store'
 require 'opentelemetry/sdk/metrics/state/metric_stream'
+require 'opentelemetry/sdk/metrics/state/asynchronous_metric_stream'

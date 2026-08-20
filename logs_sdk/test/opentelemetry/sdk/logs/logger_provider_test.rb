@@ -197,6 +197,7 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         severity_number: 0,
         body: 'body',
         attributes: { 'a' => 'b' },
+        event_name: 'event_name',
         trace_id: span_context.trace_id,
         span_id: span_context.span_id,
         trace_flags: span_context.trace_flags,
@@ -222,6 +223,33 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
         logger_provider.on_emit(**args)
         mock_log_record_processor.verify
       end
+    end
+
+    it 'does not emit if the provider is stopped' do
+      logger_provider.instance_variable_set(:@stopped, true)
+      mock_log_record = Minitest::Mock.new
+
+      OpenTelemetry::SDK::Logs::LogRecord.stub :new, mock_log_record do
+        logger_provider.add_log_record_processor(mock_log_record_processor)
+        mock_log_record_processor.expect(:on_emit, nil, [mock_log_record, mock_context])
+
+        logger_provider.on_emit(**args)
+        # The verify should fail because on_emit should never call new on LogRecord
+        assert_raises(MockExpectationError) { mock_log_record_processor.verify }
+      end
+    end
+  end
+
+  describe 'instrument registry' do
+    # On the first call, create a logger with an empty string for name and
+    # version and add to the registry. The second call returns that logger
+    # from the registry instead of creating a new instance.
+    it 'reuses the same logger if called twice when name and version are nil' do
+      logger = logger_provider.logger(name: nil, version: nil)
+      logger2 = logger_provider.logger(name: nil, version: nil)
+
+      assert_instance_of(Logs::Logger, logger)
+      assert_same(logger, logger2)
     end
   end
 end

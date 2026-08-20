@@ -312,17 +312,19 @@ module OpenTelemetry
             context.span_id,
             context.trace_id,
             context.trace_flags,
-            context.tracestate
+            context.tracestate,
+            @parent_span_is_remote
           )
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
+          @parent_span_is_remote = parent_span&.context&.remote? || false
           @span_limits = span_limits
           @span_processors = span_processors
           @resource = resource
@@ -416,7 +418,7 @@ module OpenTelemetry
           excess_link_count = valid_links.size - link_count_limit
           valid_links.pop(excess_link_count) if excess_link_count.positive?
           valid_links.map! do |link|
-            attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs = link.attributes.to_h.dup # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
@@ -442,7 +444,7 @@ module OpenTelemetry
 
           excess = event.attributes.size - event_attribute_count_limit
           if excess.positive? || !valid_attributes
-            attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs = event.attributes.to_h.dup # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - event_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?

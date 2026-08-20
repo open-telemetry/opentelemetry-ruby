@@ -156,6 +156,24 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
     end
 
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path without a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/metrics'
+    end
+
+    it 'appends the correct path if OTEL_EXPORTER_OTLP_ENDPOINT does have a path with a trailing slash' do
+      exp = OpenTelemetry::TestHelpers.with_env(
+        'OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234/api/v2/otlp/'
+      ) do
+        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
+      end
+      _(exp.instance_variable_get(:@path)).must_equal '/api/v2/otlp/v1/metrics'
+    end
+
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(headers: { 'token' => 'über' })
       _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => METRICS_DEFAULT_USER_AGENT)
@@ -334,6 +352,112 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
     end
   end
 
+  describe 'IPv4/IPv6 compatibility' do
+    it 'handles IPv6 loopback address with brackets' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[::1]:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
+    end
+
+    it 'handles IPv6 full address with brackets' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[2001:db8::1]:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '2001:db8::1'
+      _(http.port).must_equal 4318
+    end
+
+    it 'handles IPv6 address with https' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://[::1]:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 4318
+      _(http.use_ssl?).must_equal true
+    end
+
+    it 'handles IPv6 address with custom path' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[::1]:8080/custom/path')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 8080
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'handles IPv4 loopback address' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://127.0.0.1:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '127.0.0.1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
+    end
+
+    it 'handles IPv4 address with custom port' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://192.168.1.100:8080/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '192.168.1.100'
+      _(http.port).must_equal 8080
+    end
+
+    it 'handles IPv4 address with https' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://10.0.0.1:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '10.0.0.1'
+      _(http.port).must_equal 4318
+      _(http.use_ssl?).must_equal true
+    end
+
+    it 'handles IPv4 address with custom path' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://127.0.0.1:9090/custom/path')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '127.0.0.1'
+      _(http.port).must_equal 9090
+      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
+    end
+
+    it 'handles IPv4 address from environment variable' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://192.168.1.1:4318') do
+        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
+      end
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '192.168.1.1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
+    end
+
+    it 'handles hostnames' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://localhost:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'localhost'
+      _(http.port).must_equal 4318
+    end
+
+    it 'handles fully qualified domain names' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://otel.example.com:4318/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'otel.example.com'
+      _(http.port).must_equal 4318
+    end
+
+    it 'handles hostnames with https' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://otel-collector.prod.example.com:443/v1/metrics')
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal 'otel-collector.prod.example.com'
+      _(http.port).must_equal 443
+      _(http.use_ssl?).must_equal true
+    end
+
+    it 'handles IPv6 address from environment variable' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://[::1]:4318') do
+        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
+      end
+      http = exp.instance_variable_get(:@http)
+      _(http.address).must_equal '::1'
+      _(http.port).must_equal 4318
+      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
+    end
+  end
+
   describe '#export' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
     let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk) }
@@ -445,7 +569,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
 
       ndp = OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new
-      ndp.attributes = { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) }
+      ndp.attributes = { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
       ndp.start_time_unix_nano = 0
       ndp.time_unix_nano = 0
       ndp.value = 1
@@ -463,6 +587,23 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'is able to encode NumberDataPoint with Integer or Float value' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+
+      [1, 0.1234].each do |value|
+        ndp = OpenTelemetry::SDK::Metrics::Aggregation::NumberDataPoint.new
+        ndp.attributes = { 'a' => 'b' }
+        ndp.start_time_unix_nano = 0
+        ndp.time_unix_nano = 0
+        ndp.value = value
+
+        metrics_data = create_metrics_data(data_points: [ndp])
+
+        result = exporter.export([metrics_data])
+        _(result).must_equal(METRICS_SUCCESS)
+      end
+    end
+
     it 'logs rpc.Status on bad request' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
@@ -477,6 +618,26 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
       _(log_stream.string).must_match(
         /ERROR -- : OpenTelemetry error: OTLP metrics_exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
+      )
+
+      _(result).must_equal(METRICS_FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
+    it 'logs rpc.Status on bad request from byte body' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      body = "\b\x03\x12VHTTP 400 (gRPC: INVALID_ARGUMENT): Metric validation removed all of the passed metrics\x1A\xA0\x01\n)type.googleapis.com/google.rpc.BadRequest\x12s\n>\n\x1D.resourceMetrics.scopeMetrics\x12\x1DPath contained no usable data\n1\n\x10.resourceMetrics\x12\x1DPath contained no usable data"
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 400, body: body, headers: { 'Content-Type' => 'application/x-protobuf' })
+      metrics_data = create_metrics_data
+
+      result = exporter.export([metrics_data])
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: OTLP metrics_exporter received rpc\.Status{message=HTTP 400 \(gRPC: INVALID_ARGUMENT\): Metric validation removed all of the passed metrics, details=\[\]}/
       )
 
       _(result).must_equal(METRICS_FAILURE)
@@ -523,6 +684,20 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       assert_requested(stub_post)
     end
 
+    # when the exporter.pull, it will automatically invoke callback once;
+    # if wants to record data (invoke callback) with attributes, do async_counter.observe(timeout, attributes)
+    it 'exports an async metric' do
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+      meter_provider.add_metric_reader(exporter)
+      meter       = meter_provider.meter('test')
+      pf_callback = proc { 10 }
+      meter.create_observable_counter('test_async_counter', callback: pf_callback, unit: 'smidgen', description: 'a small amount of something')
+      exporter.pull
+      meter_provider.shutdown
+
+      assert_requested(stub_post)
+    end
+
     it 'compresses with gzip if enabled' do
       exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(compression: 'gzip')
       stub_post = stub_request(:post, 'http://localhost:4318/v1/metrics').to_return do |request|
@@ -559,11 +734,28 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
       meter_provider.add_metric_reader(exporter)
       meter   = meter_provider.meter('test')
+
       counter = meter.create_counter('test_counter', unit: 'smidgen', description: 'a small amount of something')
       counter.add(5, attributes: { 'foo' => 'bar' })
 
+      up_down_counter = meter.create_up_down_counter('test_up_down_counter', unit: 'smidgen', description: 'a small amount of something')
+      up_down_counter.add(5, attributes: { 'foo' => 'bar' })
+
       histogram = meter.create_histogram('test_histogram', unit: 'smidgen', description: 'a small amount of something')
       histogram.record(10, attributes: { 'oof' => 'rab' })
+
+      gauge = meter.create_gauge('test_gauge', unit: 'smidgen', description: 'a small amount of something')
+      gauge.record(15, attributes: { 'baz' => 'qux' })
+
+      meter_provider.add_view('*exponential*', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_scale: 20), type: :histogram, unit: 'smidgen')
+
+      exponential_histogram = meter.create_histogram('test_exponential_histogram', unit: 'smidgen', description: 'a small amount of something')
+      exponential_histogram.record(20, attributes: { 'lox' => 'xol' })
+
+      pf_callback = proc { 30 }
+      async_gauge = meter.create_observable_gauge('test_async_gauge', callback: pf_callback, unit: 'smidgen', description: 'a small amount of something')
+      async_gauge.observe(attributes: { 'foo' => 'bar' })
+
       exporter.pull
       meter_provider.shutdown
 
@@ -601,7 +793,28 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             exemplars: nil
                           )
                         ],
-                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                        is_monotonic: true,
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_up_down_counter',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'foo', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'bar'))
+                            ],
+                            as_int: 5,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          )
+                        ],
+                        is_monotonic: false,
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
                       )
                     ),
                     Opentelemetry::Proto::Metrics::V1::Metric.new(
@@ -625,7 +838,84 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                             max: 10
                           )
                         ],
+                        aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_gauge',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'baz', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'qux'))
+                            ],
+                            as_int: 15,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          )
+                        ]
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_exponential_histogram',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'lox', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'xol'))
+                            ],
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            count: 1,
+                            sum: 20,
+                            scale: 20,
+                            zero_count: 0,
+                            positive: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                              offset: 4_531_870,
+                              bucket_counts: [1]
+                            ),
+                            negative: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
+                              offset: 0,
+                              bucket_counts: [0]
+                            ),
+                            flags: 0,
+                            exemplars: nil,
+                            min: 20,
+                            max: 20,
+                            zero_threshold: 0
+                          )
+                        ],
                         aggregation_temporality: Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
+                      )
+                    ),
+                    Opentelemetry::Proto::Metrics::V1::Metric.new(
+                      name: 'test_async_gauge',
+                      description: 'a small amount of something',
+                      unit: 'smidgen',
+                      gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
+                        data_points: [
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [
+                              Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'foo', value: Opentelemetry::Proto::Common::V1::AnyValue.new(string_value: 'bar'))
+                            ],
+                            as_int: 30,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          ),
+                          Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(
+                            attributes: [],
+                            as_int: 30,
+                            start_time_unix_nano: 1_699_593_427_329_946_585,
+                            time_unix_nano: 1_699_593_427_329_946_586,
+                            exemplars: nil
+                          )
+                        ]
                       )
                     )
                   ]

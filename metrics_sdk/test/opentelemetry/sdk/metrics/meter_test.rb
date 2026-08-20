@@ -11,6 +11,49 @@ describe OpenTelemetry::SDK::Metrics::Meter do
 
   let(:meter) { OpenTelemetry.meter_provider.meter('new_meter') }
 
+  describe 'instrumentation scope attributes' do
+    let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+
+    before do
+      reset_metrics_sdk
+      OpenTelemetry::SDK.configure
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+    end
+
+    it 'creates a meter with empty attributes by default' do
+      OpenTelemetry.meter_provider.meter('test').create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.attributes).must_equal({})
+    end
+
+    it 'normalizes nil attributes to empty hash' do
+      OpenTelemetry.meter_provider.meter('test', attributes: nil).create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.attributes).must_equal({})
+    end
+
+    it 'creates a meter with attributes' do
+      attrs = { 'key' => 'value' }
+      OpenTelemetry.meter_provider.meter('test', attributes: attrs).create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.attributes).must_equal(attrs)
+    end
+
+    it 'propagates attributes through to exported metric data' do
+      attrs = { 'key' => 'value' }
+      OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: attrs).create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      snapshot = metric_exporter.metric_snapshots[0]
+      _(snapshot.instrumentation_scope.name).must_equal('test')
+      _(snapshot.instrumentation_scope.version).must_equal('1.0')
+      _(snapshot.instrumentation_scope.attributes).must_equal(attrs)
+    end
+  end
+
   describe '#create_counter' do
     it 'creates a counter instrument' do
       instrument = meter.create_counter('a_counter', unit: 'minutes', description: 'useful description')
@@ -34,28 +77,127 @@ describe OpenTelemetry::SDK::Metrics::Meter do
 
   describe '#create_observable_counter' do
     it 'creates a observable_counter instrument' do
-      # TODO: Implement observable instruments
-      skip
-      instrument = meter.create_observable_counter('a_observable_counter', unit: 'minutes', description: 'useful description', callback: nil)
+      instrument = meter.create_observable_counter('a_observable_counter', unit: 'minutes', description: 'useful description', callback: proc { 10 })
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter
     end
   end
 
   describe '#create_observable_gauge' do
     it 'creates a observable_gauge instrument' do
-      # TODO: Implement observable instruments
-      skip
-      instrument = meter.create_observable_gauge('a_observable_gauge', unit: 'minutes', description: 'useful description', callback: nil)
+      instrument = meter.create_observable_gauge('a_observable_gauge', unit: 'minutes', description: 'useful description', callback: proc { 10 })
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge
     end
   end
 
   describe '#create_observable_up_down_counter' do
     it 'creates a observable_up_down_counter instrument' do
-      # TODO: Implement observable instruments
-      skip
-      instrument = meter.create_observable_up_down_counter('a_observable_up_down_counter', unit: 'minutes', description: 'useful description', callback: nil)
+      instrument = meter.create_observable_up_down_counter('a_observable_up_down_counter', unit: 'minutes', description: 'useful description', callback: proc { 10 })
       _(instrument).must_be_instance_of OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter
+    end
+  end
+
+  describe 'callback' do
+    describe '#register_callback' do
+      let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+      let(:meter) { OpenTelemetry.meter_provider.meter('test') }
+
+      before do
+        reset_metrics_sdk
+        OpenTelemetry::SDK.configure
+        OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+        @original_temp = ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil)
+        ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = 'delta'
+      end
+
+      after do
+        ENV['OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE'] = @original_temp
+      end
+
+      it 'create callback with multi asychronous instrument' do
+        callback_first = proc { 10 }
+        counter_first  = meter.create_observable_counter('counter_first', unit: 'smidgen', description: '', callback: callback_first)
+        counter_second = meter.create_observable_counter('counter_second', unit: 'smidgen', description: '', callback: callback_first)
+
+        callback_second = proc { 20 }
+        meter.register_callback([counter_first, counter_second], callback_second)
+
+        _(counter_first.instance_variable_get(:@callbacks).size).must_equal 2
+        _(counter_second.instance_variable_get(:@callbacks).size).must_equal 2
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].name).must_equal('counter_first')
+        _(last_snapshot[0].unit).must_equal('smidgen')
+        _(last_snapshot[0].description).must_equal('')
+        _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
+        _(last_snapshot[0].data_points[0].value).must_equal(30)
+        _(last_snapshot[0].data_points[0].attributes).must_equal({})
+        _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+
+        _(last_snapshot[1].name).must_equal('counter_second')
+        _(last_snapshot[1].unit).must_equal('smidgen')
+        _(last_snapshot[1].description).must_equal('')
+        _(last_snapshot[1].instrumentation_scope.name).must_equal('test')
+        _(last_snapshot[1].data_points[0].value).must_equal(30)
+        _(last_snapshot[1].data_points[0].attributes).must_equal({})
+        _(last_snapshot[1].aggregation_temporality).must_equal(:delta)
+      end
+
+      it 'remove callback with multi asychronous instrument' do
+        callback_first = proc { 10 }
+        counter_first  = meter.create_observable_counter('counter_first', unit: 'smidgen', description: '', callback: callback_first)
+        counter_second = meter.create_observable_counter('counter_second', unit: 'smidgen', description: '', callback: callback_first)
+
+        callback_second = proc { 20 }
+        meter.register_callback([counter_first, counter_second], callback_second)
+
+        _(counter_first.instance_variable_get(:@callbacks).size).must_equal 2
+        _(counter_second.instance_variable_get(:@callbacks).size).must_equal 2
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].name).must_equal('counter_first')
+        _(last_snapshot[0].unit).must_equal('smidgen')
+        _(last_snapshot[0].description).must_equal('')
+        _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
+        _(last_snapshot[0].data_points[0].value).must_equal(30)
+        _(last_snapshot[0].data_points[0].attributes).must_equal({})
+        _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+
+        _(last_snapshot[1].name).must_equal('counter_second')
+        _(last_snapshot[1].unit).must_equal('smidgen')
+        _(last_snapshot[1].description).must_equal('')
+        _(last_snapshot[1].instrumentation_scope.name).must_equal('test')
+        _(last_snapshot[1].data_points[0].value).must_equal(30)
+        _(last_snapshot[1].data_points[0].attributes).must_equal({})
+        _(last_snapshot[1].aggregation_temporality).must_equal(:delta)
+
+        # unregister the callback_second from instruments counter_first and counter_second
+        meter.unregister([counter_first, counter_second], callback_second)
+
+        metric_exporter.reset
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].name).must_equal('counter_first')
+        _(last_snapshot[0].unit).must_equal('smidgen')
+        _(last_snapshot[0].description).must_equal('')
+        _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
+        _(last_snapshot[0].data_points[0].value).must_equal(10)
+        _(last_snapshot[0].data_points[0].attributes).must_equal({})
+        _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+
+        _(last_snapshot[1].name).must_equal('counter_second')
+        _(last_snapshot[1].unit).must_equal('smidgen')
+        _(last_snapshot[1].description).must_equal('')
+        _(last_snapshot[1].instrumentation_scope.name).must_equal('test')
+        _(last_snapshot[1].data_points[0].value).must_equal(10)
+        _(last_snapshot[1].data_points[0].attributes).must_equal({})
+        _(last_snapshot[1].aggregation_temporality).must_equal(:delta)
+      end
     end
   end
 
@@ -86,14 +228,14 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(-> { meter.create_counter('1_counter') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
 
-    it 'instrument name must not exceed 63 character limit' do
-      long_name = 'a' * 63
+    it 'instrument name must not exceed 255 character limit' do
+      long_name = 'a' * 255
       meter.create_counter(long_name)
       _(-> { meter.create_counter(long_name + 'a') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
 
-    it 'instrument name must belong to alphanumeric characters, _, ., and -' do
-      meter.create_counter('a_-..-_a')
+    it 'instrument name must belong to alphanumeric characters, _, ., -, and /' do
+      meter.create_counter('a_/-..-/_a')
       _(-> { meter.create_counter('a@') }).must_raise(INSTRUMENT_NAME_ERROR)
       _(-> { meter.create_counter('a!') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
@@ -109,8 +251,8 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     end
 
     it 'instrument description must be utf8mb3' do
-      _(-> { meter.create_counter('a_counter', description: '💩'.dup) }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
-      _(-> { meter.create_counter('b_counter', description: "\xc2".dup) }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
+      _(-> { meter.create_counter('a_counter', description: +'💩') }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
+      _(-> { meter.create_counter('b_counter', description: +"\xc2") }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
     end
 
     it 'instrument description must not exceed 1023 characters' do

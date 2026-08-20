@@ -11,7 +11,6 @@ describe OpenTelemetry::SDK::Trace::Span do
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
   Context = OpenTelemetry::Context
-  SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
   let(:mock_span_processor) { Minitest::Mock.new }
@@ -378,7 +377,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'encodes the stacktrace' do
       begin
-        raise "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+        raise (+"\xC2").force_encoding(::Encoding::ASCII_8BIT)
       rescue StandardError => e
         span.record_exception(e)
       end
@@ -507,7 +506,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#instrumentation_library' do
     it 'is identical to the instrumentation_scope' do
-      mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s } # rubocop:disable Lint/UselessAssignment
+      mock_span_processor.expect(:on_start, nil) { |_s| pass }
       span = Span.new(
         context,
         Context.empty,
@@ -632,6 +631,6 @@ describe OpenTelemetry::SDK::Trace::Span do
       timestamps[clock_id]
     end
 
-    Process.stub(:clock_gettime, clock_gettime_mock) { yield }
+    Process.stub(:clock_gettime, clock_gettime_mock) { yield } # rubocop:disable Style/ExplicitBlockArgument
   end
 end
