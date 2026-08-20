@@ -88,6 +88,11 @@ module OpenTelemetry
 
           # metrics Array[MetricData]
           def export(metrics, timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring export request')
+              return FAILURE
+            end
+
             @mutex.synchronize do
               send_bytes(encode(metrics), timeout: timeout)
             end
@@ -384,6 +389,11 @@ module OpenTelemetry
           end
 
           def shutdown(timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring call')
+              return
+            end
+
             @shutdown = true
             SUCCESS
           end
