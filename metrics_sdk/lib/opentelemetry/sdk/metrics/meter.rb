@@ -48,6 +48,7 @@ module OpenTelemetry
           end
         end
 
+        # Removes callback from the given instruments.
         def unregister(instruments, callback)
           instruments.each do |instrument|
             instrument.unregister(callback)
@@ -61,6 +62,7 @@ module OpenTelemetry
           end
         end
 
+        # Validates the given instrument options and creates the instrument of the given kind.
         def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
           raise InstrumentNameError if name.nil?
           raise InstrumentNameError if name.empty?
@@ -81,6 +83,7 @@ module OpenTelemetry
           end
         end
 
+        # Returns whether string is valid UTF-8 with no 4-byte (utf8mb4) characters.
         def utf8mb3_encoding?(string)
           string.force_encoding('UTF-8').valid_encoding? &&
             string.each_char { |c| return false if c.bytesize >= 4 }
