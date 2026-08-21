@@ -45,6 +45,17 @@ describe OpenTelemetry do
     end
   end
 
+  class AttributeAwareTracerProvider < OpenTelemetry::Trace::TracerProvider
+    attr_reader :last_name, :last_version, :last_attributes
+
+    def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil)
+      @last_name = name || deprecated_name
+      @last_version = version || deprecated_version
+      @last_attributes = attributes
+      CustomTracer.new
+    end
+  end
+
   describe '.tracer_provider=' do
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
@@ -62,6 +73,38 @@ describe OpenTelemetry do
       default_tracer_provider = OpenTelemetry.tracer_provider
       OpenTelemetry.tracer_provider = CustomTracerProvider.new
       _(default_tracer_provider.tracer).must_be_instance_of(CustomTracer)
+    end
+
+    it 'delegates to a provider that does not support attributes without error' do
+      OpenTelemetry.tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
+      OpenTelemetry.tracer_provider = CustomTracerProvider.new
+      _(OpenTelemetry.tracer_provider.tracer('component', '1.0')).must_be_instance_of(CustomTracer)
+    end
+
+    it 'delegates attributes to a provider that supports them' do
+      attrs = { 'key' => 'value' }
+      OpenTelemetry.tracer_provider.tracer('component', '1.0', attributes: attrs)
+      provider = AttributeAwareTracerProvider.new
+      OpenTelemetry.tracer_provider = provider
+      _(provider.last_attributes).must_equal(attrs)
+    end
+
+    it 'replays keyword-style tracers when delegate is set' do
+      OpenTelemetry.tracer_provider.tracer(name: 'component', version: '1.0', attributes: { 'k' => 'v' })
+      provider = AttributeAwareTracerProvider.new
+      OpenTelemetry.tracer_provider = provider
+      _(provider.last_name).must_equal('component')
+      _(provider.last_version).must_equal('1.0')
+      _(provider.last_attributes).must_equal('k' => 'v')
+    end
+
+    it 'delegates tracers obtained after delegate assignment with attributes' do
+      provider = AttributeAwareTracerProvider.new
+      OpenTelemetry.tracer_provider = provider
+      OpenTelemetry.tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
+      _(provider.last_name).must_equal('component')
+      _(provider.last_version).must_equal('1.0')
+      _(provider.last_attributes).must_equal('key' => 'value')
     end
   end
 

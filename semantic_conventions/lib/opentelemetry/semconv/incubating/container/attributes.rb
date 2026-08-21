@@ -70,7 +70,7 @@ module OpenTelemetry
 
         # Runtime specific image identifier. Usually a hash algorithm followed by a UUID.
         #
-        # Docker defines a sha256 of the image id; `container.image.id` corresponds to the `Image` field from the Docker container inspect [API](https://docs.docker.com/reference/api/engine/version/v1.52/#tag/Container/operation/ContainerInspect) endpoint.
+        # Docker defines a sha256 of the image ID; `container.image.id` corresponds to the `Image` field from the Docker container inspect [API](https://docs.docker.com/reference/api/engine/version/v1.52/#tag/Container/operation/ContainerInspect) endpoint.
         # K8s defines a link to the container registry repository with digest `"imageID": "registry.azurecr.io /namespace/service/dockerfile@sha256:bdeabd40c3a8a492eaf9e8e44d0ebbb84bac7ee25ac0cf8a7159d25f62555625"`.
         # The ID is assigned by the container runtime and can vary in different environments. Consider using `oci.manifest.digest` if it is important to identify the same image in different environments/runtimes.
         #
@@ -84,7 +84,7 @@ module OpenTelemetry
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CONTAINER::CONTAINER_IMAGE_NAME}.
         CONTAINER_IMAGE_NAME = 'container.image.name'
 
-        # Repo digests of the container image as provided by the container runtime.
+        # Repository digests of the container image as provided by the container runtime.
         #
         # [Docker](https://docs.docker.com/reference/api/engine/version/v1.52/#tag/Image/operation/ImageInspect) and [CRI](https://github.com/kubernetes/cri-api/blob/c75ef5b473bbe2d0a4fc92f82235efd665ea8e9f/pkg/apis/runtime/v1/api.proto#L1237-L1238) report those under the `RepoDigests` field.
         #
@@ -108,7 +108,7 @@ module OpenTelemetry
         #
         # Container labels, `<key>` being the label name, the value being the label value.
         #
-        # For example, a docker container label `app` with value `nginx` SHOULD be recorded as the `container.label.app` attribute with value `"nginx"`.
+        # For example, a Docker container label `app` with value `nginx` SHOULD be recorded as the `container.label.app` attribute with value `"nginx"`.
         #
         # @note Stability Level: development
         CONTAINER_LABEL_LAMBDA = ->(key) { "container.label.#{key}" }
