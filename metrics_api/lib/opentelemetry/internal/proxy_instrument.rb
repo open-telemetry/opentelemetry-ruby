@@ -20,7 +20,7 @@ module OpenTelemetry
         @delegate = nil
       end
 
-      # Creates the delegate instrument and replays any callbacks registered before the delegate existed.
+      # Replaces the no-op delegate with a real instrument from the given meter.
       def upgrade_with(meter)
         @delegate = case @kind
                     when :counter, :histogram, :up_down_counter
@@ -31,14 +31,19 @@ module OpenTelemetry
         @registered_callbacks.each { |callback| @delegate.register_callback(callback) }
       end
 
-      # Delegates to the underlying instrument, a no-op until the delegate is set.
+      # Delegates to the upgraded instrument's #add, if any.
       def add(amount, attributes: nil)
         @delegate&.add(amount, attributes: attributes)
       end
 
-      # Delegates to the underlying instrument, a no-op until the delegate is set.
+      # Delegates to the upgraded instrument's #record, if any.
       def record(amount, attributes: nil)
         @delegate&.record(amount, attributes: attributes)
+      end
+
+      # Delegates to the upgraded instrument's #enabled?, false (disabled) until upgraded.
+      def enabled?
+        @delegate ? @delegate.enabled? : false
       end
 
       # Delegates to the underlying instrument, or queues the callback until the delegate is set.

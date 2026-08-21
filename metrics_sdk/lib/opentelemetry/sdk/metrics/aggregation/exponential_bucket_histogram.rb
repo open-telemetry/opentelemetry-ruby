@@ -234,6 +234,7 @@ module OpenTelemetry
             nil
           end
 
+          # Returns the configured aggregation temporality (:delta or :cumulative).
           def aggregation_temporality
             @aggregation_temporality.temporality
           end

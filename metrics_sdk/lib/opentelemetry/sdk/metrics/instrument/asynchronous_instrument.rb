@@ -75,14 +75,17 @@ module OpenTelemetry
             end
           end
 
+          # Removes a previously registered callback.
           def unregister(callback)
             @callbacks.delete(callback)
           end
 
+          # Sets the timeout, in seconds, for invoking callbacks.
           def timeout(timeout)
             @timeout = timeout
           end
 
+          # Merges attributes into those reported alongside observed values.
           def add_attributes(attributes)
             @attributes.merge!(attributes) if attributes.instance_of?(Hash)
           end
