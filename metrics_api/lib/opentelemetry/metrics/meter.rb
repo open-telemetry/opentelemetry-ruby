@@ -164,7 +164,7 @@ module OpenTelemetry
       #                                    exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the observable_counter
-      # @param callback [Proc] the callback function that used to collect metrics
+      # @param callback [optional Proc, Array<Proc>] zero or more callback functions used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
@@ -179,7 +179,7 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of observable_counter, it will be stored in instrument_registry
-      def create_observable_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+      def create_observable_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
         create_instrument(:observable_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_COUNTER }
       end
 
@@ -198,7 +198,7 @@ module OpenTelemetry
       #                                  exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the observable_gauge
-      # @param callback [Proc] the callback function that used to collect metrics
+      # @param callback [optional Proc, Array<Proc>] zero or more callback functions used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
@@ -213,7 +213,7 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of observable_gauge, it will be stored in instrument_registry
-      def create_observable_gauge(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+      def create_observable_gauge(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
         create_instrument(:observable_gauge, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_GAUGE }
       end
 
@@ -232,7 +232,7 @@ module OpenTelemetry
       #                                            exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new)
       #
       # @param name [String] the name of the observable_up_down_counter
-      # @param callback [Proc] the callback function that used to collect metrics
+      # @param callback [optional Proc, Array<Proc>] zero or more callback functions used to collect metrics
       # @param unit [optional String] an optional string provided by user.
       # @param description [optional String] an optional free-form text provided by user.
       # @param exemplar_filter [optional Object] an optional filter to control which measurements are
@@ -247,8 +247,28 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       #
       # @return [nil] after creation of observable_up_down_counter, it will be stored in instrument_registry
-      def create_observable_up_down_counter(name, callback:, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
+      def create_observable_up_down_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
         create_instrument(:observable_up_down_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_UP_DOWN_COUNTER }
+      end
+
+      # Registers a callback function against a declared set of asynchronous instruments from this Meter.
+      #
+      # @param [Array] instruments the asynchronous instruments the callback function reports Measurements for
+      # @param [Proc] callback the callback function
+      #
+      # @return [nil]
+      def register_callback(instruments, callback)
+        instruments.each { |instrument| instrument.register_callback(callback) }
+      end
+
+      # Unregisters a callback function previously registered via {#register_callback}.
+      #
+      # @param [Array] instruments the asynchronous instruments the callback function was registered against
+      # @param [Proc] callback the callback function
+      #
+      # @return [nil]
+      def unregister(instruments, callback)
+        instruments.each { |instrument| instrument.unregister(callback) }
       end
 
       private
