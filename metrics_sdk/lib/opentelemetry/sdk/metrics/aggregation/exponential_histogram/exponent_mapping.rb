@@ -19,6 +19,7 @@ module OpenTelemetry
               @max_normal_lower_boundary_index = IEEE754::MAX_NORMAL_EXPONENT >> -@scale
             end
 
+            # Returns the bucket index for the given value.
             def map_to_index(value)
               return @min_normal_lower_boundary_index if value < IEEE754::MIN_NORMAL_VALUE
 
@@ -27,6 +28,7 @@ module OpenTelemetry
               (exponent + correction) >> -@scale
             end
 
+            # Returns the lowest valid bucket index for this scale.
             def calculate_min_normal_lower_boundary_index(scale)
               inds = IEEE754::MIN_NORMAL_EXPONENT >> -scale
               inds -= 1 if -scale < 2

@@ -27,6 +27,7 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
+          # Returns the current sum data points, clearing them for delta temporality.
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
@@ -51,6 +52,7 @@ module OpenTelemetry
             end
           end
 
+          # Adds increment to the sum for the given attributes.
           def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
             return if @monotonic && increment < 0
 
@@ -67,10 +69,12 @@ module OpenTelemetry
             nil
           end
 
+          # Returns whether the sum is required to be non-decreasing.
           def monotonic?
             @monotonic
           end
 
+          # Returns the configured aggregation temporality (:delta or :cumulative).
           def aggregation_temporality
             @aggregation_temporality.temporality
           end
