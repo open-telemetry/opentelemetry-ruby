@@ -34,6 +34,7 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
+          # Returns the current histogram data points, clearing them for delta temporality.
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
@@ -60,6 +61,7 @@ module OpenTelemetry
             end
           end
 
+          # Records amount into the histogram bucket for the given attributes.
           def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
             hdp = if data_points.key?(attributes)
                     data_points[attributes]
@@ -73,6 +75,7 @@ module OpenTelemetry
             nil
           end
 
+          # Returns the configured aggregation temporality (:delta or :cumulative).
           def aggregation_temporality
             @aggregation_temporality.temporality
           end
