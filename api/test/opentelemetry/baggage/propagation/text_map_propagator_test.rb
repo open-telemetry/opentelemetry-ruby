@@ -70,6 +70,65 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
         _(context.object_id).wont_equal(empty_context.object_id)
       end
     end
+
+    describe 'enforced limits' do
+      it 'does work proportional to the limit, not to the header length' do
+        def allocations_for(entry_count)
+          header = (0...entry_count).map { |i| "k#{i}=v#{i}" }.join(',')
+          carrier = { 'baggage' => header }
+          before = GC.stat[:total_allocated_objects]
+          propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+          GC.stat[:total_allocated_objects] - before
+        end
+
+        small = allocations_for(1_000)
+        large = allocations_for(100_000)
+
+        # A hundredfold longer header must not cost a hundredfold more work.
+        _(large).must_be(:<, small * 2)
+      end
+
+      it 'does not materialise every entry of an oversized header' do
+        header = (0...50_000).map { |i| "k#{i}=v#{i}" }.join(',')
+        carrier = { 'baggage' => header }
+
+        before = GC.stat[:total_allocated_objects]
+        context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+        allocated = GC.stat[:total_allocated_objects] - before
+
+        _(OpenTelemetry::Baggage.values(context: context).size).must_equal(180)
+        _(allocated).must_be(:<, 10_000)
+      end
+
+      it 'enforces max of 180 name-value pairs' do
+        header = (0..180).map { |i| "k#{i}=v#{i}" }.join(',')
+        context = propagator.extract({ header_key => header }, context: Context.empty)
+
+        180.times { |i| _(OpenTelemetry::Baggage.value("k#{i}", context: context)).must_equal("v#{i}") }
+        _(OpenTelemetry::Baggage.value('k180', context: context)).must_be_nil
+      end
+
+      it 'enforces max entry length of 4096' do
+        oversized = "key1=#{'x' * 4092}" # 4097 chars including 'key1='
+        header = "#{oversized},key2=val2"
+        context = propagator.extract({ header_key => header }, context: Context.empty)
+
+        _(OpenTelemetry::Baggage.value('key1', context: context)).must_be_nil
+        _(OpenTelemetry::Baggage.value('key2', context: context)).must_equal('val2')
+      end
+
+      it 'enforces total length of 8192 chars' do
+        # each entry is 100 chars including '=' and ','; 82 entries would be 8199 > 8192
+        keys = (0..81).map { |i| "k#{i.to_s.rjust(48, '0')}" }
+        values = (0..81).map { |i| "v#{i.to_s.rjust(48, '0')}" }
+        header = keys.zip(values).map { |k, v| "#{k}=#{v}" }.join(',')
+
+        context = propagator.extract({ header_key => header }, context: Context.empty)
+
+        81.times { |i| _(OpenTelemetry::Baggage.value(keys[i], context: context)).wont_be_nil }
+        _(OpenTelemetry::Baggage.value(keys.last, context: context)).must_be_nil
+      end
+    end
   end
 
   describe '#inject' do
