@@ -136,6 +136,7 @@ module OpenTelemetry
         end
         alias register_asynchronous_instrument register_synchronous_instrument
 
+        # Selects the exemplar filter class based on the OTEL_METRICS_EXEMPLAR_FILTER env var.
         def exemplar_filter_setup
           case ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)
           when 'always_on'
