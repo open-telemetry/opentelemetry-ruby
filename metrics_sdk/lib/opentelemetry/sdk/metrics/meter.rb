@@ -63,7 +63,8 @@ module OpenTelemetry
         end
 
         # Validates the given instrument options and creates the instrument of the given kind.
-        def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+        # TODO: advisory parameters are accepted but not yet applied to stream configuration.
+        def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
           raise InstrumentNameError if name.nil?
           raise InstrumentNameError if name.empty?
           raise InstrumentNameError unless NAME_REGEX.match?(name)

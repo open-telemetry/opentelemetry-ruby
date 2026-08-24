@@ -8,7 +8,7 @@ module OpenTelemetry
   module Internal
     # @api private
     class ProxyInstrument
-      def initialize(kind, name, unit, desc, callback, exemplar_filter, exemplar_reservoir)
+      def initialize(kind, name, unit, desc, callback, exemplar_filter, exemplar_reservoir, advisory = nil)
         @kind = kind
         @name = name
         @unit = unit
@@ -16,6 +16,7 @@ module OpenTelemetry
         @callback = callback
         @exemplar_filter      = exemplar_filter
         @exemplar_reservoir   = exemplar_reservoir
+        @advisory             = advisory
         @registered_callbacks = []
         @delegate = nil
       end
@@ -24,9 +25,9 @@ module OpenTelemetry
       def upgrade_with(meter)
         @delegate = case @kind
                     when :counter, :histogram, :up_down_counter
-                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir)
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir, advisory: @advisory)
                     when :observable_counter, :observable_gauge, :observable_up_down_counter
-                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir, callback: @callback)
+                      meter.send("create_#{@kind}", @name, unit: @unit, description: @desc, exemplar_filter: @exemplar_filter, exemplar_reservoir: @exemplar_reservoir, callback: @callback, advisory: @advisory)
                     end
         @registered_callbacks.each { |callback| @delegate.register_callback(callback) }
       end

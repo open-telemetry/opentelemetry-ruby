@@ -55,10 +55,14 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of counter, it will be stored in instrument_registry
-      def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { COUNTER }
+      def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir, advisory) { COUNTER }
       end
 
       # Histogram is a synchronous Instrument which can be used to report arbitrary values that are likely
@@ -86,10 +90,15 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:explicit_bucket_boundaries` [Array<Numeric>] recommended bucket boundaries when this
+      #     instrument is aggregated to an explicit bucket histogram.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
       #
       # @return [nil] after creation of histogram, it will be stored in instrument_registry
-      def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:histogram, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { HISTOGRAM }
+      def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:histogram, name, unit, description, nil, exemplar_filter, exemplar_reservoir, advisory) { HISTOGRAM }
       end
 
       # Gauge is an synchronous Instrument which reports non-additive value(s)
@@ -115,10 +124,14 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of gauge, it will be stored in instrument_registry
-      def create_gauge(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:gauge, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { GAUGE }
+      def create_gauge(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:gauge, name, unit, description, nil, exemplar_filter, exemplar_reservoir, advisory) { GAUGE }
       end
 
       # UpDownCounter is a synchronous Instrument which supports increments and decrements.
@@ -144,10 +157,14 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of up_down_counter, it will be stored in instrument_registry
-      def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:up_down_counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir) { UP_DOWN_COUNTER }
+      def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:up_down_counter, name, unit, description, nil, exemplar_filter, exemplar_reservoir, advisory) { UP_DOWN_COUNTER }
       end
 
       # ObservableCounter is an asynchronous Instrument which reports monotonically
@@ -177,10 +194,14 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of observable_counter, it will be stored in instrument_registry
-      def create_observable_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:observable_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_COUNTER }
+      def create_observable_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:observable_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory) { OBSERVABLE_COUNTER }
       end
 
       # ObservableGauge is an asynchronous Instrument which reports non-additive value(s)
@@ -211,10 +232,14 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of observable_gauge, it will be stored in instrument_registry
-      def create_observable_gauge(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:observable_gauge, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_GAUGE }
+      def create_observable_gauge(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:observable_gauge, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory) { OBSERVABLE_GAUGE }
       end
 
       # ObservableUpDownCounter is an asynchronous Instrument which reports additive value(s)
@@ -245,10 +270,14 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir` - uniformly-weighted sampling
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir` - one exemplar per histogram bucket (recommended for histograms)
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
+      # @param advisory [optional Hash] optional advisory parameters: recommendations from the
+      #   instrument author that implementations MAY ignore. The API does not validate them.
+      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of observable_up_down_counter, it will be stored in instrument_registry
-      def create_observable_up_down_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil)
-        create_instrument(:observable_up_down_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir) { OBSERVABLE_UP_DOWN_COUNTER }
+      def create_observable_up_down_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
+        create_instrument(:observable_up_down_counter, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory) { OBSERVABLE_UP_DOWN_COUNTER }
       end
 
       # Registers a callback function against a declared set of asynchronous instruments from this Meter.
@@ -273,7 +302,7 @@ module OpenTelemetry
 
       private
 
-      def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+      def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
         @mutex.synchronize do
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
 
