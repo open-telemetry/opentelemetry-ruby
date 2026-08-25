@@ -145,7 +145,7 @@
       managerFilePatterns: ["**/Appraisals"],
       matchStrings: [
         "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
-        "\\n\\s%w\\[([0-9.]+\\s)+(?<depVersion>[0-9.]+)\\].+\\n.+\\n\\s+gem\\s'(?<packageName>.+?)', \"~> #{version}\"",
+        "\\n\\s*?%w\\[([0-9.]+\\s)+(?<depVersion>[0-9.]+)\\].+\\n.+\\n\\s+gem\\s'(?<packageName>.+?)', \"~> #{version}\"",
       ],
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
