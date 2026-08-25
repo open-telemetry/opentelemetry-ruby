@@ -48,6 +48,9 @@ gems:
   - name: opentelemetry-exporter-otlp
     directory: exporter/otlp
 
+  - name: opentelemetry-exporter-otlp-common
+    directory: exporter/otlp-common
+
   - name: opentelemetry-exporter-otlp-logs
     directory: exporter/otlp-logs
 
