@@ -18,10 +18,12 @@ module OpenTelemetry
             @exemplar_reservoir = DEFAULT_RESERVOIR
           end
 
+          # Returns the collected data points, discarding them from further collection.
           def collect(start_time, end_time, data_points)
             data_points.values.map!(&:dup)
           end
 
+          # No-op: discards the recorded value instead of aggregating it.
           def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
             data_points[attributes] = NumberDataPoint.new(
               {},
