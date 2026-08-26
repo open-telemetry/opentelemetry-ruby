@@ -155,22 +155,26 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
     end
 
     describe '#attributes=' do
-      it 'updates total_recorded_attributes when reassigned' do
-        log_record = Logs::LogRecord.new(attributes: { 'key1' => 'value1' })
-        assert_equal(1, log_record.instance_variable_get(:@total_recorded_attributes))
+      it 'does not increment dropped_attributes_count when reassigned within the limit' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 2)
+        log_record = Logs::LogRecord.new(log_record_limits: limits, attributes: { 'key1' => 'value1' })
+        assert_equal(0, log_record.instance_variable_get(:@dropped_attributes_count))
 
         log_record.attributes = { 'key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3' }
 
-        assert_equal(3, log_record.instance_variable_get(:@total_recorded_attributes))
-        assert_equal(3, log_record.to_log_record_data.total_recorded_attributes)
+        assert_equal(1, log_record.instance_variable_get(:@dropped_attributes_count))
+        assert_equal(1, log_record.to_log_record_data.dropped_attributes_count)
+        assert_equal({ 'key2' => 'value2', 'key3' => 'value3' }, log_record.to_log_record_data.attributes)
       end
 
-      it 'sets total_recorded_attributes to 0 when set to nil' do
-        log_record = Logs::LogRecord.new(attributes: { 'key1' => 'value1' })
+      it 'does not reset dropped_attributes_count when set to nil' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 1)
+        log_record = Logs::LogRecord.new(log_record_limits: limits, attributes: { 'key1' => 'value1', 'key2' => 'value2' })
+        assert_equal(1, log_record.instance_variable_get(:@dropped_attributes_count))
 
         log_record.attributes = nil
 
-        assert_equal(0, log_record.instance_variable_get(:@total_recorded_attributes))
+        assert_equal(1, log_record.instance_variable_get(:@dropped_attributes_count))
         assert_nil(log_record.attributes)
       end
 
@@ -181,6 +185,40 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         log_record.attributes = { 'old' => 'old', 'new' => 'new' }
 
         assert_equal({ 'new' => 'new' }, log_record.attributes)
+      end
+
+      it 'increments dropped_attributes_count on initial construction when over the limit' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 1)
+        log_record = Logs::LogRecord.new(log_record_limits: limits, attributes: { 'old' => 'old', 'new' => 'new' })
+
+        assert_equal(1, log_record.instance_variable_get(:@dropped_attributes_count))
+      end
+
+      it 'does not increment dropped_attributes_count for invalid attributes dropped by value validation' do
+        log_record = nil
+
+        OpenTelemetry::TestHelpers.with_test_logger do
+          log_record = Logs::LogRecord.new(attributes: { 'a' => 'a', 'b' => Class.new })
+        end
+
+        assert_equal(0, log_record.instance_variable_get(:@dropped_attributes_count))
+      end
+
+      it 'accumulates dropped_attributes_count across repeated reassignment' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 2)
+        log_record = Logs::LogRecord.new(log_record_limits: limits, attributes: { 'a' => 1, 'b' => 2, 'c' => 3, 'd' => 4 })
+        assert_equal(2, log_record.instance_variable_get(:@dropped_attributes_count))
+
+        log_record.attributes = log_record.attributes.merge('e' => 5)
+        assert_equal(3, log_record.instance_variable_get(:@dropped_attributes_count))
+
+        log_record.attributes = log_record.attributes.except('e')
+        assert_equal(3, log_record.instance_variable_get(:@dropped_attributes_count))
+
+        log_record.attributes = log_record.attributes.merge('f' => 6, 'g' => 7)
+        assert_equal(4, log_record.instance_variable_get(:@dropped_attributes_count))
+
+        assert_equal(4, log_record.to_log_record_data.dropped_attributes_count)
       end
     end
 
