@@ -21,11 +21,13 @@ It works with:
 This code is still under development and is not a complete implementation of the declarative configuration specification. Until the code becomes stable, declarative configuration functionality will live outside stable OpenTelemetry libraries.
 
 Some features we still need to implement include:
-* Configuration file precedence over environment variables
-* Using declarative configuration without a call in your code
-* Declarative configuration instrumentation API and SDK
+
+- Configuration file precedence over environment variables
+- Using declarative configuration without a call in your code
+- Declarative configuration instrumentation API and SDK
 
 This is not an exhaustive list.
+
 ## How do I get started?
 
 Install the gem using:
