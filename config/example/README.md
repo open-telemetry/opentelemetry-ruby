@@ -10,7 +10,7 @@ file using the `opentelemetry-config` gem — no programmatic
 | ---- | ------- |
 | `app.rb` | Example application — emits spans |
 | `otel-config-console.yaml` | console-only exporter, works without a collector |
-| `otel-config.yaml` | Include otlp_http exporter, need working collector |
+| `otel-config.yaml` | Includes otlp_http exporter, need a working collector |
 
 ## Quick start (console output, no collector needed)
 

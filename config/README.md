@@ -14,10 +14,18 @@ The `opentelemetry-config` gem sits on top of the OpenTelemetry Ruby SDK. Instea
 
 It works with:
 
-- `opentelemetry-sdk` — tracing
-- `opentelemetry-exporter-otlp` — OTLP HTTP exporters
-- `opentelemetry-instrumentation-all` — auto-instrumentation
+- `opentelemetry-sdk` — Traces
+- `opentelemetry-exporter-otlp` — OTLP HTTP exporter
+- `opentelemetry-instrumentation-all` — Instrumentation for gems
 
+This code is still under development and is not a complete implementation of the declarative configuration specification. Until the code becomes stable, declarative configuration functionality will live outside stable OpenTelemetry libraries.
+
+Some features we still need to implement include:
+* Configuration file precedence over environment variables
+* Using declarative configuration without a call in your code
+* Declarative configuration instrumentation API and SDK
+
+This is not an exhaustive list.
 ## How do I get started?
 
 Install the gem using:
@@ -77,7 +85,7 @@ sdk = OpenTelemetry::Config.install(
 
 ## YAML configuration reference
 
-See full configuration reference in [declarative-configuration](https://opentelemetry.io/docs/languages/sdk-configuration/declarative-configuration/)
+See full configuration reference in [declarative-configuration](https://opentelemetry.io/docs/languages/sdk-configuration/declarative-configuration/).
 
 ### Disabling the SDK
 
@@ -174,7 +182,7 @@ bundle exec ruby app.rb
 
 ## How can I get involved?
 
-The `opentelemetry-config` gem source is [on github][repo-github], along with related gems including `opentelemetry-sdk`.
+The `opentelemetry-config` gem source is [on GitHub][repo-github], along with related gems including `opentelemetry-sdk`.
 
 The OpenTelemetry Ruby gems are maintained by the OpenTelemetry Ruby special interest group (SIG). You can get involved by joining us in [GitHub Discussions][discussions-url] or attending our weekly meeting. See the [meeting calendar][community-meetings] for dates and times. For more information on this and other language SIGs, see the OpenTelemetry [community page][ruby-sig].
 
