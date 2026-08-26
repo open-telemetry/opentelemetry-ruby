@@ -35,16 +35,19 @@ module OpenTelemetry
               @counts = tmp
             end
 
+            # Returns the lower index bound of the populated buckets.
             def offset
               @index_start
             end
 
+            # Returns the bucket counts, rotated so index 0 aligns with #offset.
             def offset_counts
               bias = @index_base - @index_start
               @counts[-bias..] + @counts[0...-bias]
             end
             alias counts offset_counts
 
+            # Returns the number of populated buckets, from index_start to index_end.
             def length
               return 0 if @counts.empty?
               return 0 if @index_end == @index_start && counts[0] == 0
@@ -52,6 +55,7 @@ module OpenTelemetry
               @index_end - @index_start + 1
             end
 
+            # Returns the count stored at the given absolute bucket index.
             def get_bucket(key)
               bias = @index_base - @index_start
 
@@ -61,6 +65,7 @@ module OpenTelemetry
               @counts[key]
             end
 
+            # Halves the bucket resolution amount times, merging adjacent buckets.
             def downscale(amount)
               bias = @index_base - @index_start
 
@@ -101,10 +106,12 @@ module OpenTelemetry
               @index_base = @index_start
             end
 
+            # Increments the count at bucket_index by increment.
             def increment_bucket(bucket_index, increment = 1)
               @counts[bucket_index] += increment
             end
 
+            # Returns a copy of these buckets with all counts reset to zero.
             def copy_empty
               new_buckets = self.class.new
               new_buckets.instance_variable_set(:@counts, Array.new(@counts.size, 0))
