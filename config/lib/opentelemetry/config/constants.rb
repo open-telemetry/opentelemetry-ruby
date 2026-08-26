@@ -14,8 +14,7 @@ module OpenTelemetry
       :meter_provider,
       :logger_provider,
       :resource,
-      :propagator,
-      :instrumentation
+      :propagator
     ) do
       # Shuts down every configured provider. No-op providers are skipped.
       #

@@ -6,7 +6,6 @@
 require 'date'
 require 'yaml'
 
-require_relative 'config/instrumentation'
 require_relative 'config/propagation'
 require_relative 'config/resource'
 require_relative 'config/constants'
@@ -87,14 +86,12 @@ module OpenTelemetry
         RubySDK.new(
           tracer_provider: tracer_provider,
           propagator: propagators,
-          resource: resource,
-          instrumentation: build_instrumentation_config_map(config.instrumentation_development)
+          resource: resource
         )
       end
 
-      # Assigns the components of a RubySDK to the global OpenTelemetry state and
-      # installs the configured instrumentation libraries. NOOP_SDK will skip installation
-      # and leave the global state untouched.
+      # Assigns the components of a RubySDK to the global OpenTelemetry state.
+      # NOOP_SDK will skip installation and leave the global state untouched.
       #
       # @param ruby_sdk [RubySDK]
       # @return [RubySDK] the same SDK handle
@@ -103,7 +100,6 @@ module OpenTelemetry
 
         OpenTelemetry.tracer_provider = ruby_sdk.tracer_provider if ruby_sdk.tracer_provider
         OpenTelemetry.propagation = ruby_sdk.propagator if ruby_sdk.propagator
-        install_instrumentation(ruby_sdk.instrumentation)
         ruby_sdk
       end
     end

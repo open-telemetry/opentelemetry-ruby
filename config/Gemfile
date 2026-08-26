@@ -24,7 +24,6 @@ group :test, :development do
   gem 'opentelemetry-registry',                  path: '../registry',                  require: false
   gem 'opentelemetry-test-helpers',              path: '../test_helpers',              require: false
 
-  gem 'opentelemetry-instrumentation-all',                      '0.94.0'
   gem 'opentelemetry-propagator-google_cloud_trace_context',    '0.4.0'
   gem 'opentelemetry-propagator-ottrace',                       '0.25.0'
   gem 'opentelemetry-propagator-xray',                          '0.27.0'

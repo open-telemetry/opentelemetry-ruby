@@ -18,6 +18,9 @@ sdk = OpenTelemetry::Config.install(
   )
 )
 
+# Install all available instrumentation
+OpenTelemetry::Instrumentation.registry.install_all
+
 tracer = OpenTelemetry.tracer_provider.tracer('config-example', '1.0.0')
 
 tracer.in_span('process-order', attributes: { 'order.id' => 'ORD-001', 'order.items' => 3 }) do |span|

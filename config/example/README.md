@@ -26,7 +26,7 @@ You will see span output written to stdout.
 
 1. Set the `OTEL_CONFIG_FILE` environment variable to the path of your YAML file.
 2. `require 'opentelemetry-config'` reads the file, parses it, and wires
-   up `TracerProvider`, propagators, and instrumentation — all in one step.
+   up `TracerProvider` and propagators — all in one step.
 3. Use the standard OpenTelemetry API (`OpenTelemetry.tracer_provider`) as normal.
 
 If `OTEL_CONFIG_FILE` is not set, call `OpenTelemetry::Config.configure`
@@ -42,4 +42,3 @@ manually with a config hash, or configure programmatically using the SDK.
 | `tracer_provider.sampler` | `always_on`, `always_off`, `trace_id_ratio_based`, or `parent_based` |
 | `tracer_provider.limits` | Attribute, event, and link count/length limits |
 | `propagator.composite` | Ordered list of propagators (`tracecontext`, `baggage`, `b3`, `b3multi`, `jaeger`, `xray`) |
-| `instrumentation.general` | Enabled/disabled instrumentation libraries |

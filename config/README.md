@@ -154,23 +154,6 @@ propagator:
 
 Supported propagator names: `tracecontext`, `baggage`, `b3`, `b3multi`, `jaeger`, `ottrace`, `xray`, `google_cloud_trace_context`.
 
-### Auto-instrumentation
-
-The `instrumentation/development` key configures auto-instrumentation. The `ruby:` sub-key maps snake_case library names to option hashes.
-
-```yaml
-instrumentation/development:
-  ruby:
-    net_http:
-      untraced_hosts:
-        - localhost
-    rack:
-      untraced_endpoints:
-        - /healthz
-```
-
-Short names follow the snake_case convention of the instrumentation class suffix (e.g., `net_http` for `OpenTelemetry::Instrumentation::Net::HTTP`).
-
 ## Examples
 
 A runnable example application is available in the [`example/`][example-dir] directory. It demonstrates traces configured from YAML with console output.
