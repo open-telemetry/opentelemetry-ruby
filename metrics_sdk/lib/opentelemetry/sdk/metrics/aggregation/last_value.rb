@@ -19,15 +19,18 @@ module OpenTelemetry
 
           def initialize(exemplar_reservoir: nil)
             @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
-            @exemplar_reservoir_storage = {}
+            # Keyed by stream then attributes: a view's aggregation instance is shared across every stream it matches.
+            @exemplar_reservoir_storage = Hash.new { |h, k| h[k] = {} }.compare_by_identity
           end
 
           # Returns the current data points, clearing them for delta temporality.
           def collect(start_time, end_time, data_points)
+            stream_exemplar_reservoir_storage = @exemplar_reservoir_storage[data_points]
+
             ndps = data_points.values.map! do |ndp|
               ndp.start_time_unix_nano = start_time
               ndp.time_unix_nano = end_time
-              reservoir = @exemplar_reservoir_storage[ndp.attributes]
+              reservoir = stream_exemplar_reservoir_storage[ndp.attributes]
               ndp.exemplars = reservoir&.collect(attributes: ndp.attributes, aggregation_temporality: :delta)
               ndp
             end
@@ -46,7 +49,7 @@ module OpenTelemetry
                     create_new_data_point(attributes, data_points)
                   end
 
-            update_number_data_point(ndp, increment, exemplar_offer: exemplar_offer)
+            update_number_data_point(ndp, increment, data_points, exemplar_offer: exemplar_offer)
             nil
           end
 
@@ -62,17 +65,17 @@ module OpenTelemetry
             )
           end
 
-          def update_number_data_point(ndp, increment, exemplar_offer: false)
+          def update_number_data_point(ndp, increment, stream_key, exemplar_offer: false)
             ndp.value = increment
-            reservior_update(ndp.attributes, increment, exemplar_offer)
+            reservior_update(ndp.attributes, increment, exemplar_offer, stream_key)
           end
 
-          def reservior_update(attributes, increment, exemplar_offer)
-            reservoir = @exemplar_reservoir_storage[attributes]
+          def reservior_update(attributes, increment, exemplar_offer, stream_key)
+            reservoir = @exemplar_reservoir_storage[stream_key][attributes]
             unless reservoir
               reservoir = @exemplar_reservoir.dup
               reservoir.reset
-              @exemplar_reservoir_storage[attributes] = reservoir
+              @exemplar_reservoir_storage[stream_key][attributes] = reservoir
             end
 
             return unless exemplar_offer

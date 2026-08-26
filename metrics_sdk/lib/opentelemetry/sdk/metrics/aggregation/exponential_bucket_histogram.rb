@@ -54,45 +54,59 @@ module OpenTelemetry
             @scale          = validate_scale(max_scale)
 
             @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
-            @exemplar_reservoir_storage = {}
+            # Keyed by stream then attributes: a view's aggregation instance is shared across every stream it matches.
+            @exemplar_reservoir_storage = Hash.new { |h, k| h[k] = {} }.compare_by_identity
 
             @mapping = new_mapping(@scale)
 
             # Previous state for cumulative aggregation
-            @previous_positive = {} # nil
-            @previous_negative = {} # nil
-            @previous_min = {} # Float::INFINITY
-            @previous_max = {} # -Float::INFINITY
-            @previous_sum = {} # 0
-            @previous_count = {} # 0
-            @previous_zero_count = {} # 0
-            @previous_scale = {} # nil
+            @previous_positive = Hash.new { |h, k| h[k] = {} }.compare_by_identity # nil
+            @previous_negative = Hash.new { |h, k| h[k] = {} }.compare_by_identity # nil
+            @previous_min = Hash.new { |h, k| h[k] = {} }.compare_by_identity # Float::INFINITY
+            @previous_max = Hash.new { |h, k| h[k] = {} }.compare_by_identity # -Float::INFINITY
+            @previous_sum = Hash.new { |h, k| h[k] = {} }.compare_by_identity # 0
+            @previous_count = Hash.new { |h, k| h[k] = {} }.compare_by_identity # 0
+            @previous_zero_count = Hash.new { |h, k| h[k] = {} }.compare_by_identity # 0
+            @previous_scale = Hash.new { |h, k| h[k] = {} }.compare_by_identity # nil
 
-            # Cache mappings per attribute set
-            @mappings = {}
-            @previous_mappings = {}
+            # Cache mappings per stream, then per attribute set
+            @mappings = Hash.new { |h, k| h[k] = {} }.compare_by_identity
+            @previous_mappings = Hash.new { |h, k| h[k] = {} }.compare_by_identity
           end
 
           # when aggregation temporality is cumulative, merge and downscale will happen.
           # rubocop:disable Metrics/MethodLength
           def collect(start_time, end_time, data_points)
+            stream_key = data_points
+            stream_exemplar_reservoir_storage = @exemplar_reservoir_storage[stream_key]
+
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
-                reservoir = @exemplar_reservoir_storage[hdp.attributes]
-                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
+                reservoir = stream_exemplar_reservoir_storage[hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality.temporality)
                 hdp
               end
               data_points.clear
-              @mappings.clear
+              @mappings.delete(stream_key)
               hdps
             else
               # CUMULATIVE temporality - merge current data_points to previous data_points
               # and only keep the merged data_points in @previous_*
 
               merged_data_points = {}
+              stream_previous_positive = @previous_positive[stream_key]
+              stream_previous_negative = @previous_negative[stream_key]
+              stream_previous_min = @previous_min[stream_key]
+              stream_previous_max = @previous_max[stream_key]
+              stream_previous_sum = @previous_sum[stream_key]
+              stream_previous_count = @previous_count[stream_key]
+              stream_previous_zero_count = @previous_zero_count[stream_key]
+              stream_previous_scale = @previous_scale[stream_key]
+              stream_mappings = @mappings[stream_key]
+              stream_previous_mappings = @previous_mappings[stream_key]
 
               # this will slow down the operation especially if large amount of data_points present
               # but it should be fine since with cumulative, the data_points are merged into previous_* and not kept in data_points
@@ -108,25 +122,25 @@ module OpenTelemetry
                 current_scale = hdp.scale
 
                 # Setup previous positive, negative bucket and scale based on three different cases
-                @previous_positive[attributes] = current_positive.copy_empty if @previous_positive[attributes].nil?
-                @previous_negative[attributes] = current_negative.copy_empty if @previous_negative[attributes].nil?
-                @previous_scale[attributes] = current_scale if @previous_scale[attributes].nil?
+                stream_previous_positive[attributes] = current_positive.copy_empty if stream_previous_positive[attributes].nil?
+                stream_previous_negative[attributes] = current_negative.copy_empty if stream_previous_negative[attributes].nil?
+                stream_previous_scale[attributes] = current_scale if stream_previous_scale[attributes].nil?
 
                 # Determine minimum scale for merging
-                min_scale = [@previous_scale[attributes], current_scale].min
+                min_scale = [stream_previous_scale[attributes], current_scale].min
 
                 # Calculate ranges for positive and negative buckets
                 low_positive, high_positive = get_low_high_previous_current(
-                  @previous_positive[attributes],
+                  stream_previous_positive[attributes],
                   current_positive,
-                  @previous_scale[attributes],
+                  stream_previous_scale[attributes],
                   current_scale,
                   min_scale
                 )
                 low_negative, high_negative = get_low_high_previous_current(
-                  @previous_negative[attributes],
+                  stream_previous_negative[attributes],
                   current_negative,
-                  @previous_scale[attributes],
+                  stream_previous_scale[attributes],
                   current_scale,
                   min_scale
                 )
@@ -138,79 +152,79 @@ module OpenTelemetry
                 ].min
 
                 # Downscale previous buckets if necessary
-                downscale_change = @previous_scale[attributes] - min_scale
-                downscale(downscale_change, @previous_positive[attributes], @previous_negative[attributes])
+                downscale_change = stream_previous_scale[attributes] - min_scale
+                downscale(downscale_change, stream_previous_positive[attributes], stream_previous_negative[attributes])
 
                 # Merge current buckets into previous buckets (kind like update); it's always :cumulative
-                merge_buckets(@previous_positive[attributes], current_positive, current_scale, min_scale, @aggregation_temporality)
-                merge_buckets(@previous_negative[attributes], current_negative, current_scale, min_scale, @aggregation_temporality)
+                merge_buckets(stream_previous_positive[attributes], current_positive, current_scale, min_scale, @aggregation_temporality)
+                merge_buckets(stream_previous_negative[attributes], current_negative, current_scale, min_scale, @aggregation_temporality)
 
                 # initialize min, max, sum, count, zero_count for first time
-                @previous_min[attributes] = Float::INFINITY if @previous_min[attributes].nil?
-                @previous_max[attributes] = -Float::INFINITY if @previous_max[attributes].nil?
-                @previous_sum[attributes] = 0 if @previous_sum[attributes].nil?
-                @previous_count[attributes] = 0 if @previous_count[attributes].nil?
-                @previous_zero_count[attributes] = 0 if @previous_zero_count[attributes].nil?
+                stream_previous_min[attributes] = Float::INFINITY if stream_previous_min[attributes].nil?
+                stream_previous_max[attributes] = -Float::INFINITY if stream_previous_max[attributes].nil?
+                stream_previous_sum[attributes] = 0 if stream_previous_sum[attributes].nil?
+                stream_previous_count[attributes] = 0 if stream_previous_count[attributes].nil?
+                stream_previous_zero_count[attributes] = 0 if stream_previous_zero_count[attributes].nil?
 
                 # Update aggregated values
-                @previous_min[attributes] = [@previous_min[attributes], current_min].min
-                @previous_max[attributes] = [@previous_max[attributes], current_max].max
-                @previous_sum[attributes] += current_sum
-                @previous_count[attributes] += current_count
-                @previous_zero_count[attributes] += current_zero_count
-                @previous_scale[attributes] = min_scale
+                stream_previous_min[attributes] = [stream_previous_min[attributes], current_min].min
+                stream_previous_max[attributes] = [stream_previous_max[attributes], current_max].max
+                stream_previous_sum[attributes] += current_sum
+                stream_previous_count[attributes] += current_count
+                stream_previous_zero_count[attributes] += current_zero_count
+                stream_previous_scale[attributes] = min_scale
 
                 # Create merged data point
-                reservoir = @exemplar_reservoir_storage[attributes]
+                reservoir = stream_exemplar_reservoir_storage[attributes]
                 merged_hdp = ExponentialHistogramDataPoint.new(
                   attributes,
                   start_time,
                   end_time,
-                  @previous_count[attributes],
-                  @previous_sum[attributes],
-                  @previous_scale[attributes],
-                  @previous_zero_count[attributes],
-                  @previous_positive[attributes].dup,
-                  @previous_negative[attributes].dup,
+                  stream_previous_count[attributes],
+                  stream_previous_sum[attributes],
+                  stream_previous_scale[attributes],
+                  stream_previous_zero_count[attributes],
+                  stream_previous_positive[attributes].dup,
+                  stream_previous_negative[attributes].dup,
                   0, # flags
-                  reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
-                  @previous_min[attributes],
-                  @previous_max[attributes],
+                  reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality.temporality), # exemplars
+                  stream_previous_min[attributes],
+                  stream_previous_max[attributes],
                   @zero_threshold
                 )
 
                 merged_data_points[attributes] = merged_hdp
-                @previous_mappings[attributes] = @mappings[attributes] if @mappings[attributes] # Preserve mapping for next collection
+                stream_previous_mappings[attributes] = stream_mappings[attributes] if stream_mappings[attributes] # Preserve mapping for next collection
               end
 
               # when you have no local_data_points, the loop from cumulative aggregation will not run
               # so return last merged data points if exists
-              if data_points.empty? && !@previous_positive.empty?
-                @previous_positive.each_key do |attributes|
-                  reservoir = @exemplar_reservoir_storage[attributes]
+              if data_points.empty? && !stream_previous_positive.empty?
+                stream_previous_positive.each_key do |attributes|
+                  reservoir = stream_exemplar_reservoir_storage[attributes]
                   merged_hdp = ExponentialHistogramDataPoint.new(
                     attributes,
                     start_time,
                     end_time,
-                    @previous_count[attributes],
-                    @previous_sum[attributes],
-                    @previous_scale[attributes],
-                    @previous_zero_count[attributes],
-                    @previous_positive[attributes].dup,
-                    @previous_negative[attributes].dup,
+                    stream_previous_count[attributes],
+                    stream_previous_sum[attributes],
+                    stream_previous_scale[attributes],
+                    stream_previous_zero_count[attributes],
+                    stream_previous_positive[attributes].dup,
+                    stream_previous_negative[attributes].dup,
                     0, # flags
-                    reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality), # exemplars
-                    @previous_min[attributes],
-                    @previous_max[attributes],
+                    reservoir&.collect(attributes: attributes, aggregation_temporality: @aggregation_temporality.temporality), # exemplars
+                    stream_previous_min[attributes],
+                    stream_previous_max[attributes],
                     @zero_threshold
                   )
                   merged_data_points[attributes] = merged_hdp
                 end
               end
 
-              # Swap current with previous mappings for next cycle
-              @mappings = @previous_mappings
-              @previous_mappings = {}
+              # Swap current with previous mappings for next cycle, for this stream only
+              @mappings[stream_key] = stream_previous_mappings
+              @previous_mappings[stream_key] = {}
 
               # clear data_points since the data is merged into previous_* already;
               # otherwise we will have duplicated data_points in the next collect
@@ -230,7 +244,7 @@ module OpenTelemetry
                     create_new_data_point(attributes, data_points)
                   end
 
-            update_histogram_data_point(hdp, attributes, amount, exemplar_offer: exemplar_offer)
+            update_histogram_data_point(hdp, attributes, amount, data_points, exemplar_offer: exemplar_offer)
             nil
           end
 
@@ -266,8 +280,8 @@ module OpenTelemetry
           end
 
           # rubocop:disable Metrics/CyclomaticComplexity,Metrics/MethodLength
-          def update_histogram_data_point(hdp, attributes, amount, exemplar_offer: false)
-            reservior_update(attributes, amount, exemplar_offer)
+          def update_histogram_data_point(hdp, attributes, amount, stream_key, exemplar_offer: false)
+            reservior_update(attributes, amount, exemplar_offer, stream_key)
 
             if @record_min_max
               hdp.max = amount if amount > hdp.max
@@ -290,11 +304,11 @@ module OpenTelemetry
             # Reset scale to max_scale if transitioning from all-zeros to first non-zero value
             if buckets.counts == [0] && hdp.scale == 0 && hdp.count > hdp.zero_count
               hdp.scale = @scale
-              @mappings.delete(attributes) # Clear any cached mapping
+              @mappings[stream_key].delete(attributes) # Clear any cached mapping
             end
 
             # Get or create mapping for this attribute set
-            mapping = @mappings[attributes] ||= new_mapping(hdp.scale)
+            mapping = @mappings[stream_key][attributes] ||= new_mapping(hdp.scale)
             bucket_index = mapping.map_to_index(amount)
 
             rescaling_needed = false
@@ -321,7 +335,7 @@ module OpenTelemetry
               downscale(scale_change, hdp.positive, hdp.negative)
               new_scale = mapping.scale - scale_change
               mapping = new_mapping(new_scale)
-              @mappings[attributes] = mapping # Update cache
+              @mappings[stream_key][attributes] = mapping # Update cache
               bucket_index = mapping.map_to_index(amount)
 
               OpenTelemetry.logger.debug "Rescaled with new scale #{new_scale} from #{low} and #{high}; bucket_index is updated to #{bucket_index}"
@@ -354,12 +368,12 @@ module OpenTelemetry
             buckets.grow(span + 1, @size)
           end
 
-          def reservior_update(attributes, amount, exemplar_offer)
-            reservoir = @exemplar_reservoir_storage[attributes]
+          def reservior_update(attributes, amount, exemplar_offer, stream_key)
+            reservoir = @exemplar_reservoir_storage[stream_key][attributes]
             unless reservoir
               reservoir = @exemplar_reservoir.dup
               reservoir.reset
-              @exemplar_reservoir_storage[attributes] = reservoir
+              @exemplar_reservoir_storage[stream_key][attributes] = reservoir
             end
 
             return unless exemplar_offer
