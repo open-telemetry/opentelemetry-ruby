@@ -55,7 +55,7 @@ module OpenTelemetry
           header = getter.get(carrier, BAGGAGE_KEY)
           return context if header.nil? || header.empty?
 
-          entries = header.each_line(',', chomp: true).lazy.take(MAX_ENTRIES)
+          entries = bounded_entries(header).lazy.take(MAX_ENTRIES)
 
           OpenTelemetry::Baggage.build(context: context) do |builder|
             decode_entries(entries, builder)
@@ -75,13 +75,35 @@ module OpenTelemetry
 
         private
 
+        # Like String#each_line(','), but never scans more than 2x MAX_ENTRY_LENGTH
+        # ahead for the next separator.
+        def bounded_entries(header)
+          Enumerator.new do |yielder|
+            pos = 0
+            len = header.bytesize
+            while pos < len
+              window = header.byteslice(pos, (MAX_ENTRY_LENGTH * 2) + 1)
+              comma_offset = window.index(',')
+              if comma_offset
+                yielder << header.byteslice(pos, comma_offset)
+                pos += comma_offset + 1
+              else
+                yielder << window
+                break
+              end
+            end
+          end
+        end
+
         def decode_entries(entries, builder)
           decoded_length = 0
           entries.each do |raw_entry|
+            next if raw_entry.bytesize > MAX_ENTRY_LENGTH
+
             entry = raw_entry.gsub(/\s/, '')
             next if entry.empty?
-            next unless entry.size <= MAX_ENTRY_LENGTH &&
-                        entry.size + decoded_length <= MAX_TOTAL_LENGTH
+            next unless entry.bytesize <= MAX_ENTRY_LENGTH &&
+                        entry.bytesize + decoded_length <= MAX_TOTAL_LENGTH
 
             # Note metadata is currently unused in OpenTelemetry, but is part
             # the W3C spec where it's referred to as properties. We preserve
@@ -89,7 +111,7 @@ module OpenTelemetry
             kv, meta = entry.split(';', 2)
             k, v = kv.split('=').map! { |part| URI.decode_uri_component(part) }
             builder.set_value(k, v, metadata: meta)
-            decoded_length += entry.size + 1 # +1 for the ',' separator, as in #encode
+            decoded_length += entry.bytesize + 1 # +1 for the ',' separator, as in #encode
           end
         end
 
