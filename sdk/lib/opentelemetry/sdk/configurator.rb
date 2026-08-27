@@ -33,21 +33,6 @@ module OpenTelemetry
 
       attr_writer :propagators, :id_generator
 
-      # @!attribute [w] error_handler
-      #   Configures the error handler that will be installed on
-      #   OpenTelemetry during SDK configuration.
-      #
-      #   Assigned object must respond to +#call+ and accept the keyword
-      #   arguments +exception:+ and +message:+.
-      #
-      #   @example Configure a custom error handler during SDK setup
-      #     OpenTelemetry::SDK.configure do |c|
-      #       c.error_handler = lambda do |exception: nil, message: nil|
-      #         OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
-      #       end
-      #     end
-      attr_writer :error_handler
-
       def initialize
         @instrumentation_names = []
         @instrumentation_config_map = {}
@@ -70,6 +55,26 @@ module OpenTelemetry
       def logger=(new_logger)
         @logger = ForwardingLogger.new(new_logger, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
       end
+
+      # Configures the error handler that will be installed on
+      # OpenTelemetry during SDK configuration.
+      #
+      # Assigned object must respond to +#call+ and accept the keyword
+      # arguments +exception:+ and +message:+.
+      #
+      # @param [#call] error_handler The error handler to install
+      #
+      # @example Configure a custom error handler during SDK setup
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.error_handler = lambda do |exception: nil, message: nil|
+      #       OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
+      #     end
+      #   end
+      # rubocop:disable Style/TrivialAccessors
+      def error_handler=(error_handler)
+        @error_handler = error_handler
+      end
+      # rubocop:enable Style/TrivialAccessors
 
       def error_handler
         @error_handler ||= OpenTelemetry.error_handler
