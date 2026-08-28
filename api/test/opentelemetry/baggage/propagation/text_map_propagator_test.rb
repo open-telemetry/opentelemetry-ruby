@@ -105,12 +105,12 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
       end
 
       it 'does not scan a single oversized entry before rejecting it' do
-        require 'benchmark'
-
         header = "k=#{'x' * 1_000_000_000}"
         carrier = { 'baggage' => header }
 
-        elapsed = Benchmark.realtime { propagator.extract(carrier, context: OpenTelemetry::Context.empty) }
+        start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+        propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+        elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
 
         # A linear scan of 1 GB measures ~0.1s; this fix measures ~0.0002s.
         _(elapsed).must_be(:<, 0.02)
