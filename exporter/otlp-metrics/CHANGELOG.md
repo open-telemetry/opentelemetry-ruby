@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.11.0 / 2026-08-28
+
+* ADDED: Add flags to metrics data model (#2302)
+
 ### v0.10.0 / 2026-06-16
 
 * BREAKING CHANGE: Metrics cardinality limit (#1909)
