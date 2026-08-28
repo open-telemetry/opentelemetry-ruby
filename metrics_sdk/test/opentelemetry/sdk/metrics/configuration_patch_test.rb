@@ -61,6 +61,24 @@ describe OpenTelemetry::SDK::Metrics::ConfiguratorPatch do
         assert_instance_of OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter, reader.instance_variable_get(:@exporter)
       end
 
+      it 'defaults the console reader export interval to 10 seconds' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'console', 'OTEL_METRIC_EXPORT_INTERVAL' => nil) do
+          configurator.configure
+        end
+
+        reader = OpenTelemetry.meter_provider.metric_readers[0]
+        _(reader.instance_variable_get(:@export_interval)).must_equal(10.0)
+      end
+
+      it 'sets the console reader export interval from OTEL_METRIC_EXPORT_INTERVAL' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'console', 'OTEL_METRIC_EXPORT_INTERVAL' => '5000') do
+          configurator.configure
+        end
+
+        reader = OpenTelemetry.meter_provider.metric_readers[0]
+        _(reader.instance_variable_get(:@export_interval)).must_equal(5.0)
+      end
+
       it 'supports "none" as an environment variable' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
           OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'none') do
