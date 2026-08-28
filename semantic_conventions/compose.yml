@@ -1,0 +1,18 @@
+services:
+  semconv-weaver:
+    image: otel/weaver:v0.25.1@sha256:9ad46ca9cd4fa5974b121f886aa3e9946a8ef8ea905001a96c018d21f9db87ca
+    user: "${UID}:${GID}"
+    volumes:
+      - ./tmp/semconvrepo/model:/source:ro
+      - ./templates:/templates:ro
+      - ./:/output
+    working_dir: /output
+    command:
+      [
+        "registry",
+        "generate",
+        "--registry=/source",
+        "--templates=/templates",
+        "ruby",
+        "/output/lib/opentelemetry/semconv"
+      ]

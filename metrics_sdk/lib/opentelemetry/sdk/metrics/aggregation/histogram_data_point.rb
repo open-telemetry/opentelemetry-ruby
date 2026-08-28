@@ -17,6 +17,7 @@ module OpenTelemetry
                                         :sum,                   # Float sum of the values in the population. If count is zero then this field must be zero.
                                         :bucket_counts,         # optional Array[Integer] field contains the count values of histogram for each bucket.
                                         :explicit_bounds,       # Array[Float] specifies buckets with explicitly defined bounds for values.
+                                        :flags,                 # optional Integer flags associated with the data point
                                         :exemplars,             # optional List of exemplars collected from measurements that were used to form the data point
                                         :min,                   # optional Float min is the minimum value over (start_time, end_time].
                                         :max)                   # optional Float max is the maximum value over (start_time, end_time].

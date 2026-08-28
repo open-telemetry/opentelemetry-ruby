@@ -24,7 +24,7 @@ module OpenTelemetry
       module SESSION
         # @!group Attribute Names
 
-        # A unique id to identify a session.
+        # A unique ID to identify a session.
         #
         # @note Stability Level: development
         SESSION_ID = 'session.id'
