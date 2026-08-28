@@ -16,21 +16,41 @@
   prHourlyLimit: 12,
   packageRules: [
     {
-      groupName: "all patch versions",
-      matchDepNames: ["!ruby"],
-      matchUpdateTypes: ["patch"],
+      groupName: "all [patches]",
+      matchDepNames: ["!ruby", "!renovate"],
+      matchUpdateTypes: ["patch", "digest"],
       schedule: ["before 6am every weekday"],
     },
     {
-      groupName: "all digest versions",
-      matchDepNames: ["!ruby"],
-      matchUpdateTypes: ["digest"],
-      schedule: ["before 6am every weekday"],
+      groupName: "infra [minor]",
+      matchCategories: ["ci", "docker", "js"],
+      matchDepNames: [
+        "!ruby",
+        "!markdownlint-cli2",
+        "!setup-ruby",
+        "!confluentinc/cp-kafka",
+      ],
+      matchUpdateTypes: ["minor"],
+      schedule: ["before 7am on Monday"],
+    },
+    {
+      groupName: "infra [minor]",
+      matchCategories: ["js"],
+      matchDepNames: ["renovate"],
+      matchUpdateTypes: ["patch", "digest"],
+      schedule: ["before 7am on Monday"],
     },
     {
       matchDepNames: ["ruby"],
       matchUpdateTypes: ["digest", "patch"],
       schedule: ["before 6am every weekday"],
+    },
+    {
+      groupName: "test dependencies [minor]",
+      matchUpdateTypes: ["minor"],
+      matchDatasources: ["rubygems"],
+      matchDepTypes: ["testDependency"],
+      schedule: ["before 7am on Monday"],
     },
     {
       description: "Separate ruby updates so that patches can be installed after new minor has been released.",
@@ -124,7 +144,8 @@
       description: "Update dependencies in Appraisals",
       managerFilePatterns: ["**/Appraisals"],
       matchStrings: [
-        "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>.+\\s[0-9.]+)'",
+        "gem\\s'(?<packageName>.+?)',\\s'(?<depVersion>=\\s[0-9.]+)'",
+        "\\n\\s*?%w\\[([0-9.]+\\s)+(?<depVersion>[0-9.]+)\\].+\\n.+\\n\\s+gem\\s'(?<packageName>.+?)', \"~> #{version}\"",
       ],
       datasourceTemplate: "rubygems",
       versioningTemplate: "ruby",
