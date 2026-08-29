@@ -13,11 +13,13 @@ on:
       - main
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   regenerate-semconv:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-24.04
     steps:
       - name: Create otelbot app token
