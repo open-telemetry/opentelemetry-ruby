@@ -6,6 +6,7 @@
 
 source 'https://rubygems.org'
 
+gem 'dotenv', '~> 3.2.0'
 gem 'rake', '~> 13.4.0'
 gem 'rubocop', '~> 1.89.0'
 gem 'rubocop-rspec', '~> 3.10.0'
