@@ -336,4 +336,95 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       end
     end
   end
+
+  # https://github.com/open-telemetry/opentelemetry-ruby/issues/2300
+  describe 'when multiple streams share one aggregation instance via a view' do
+    it 'keeps delta scale and bucket state independent per stream, matching independent instances' do
+      attrs = { 'outcome' => 'success' }
+      duration_values = [0.143741, 0.327218, 0.156199, 0.201044, 0.118377]
+      batch_size_values = [1.0, 2.0, 1.0, 2.0, 1.0]
+      body_size_values = [351.0, 2269.0, 640.0, 1810.0, 402.0]
+
+      independent_result = lambda do |values|
+        agg = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(aggregation_temporality: :delta, zero_threshold: 0)
+        dps = {}
+        values.each { |v| agg.update(v, attrs, dps, cardinality_limit) }
+        agg.collect(start_time, end_time, dps).first
+      end
+
+      expected_duration = independent_result.call(duration_values)
+      expected_batch_size = independent_result.call(batch_size_values)
+      expected_body_size = independent_result.call(body_size_values)
+
+      shared = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(aggregation_temporality: :delta, zero_threshold: 0)
+      duration_dps = {}
+      batch_size_dps = {}
+      body_size_dps = {}
+
+      duration_values.each_index do |i|
+        shared.update(duration_values[i], attrs, duration_dps, cardinality_limit)
+        shared.update(batch_size_values[i], attrs, batch_size_dps, cardinality_limit)
+        shared.update(body_size_values[i], attrs, body_size_dps, cardinality_limit)
+      end
+
+      duration_hdp = shared.collect(start_time, end_time, duration_dps).first
+      batch_size_hdp = shared.collect(start_time, end_time, batch_size_dps).first
+      body_size_hdp = shared.collect(start_time, end_time, body_size_dps).first
+
+      _(duration_hdp.scale).must_equal(expected_duration.scale)
+      _(duration_hdp.count).must_equal(expected_duration.count)
+      _(duration_hdp.positive.counts).must_equal(expected_duration.positive.counts)
+
+      _(batch_size_hdp.scale).must_equal(expected_batch_size.scale)
+      _(batch_size_hdp.count).must_equal(expected_batch_size.count)
+      _(batch_size_hdp.positive.counts).must_equal(expected_batch_size.positive.counts)
+
+      _(body_size_hdp.scale).must_equal(expected_body_size.scale)
+      _(body_size_hdp.count).must_equal(expected_body_size.count)
+      _(body_size_hdp.positive.counts).must_equal(expected_body_size.positive.counts)
+    end
+
+    it 'keeps cumulative previous-state independent per stream across collect cycles' do
+      attrs = { 'outcome' => 'success' }
+      shared = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(aggregation_temporality: :cumulative, zero_threshold: 0)
+      stream_a_dps = {}
+      stream_b_dps = {}
+
+      shared.update(1.0, attrs, stream_a_dps, cardinality_limit)
+      shared.update(1000.0, attrs, stream_b_dps, cardinality_limit)
+
+      a_first = shared.collect(start_time, end_time, stream_a_dps).first
+      b_first = shared.collect(start_time, end_time, stream_b_dps).first
+
+      _(a_first.count).must_equal(1)
+      _(b_first.count).must_equal(1)
+
+      shared.update(2.0, attrs, stream_a_dps, cardinality_limit)
+      shared.update(2000.0, attrs, stream_b_dps, cardinality_limit)
+
+      a_second = shared.collect(start_time, end_time, stream_a_dps).first
+      b_second = shared.collect(start_time, end_time, stream_b_dps).first
+
+      _(a_second.count).must_equal(2)
+      _(a_second.positive.counts.sum).must_equal(2)
+      _(b_second.count).must_equal(2)
+      _(b_second.positive.counts.sum).must_equal(2)
+    end
+
+    it 'keeps exemplar reservoirs independent per stream' do
+      attrs = { 'outcome' => 'success' }
+      shared = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(aggregation_temporality: :delta, zero_threshold: 0)
+      stream_a_dps = {}
+      stream_b_dps = {}
+
+      shared.update(1.0, attrs, stream_a_dps, cardinality_limit, exemplar_offer: true)
+      shared.update(2.0, attrs, stream_b_dps, cardinality_limit, exemplar_offer: true)
+
+      a_hdp = shared.collect(start_time, end_time, stream_a_dps).first
+      b_hdp = shared.collect(start_time, end_time, stream_b_dps).first
+
+      _(a_hdp.exemplars.map(&:value)).must_equal([1.0])
+      _(b_hdp.exemplars.map(&:value)).must_equal([2.0])
+    end
+  end
 end

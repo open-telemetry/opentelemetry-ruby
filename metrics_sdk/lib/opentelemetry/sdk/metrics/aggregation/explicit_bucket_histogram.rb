@@ -31,7 +31,8 @@ module OpenTelemetry
             @boundaries = boundaries && !boundaries.empty? ? boundaries.sort : nil
             @record_min_max = record_min_max
             @exemplar_reservoir = exemplar_reservoir || Metrics::Exemplar::AlignedHistogramBucketExemplarReservoir.new(boundaries: @boundaries)
-            @exemplar_reservoir_storage = {}
+            # Keyed by stream then attributes: a view's aggregation instance is shared across every stream it matches.
+            @exemplar_reservoir_storage = Hash.new { |h, k| h[k] = {} }.compare_by_identity
           end
 
           # Returns the current histogram data points, clearing them for delta temporality.
@@ -41,8 +42,8 @@ module OpenTelemetry
               hdps = data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano = start_time
                 hdp.time_unix_nano = end_time
-                reservoir = @exemplar_reservoir_storage[hdp.attributes]
-                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
+                reservoir = @exemplar_reservoir_storage[data_points][hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality.temporality)
                 hdp
               end
               data_points.clear
@@ -52,8 +53,8 @@ module OpenTelemetry
               data_points.values.map! do |hdp|
                 hdp.start_time_unix_nano ||= start_time # Start time of a data point is from the first observation.
                 hdp.time_unix_nano = end_time
-                reservoir = @exemplar_reservoir_storage[hdp.attributes]
-                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality)
+                reservoir = @exemplar_reservoir_storage[data_points][hdp.attributes]
+                hdp.exemplars = reservoir&.collect(attributes: hdp.attributes, aggregation_temporality: @aggregation_temporality.temporality)
                 hdp = hdp.dup
                 hdp.bucket_counts = hdp.bucket_counts.dup
                 hdp
@@ -71,7 +72,7 @@ module OpenTelemetry
                     create_new_data_point(attributes, data_points)
                   end
 
-            update_histogram_data_point(hdp, amount, exemplar_offer: exemplar_offer)
+            update_histogram_data_point(hdp, amount, data_points, exemplar_offer: exemplar_offer)
             nil
           end
 
@@ -103,8 +104,8 @@ module OpenTelemetry
             )
           end
 
-          def update_histogram_data_point(hdp, amount, exemplar_offer: false)
-            reservior_update(hdp.attributes, amount, exemplar_offer)
+          def update_histogram_data_point(hdp, amount, stream_key, exemplar_offer: false)
+            reservior_update(hdp.attributes, amount, exemplar_offer, stream_key)
 
             if @record_min_max
               hdp.max = amount if amount > hdp.max
@@ -119,12 +120,12 @@ module OpenTelemetry
             hdp.bucket_counts[bucket_index] += 1
           end
 
-          def reservior_update(attributes, amount, exemplar_offer)
-            reservoir = @exemplar_reservoir_storage[attributes]
+          def reservior_update(attributes, amount, exemplar_offer, stream_key)
+            reservoir = @exemplar_reservoir_storage[stream_key][attributes]
             unless reservoir
               reservoir = @exemplar_reservoir.dup
               reservoir.reset
-              @exemplar_reservoir_storage[attributes] = reservoir
+              @exemplar_reservoir_storage[stream_key][attributes] = reservoir
             end
 
             return unless exemplar_offer
