@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.35.1 / 2026-09-01
+
+* No significant updates.
+
 ### v0.35.0 / 2026-09-01
 
 * ADDED: Use common conversion including supporting flags (#2250)
