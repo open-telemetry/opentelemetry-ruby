@@ -19,6 +19,11 @@ services:
     build:
       context: .
     working_dir: /app
+  otel-ruby-devcontainer:
+    <<: *base
+    build:
+      context: .
+    working_dir: /app
 
 volumes:
   bundle:
