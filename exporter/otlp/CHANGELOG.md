@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.35.0 / 2026-09-01
+
+* ADDED: Use common conversion including supporting flags (#2250)
+
 ### v0.34.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
