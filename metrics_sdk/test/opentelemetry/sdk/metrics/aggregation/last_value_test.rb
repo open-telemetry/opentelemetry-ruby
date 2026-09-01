@@ -21,6 +21,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
     _(ndp.time_unix_nano).must_equal(end_time)
   end
 
+  it 'includes flags on the collected data point' do
+    last_value_aggregation.update(0, {}, data_points, cardinality_limit)
+    ndp = last_value_aggregation.collect(start_time, end_time, data_points)[0]
+    _(ndp).must_respond_to(:flags)
+    _(ndp.flags).must_equal(0)
+  end
+
   it 'aggregates and collects should collect the last value' do
     last_value_aggregation.update(1, {}, data_points, cardinality_limit)
     last_value_aggregation.update(2, {}, data_points, cardinality_limit)

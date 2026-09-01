@@ -71,6 +71,7 @@ ignoreWords:
   - opentelemetrybot
   - otelbot
 words:
+  - artipacked
   - autocorrection
   - bigdecimal
   - cadvisor
@@ -84,3 +85,4 @@ words:
   - semconv
   - traceid
   - tracestate
+  - zizmor

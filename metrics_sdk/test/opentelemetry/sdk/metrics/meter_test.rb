@@ -11,6 +11,49 @@ describe OpenTelemetry::SDK::Metrics::Meter do
 
   let(:meter) { OpenTelemetry.meter_provider.meter('new_meter') }
 
+  describe 'instrumentation scope attributes' do
+    let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+
+    before do
+      reset_metrics_sdk
+      OpenTelemetry::SDK.configure
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+    end
+
+    it 'creates a meter with empty attributes by default' do
+      OpenTelemetry.meter_provider.meter('test').create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.attributes).must_equal({})
+    end
+
+    it 'normalizes nil attributes to empty hash' do
+      OpenTelemetry.meter_provider.meter('test', attributes: nil).create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.attributes).must_equal({})
+    end
+
+    it 'creates a meter with attributes' do
+      attrs = { 'key' => 'value' }
+      OpenTelemetry.meter_provider.meter('test', attributes: attrs).create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.attributes).must_equal(attrs)
+    end
+
+    it 'propagates attributes through to exported metric data' do
+      attrs = { 'key' => 'value' }
+      OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: attrs).create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      snapshot = metric_exporter.metric_snapshots[0]
+      _(snapshot.instrumentation_scope.name).must_equal('test')
+      _(snapshot.instrumentation_scope.version).must_equal('1.0')
+      _(snapshot.instrumentation_scope.attributes).must_equal(attrs)
+    end
+  end
+
   describe '#create_counter' do
     it 'creates a counter instrument' do
       instrument = meter.create_counter('a_counter', unit: 'minutes', description: 'useful description')
