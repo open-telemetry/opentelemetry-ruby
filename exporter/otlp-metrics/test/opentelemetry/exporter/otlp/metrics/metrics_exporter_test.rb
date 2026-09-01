@@ -930,5 +930,24 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
         Zlib.gunzip(req.body) == encoded_etsr
       end
     end
+
+    it 'records the meter schema_url on the emitted scope metrics' do
+      etsr = nil
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return do |request|
+        proto = Zlib.gunzip(request.body)
+        etsr = Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.decode(proto)
+        { status: 200 }
+      end
+
+      meter_provider.add_metric_reader(exporter)
+      meter = meter_provider.meter('test', schema_url: 'https://opentelemetry.io/schemas/1.30.0')
+      meter.create_counter('test_counter').add(1)
+
+      exporter.pull
+      meter_provider.shutdown
+
+      scope_metrics = etsr.resource_metrics.first.scope_metrics.first
+      _(scope_metrics.schema_url).must_equal('https://opentelemetry.io/schemas/1.30.0')
+    end
   end
 end

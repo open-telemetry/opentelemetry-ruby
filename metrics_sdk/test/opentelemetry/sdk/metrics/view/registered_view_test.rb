@@ -243,9 +243,14 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
     let(:instrumentation_scope) do
       OpenTelemetry::SDK::InstrumentationScope.new('test_scope', '1.0.1')
     end
-
     let(:metric_stream) do
       OpenTelemetry::SDK::Metrics::State::MetricStream.new('test', 'description', 'smidgen', :counter, nil, instrumentation_scope, nil, nil, nil)
+    end
+    let(:instrumentation_scope_with_schema_url) do
+      OpenTelemetry::SDK::InstrumentationScope.new('test_scope', '1.0.1', 'https://opentelemetry.io/schemas/1.30.0')
+    end
+    let(:metric_stream_with_schema_url) do
+      OpenTelemetry::SDK::Metrics::State::MetricStream.new('test', 'description', 'smidgen', :counter, nil, instrumentation_scope_with_schema_url, nil, nil, nil)
     end
 
     it 'registered view with matching name' do
@@ -267,6 +272,16 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
     it 'registered view with matching meter_name' do
       registered_view.instance_variable_set(:@options, { meter_name: 'test_scope' })
       _(registered_view.match_instrument?(metric_stream)).must_equal true
+    end
+
+    it 'registered view with matching meter_schema_url' do
+      registered_view.instance_variable_set(:@options, { meter_schema_url: 'https://opentelemetry.io/schemas/1.30.0' })
+      _(registered_view.match_instrument?(metric_stream_with_schema_url)).must_equal true
+    end
+
+    it 'do not registered view with unmatching meter_schema_url' do
+      registered_view.instance_variable_set(:@options, { meter_schema_url: 'https://opentelemetry.io/schemas/1.31.0' })
+      _(registered_view.match_instrument?(metric_stream_with_schema_url)).must_equal false
     end
 
     it 'do not registered view with unmatching name and matching type' do
