@@ -2,7 +2,7 @@
 
 ### v0.35.1 / 2026-09-01
 
-* No significant updates.
+* REVERT: Use common conversion including supporting flags (#2328)
 
 ### v0.35.0 / 2026-09-01
 
