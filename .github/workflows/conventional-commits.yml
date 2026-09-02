@@ -23,7 +23,9 @@ jobs:
     name: PR Title
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       # restrict checks to pull requests to avoid issues blocking the merge queue
       - name: Validate conventional commit style title
         if: ${{ github.event_name == 'pull_request' }}
@@ -52,7 +54,8 @@ jobs:
         run: |
           echo "Title: $TITLE" > pr_title.md
       - name: Check PR Title spelling
-        uses: streetsidesoftware/cspell-action@de2a73e963e7443969755b648a1008f77033c5b2 # v8.4.0
+        if: ${{ steps.lint_pr_title.outputs.scope != 'deps' }}
+        uses: streetsidesoftware/cspell-action@e0668cf020899e887ee8ad4d173c31738a79eae8 # v9.0.1
         with:
           config: .cspell.yml
           suggestions: true

@@ -79,6 +79,7 @@ module OpenTelemetry
             Export::FAILURE
           end
 
+          # Restarts the periodic export thread after a process fork.
           def after_fork
             @exporter.reset if @exporter.respond_to?(:reset)
             collect # move past previously reported metrics from parent process
