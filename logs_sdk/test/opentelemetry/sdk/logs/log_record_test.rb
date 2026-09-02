@@ -136,6 +136,39 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         end
       end
 
+      it 'normalizes valid UTF-8 bytes from a binary-encoded attribute string' do
+        city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+        log_record = Logs::LogRecord.new(attributes: { 'city' => city })
+        value = log_record.attributes['city']
+
+        assert_equal('Montréal', value)
+        assert_equal(::Encoding::UTF_8, value.encoding)
+        assert_equal(::Encoding::ASCII_8BIT, city.encoding)
+      end
+
+      it 'normalizes valid UTF-8 bytes in attribute keys' do
+        key = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+        log_record = Logs::LogRecord.new(attributes: { key => 'city' })
+        normalized_key = log_record.attributes.keys.first
+
+        assert_equal('Montréal', normalized_key)
+        assert_equal(::Encoding::UTF_8, normalized_key.encoding)
+        assert_equal(::Encoding::ASCII_8BIT, key.encoding)
+      end
+
+      it 'drops binary-encoded attribute strings that are not valid UTF-8' do
+        invalid = "\xC3".dup.force_encoding(::Encoding::ASCII_8BIT)
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          log_record = Logs::LogRecord.new(attributes: { 'invalid' => invalid })
+
+          assert_empty(log_record.attributes)
+          assert_match(/invalid UTF-8 encoding.*invalid.*Dropping attribute/, log_stream.string)
+        end
+      end
+
       it 'uses the default limits if none provided' do
         log_record = Logs::LogRecord.new
         default = Logs::LogRecordLimits::DEFAULT

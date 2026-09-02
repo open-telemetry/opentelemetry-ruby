@@ -61,6 +61,46 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(result.resource_spans).must_be_empty
     end
 
+    it 'exports valid UTF-8 bytes from binary-encoded attribute strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'city' => city }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_span = etsr.resource_spans.first.scope_spans.first.spans.first
+
+      _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+    end
+
+    it 'safely exports attributes with invalid UTF-8 keys' do
+      invalid_key = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { invalid_key => 'value' }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_attribute = etsr.resource_spans.first.scope_spans.first.spans.first.attributes.first
+
+      _(exported_attribute.key).must_equal('Encoding Error')
+      _(exported_attribute.value.string_value).must_equal('value')
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'values' => [invalid_value] }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_value = etsr.resource_spans.first.scope_spans.first.spans.first.attributes.first.value
+
+      _(exported_value.string_value).must_equal('Encoding Error')
+    end
+
     it 'batches per resource and instrumentation scope' do
       # Test resource batching
       resource_one = OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1')

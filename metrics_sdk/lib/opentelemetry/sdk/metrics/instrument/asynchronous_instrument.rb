@@ -85,7 +85,7 @@ module OpenTelemetry
 
           # Merges attributes into those reported alongside observed values.
           def add_attributes(attributes)
-            @attributes.merge!(attributes) if attributes.instance_of?(Hash)
+            @attributes.merge!(Internal.normalize_attributes(@name, 'metric', attributes)) if attributes.instance_of?(Hash)
           end
 
           private
@@ -93,6 +93,7 @@ module OpenTelemetry
           # update the observed value (after calling observe)
           # invoke callback will execute callback and export metric_data that is observed
           def update(timeout, attributes)
+            attributes = Internal.normalize_attributes(@name, 'metric', attributes)
             @metric_streams.each { |ms| ms.invoke_callback(timeout, attributes) }
           end
 

@@ -54,9 +54,9 @@ module OpenTelemetry
       #
       # @param [String] string The string to be utf8 encoded
       # @param [optional boolean] binary This option is for displaying binary data
-      # @param [optional String] placeholder The fallback string to be used if encoding fails
+      # @param [String, nil] placeholder The fallback value to be used if encoding fails
       #
-      # @return [String]
+      # @return [String, nil]
       def utf8_encode(string, binary: false, placeholder: STRING_PLACEHOLDER)
         string = string.to_s
 
@@ -66,6 +66,11 @@ module OpenTelemetry
           string.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
         elsif string.encoding == ::Encoding::UTF_8
           string
+        elsif string.encoding == ::Encoding::ASCII_8BIT
+          utf8_string = string.dup.force_encoding(::Encoding::UTF_8)
+          raise Encoding::InvalidByteSequenceError, 'binary string is not valid UTF-8' unless utf8_string.valid_encoding?
+
+          utf8_string
         else
           string.encode(::Encoding::UTF_8)
         end
