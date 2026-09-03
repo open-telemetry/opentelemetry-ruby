@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-common
 
+### v0.2.0 / 2026-09-03
+
+* No significant updates.
+
 ### v0.1.0 / 2026-09-01
 
 * ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 (#1345)
