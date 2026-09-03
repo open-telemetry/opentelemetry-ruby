@@ -1,0 +1,19 @@
+name: Zizmor
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: '27 15 * * 2' # weekly at 15:27 UTC on Tuesday
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  zizmor:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      contents: read # for actions/checkout
+      security-events: write # for zizmor to upload SARIF results
+    uses: open-telemetry/shared-workflows/.github/workflows/zizmor.yml@03559ef555db0eae5d85c3c6347d1530243e7aa7 # v0.13.0

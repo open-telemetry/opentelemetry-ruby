@@ -36,6 +36,7 @@ module OpenTelemetry
           private_constant(:SUCCESS, :FAILURE)
 
           # rubocop:disable Lint/DuplicateBranch
+          # Returns the SSL verify mode configured via environment variables.
           def self.ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
@@ -93,6 +94,7 @@ module OpenTelemetry
             end
           end
 
+          # Sends the encoded request bytes to the configured OTLP endpoint.
           def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
@@ -187,6 +189,7 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
+          # Encodes metrics_data into a serialized ExportMetricsServiceRequest.
           def encode(metrics_data)
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
               Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
@@ -255,6 +258,7 @@ module OpenTelemetry
             end
           end
 
+          # Converts an SDK aggregation temporality symbol to its OTLP proto enum value.
           def as_otlp_aggregation_temporality(type)
             case type
             when :delta then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
@@ -263,6 +267,7 @@ module OpenTelemetry
             end
           end
 
+          # Builds an OTLP Metric for either histogram or exponential histogram data points.
           def histogram_data_point(metrics)
             return if metrics.data_points.empty?
 
@@ -293,6 +298,7 @@ module OpenTelemetry
             end
           end
 
+          # Converts a {HistogramDataPoint} to its OTLP proto representation.
           def explicit_histogram_data_point(hdp)
             Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
               attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
@@ -304,10 +310,12 @@ module OpenTelemetry
               explicit_bounds: hdp.explicit_bounds,
               exemplars: as_otlp_exemplars(hdp.exemplars),
               min: hdp.min,
-              max: hdp.max
+              max: hdp.max,
+              flags: hdp.flags
             )
           end
 
+          # Converts an {ExponentialHistogramDataPoint} to its OTLP proto representation.
           def exponential_histogram_data_point(ehdp)
             Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
               attributes: ehdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
@@ -333,12 +341,14 @@ module OpenTelemetry
             )
           end
 
+          # Converts a {NumberDataPoint} to its OTLP proto representation.
           def number_data_point(ndp)
             args = {
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
-              exemplars: as_otlp_exemplars(ndp.exemplars)
+              exemplars: as_otlp_exemplars(ndp.exemplars),
+              flags: ndp.flags
             }
 
             if ndp.value.is_a?(Float)
@@ -350,10 +360,12 @@ module OpenTelemetry
             Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
           end
 
+          # Converts a list of SDK exemplars to their OTLP proto representation.
           def as_otlp_exemplars(exemplars)
             exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
           end
 
+          # Converts a single SDK exemplar to its OTLP proto representation.
           def as_otlp_exemplar(exemplar)
             args = {
               time_unix_nano: exemplar.time_unix_nano,
@@ -379,10 +391,12 @@ module OpenTelemetry
             SUCCESS
           end
 
+          # No-op: there is nothing to flush for this exporter.
           def force_flush(timeout: nil)
             SUCCESS
           end
 
+          # Marks this exporter as shut down so subsequent exports fail.
           def shutdown(timeout: nil)
             @shutdown = true
             SUCCESS
