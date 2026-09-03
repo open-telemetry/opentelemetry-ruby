@@ -26,7 +26,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => DEFAULT_USER_AGENT)
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
+      _(exp.instance_variable_get(:@compression)).must_equal 'none'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
       _(http.cert).must_be_nil
@@ -508,7 +508,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'records metrics' do
       metrics_reporter = Minitest::Mock.new
-      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(metrics_reporter: metrics_reporter)
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip', metrics_reporter: metrics_reporter)
       stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
       metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.encode_duration' }
       metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.uncompressed_size' }
@@ -668,6 +668,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'handles Zlib gzip compression errors' do
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
       stub_request(:post, 'http://localhost:4318/v1/traces').to_raise(Zlib::DataError.new('data error'))
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter.stub(:backoff?, ->(**_) { false }) do
@@ -681,6 +682,20 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
+      assert_requested(stub_post)
+    end
+
+    it 'does not compress by default' do
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
+        _(request.headers).wont_include('Content-Encoding')
+        Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(request.body)
+        { status: 200 }
+      end
+
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+      result = exporter.export([span_data])
+
+      _(result).must_equal(SUCCESS)
       assert_requested(stub_post)
     end
 
@@ -701,8 +716,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'batches per resource' do
       etsr = nil
       stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
-        proto = Zlib.gunzip(request.body)
-        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(proto)
+        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(request.body)
         { status: 200 }
       end
 
@@ -905,7 +919,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       )
 
       assert_requested(:post, 'http://localhost:4318/v1/traces') do |req|
-        Zlib.gunzip(req.body) == encoded_etsr
+        req.body == encoded_etsr
       end
     end
   end
