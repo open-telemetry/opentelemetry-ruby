@@ -67,6 +67,7 @@ module OpenTelemetry # rubocop:disable Style/Documentation
       #
       # @param [Context] ctx The context to be made active
       # @yield [context] Yields context to the block
+      # @yieldparam [Context] context The active context
       def with_current(ctx)
         token = attach(ctx)
         yield ctx
@@ -81,6 +82,8 @@ module OpenTelemetry # rubocop:disable Style/Documentation
       # @param [Object] value The object stored under key
       # @yield [context, value] Yields the newly created context and value to
       #   the block
+      # @yieldparam [Context] context The newly created context
+      # @yieldparam [Object] value The object stored under key
       def with_value(key, value)
         ctx = current.set_value(key, value)
         token = attach(ctx)
@@ -96,6 +99,8 @@ module OpenTelemetry # rubocop:disable Style/Documentation
       #  and returned in a new context
       # @yield [context, values] Yields the newly created context and values
       #   to the block
+      # @yieldparam [Context] context The newly created context
+      # @yieldparam [Hash] values The values merged into the new context
       def with_values(values)
         ctx = current.set_values(values)
         token = attach(ctx)
