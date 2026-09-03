@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.17.0 / 2026-09-01
+
+* ADDED: Add flags to metrics data model (#2302)
+
 ### v0.16.0 / 2026-08-04
 
 * ADDED: Add attributes to Meter InstrumentationScope (#2273)
