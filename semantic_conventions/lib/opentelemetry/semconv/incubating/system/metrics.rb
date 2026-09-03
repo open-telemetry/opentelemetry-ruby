@@ -288,12 +288,12 @@ module OpenTelemetry
         # @note Stability Level: development
         SYSTEM_PAGING_OPERATIONS = 'system.paging.operations'
 
-        # Unix swap or windows pagefile usage.
+        # UNIX swap or windows pagefile usage.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_USAGE = 'system.paging.usage'
 
-        # Swap (unix) or pagefile (windows) utilization.
+        # Swap (UNIX) or pagefile (windows) utilization.
         #
         # @note Stability Level: development
         SYSTEM_PAGING_UTILIZATION = 'system.paging.utilization'
@@ -307,6 +307,15 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         SYSTEM_PROCESS_CREATED = 'system.process.created'
+
+        # The maximum number of concurrent processes/tasks allowed by the operating system.
+        #
+        # On Linux, this corresponds to `/proc/sys/kernel/pid_max` or `/proc/sys/kernel/threads-max`.
+        # A per-user process limit may also be retrieved via `getrlimit(RLIMIT_NPROC)`.
+        # On BSD-like systems, this corresponds to `sysctl kern.maxproc`. This metric is unsupported on Windows systems.
+        #
+        # @note Stability Level: development
+        SYSTEM_PROCESS_LIMIT = 'system.process.limit'
 
         # The time the system has been running.
         #
