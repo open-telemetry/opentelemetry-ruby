@@ -133,7 +133,7 @@ module OpenTelemetry
         # documents} certain "standard attributes" that have prescribed semantic
         # meanings.
         #
-        # @param [OpenTelemetry::Trace::Link] the link object to add on the {Span}.
+        # @param [OpenTelemetry::Trace::Link] link The link object to add on the {Span}.
         #
         # @return [self] returns itself
         def add_link(link)
