@@ -88,6 +88,8 @@ runs:
 
     - name: Test Gem
       shell: bash
+      env:
+        SIMPLECOV_FINALIZE_MERGE: false
       run: |
         # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
@@ -110,6 +112,15 @@ runs:
         # 📄 Yard Docs 📄
         bundle exec rake yard
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
+
+    - name: Coverage
+      shell: bash
+      env:
+        GEM_DIR: "${{ steps.setup.outputs.gem_dir }}"
+      # This merges with the existing coverage reports generated during testing into 1 report.
+      run: |
+        bundle install --quiet --jobs=3 --retry=4
+        bundle exec rake collate_simplecov["${GEM_DIR}"]
 
     - name: Rubocop
       shell: bash
