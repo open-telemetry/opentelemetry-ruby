@@ -55,7 +55,7 @@ module OpenTelemetry
           header = getter.get(carrier, BAGGAGE_KEY)
           return context if header.nil? || header.empty?
 
-          entries = bounded_entries(header).lazy.take(MAX_ENTRIES)
+          entries = split_entries(header).take(MAX_ENTRIES)
 
           OpenTelemetry::Baggage.build(context: context) do |builder|
             decode_entries(entries, builder)
@@ -75,31 +75,21 @@ module OpenTelemetry
 
         private
 
-        # Like String#each_line(','), but never scans more than 2x MAX_ENTRY_LENGTH
-        # ahead for the next separator.
-        def bounded_entries(header)
-          Enumerator.new do |yielder|
-            pos = 0
-            len = header.bytesize
-            while pos < len
-              window = header.byteslice(pos, (MAX_ENTRY_LENGTH * 2) + 1)
-              comma_offset = window.index(',')
-              if comma_offset
-                yielder << header.byteslice(pos, comma_offset)
-                pos += comma_offset + 1
-              else
-                yielder << window
-                break
-              end
-            end
-          end
+        # Nothing past MAX_TOTAL_LENGTH can be accepted, so truncate there and cut
+        # back to the last separator rather than splitting the whole header.
+        def split_entries(header)
+          return header.split(',') if header.bytesize <= MAX_TOTAL_LENGTH
+
+          window = header.byteslice(0, MAX_TOTAL_LENGTH + 1)
+          last_separator = window.byterindex(',')
+          return [] unless last_separator
+
+          window.byteslice(0, last_separator).split(',')
         end
 
         def decode_entries(entries, builder)
           decoded_length = 0
           entries.each do |raw_entry|
-            next if raw_entry.bytesize > MAX_ENTRY_LENGTH
-
             entry = raw_entry.gsub(/\s/, '')
             next if entry.empty?
             next unless entry.bytesize <= MAX_ENTRY_LENGTH &&
