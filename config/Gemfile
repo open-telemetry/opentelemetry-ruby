@@ -17,7 +17,7 @@ group :test, :development do
   gem 'rubocop-rake', '0.7.1'
   gem 'rubocop-rspec', '3.10.2'
   gem 'simplecov', '1.0.0'
-  gem 'yard', '0.9.44'
+  gem 'yard', '0.9.45'
 
   # Local path overrides for gems developed in this monorepo
   gem 'opentelemetry-exporter-otlp-common',      path: '../exporter/otlp-common',      require: false
