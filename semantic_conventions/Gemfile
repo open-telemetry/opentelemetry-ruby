@@ -10,6 +10,7 @@ eval_gemfile File.expand_path('../Gemfile', __dir__)
 gemspec
 
 group :development, :test do
+  gem 'dotenv', '~> 3.2.0'
   gem 'minitest', '~> 6.0.0'
   gem 'mutex_m' if RUBY_VERSION >= '3.4'
   gem 'simplecov', '~> 1.1.0'

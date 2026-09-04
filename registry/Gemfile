@@ -11,6 +11,7 @@ gemspec
 
 group :test, :development do
   gem 'appraisal', '~> 2.5.0'
+  gem 'dotenv', '~> 3.2.0'
   gem 'minitest', '~> 6.0.0'
   gem 'rspec-mocks', '~> 3.13.7'
   gem 'simplecov', '~> 1.1.0'

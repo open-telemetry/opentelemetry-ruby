@@ -10,6 +10,7 @@ eval_gemfile File.expand_path('../../Gemfile', __dir__)
 gemspec
 
 group :test, :development do
+  gem 'dotenv', '~> 3.2.0'
   gem 'minitest', '~> 6.0.0'
   gem 'simplecov', '~> 1.1.0'
   gem 'webmock', '~> 3.24'

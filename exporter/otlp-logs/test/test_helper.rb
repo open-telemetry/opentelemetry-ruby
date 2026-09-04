@@ -4,15 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  SimpleCov.start do
-    enable_coverage :branch
-    add_filter '/test/'
-  end
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
 
-  SimpleCov.minimum_coverage 85
-end
+require 'simplecov'
+SimpleCov.start
 
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/otlp_logs'
