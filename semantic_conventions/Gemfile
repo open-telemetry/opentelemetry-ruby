@@ -9,6 +9,7 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
+  gem 'dotenv', '~> 3.2.0'
   gem 'minitest', '~> 6.0.0'
   gem 'mutex_m' if RUBY_VERSION >= '3.4'
   gem 'rake', '~> 13.4.0'
