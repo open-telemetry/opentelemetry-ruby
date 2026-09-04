@@ -13,7 +13,7 @@ module OpenTelemetry
         # The MetricStream class provides SDK internal functionality that is not a part of the
         # public API.
         #
-        # rubocop:disable Metrics/ClassLength
+        # rubocop:disable-next Metrics/ClassLength
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
           attr_writer :cardinality_limit
@@ -47,6 +47,7 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
+          # Returns a snapshot of this stream's aggregated metric data.
           def collect(start_time, end_time)
             @mutex.synchronize do
               metric_data = []
@@ -99,6 +100,7 @@ module OpenTelemetry
             end
           end
 
+          # Builds a {MetricData} snapshot from the given aggregation and data points.
           def aggregate_metric_data(start_time, end_time, aggregation: nil, data_points: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
@@ -120,12 +122,14 @@ module OpenTelemetry
             )
           end
 
+          # Finds and caches views from the meter provider that match this instrument.
           def find_registered_view
             return if @meter_provider.nil?
 
             @meter_provider.registered_views.each { |view| @registered_views[view] = {} if view.match_instrument?(self) }
           end
 
+          # Returns whether this stream has no data points to export.
           def empty_data_point?
             if @registered_views.empty?
               @data_points.empty?
@@ -136,11 +140,13 @@ module OpenTelemetry
             end
           end
 
+          # Returns the non-negative cardinality limit to use for the given view.
           def resolve_cardinality_limit(view)
             cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
             [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
           end
 
+          # Returns whether the exemplar filter accepts this measurement.
           def should_offer_exemplar?(value, attributes)
             return false if @exemplar_reservoir&.noop?
 
@@ -149,6 +155,7 @@ module OpenTelemetry
             @exemplar_filter&.should_sample?(value, time, attributes, context)
           end
 
+          # Returns a human-readable summary of this stream's data points.
           def to_s
             instrument_info = +''
             instrument_info << "name=#{@name}"
@@ -163,7 +170,6 @@ module OpenTelemetry
             end.join("\n")
           end
         end
-        # rubocop:enable Metrics/ClassLength
       end
     end
   end

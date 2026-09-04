@@ -37,7 +37,7 @@ module OpenTelemetry
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::CODE::CODE_COLUMN_NUMBER}.
         CODE_COLUMN_NUMBER = 'code.column.number'
 
-        # The source code file name that identifies the code unit as uniquely as possible (preferably an absolute file path). This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Function'. This constraint is imposed to prevent redundancy and maintain data integrity.
+        # The source code filename that identifies the code unit as uniquely as possible (preferably an absolute file path). This attribute MUST NOT be used on the Profile signal since the data is already captured in 'message Function'. This constraint is imposed to prevent redundancy and maintain data integrity.
         #
         # @note Stability Level: stable
         #
