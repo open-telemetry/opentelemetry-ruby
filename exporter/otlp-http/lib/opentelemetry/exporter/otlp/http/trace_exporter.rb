@@ -86,7 +86,7 @@ module OpenTelemetry
 
           private
 
-          # rubocop:disable Lint/DuplicateBranch
+          # rubocop:disable-next Lint/DuplicateBranch
           def fetch_ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
@@ -96,7 +96,6 @@ module OpenTelemetry
               OpenSSL::SSL::VERIFY_PEER
             end
           end
-          # rubocop:enable Lint/DuplicateBranch
 
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
             http = Net::HTTP.new(uri.hostname, uri.port)

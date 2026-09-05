@@ -14,7 +14,7 @@ module OpenTelemetry
       # Instrumentation should use the API provided by {OpenTelemetry::Trace::Span}
       # and should consider {Span} to be write-only.
       #
-      # rubocop:disable Metrics/ClassLength
+      # rubocop:disable-next Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
         DEFAULT_STATUS = OpenTelemetry::Trace::Status.unset
         EMPTY_ATTRIBUTES = {}.freeze
@@ -133,7 +133,7 @@ module OpenTelemetry
         # documents} certain "standard attributes" that have prescribed semantic
         # meanings.
         #
-        # @param [OpenTelemetry::Trace::Link] the link object to add on the {Span}.
+        # @param [OpenTelemetry::Trace::Link] link The link object to add on the {Span}.
         #
         # @return [self] returns itself
         def add_link(link)
@@ -475,7 +475,6 @@ module OpenTelemetry
           Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
         end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end

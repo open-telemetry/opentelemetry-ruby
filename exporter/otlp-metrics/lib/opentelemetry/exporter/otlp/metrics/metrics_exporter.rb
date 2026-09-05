@@ -304,7 +304,8 @@ module OpenTelemetry
               explicit_bounds: hdp.explicit_bounds,
               exemplars: as_otlp_exemplars(hdp.exemplars),
               min: hdp.min,
-              max: hdp.max
+              max: hdp.max,
+              flags: hdp.flags
             )
           end
 
@@ -340,7 +341,8 @@ module OpenTelemetry
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
-              exemplars: as_otlp_exemplars(ndp.exemplars)
+              exemplars: as_otlp_exemplars(ndp.exemplars),
+              flags: ndp.flags
             }
 
             if ndp.value.is_a?(Float)
