@@ -4,11 +4,14 @@ on:
   pull_request:
     types: [opened, synchronize, edited]
     paths:
+      - '**/otel-spec.yaml'
       - '.github/workflows/ci-semconv.yml'
       - 'semantic_conventions/compose.yml'
       - 'semantic_conventions/Rakefile'
       - 'semantic_conventions/lib/**'
       - 'semantic_conventions/templates/**'
+      - 'types/**/Rakefile'
+      - 'types/**/lib/**'
     branches:
       - main
 
@@ -17,8 +20,34 @@ permissions:
   pull-requests: write
 
 jobs:
-  regenerate-semconv:
+  plan:
     runs-on: ubuntu-24.04
+    outputs:
+      dirs: ${{ steps.set_dirs.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Select directories
+        id: set_dirs
+        shell: bash
+        run: |
+          # Static list (replace with dynamic detection if needed)
+          DIRS='["semantic_conventions", "types/otlp"]'
+
+          echo "dirs<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$DIRS" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+  regenerate-otel:
+    runs-on: ubuntu-24.04
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: ${{ fromJson(needs.plan.outputs.dirs) }}
+    name: "Regenerate ${{ matrix.dir }}"
     steps:
       - name: Create otelbot app token
         if: ${{ github.event.pull_request.head.repo.fork == false }}
@@ -49,24 +78,25 @@ jobs:
         with:
           ruby-version: '4.0.6'
           bundler-cache: true
-          working-directory: semantic_conventions
+          working-directory: ${{ matrix.dir }}
 
-      - name: Regenerate semantic conventions
-        working-directory: semantic_conventions
+      - name: Regenerate ${{ matrix.dir }}
+        working-directory: ${{ matrix.dir }}
         run: bundle exec rake generate
 
       - name: Check for changes
         id: changes
         env:
           BASE_REF: ${{ github.base_ref }}
+          DIR_SCOPE: ${{ matrix.dir }}
         run: |
           git fetch origin "$BASE_REF"
-          if git diff "origin/$BASE_REF" HEAD -- semantic_conventions/Rakefile | grep -q "SPEC_VERSION"; then
+          if git diff "origin/$BASE_REF" HEAD -- ${DIR_SCOPE}/otel-spec.yaml | grep -q "# $DIR_SCOPE"; then
             echo "spec_version=true" >> $GITHUB_OUTPUT
           else
             echo "spec_version=false" >> $GITHUB_OUTPUT
           fi
-          git add semantic_conventions/
+          git add ${DIR_SCOPE}/
           if git diff --staged --quiet; then
             echo "No changes to commit"
             echo "files=false" >> $GITHUB_OUTPUT
@@ -76,17 +106,20 @@ jobs:
 
       - name: Log changes
         if: ${{ steps.changes.outputs.spec_version == 'false' && steps.changes.outputs.files == 'true' }}
+        env:
+          DIR_SCOPE: ${{ matrix.dir }}
         run: |
           git diff --cached
-          echo "::error:: The semantic convention files are out of date. If the file changes are intended, commit the updated files locally."
+          echo "::error:: The ${DIR_SCOPE} files are out of date. If the file changes are intended, commit the updated files locally."
           return 1
 
       - name: Commit and push changes
         if: ${{ steps.changes.outputs.spec_version == 'true' && steps.changes.outputs.files == 'true' }}
         env:
+          DIR_SCOPE: ${{ matrix.dir }}
           HEAD_REF: ${{ github.head_ref }}
         run: |
           git config user.name "otelbot"
           git config user.email "197425009+otelbot@users.noreply.github.com"
-          git commit -m "chore: regenerate semantic conventions"
+          git commit -m "chore: regenerate ${DIR_SCOPE}"
           git push origin "HEAD:${HEAD_REF}"

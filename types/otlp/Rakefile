@@ -6,6 +6,7 @@
 
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'yaml'
 require 'yard'
 
 require 'rubocop/rake_task'
@@ -27,7 +28,8 @@ default_tasks =
 
 task default: default_tasks
 
-PROTO_VERSION = 'v1.8.0'
+OTEL_SPECS = YAML.load_file('otel-spec.yaml').freeze
+PROTO_VERSION = OTEL_SPECS['opentelemetry-proto'].freeze
 PROTOBUF_FILES = [
   'collector/logs/v1/logs_service.proto',
   'collector/metrics/v1/metrics_service.proto',
@@ -39,9 +41,9 @@ PROTOBUF_FILES = [
   'trace/v1/trace.proto'
 ].freeze
 
-desc 'Update probobuf'
-task :update_protobuf do
-  system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
+desc 'Generate probobuf'
+task :generate do
+  system("git clone -b v#{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
   PROTOBUF_FILES.each do |file|
     system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
   end
