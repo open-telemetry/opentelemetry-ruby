@@ -14,8 +14,10 @@ module OpenTelemetry
         class TraceIdRatioBased
           attr_reader :description
 
-          def initialize(probability)
-            @probability = probability
+          def initialize(probability = nil)
+            @probability = probability || Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0))
+            raise ArgumentError, 'ratio must be in range [0.0, 1.0]' unless (0.0..1.0).cover?(@probability)
+
             @id_upper_bound = (probability * ((2**64) - 1)).ceil
             @description = format('TraceIdRatioBased{%.6f}', probability)
           end
