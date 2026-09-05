@@ -18,13 +18,14 @@ module OpenTelemetry
                       :severity_text,
                       :severity_number,
                       :body,
-                      :attributes,
                       :event_name,
                       :trace_id,
                       :span_id,
                       :trace_flags,
                       :resource,
                       :instrumentation_scope
+
+        attr_reader :attributes
 
         # Creates a new {LogRecord}.
         #
@@ -81,7 +82,6 @@ module OpenTelemetry
           @severity_text = severity_text
           @severity_number = severity_number
           @body = body
-          @attributes = attributes&.to_h # We need a mutable copy of attributes
           @event_name = event_name
           @trace_id = trace_id
           @span_id = span_id
@@ -89,9 +89,18 @@ module OpenTelemetry
           @resource = resource
           @instrumentation_scope = instrumentation_scope
           @log_record_limits = log_record_limits || LogRecordLimits::DEFAULT
-          @total_recorded_attributes = @attributes&.size || 0
+          @dropped_attributes_count = 0
+          self.attributes = attributes
+        end
 
-          trim_attributes(@attributes)
+        # Sets the attributes for this {LogRecord} and reapplies the
+        # configured attribute limits.
+        #
+        # @param [optional Hash{String => String, Numeric, Boolean,
+        #   Array<String, Numeric, Boolean>}] new_attributes Attributes to
+        #   associate with the {LogRecord}.
+        def attributes=(new_attributes)
+          trim_attributes(@attributes = new_attributes&.to_h) # We need a mutable copy of attributes
         end
 
         def to_log_record_data
@@ -108,36 +117,35 @@ module OpenTelemetry
             @trace_flags,
             @resource,
             @instrumentation_scope,
-            @total_recorded_attributes
+            @dropped_attributes_count
           )
         end
 
         private
 
         def to_integer_nanoseconds(timestamp)
-          return unless timestamp.is_a?(Time)
-
-          (timestamp.to_r * (10**9)).to_i
+          (timestamp.to_r * (10**9)).to_i if timestamp.is_a?(Time)
         end
 
-        def trim_attributes(attributes)
-          return if attributes.nil?
+        def trim_attributes(attrs)
+          return if attrs.nil?
 
           # truncate total attributes
-          truncate_attributes(attributes, @log_record_limits.attribute_count_limit)
+          truncate_attributes(attrs, @log_record_limits.attribute_count_limit)
 
           # truncate attribute values
-          truncate_attribute_values(attributes, @log_record_limits.attribute_length_limit)
+          truncate_attribute_values(attrs, @log_record_limits.attribute_length_limit)
 
           # validate attributes
-          validate_attributes(attributes)
-
-          nil
+          validate_attributes(attrs)
         end
 
-        def truncate_attributes(attributes, attribute_limit)
-          excess = attributes.size - attribute_limit
-          excess.times { attributes.shift } if excess.positive?
+        def truncate_attributes(attrs, attribute_limit)
+          excess = attrs.size - attribute_limit
+          return unless excess.positive?
+
+          excess.times { attrs.shift }
+          @dropped_attributes_count += excess
         end
 
         def validate_attributes(attrs)
