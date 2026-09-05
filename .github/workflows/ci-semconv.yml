@@ -94,7 +94,7 @@ jobs:
           DIR_SCOPE: ${{ matrix.dir }}
         run: |
           git fetch origin "$BASE_REF"
-          if git diff "origin/$BASE_REF" HEAD -- ${DIR_SCOPE}/otel-spec.yaml | grep -q "# $DIR_SCOPE"; then
+          if git diff "origin/$BASE_REF" HEAD -- ${DIR_SCOPE}/otel-spec.yaml | grep -q "# ${DIR_SCOPE}"; then
             echo "spec_version=true" >> $GITHUB_OUTPUT
           else
             echo "spec_version=false" >> $GITHUB_OUTPUT
@@ -108,7 +108,7 @@ jobs:
           fi
 
       - name: Log changes
-        if: ${{ steps.changes.outputs.spec_version == 'false' && steps.changes.outputs.files == 'true' }}
+        if: ${{ (steps.changes.outputs.spec_version == 'false' || github.event.pull_request.head.repo.fork == true) && steps.changes.outputs.files == 'true' }}
         env:
           DIR_SCOPE: ${{ matrix.dir }}
         run: |
@@ -117,7 +117,7 @@ jobs:
           return 1
 
       - name: Commit and push changes
-        if: ${{ steps.changes.outputs.spec_version == 'true' && steps.changes.outputs.files == 'true' }}
+        if: ${{ steps.changes.outputs.files == 'true' }}
         env:
           DIR_SCOPE: ${{ matrix.dir }}
           HEAD_REF: ${{ github.head_ref }}
