@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry'
+require 'opentelemetry/exporter/otlp/common/utilities'
 require 'opentelemetry/exporter/otlp/common/version'
 
 require 'google/rpc/status_pb'
