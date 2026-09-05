@@ -81,7 +81,12 @@ jobs:
           working-directory: ${{ matrix.dir }}
 
       - name: Install protoc
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+        run: |
+          PROTOC_VERSION=3.2.5
+          curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip
+          unzip protoc-${PROTOC_VERSION}-linux-x86_64.zip -d $HOME/.local
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        # run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
 
       - name: Regenerate ${{ matrix.dir }}
         working-directory: ${{ matrix.dir }}
