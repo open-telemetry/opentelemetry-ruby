@@ -82,7 +82,7 @@ jobs:
 
       - name: Install protoc
         run: |
-          PROTOC_VERSION=3.10.1
+          PROTOC_VERSION=3.14.0
           curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip
           unzip protoc-${PROTOC_VERSION}-linux-x86_64.zip -d $HOME/.local
           echo "$HOME/.local/bin" >> $GITHUB_PATH
