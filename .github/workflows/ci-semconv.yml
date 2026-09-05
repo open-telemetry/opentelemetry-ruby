@@ -80,6 +80,9 @@ jobs:
           bundler-cache: true
           working-directory: ${{ matrix.dir }}
 
+      - name: Install protoc
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+
       - name: Regenerate ${{ matrix.dir }}
         working-directory: ${{ matrix.dir }}
         run: bundle exec rake generate
