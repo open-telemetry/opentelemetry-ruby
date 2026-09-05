@@ -43,9 +43,18 @@ PROTOBUF_FILES = [
 
 desc 'Generate probobuf'
 task :generate do
-  system("git clone -b v#{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
+  run("git clone -b v#{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
   PROTOBUF_FILES.each do |file|
-    system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
+    run("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
   end
-  system('rm -rf opentelemetry-proto')
+  run('rm -rf opentelemetry-proto')
 end
+
+def run(cmd)
+  puts "#{cmd}"
+  IO.popen(cmd) do |io|
+    io.each_line { |line| puts line }
+  end
+  raise "Command failed: #{cmd}" unless $?.success?
+end
+

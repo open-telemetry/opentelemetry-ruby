@@ -1,4 +1,4 @@
-name: Semantic Conventions ci check
+name: Otel primitives
 
 on:
   pull_request:
@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         dir: ${{ fromJson(needs.plan.outputs.dirs) }}
-    name: "Regenerate ${{ matrix.dir }}"
+    name: "${{ matrix.dir }}"
     steps:
       - name: Create otelbot app token
         if: ${{ github.event.pull_request.head.repo.fork == false }}
