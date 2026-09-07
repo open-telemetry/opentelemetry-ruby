@@ -303,6 +303,73 @@ describe OpenTelemetry::Propagator::Jaeger::TextMapPropagator do
       _(carrier['uberctx-key2']).must_equal('value2')
     end
 
+    it 'enforces the max of 180 baggage entries on inject' do
+      context = create_context(
+        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id: 'e457b5a2e4d86bd1'
+      )
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
+        200.times { |i| baggage.set_value("k#{i}", "v#{i}") }
+      end
+      carrier = {}
+      propagator.inject(carrier, context: context)
+
+      _(carrier.keys.count { |k| k.start_with?('uberctx-') }).must_equal(180)
+      _(carrier['uberctx-k0']).must_equal('v0')
+      _(carrier['uberctx-k180']).must_be_nil
+    end
+
+    it 'drops a baggage entry over 4096 bytes on inject, keeping the rest' do
+      context = create_context(
+        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id: 'e457b5a2e4d86bd1'
+      )
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
+        baggage.set_value('ok', 'value')
+        baggage.set_value('big', 'x' * 5000)
+      end
+      carrier = {}
+      propagator.inject(carrier, context: context)
+
+      _(carrier['uberctx-ok']).must_equal('value')
+      _(carrier['uberctx-big']).must_be_nil
+    end
+
+    it 'measures the injected per-entry limit in bytes, not characters' do
+      context = create_context(
+        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id: 'e457b5a2e4d86bd1'
+      )
+      multibyte_key = 'é' * 2100
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
+        baggage.set_value('ok', 'value')
+        baggage.set_value(multibyte_key, 'v')
+      end
+      carrier = {}
+      propagator.inject(carrier, context: context)
+
+      _(carrier['uberctx-ok']).must_equal('value')
+      _(carrier["uberctx-#{multibyte_key}"]).must_be_nil
+    end
+
+    it 'enforces the max total of 8192 bytes on inject, keeping the earlier entries' do
+      context = create_context(
+        trace_id: '80f198ee56343ba864fe8b2a57d3eff7',
+        span_id: 'e457b5a2e4d86bd1'
+      )
+      context = OpenTelemetry::Baggage.build(context: context) do |baggage|
+        100.times { |i| baggage.set_value("k#{i}", 'y' * 200) }
+      end
+      carrier = {}
+      propagator.inject(carrier, context: context)
+
+      injected = carrier.keys.count { |k| k.start_with?('uberctx-') }
+      _(injected).must_be(:positive?)
+      _(injected).must_be(:<, 100)
+      _(carrier['uberctx-k0']).wont_be_nil
+      _(carrier['uberctx-k99']).must_be_nil
+    end
+
     it 'URL-encodes baggage values before injecting' do
       context = create_context(
         trace_id: '80f198ee56343ba864fe8b2a57d3eff7',

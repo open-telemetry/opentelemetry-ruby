@@ -31,9 +31,7 @@ module OpenTelemetry
         MAX_BAGGAGE_ENTRY_BYTES = 4096
         MAX_BAGGAGE_TOTAL_BYTES = 8192
 
-        private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT, :FIELDS,
-                         :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :BAGGAGE_KEY_PREFIX,
-                         :MAX_BAGGAGE_ENTRIES, :MAX_BAGGAGE_ENTRY_BYTES, :MAX_BAGGAGE_TOTAL_BYTES
+        private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT, :FIELDS, :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :BAGGAGE_KEY_PREFIX, :MAX_BAGGAGE_ENTRIES, :MAX_BAGGAGE_ENTRY_BYTES, :MAX_BAGGAGE_TOTAL_BYTES
 
         # Extract trace context from the supplied carrier.
         # If extraction fails, the original context will be returned
@@ -73,15 +71,9 @@ module OpenTelemetry
           return unless span_context.valid?
 
           flags = to_jaeger_flags(context, span_context)
-          trace_span_identity_value = [
-            span_context.hex_trace_id, span_context.hex_span_id, '0', flags
-          ].join(':')
+          trace_span_identity_value = [span_context.hex_trace_id, span_context.hex_span_id, '0', flags].join(':')
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
-          OpenTelemetry::Baggage.values(context: context).each do |key, value|
-            baggage_key = "uberctx-#{key}"
-            encoded_value = URI.encode_uri_component(value)
-            setter.set(carrier, baggage_key, encoded_value)
-          end
+          inject_baggage(carrier, context, setter)
           carrier
         end
 
@@ -97,13 +89,24 @@ module OpenTelemetry
 
         def build_span(match, sampling_flags)
           trace_id = to_trace_id(match['trace_id'])
-          span_context = Trace::SpanContext.new(
-            trace_id: trace_id,
-            span_id: to_span_id(match['span_id']),
-            trace_flags: to_trace_flags(sampling_flags),
-            remote: true
-          )
+          span_context = Trace::SpanContext.new(trace_id: trace_id, span_id: to_span_id(match['span_id']), trace_flags: to_trace_flags(sampling_flags), remote: true)
           OpenTelemetry::Trace.non_recording_span(span_context)
+        end
+
+        def inject_baggage(carrier, context, setter)
+          count = 0
+          total_bytes = 0
+          OpenTelemetry::Baggage.values(context: context).each do |key, value|
+            break unless count < MAX_BAGGAGE_ENTRIES
+
+            encoded_value = URI.encode_uri_component(value)
+            entry_bytes = key.to_s.bytesize + encoded_value.bytesize
+            next unless within_baggage_limits?(entry_bytes, total_bytes)
+
+            setter.set(carrier, "#{BAGGAGE_KEY_PREFIX}#{key}", encoded_value)
+            count += 1
+            total_bytes += entry_bytes
+          end
         end
 
         def context_with_extracted_baggage(carrier, context, getter)
