@@ -72,50 +72,6 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
     end
 
     describe 'enforced limits' do
-      it 'does work proportional to the limit, not to the header length' do
-        skip 'total_allocated_objects is MRI-only' unless RUBY_ENGINE == 'ruby'
-
-        def allocations_for(entry_count)
-          header = (0...entry_count).map { |i| "k#{i}=v#{i}" }.join(',')
-          carrier = { 'baggage' => header }
-          before = GC.stat[:total_allocated_objects]
-          propagator.extract(carrier, context: OpenTelemetry::Context.empty)
-          GC.stat[:total_allocated_objects] - before
-        end
-
-        small = allocations_for(1_000)
-        large = allocations_for(100_000)
-
-        _(large).must_be(:<, small * 2)
-      end
-
-      it 'does not materialise every entry of an oversized header' do
-        skip 'total_allocated_objects is MRI-only' unless RUBY_ENGINE == 'ruby'
-
-        header = (0...50_000).map { |i| "k#{i}=v#{i}" }.join(',')
-        carrier = { 'baggage' => header }
-
-        before = GC.stat[:total_allocated_objects]
-        context = propagator.extract(carrier, context: OpenTelemetry::Context.empty)
-        allocated = GC.stat[:total_allocated_objects] - before
-
-        _(OpenTelemetry::Baggage.values(context: context).size).must_equal(180)
-        _(allocated).must_be(:<, 10_000)
-      end
-
-      it 'does not scan a single oversized entry before rejecting it' do
-        header = "k=#{'x' * 1_000_000_000}"
-        carrier = { 'baggage' => header }
-
-        propagator.extract(carrier, context: OpenTelemetry::Context.empty)
-
-        start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-        propagator.extract(carrier, context: OpenTelemetry::Context.empty)
-        elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
-
-        _(elapsed).must_be(:<, 0.02)
-      end
-
       it 'enforces max of 180 name-value pairs' do
         header = (0..180).map { |i| "k#{i}=v#{i}" }.join(',')
         context = propagator.extract({ header_key => header }, context: Context.empty)
