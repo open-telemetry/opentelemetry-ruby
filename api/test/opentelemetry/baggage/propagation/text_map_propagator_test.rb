@@ -86,7 +86,6 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
         small = allocations_for(1_000)
         large = allocations_for(100_000)
 
-        # A hundredfold longer header must not cost a hundredfold more work.
         _(large).must_be(:<, small * 2)
       end
 
@@ -108,11 +107,12 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
         header = "k=#{'x' * 1_000_000_000}"
         carrier = { 'baggage' => header }
 
+        propagator.extract(carrier, context: OpenTelemetry::Context.empty)
+
         start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
         propagator.extract(carrier, context: OpenTelemetry::Context.empty)
         elapsed = Process.clock_gettime(Process::CLOCK_MONOTONIC) - start
 
-        # A linear scan of 1 GB measures ~0.1s; this fix measures ~0.0002s.
         _(elapsed).must_be(:<, 0.02)
       end
 
@@ -122,6 +122,13 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
 
         180.times { |i| _(OpenTelemetry::Baggage.value("k#{i}", context: context)).must_equal("v#{i}") }
         _(OpenTelemetry::Baggage.value('k180', context: context)).must_be_nil
+      end
+
+      it 'counts the entries it keeps, not the candidates it skips' do
+        header = (',' * 200) + (0...200).map { |i| "k#{i}=v#{i}" }.join(',')
+        context = propagator.extract({ header_key => header }, context: Context.empty)
+
+        _(OpenTelemetry::Baggage.values(context: context).size).must_equal(180)
       end
 
       it 'enforces max entry length of 4096' do
@@ -134,7 +141,6 @@ describe OpenTelemetry::Baggage::Propagation::TextMapPropagator do
       end
 
       it 'enforces total length of 8192 chars' do
-        # each entry is 100 chars including '=' and ','; 82 entries would be 8199 > 8192
         keys = (0..81).map { |i| "k#{i.to_s.rjust(48, '0')}" }
         values = (0..81).map { |i| "v#{i.to_s.rjust(48, '0')}" }
         header = keys.zip(values).map { |k, v| "#{k}=#{v}" }.join(',')
