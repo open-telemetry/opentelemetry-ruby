@@ -26,7 +26,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
           include Util
 
           attr_reader :metric_snapshots
@@ -89,6 +89,11 @@ module OpenTelemetry
 
           # metrics Array[MetricData]
           def export(metrics, timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring export request')
+              return FAILURE
+            end
+
             @mutex.synchronize do
               send_bytes(encode(metrics), timeout: timeout)
             end
@@ -398,6 +403,11 @@ module OpenTelemetry
 
           # Marks this exporter as shut down so subsequent exports fail.
           def shutdown(timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring call')
+              return
+            end
+
             @shutdown = true
             SUCCESS
           end
