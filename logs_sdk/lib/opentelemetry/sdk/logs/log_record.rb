@@ -78,6 +78,7 @@ module OpenTelemetry
           log_record_limits: nil
         )
           @timestamp = timestamp
+          # We follow the data model's note here, where if observed timestamp isn't available, look for timestamp. If neither are present, use the current time.
           @observed_timestamp = observed_timestamp || timestamp || Time.now
           @severity_text = severity_text
           @severity_number = severity_number
