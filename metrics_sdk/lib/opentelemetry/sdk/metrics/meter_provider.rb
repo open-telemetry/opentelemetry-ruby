@@ -10,7 +10,7 @@ module OpenTelemetry
     # implementation.
     module Metrics
       # {MeterProvider} is the SDK implementation of {OpenTelemetry::Metrics::MeterProvider}.
-      # rubocop:disable Metrics/ClassLength
+      # rubocop:disable-next Metrics/ClassLength
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
         EMPTY_ATTRIBUTES = {}.freeze
 
@@ -190,7 +190,6 @@ module OpenTelemetry
           nil
         end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end

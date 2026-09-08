@@ -10,7 +10,7 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the ExplicitBucketHistogram aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
-        class ExplicitBucketHistogram
+        class ExplicitBucketHistogram # rubocop:disable Metrics/ClassLength
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
           attr_reader :exemplar_reservoir
 
@@ -96,6 +96,7 @@ module OpenTelemetry
               0,                   # :sum
               empty_bucket_counts, # :bucket_counts
               @boundaries,         # :explicit_bounds
+              0,                   # :flags
               nil,                 # :exemplars
               min,                 # :min
               max                  # :max
