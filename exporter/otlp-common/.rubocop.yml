@@ -8,6 +8,6 @@ AllCops:
 Metrics/CyclomaticComplexity:
   Max: 16
 Metrics/MethodLength:
-  Max: 35
+  Max: 22
 Metrics/PerceivedComplexity:
   Max: 16
