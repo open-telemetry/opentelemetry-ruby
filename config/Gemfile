@@ -5,19 +5,14 @@
 # SPDX-License-Identifier: Apache-2.0
 
 source 'https://rubygems.org'
+eval_gemfile File.expand_path('../Gemfile', __dir__)
 
 gemspec
 
 group :test, :development do
   gem 'minitest', '6.0.6'
-  gem 'rake', '13.4.2'
-  gem 'rubocop', '1.87.0'
-  gem 'rubocop-minitest', '0.39.1'
-  gem 'rubocop-performance', '1.26.1'
-  gem 'rubocop-rake', '0.7.1'
-  gem 'rubocop-rspec', '3.10.2'
   gem 'simplecov', '1.0.0'
-  gem 'yard', '0.9.44'
+  gem 'yard', '0.9.45'
 
   # Local path overrides for gems developed in this monorepo
   gem 'opentelemetry-exporter-otlp-common',      path: '../exporter/otlp-common',      require: false
@@ -34,7 +29,7 @@ group :test, :development do
 
   # Prevent bundler from downgrading google-protobuf to an incompatible
   # pre-built binary (glibc) that does not run in Alpine (musl) containers.
-  gem 'google-protobuf', '3.25.8'
+  gem 'google-protobuf', '4.36.1'
 
   if RUBY_VERSION >= '3.4'
     gem 'base64'
