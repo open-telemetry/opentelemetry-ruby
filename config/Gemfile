@@ -29,7 +29,7 @@ group :test, :development do
 
   # Prevent bundler from downgrading google-protobuf to an incompatible
   # pre-built binary (glibc) that does not run in Alpine (musl) containers.
-  gem 'google-protobuf', '3.25.8'
+  gem 'google-protobuf', '4.36.1'
 
   if RUBY_VERSION >= '3.4'
     gem 'base64'
