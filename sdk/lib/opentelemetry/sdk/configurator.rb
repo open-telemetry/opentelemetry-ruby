@@ -14,12 +14,15 @@ module OpenTelemetry
         EMPTY_LIST = [].freeze
         private_constant(:EMPTY_LIST)
 
+        # No-op because this propagator does not inject any values.
         def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter); end
 
+        # Returns the passed context unchanged because there is nothing to extract.
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           context
         end
 
+        # Returns an empty list because this propagator does not use carrier fields.
         def fields
           EMPTY_LIST
         end
@@ -43,6 +46,7 @@ module OpenTelemetry
         @id_generator = OpenTelemetry::Trace
       end
 
+      # Returns the configured logger or the global OpenTelemetry logger.
       def logger
         @logger ||= OpenTelemetry.logger
       end
@@ -56,6 +60,7 @@ module OpenTelemetry
         @logger = ForwardingLogger.new(new_logger, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
       end
 
+      # Returns the configured error handler or the global OpenTelemetry error handler.
       def error_handler
         @error_handler ||= OpenTelemetry.error_handler
       end

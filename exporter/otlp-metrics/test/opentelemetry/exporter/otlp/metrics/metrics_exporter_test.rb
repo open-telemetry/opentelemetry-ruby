@@ -545,6 +545,22 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       _(result).must_equal(METRICS_FAILURE)
     end
 
+    it 'logs a warning and skips sending when already shutdown' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      exporter.shutdown
+      metrics_data = create_metrics_data
+      result = exporter.export([metrics_data])
+
+      _(result).must_equal(METRICS_FAILURE)
+      _(log_stream.string).must_match(/Exporter already shutdown, ignoring export request/)
+      assert_not_requested(:post, 'http://localhost:4318/v1/metrics')
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
     it 'returns METRICS_FAILURE when encryption to receiver endpoint fails' do
       exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://localhost:4318/v1/metrics')
       stub_request(:post, 'https://localhost:4318/v1/metrics').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))
@@ -929,6 +945,33 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       assert_requested(:post, 'http://localhost:4318/v1/metrics') do |req|
         Zlib.gunzip(req.body) == encoded_etsr
       end
+    end
+  end
+
+  describe '#shutdown' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
+
+    it 'returns SUCCESS on first call' do
+      _(exporter.shutdown).must_equal(METRICS_SUCCESS)
+    end
+
+    it 'marks the exporter as shutdown' do
+      exporter.shutdown
+      _(exporter.instance_variable_get(:@shutdown)).must_equal(true)
+    end
+
+    it 'logs a warning and returns nil when already shutdown' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      exporter.shutdown
+      result = exporter.shutdown
+
+      _(result).must_be_nil
+      _(log_stream.string).must_match(/Exporter already shutdown, ignoring call/)
+    ensure
+      OpenTelemetry.logger = logger
     end
   end
 end
