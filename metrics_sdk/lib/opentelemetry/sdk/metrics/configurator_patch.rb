@@ -40,9 +40,8 @@ module OpenTelemetry
             case exporter.strip
             when 'none' then nil
             when 'console'
-              default_console_interval = ENV['OTEL_METRIC_EXPORT_INTERVAL'] || 10_000
               OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(
-                                                               export_interval_millis: Float(default_console_interval),
+                                                               export_interval_millis: 10_000.0,
                                                                exporter: Metrics::Export::ConsoleMetricPullExporter.new
                                                              ))
             when 'in-memory' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
