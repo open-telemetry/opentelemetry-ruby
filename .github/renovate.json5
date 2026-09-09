@@ -35,6 +35,12 @@
     },
     {
       groupName: "infra [minor]",
+      matchManagers: ["mise"],
+      matchUpdateTypes: ["minor"],
+      schedule: ["before 7am on Monday"],
+    },
+    {
+      groupName: "infra [minor]",
       matchCategories: ["js"],
       matchDepNames: ["renovate"],
       matchUpdateTypes: ["patch", "digest"],
