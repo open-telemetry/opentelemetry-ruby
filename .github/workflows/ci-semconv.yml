@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: |
           # Static list (replace with dynamic detection if needed)
-          FOLDERS=("semantic_conventions", "types/otlp")
+          FOLDERS=("semantic_conventions" "types/otlp")
           RESULTS=()
 
           for dir in "${FOLDERS[@]}"; do
