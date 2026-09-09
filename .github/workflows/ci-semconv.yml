@@ -10,6 +10,8 @@ on:
       - 'semantic_conventions/Rakefile'
       - 'semantic_conventions/lib/**'
       - 'semantic_conventions/templates/**'
+      - 'types/**/mise.lock'
+      - 'types/**/mise.toml'
       - 'types/**/Rakefile'
       - 'types/**/lib/**'
     branches:
@@ -33,7 +35,18 @@ jobs:
         shell: bash
         run: |
           # Static list (replace with dynamic detection if needed)
-          DIRS='["semantic_conventions", "types/otlp"]'
+          FOLDERS=("semantic_conventions", "types/otlp")
+          RESULTS=()
+
+          for dir in "${FOLDERS[@]}"; do
+            while IFS= read -r file; do
+              folder_path=$(dirname "$file")
+              RESULTS+=("$folder_path")
+            done < <(find "$dir" -mindepth 1 -maxdepth 2 -type f -name "*.gemspec")
+          done
+
+          # Convert bash array → JSON array
+          DIRS=$(printf '%s\n' "${RESULTS[@]}" | jq -R . | jq -s .)
 
           echo "dirs<<EOF" >> "$GITHUB_OUTPUT"
           echo "$DIRS" >> "$GITHUB_OUTPUT"
