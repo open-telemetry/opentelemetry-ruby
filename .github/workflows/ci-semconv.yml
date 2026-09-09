@@ -82,8 +82,10 @@ jobs:
           bundler-cache: true
           working-directory: ${{ matrix.dir }}
 
-      - name: Install protoc
-        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler
+      - name: Install System dependencies
+        uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
+        with:
+          working_directory: ${{ matrix.dir }}
 
       - name: Regenerate ${{ matrix.dir }}
         working-directory: ${{ matrix.dir }}
