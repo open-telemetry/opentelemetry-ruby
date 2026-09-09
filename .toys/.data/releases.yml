@@ -68,6 +68,9 @@ gems:
 
   - name: opentelemetry-semantic_conventions
     directory: semantic_conventions
+  
+  - name: opentelemetry-config
+    directory: config
 
   - name: opentelemetry-test-helpers
     directory: test_helpers

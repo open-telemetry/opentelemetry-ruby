@@ -11,7 +11,7 @@ gemspec
 
 group :test, :development do
   gem 'minitest', '6.0.6'
-  gem 'simplecov', '1.0.0'
+  gem 'minitest-mock', '5.27.0'
   gem 'yard', '0.9.45'
 
   # Local path overrides for gems developed in this monorepo
