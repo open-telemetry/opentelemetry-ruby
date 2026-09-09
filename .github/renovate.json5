@@ -196,13 +196,25 @@
       "description": "Update Semantic Conventions version in Rake files",
       "managerFilePatterns": [
         "/^semantic_conventions/Rakefile$/",
-        "/^semantic_conventions/semconv.yaml$/"
       ],
       "matchStrings": [
         "SPEC_VERSION = '(?<currentValue>.*?)'",
-        "spec_version: '(?<currentValue>.*?)'"
       ],
       "depNameTemplate": "open-telemetry/semantic-conventions",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update otel dependency version to trigger regeneration.",
+      "managerFilePatterns": [
+        "otel-spec.yaml"
+      ],
+      "matchStrings": [
+        "(?<repoName>.*?): '(?<currentValue>.*?)'"
+      ],
+      "depNameTemplate": "open-telemetry/{{repoName}}",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver",
       "extractVersionTemplate": "^v(?<version>.*)$"
