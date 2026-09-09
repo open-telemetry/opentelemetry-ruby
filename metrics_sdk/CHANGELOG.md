@@ -1,6 +1,6 @@
 # Release History: opentelemetry-metrics-sdk
 
-### v0.18.0 / 2026-09-08
+### v0.18.0 / 2026-09-09
 
 * BREAKING CHANGE: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
 * FIXED: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
