@@ -74,7 +74,7 @@ module OpenTelemetry
           end
 
           # when aggregation temporality is cumulative, merge and downscale will happen.
-          # rubocop:disable Metrics/MethodLength
+          # rubocop:disable-next Metrics/MethodLength
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
@@ -218,7 +218,6 @@ module OpenTelemetry
               merged_data_points.values # return array
             end
           end
-          # rubocop:enable Metrics/MethodLength
 
           # this is aggregate in python; there is no merge in aggregate; but rescale happened
           def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
@@ -265,7 +264,7 @@ module OpenTelemetry
             )
           end
 
-          # rubocop:disable Metrics/CyclomaticComplexity,Metrics/MethodLength
+          # rubocop:disable-next Metrics/CyclomaticComplexity,Metrics/MethodLength
           def update_histogram_data_point(hdp, attributes, amount, exemplar_offer: false)
             reservior_update(attributes, amount, exemplar_offer)
 
@@ -345,7 +344,6 @@ module OpenTelemetry
 
             buckets.increment_bucket(bucket_index)
           end
-          # rubocop:enable Metrics/CyclomaticComplexity,Metrics/MethodLength
 
           def grow_buckets(span, buckets)
             return if span < buckets.counts.size

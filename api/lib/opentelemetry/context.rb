@@ -67,6 +67,7 @@ module OpenTelemetry # rubocop:disable Style/Documentation
       #
       # @param [Context] ctx The context to be made active
       # @yield [context] Yields context to the block
+      # @yieldparam [Context] context The active context
       def with_current(ctx)
         token = attach(ctx)
         yield ctx
@@ -79,9 +80,10 @@ module OpenTelemetry # rubocop:disable Style/Documentation
 
       # @param [String] key The lookup key
       # @param [Object] value The object stored under key
-      # @param [Callable] Block to execute in a new context
       # @yield [context, value] Yields the newly created context and value to
       #   the block
+      # @yieldparam [Context] context The newly created context
+      # @yieldparam [Object] value The object stored under key
       def with_value(key, value)
         ctx = current.set_value(key, value)
         token = attach(ctx)
@@ -93,12 +95,12 @@ module OpenTelemetry # rubocop:disable Style/Documentation
       # Execute a block in a new context where its values are merged with the
       # incoming values. Restores the previous context after the block executes.
 
-      # @param [String] key The lookup key
       # @param [Hash] values Will be merged with values of the current context
       #  and returned in a new context
-      # @param [Callable] Block to execute in a new context
       # @yield [context, values] Yields the newly created context and values
       #   to the block
+      # @yieldparam [Context] context The newly created context
+      # @yieldparam [Hash] values The values merged into the new context
       def with_values(values)
         ctx = current.set_values(values)
         token = attach(ctx)
@@ -119,6 +121,9 @@ module OpenTelemetry # rubocop:disable Style/Documentation
         Fiber.current.opentelemetry_context = []
       end
 
+      # Returns an empty context.
+      #
+      # @return [Context]
       def empty
         new(EMPTY_ENTRIES)
       end
@@ -160,7 +165,6 @@ module OpenTelemetry # rubocop:disable Style/Documentation
     #
     # @param [Hash] values The values to be merged with the current context's
     #   entries.
-    # @param [Object] value Object to be stored under key
     # @return [Context]
     def set_values(values) # rubocop:disable Naming/AccessorMethodName
       Context.new(@entries.merge(values))
