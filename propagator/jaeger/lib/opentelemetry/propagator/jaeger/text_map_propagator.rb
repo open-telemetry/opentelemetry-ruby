@@ -26,10 +26,14 @@ module OpenTelemetry
         FIELDS = [IDENTITY_KEY].freeze
         TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>(?:[0-9a-f]){1,16}):(?:[0-9a-f]){1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
         ZERO_ID_REGEX = /^0+$/
+        BAGGAGE_KEY_PREFIX = 'uberctx-'
+        MAX_BAGGAGE_ENTRIES = 180
+        MAX_BAGGAGE_ENTRY_BYTES = 4096
+        MAX_BAGGAGE_TOTAL_BYTES = 8192
 
-        private_constant \
-          :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT,
-          :FIELDS, :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX
+        private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT, :FIELDS,
+                         :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :BAGGAGE_KEY_PREFIX,
+                         :MAX_BAGGAGE_ENTRIES, :MAX_BAGGAGE_ENTRY_BYTES, :MAX_BAGGAGE_TOTAL_BYTES
 
         # Extract trace context from the supplied carrier.
         # If extraction fails, the original context will be returned
@@ -73,11 +77,7 @@ module OpenTelemetry
             span_context.hex_trace_id, span_context.hex_span_id, '0', flags
           ].join(':')
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
-          OpenTelemetry::Baggage.values(context: context).each do |key, value|
-            baggage_key = "uberctx-#{key}"
-            encoded_value = URI.encode_uri_component(value)
-            setter.set(carrier, baggage_key, encoded_value)
-          end
+          inject_baggage(carrier, context, setter)
           carrier
         end
 
@@ -102,18 +102,47 @@ module OpenTelemetry
           OpenTelemetry::Trace.non_recording_span(span_context)
         end
 
+        def inject_baggage(carrier, context, setter)
+          count = 0
+          total_bytes = 0
+          OpenTelemetry::Baggage.values(context: context).each do |key, value|
+            break unless count < MAX_BAGGAGE_ENTRIES
+
+            encoded_value = URI.encode_uri_component(value)
+            entry_bytes = key.to_s.bytesize + encoded_value.bytesize
+            next unless within_baggage_limits?(entry_bytes, total_bytes)
+
+            setter.set(carrier, "#{BAGGAGE_KEY_PREFIX}#{key}", encoded_value)
+            count += 1
+            total_bytes += entry_bytes
+          end
+        end
+
         def context_with_extracted_baggage(carrier, context, getter)
-          baggage_key_prefix = 'uberctx-'
           OpenTelemetry::Baggage.build(context: context) do |b|
+            count = 0
+            total_bytes = 0
             getter.keys(carrier).each do |carrier_key|
-              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..]
+              break unless count < MAX_BAGGAGE_ENTRIES
+
+              baggage_key = carrier_key.start_with?(BAGGAGE_KEY_PREFIX) && carrier_key[BAGGAGE_KEY_PREFIX.length..]
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
-              value = URI.decode_uri_component(raw_value)
-              b.set_value(baggage_key, value)
+              next unless raw_value
+
+              entry_bytes = baggage_key.bytesize + raw_value.bytesize
+              next unless within_baggage_limits?(entry_bytes, total_bytes)
+
+              b.set_value(baggage_key, URI.decode_uri_component(raw_value))
+              count += 1
+              total_bytes += entry_bytes
             end
           end
+        end
+
+        def within_baggage_limits?(entry_bytes, total_bytes)
+          entry_bytes <= MAX_BAGGAGE_ENTRY_BYTES && total_bytes + entry_bytes <= MAX_BAGGAGE_TOTAL_BYTES
         end
 
         def to_jaeger_flags(context, span_context)
