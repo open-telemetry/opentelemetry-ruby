@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'bundler/gem_tasks'
+require 'English'
 require 'rake/testtask'
 require 'yaml'
 require 'yard'
@@ -51,10 +52,9 @@ task :generate do
 end
 
 def run(cmd)
-  puts "#{cmd}"
+  puts cmd
   IO.popen(cmd) do |io|
     io.each_line { |line| puts line }
   end
-  raise "Command failed: #{cmd}" unless $?.success?
+  raise "Command failed: #{cmd}" unless $CHILD_STATUS.success?
 end
-

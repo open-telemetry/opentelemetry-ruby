@@ -4,15 +4,12 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  SimpleCov.start
-end
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
 
-require 'opentelemetry/sdk'
-require 'opentelemetry-test-helpers'
+require 'simplecov'
+SimpleCov.start
 
 require 'minitest/autorun'
-require 'webmock/minitest'
 
-OpenTelemetry.logger = Logger.new(File::NULL)
+Dir[File.join(File.dirname(__FILE__), '..', 'lib', 'opentelemetry', '**', '*.rb')].each { |file| require file }
