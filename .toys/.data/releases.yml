@@ -84,7 +84,7 @@ gems:
   - name: opentelemetry-logs-api
     directory: logs_api
     version_rb_path: lib/opentelemetry/logs/version.rb
- 
+
   - name: opentelemetry-logs-sdk
     directory: logs_sdk
     version_rb_path: lib/opentelemetry/sdk/logs/version.rb
