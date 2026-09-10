@@ -20,6 +20,10 @@ module OpenTelemetry
 
         # Returns whether this Histogram is enabled for recording measurements.
         #
+        # Instrumentation authors need to call this API each time 
+        #  they record a measurement to ensure they have the most
+        #  up-to-date value.
+        #
         # @return [Boolean] default to true in noop implementation
         def enabled?
           true

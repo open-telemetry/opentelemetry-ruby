@@ -57,8 +57,8 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
-      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of counter, it will be stored in instrument_registry
       def create_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
@@ -92,9 +92,9 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:explicit_bucket_boundaries` [Array<Numeric>] recommended bucket boundaries when this
-      #     instrument is aggregated to an explicit bucket histogram.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Recommended bucket boundaries when
+      #     this instrument is aggregated to an explicit bucket histogram.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
       #
       # @return [nil] after creation of histogram, it will be stored in instrument_registry
       def create_histogram(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
@@ -126,8 +126,8 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
-      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of gauge, it will be stored in instrument_registry
       def create_gauge(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
@@ -159,8 +159,8 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
-      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of up_down_counter, it will be stored in instrument_registry
       def create_up_down_counter(name, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
@@ -196,8 +196,8 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
-      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of observable_counter, it will be stored in instrument_registry
       def create_observable_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
@@ -234,8 +234,8 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
-      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of observable_gauge, it will be stored in instrument_registry
       def create_observable_gauge(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
@@ -272,8 +272,8 @@ module OpenTelemetry
       #   - `OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir` - no-op, disables exemplar collection
       # @param advisory [optional Hash] optional advisory parameters: recommendations from the
       #   instrument author that implementations MAY ignore. The API does not validate them.
-      #   - `:attributes` [Array<String>] recommended set of attribute keys for the resulting metrics.
-      #   `:explicit_bucket_boundaries` applies to histograms only and has no effect here.
+      #   @option advisory [Array<String>] :attributes Recommended set of attribute keys for the resulting metrics.
+      #   @option advisory [Array<Numeric>] :explicit_bucket_boundaries Applies to histograms only and has no effect here.
       #
       # @return [nil] after creation of observable_up_down_counter, it will be stored in instrument_registry
       def create_observable_up_down_counter(name, callback: nil, unit: nil, description: nil, exemplar_filter: nil, exemplar_reservoir: nil, advisory: nil)
