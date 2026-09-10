@@ -177,6 +177,23 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       _(second_provider.metric_readers).must_equal([])
     end
 
+    it 'serializes concurrent metric reader registration' do
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      providers = 2.times.map { OpenTelemetry::SDK::Metrics::MeterProvider.new }
+      errors = Queue.new
+
+      threads = providers.map do |provider|
+        Thread.new do
+          metric_reader.register_meter_provider(provider)
+        rescue ArgumentError => e
+          errors << e
+        end
+      end
+      threads.each(&:join)
+
+      _(errors.size).must_equal 1
+    end
+
     it 'associates the metric store with instruments created before the metric reader' do
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
 
