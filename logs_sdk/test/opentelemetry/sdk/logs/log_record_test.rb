@@ -204,6 +204,9 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         assert_equal(0, log_record.instance_variable_get(:@dropped_attributes_count))
       end
 
+      # our choice to accumulate across reassignment is based on 
+      # a test in the JS implementation:
+      # https://github.com/open-telemetry/opentelemetry-js/blob/7b155b84c86be06b2b6d309c28e61e617af6e779/experimental/packages/sdk-logs/test/common/LogRecord.test.ts#L313-L324
       it 'accumulates dropped_attributes_count across repeated reassignment' do
         limits = Logs::LogRecordLimits.new(attribute_count_limit: 2)
         log_record = Logs::LogRecord.new(log_record_limits: limits, attributes: { 'a' => 1, 'b' => 2, 'c' => 3, 'd' => 4 })
