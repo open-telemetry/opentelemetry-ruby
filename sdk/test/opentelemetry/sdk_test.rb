@@ -26,6 +26,22 @@ describe OpenTelemetry::SDK do
       _(received_exception).must_be_instance_of OpenTelemetry::SDK::ConfigurationError
       _(received_message).must_match(/unexpected configuration error due to unknown keyword: .*invalid_option/)
     end
+
+    it 'installs configured error handler' do
+      received_exception = nil
+      received_message = nil
+
+      OpenTelemetry::SDK.configure do |config|
+        config.error_handler = lambda do |exception: nil, message: nil|
+          received_exception = exception
+          received_message = message
+        end
+      end
+
+      OpenTelemetry.handle_error(exception: 1, message: 2)
+      _(received_exception).must_equal 1
+      _(received_message).must_equal 2
+    end
   end
 
   describe '#configure (sdk disabled)' do
