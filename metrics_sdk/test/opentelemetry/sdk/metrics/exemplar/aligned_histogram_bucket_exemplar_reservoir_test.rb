@@ -80,6 +80,17 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarRe
       _(bucket_1_exemplars[0].value).must_be :>, 0
       _(bucket_1_exemplars[0].value).must_be :<=, 5
     end
+
+    it 'supports concurrent offers' do
+      threads = 10.times.map do
+        Thread.new do
+          100.times { reservoir.offer(value: 3, timestamp: timestamp, attributes: attributes, context: context) }
+        end
+      end
+      threads.each(&:join)
+
+      _(reservoir.collect.size).must_equal 1
+    end
   end
 
   describe '#collect' do

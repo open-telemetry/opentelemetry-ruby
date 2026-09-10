@@ -21,35 +21,46 @@ module OpenTelemetry
 
           def initialize(max_size: nil)
             @max_size = max_size || DEFAULT_SIZE
-            reset
+            @mutex = Mutex.new
+            reset!
           end
 
           # Uses a uniformly-weighted sampling algorithm based on the number of samples the reservoir has seen
           # Fill the buckets array first then randomly override existing bucket
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
-            bucket_index = find_histogram_bucket
-            @exemplar_buckets[bucket_index].offer(value: value, time_unix_nano: timestamp, attributes: attributes, context: context) if bucket_index < @max_size
-            @num_measurements_seen += 1
+            @mutex.synchronize do
+              bucket_index = find_histogram_bucket
+              @exemplar_buckets[bucket_index].offer(value: value, time_unix_nano: timestamp, attributes: attributes, context: context) if bucket_index < @max_size
+              @num_measurements_seen += 1
+            end
             nil
           end
 
           # Reset measurement counter on collection for delta temporality
           def collect(attributes: nil, aggregation_temporality: nil)
-            exemplars = @exemplar_buckets.map { |bucket| bucket.collect(point_attributes: attributes) }
-            reset if aggregation_temporality == :delta
-            exemplars.compact!
-            exemplars
+            @mutex.synchronize do
+              exemplars = @exemplar_buckets.map { |bucket| bucket.collect(point_attributes: attributes) }
+              reset! if aggregation_temporality == :delta
+              exemplars.compact!
+              exemplars
+            end
           end
 
           # Clears all sampled exemplars and the measurement counter.
           def reset
-            @exemplar_buckets = Array.new(@max_size) { ExemplarBucket.new }
-            @num_measurements_seen = 0
+            @mutex.synchronize { reset! }
           end
 
           # Returns the bucket index to sample into for the current measurement.
           def find_histogram_bucket
             @num_measurements_seen < @max_size ? @num_measurements_seen : rand(0..(@num_measurements_seen - 1))
+          end
+
+          private
+
+          def reset!
+            @exemplar_buckets = Array.new(@max_size) { ExemplarBucket.new }
+            @num_measurements_seen = 0
           end
         end
       end
