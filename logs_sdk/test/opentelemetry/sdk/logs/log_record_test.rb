@@ -125,14 +125,28 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
       it 'emits an error message if attribute key is invalid' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
           logger.on_emit(attributes: { a: 'a' })
-          assert_match(/Invalid log record attribute key type Symbol/, log_stream.string)
+          assert_match(/Discarded 1 log record attributes/, log_stream.string)
         end
       end
 
       it 'emits an error message if the attribute value is invalid' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
           logger.on_emit(attributes: { 'a' => Class.new })
-          assert_match(/Invalid log record attribute value type Class/, log_stream.string)
+          assert_match(/Discarded 1 log record attributes/, log_stream.string)
+        end
+      end
+
+      it 'emits one error message when multiple attributes are discarded' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          limits = Logs::LogRecordLimits.new(attribute_count_limit: 2)
+          Logs::LogRecord.new(
+            log_record_limits: limits,
+            attributes: { 'a' => 'a', 'b' => Class.new, c: 'c' }
+          )
+
+          messages = log_stream.string.lines.grep(/Discarded \d+ log record attributes/)
+          assert_equal(1, messages.length)
+          assert_match(/Discarded 2 log record attributes/, messages.first)
         end
       end
 
