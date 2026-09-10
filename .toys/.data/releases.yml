@@ -29,7 +29,7 @@ git_user_email: 197425009+otelbot@users.noreply.github.com
 #     "CHANGELOG.md" at the root of the gem directory.)
 gems:
   - name: opentelemetry-api
-    directory: api
+    directory: api/stable
     version_rb_path: lib/opentelemetry/version.rb
 
   - name: opentelemetry-registry
@@ -74,7 +74,7 @@ gems:
     version_rb_path: lib/opentelemetry/test_helpers/version.rb
 
   - name: opentelemetry-metrics-api
-    directory: metrics_api
+    directory: api/metrics
     version_rb_path: lib/opentelemetry/metrics/version.rb
 
   - name: opentelemetry-metrics-sdk
@@ -82,7 +82,7 @@ gems:
     version_rb_path: lib/opentelemetry/sdk/metrics/version.rb
 
   - name: opentelemetry-logs-api
-    directory: logs_api
+    directory: api/logs
     version_rb_path: lib/opentelemetry/logs/version.rb
 
   - name: opentelemetry-logs-sdk

@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 source 'https://rubygems.org'
-eval_gemfile File.expand_path('../Gemfile', __dir__)
+eval_gemfile File.expand_path('../../Gemfile', __dir__)
 
 gemspec
 
@@ -16,7 +16,7 @@ group :test, :development do
   gem 'simplecov', '~> 1.2.0'
   gem 'yard', '~> 0.9.0'
   gem 'yard-doctest', '~> 0.1.6'
-  gem 'opentelemetry-api', path: '../api', require: false
-  gem 'opentelemetry-metrics-sdk', path: '../metrics_sdk', require: false
-  gem 'opentelemetry-test-helpers', path: '../test_helpers', require: false
+  gem 'opentelemetry-api', path: '../stable', require: false
+  gem 'opentelemetry-metrics-sdk', path: '../../metrics_sdk', require: false
+  gem 'opentelemetry-test-helpers', path: '../../test_helpers', require: false
 end
