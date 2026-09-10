@@ -118,6 +118,7 @@ module OpenTelemetry
             if @stopped
               OpenTelemetry.logger.warn('calling MetricProvider#add_metric_reader after shutdown.')
             else
+              metric_reader.register_meter_provider(self) if metric_reader.respond_to?(:register_meter_provider)
               @metric_readers.push(metric_reader)
               @meter_registry.each_value { |meter| meter.add_metric_reader(metric_reader) }
             end

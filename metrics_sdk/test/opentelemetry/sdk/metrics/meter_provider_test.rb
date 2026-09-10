@@ -152,6 +152,17 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       _(OpenTelemetry.meter_provider.instance_variable_get(:@metric_readers)).must_equal([metric_reader])
     end
 
+    it 'does not allow a metric reader to be registered with multiple providers' do
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      first_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      second_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+
+      first_provider.add_metric_reader(metric_reader)
+
+      _ { second_provider.add_metric_reader(metric_reader) }.must_raise(ArgumentError)
+      _(second_provider.metric_readers).must_equal([])
+    end
+
     it 'associates the metric store with instruments created before the metric reader' do
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
 

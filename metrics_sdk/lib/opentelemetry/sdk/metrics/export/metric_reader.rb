@@ -18,6 +18,15 @@ module OpenTelemetry
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
           end
 
+          # Registers this reader with a MeterProvider.
+          def register_meter_provider(meter_provider)
+            if @meter_provider && !@meter_provider.equal?(meter_provider)
+              raise ArgumentError, 'MetricReader cannot be registered with more than one MeterProvider'
+            end
+
+            @meter_provider = meter_provider
+          end
+
           # Collects and returns the current metrics from the metric store.
           def collect
             @metric_store.collect
