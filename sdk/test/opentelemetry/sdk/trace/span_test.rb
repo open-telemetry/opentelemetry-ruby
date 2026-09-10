@@ -504,6 +504,72 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
+  describe '#on_finishing' do
+    OnFinishingProcessor = Struct.new(:on_finishing_block, :on_finishing_count, :on_finish_count) do
+      def initialize(&block)
+        super(block, 0, 0)
+      end
+
+      def on_start(_span, _parent_context); end
+
+      def on_finishing(span)
+        self.on_finishing_count += 1
+        on_finishing_block.call(span)
+      end
+
+      def on_finish(_span)
+        self.on_finish_count += 1
+      end
+    end
+
+    # The file-level span_limits caps attributes, events and links at 1 each,
+    # which would mask what these tests are checking.
+    def span_with_processors(processors)
+      Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil,
+               OpenTelemetry::SDK::Trace::SpanLimits::DEFAULT, processors, nil, nil, Time.now, nil, nil)
+    end
+
+    def wait_until(timeout: 5)
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + timeout
+      until yield
+        flunk('timed out waiting for the writer thread to block on the span') if Process.clock_gettime(Process::CLOCK_MONOTONIC) > deadline
+
+        sleep(0.001)
+      end
+    end
+
+    it 'prevents other threads from modifying the span once it is ending' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        ending = Queue.new
+        release = Queue.new
+        span = span_with_processors([OnFinishingProcessor.new do |_span|
+          ending << :ending
+          release.pop
+        end])
+
+        finisher = Thread.new { span.finish }
+        writer = nil
+        begin
+          ending.pop
+
+          writer = Thread.new { span.set_attribute('other', 'thread') }
+          wait_until { writer.status == 'sleep' }
+
+          release << :go
+          [finisher, writer].each(&:join)
+
+          _(span.to_span_data.attributes).must_be_nil
+          _(log_stream.string).must_match(/Calling set_attribute on an ended Span/)
+        ensure
+          # A failed assertion or a flunk above leaves both threads parked on
+          # the span's mutex, which would leak them into the rest of the suite.
+          release << :go
+          [finisher, writer].compact.each { |thread| thread.kill.join }
+        end
+      end
+    end
+  end
+
   describe '#instrumentation_library' do
     it 'is identical to the instrumentation_scope' do
       mock_span_processor.expect(:on_start, nil) { |_s| pass }
