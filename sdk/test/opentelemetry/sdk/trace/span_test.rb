@@ -568,6 +568,74 @@ describe OpenTelemetry::SDK::Trace::Span do
         end
       end
     end
+
+    it 'allows a processor to set an attribute' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', 'yes') }])
+      span.finish
+      _(span.to_span_data.attributes).must_equal('finishing' => 'yes')
+    end
+
+    it 'allows a processor to add attributes' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.add_attributes('finishing' => 'yes') }])
+      span.finish
+      _(span.to_span_data.attributes).must_equal('finishing' => 'yes')
+    end
+
+    it 'allows a processor to add an event' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.add_event('finishing') }])
+      span.finish
+      _(span.to_span_data.events.map(&:name)).must_equal(['finishing'])
+    end
+
+    it 'allows a processor to add a link' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.add_link(OpenTelemetry::Trace::Link.new(context)) }])
+      span.finish
+      _(span.to_span_data.links.map(&:span_context)).must_equal([context])
+    end
+
+    it 'allows a processor to set the status' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.status = Status.error('cancelled') }])
+      span.finish
+      _(span.to_span_data.status.code).must_equal(Status::ERROR)
+    end
+
+    it 'allows a processor to set the name' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.name = 'renamed' }])
+      span.finish
+      _(span.to_span_data.name).must_equal('renamed')
+    end
+
+    it 'counts attributes set by a processor' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', 'yes') }])
+      span.set_attribute('before', 'yes')
+      span.finish
+      _(span.to_span_data.total_recorded_attributes).must_equal(2)
+    end
+
+    it 'does not warn that the span has ended' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', 'yes') }])
+        span.finish
+        _(log_stream.string).must_be_empty
+      end
+    end
+
+    it 'validates attributes written by a processor' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', :invalid) }])
+        span.finish
+        _(span.to_span_data.attributes).must_equal({})
+        _(span.to_span_data.attributes).must_be :frozen?
+        _(log_stream.string).must_match(/invalid span attribute value type Symbol for key 'finishing' on span 'name'/)
+      end
+    end
+
+    it 'is still recording while a processor runs' do
+      recording = nil
+      span = span_with_processors([OnFinishingProcessor.new { |s| recording = s.recording? }])
+      span.finish
+      _(recording).must_equal(true)
+    end
   end
 
   describe '#instrumentation_library' do
