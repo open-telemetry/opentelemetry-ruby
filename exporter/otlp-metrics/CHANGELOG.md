@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.12.0 / 2026-09-09
+
+* BREAKING CHANGE: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
+* FIXED: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
+
 ### v0.11.0 / 2026-09-01
 
 * ADDED: Add flags to metrics data model (#2302)
