@@ -170,7 +170,7 @@ module OpenTelemetry
 
               case response
               when Net::HTTPSuccess
-                response.body # Read and discard body
+                log_partial_success(response.body)
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
                 response.body # Read and discard body
@@ -246,6 +246,18 @@ module OpenTelemetry
             OpenTelemetry.handle_error(message: "OTLP logs exporter received rpc.Status{message=#{status.message}, details=#{details}}")
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          end
+
+          def log_partial_success(body)
+            response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
+            partial_success = response.partial_success
+            return if partial_success.nil? || partial_success.rejected_log_records <= 0
+
+            OpenTelemetry.handle_error(
+              message: "OTLP logs exporter received partial success: rejected_log_records=#{partial_success.rejected_log_records}, error_message=#{partial_success.error_message}"
+            )
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding ExportLogsServiceResponse in OTLP::Exporter#log_partial_success')
           end
 
           def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
