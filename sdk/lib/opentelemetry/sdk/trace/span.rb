@@ -270,10 +270,13 @@ module OpenTelemetry
               OpenTelemetry.logger.warn('Calling finish on an ended Span.')
               return self
             end
-            @end_timestamp = relative_timestamp(end_timestamp)
-            @span_processors.each do |processor|
-              processor.on_finishing(self) if processor.respond_to?(:on_finishing)
+            if @ending
+              OpenTelemetry.logger.warn('Calling finish on a Span that is ending.')
+              return self
             end
+
+            @end_timestamp = relative_timestamp(end_timestamp)
+            run_on_finishing_callbacks
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
             @links.freeze
@@ -330,6 +333,7 @@ module OpenTelemetry
           @resource = resource
           @instrumentation_scope = instrumentation_scope
           @ended = false
+          @ending = false
           @status = DEFAULT_STATUS
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
@@ -382,6 +386,15 @@ module OpenTelemetry
           return yield if @mutex.owned?
 
           @mutex.synchronize(&)
+        end
+
+        def run_on_finishing_callbacks
+          @ending = true
+          @span_processors.each do |processor|
+            processor.on_finishing(self) if processor.respond_to?(:on_finishing)
+          end
+        ensure
+          @ending = false
         end
 
         def validated_attributes(attrs)

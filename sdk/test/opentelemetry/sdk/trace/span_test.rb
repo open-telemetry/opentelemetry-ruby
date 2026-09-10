@@ -636,6 +636,54 @@ describe OpenTelemetry::SDK::Trace::Span do
       span.finish
       _(recording).must_equal(true)
     end
+
+    it 'ignores a nested finish from a processor' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        processor = OnFinishingProcessor.new(&:finish)
+        span = span_with_processors([processor])
+        span.finish
+
+        _(processor.on_finishing_count).must_equal(1)
+        _(processor.on_finish_count).must_equal(1)
+        _(log_stream.string).must_match(/Calling finish on a Span that is ending/)
+      end
+    end
+
+    it 'leaves the span finishable when a processor raises' do
+      raised = false
+      processor = OnFinishingProcessor.new do |_span|
+        next if raised
+
+        raised = true
+        raise 'boom'
+      end
+      span = span_with_processors([processor])
+
+      error = _(proc { span.finish }).must_raise(RuntimeError)
+      _(error.message).must_equal('boom')
+      _(span).must_be :recording?
+
+      span.finish
+      _(span).wont_be :recording?
+      _(processor.on_finishing_count).must_equal(2)
+      _(processor.on_finish_count).must_equal(1)
+    end
+
+    it 'runs every processor in the list' do
+      OpenTelemetry::TestHelpers.with_test_logger do
+        observed = nil
+        first = OnFinishingProcessor.new do |s|
+          s.set_attribute('first', 'yes')
+          s.finish
+        end
+        second = OnFinishingProcessor.new { |s| observed = s.attributes }
+        span = span_with_processors([first, second])
+        span.finish
+
+        _(observed).must_equal('first' => 'yes')
+        _(second.on_finishing_count).must_equal(1)
+      end
+    end
   end
 
   describe '#instrumentation_library' do
