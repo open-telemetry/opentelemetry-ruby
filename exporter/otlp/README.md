@@ -80,7 +80,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 | `client_certificate_file` | `OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE`      |                                     |
 | `client_key_file`         | `OTEL_EXPORTER_OTLP_CLIENT_KEY`              |                                     |
 | `headers:`                | `OTEL_EXPORTER_OTLP_HEADERS`                 |                                     |
-| `compression:`            | `OTEL_EXPORTER_OTLP_COMPRESSION`             | `"gzip"`                            |
+| `compression:`            | `OTEL_EXPORTER_OTLP_COMPRESSION`             | `"none"`                            |
 | `timeout:`                | `OTEL_EXPORTER_OTLP_TIMEOUT`                 | `10`                                |
 | `ssl_verify_mode:`        | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or | `OpenSSL::SSL:VERIFY_PEER`          |
 |                           | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE`    |                                     |
