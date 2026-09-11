@@ -229,7 +229,11 @@ describe OpenTelemetry::SDK do
 
     it 'emits exponential bucket histogram metrics with exemplars' do
       reset_metrics_sdk
-      meter = create_meter
+      # The let(:metric_exporter) reader is already registered with the
+      # MeterProvider created in the before block; the reset provider needs
+      # its own reader.
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      meter = create_meter(metric_exporter)
       OpenTelemetry.meter_provider.add_view(
         'exponential_histogram',
         aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 4))
@@ -304,7 +308,11 @@ describe OpenTelemetry::SDK do
 
     it 'emits counter metrics with exemplars across multiple views' do
       reset_metrics_sdk
-      meter = create_meter
+      # The let(:metric_exporter) reader is already registered with the
+      # MeterProvider created in the before block; the reset provider needs
+      # its own reader.
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      meter = create_meter(metric_exporter)
 
       # Add multiple views for the same counter
       OpenTelemetry.meter_provider.add_view(
