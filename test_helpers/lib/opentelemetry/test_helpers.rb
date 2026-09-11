@@ -86,7 +86,7 @@ module OpenTelemetry
                                trace_flags: OpenTelemetry::Trace::TraceFlags::DEFAULT,
                                resource: nil,
                                instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope.new('', 'v0.0.1'),
-                               total_recorded_attributes: 0)
+                               dropped_attributes_count: 0)
       resource ||= OpenTelemetry::SDK::Resources::Resource.telemetry_sdk
       OpenTelemetry::SDK::Logs::LogRecordData.new(
         timestamp,
@@ -101,7 +101,7 @@ module OpenTelemetry
         trace_flags,
         resource,
         instrumentation_scope,
-        total_recorded_attributes
+        dropped_attributes_count
       )
     end
   end
