@@ -11,7 +11,10 @@ describe OpenTelemetry do
   end
 
   class CustomLogger < OpenTelemetry::Logs::Logger
-    def on_emit(*)
+    attr_reader :emitted
+
+    def on_emit(**args)
+      @emitted = args
       CustomLogRecord.new
     end
   end
@@ -21,7 +24,7 @@ describe OpenTelemetry do
 
     def logger(name:, version: nil)
       @requested = { name: name, version: version }
-      CustomLogger.new
+      @logger ||= CustomLogger.new
     end
   end
 
@@ -77,6 +80,28 @@ describe OpenTelemetry do
       custom_logger_provider = CustomLoggerProvider.new
       OpenTelemetry.logger_provider = custom_logger_provider
       _(custom_logger_provider.requested).must_equal(name: 'component', version: '1.0')
+    end
+
+    it 'forwards log record fields through an upgraded proxy logger' do
+      proxy_logger = OpenTelemetry.logger_provider.logger(name: 'component')
+      custom_logger_provider = CustomLoggerProvider.new
+      OpenTelemetry.logger_provider = custom_logger_provider
+
+      proxy_logger.on_emit(body: 'hello', severity_text: 'WARN', severity_number: 13)
+
+      _(custom_logger_provider.logger(name: 'component').emitted).must_equal(
+        timestamp: nil,
+        observed_timestamp: nil,
+        severity_number: 13,
+        severity_text: 'WARN',
+        body: 'hello',
+        trace_id: nil,
+        span_id: nil,
+        trace_flags: nil,
+        attributes: nil,
+        event_name: nil,
+        context: nil
+      )
     end
   end
 end
