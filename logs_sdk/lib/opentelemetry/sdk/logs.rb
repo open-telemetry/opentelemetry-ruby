@@ -6,6 +6,7 @@
 
 require 'opentelemetry/sdk'
 require 'opentelemetry-logs-api'
+require 'opentelemetry/logs/global'
 
 require_relative 'logs/version'
 require_relative 'logs/configurator_patch'

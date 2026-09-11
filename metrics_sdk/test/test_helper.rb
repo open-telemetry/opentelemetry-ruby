@@ -17,7 +17,7 @@ require 'minitest/autorun'
 # reset_metrics_sdk is a test helper used to clear
 # SDK configuration state between calls
 def reset_metrics_sdk
-  OpenTelemetry.instance_variable_set(
+  OpenTelemetry::Internal.instance_variable_set(
     :@meter_provider,
     OpenTelemetry::Internal::ProxyMeterProvider.new
   )
