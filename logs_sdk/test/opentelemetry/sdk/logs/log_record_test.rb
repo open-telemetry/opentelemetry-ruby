@@ -141,7 +141,7 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
           limits = Logs::LogRecordLimits.new(attribute_count_limit: 2)
           Logs::LogRecord.new(
             log_record_limits: limits,
-            attributes: { 'a' => 'a', 'b' => Class.new, c: 'c' }
+            attributes: { 'a' => 'a', 'b' => Class.new, 'c' => 'c' }
           )
 
           messages = log_stream.string.lines.grep(/Discarded \d+ log record attributes/)
