@@ -9,6 +9,7 @@ module OpenTelemetry
     # InstrumentationScope is a struct containing scope information for export.
     InstrumentationScope = Struct.new(:name,
                                       :version,
+                                      :schema_url,
                                       :attributes)
   end
 end

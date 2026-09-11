@@ -52,6 +52,20 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(snapshot.instrumentation_scope.version).must_equal('1.0')
       _(snapshot.instrumentation_scope.attributes).must_equal(attrs)
     end
+
+    it 'normalizes nil schema_url to empty string' do
+      OpenTelemetry.meter_provider.meter('test').create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.schema_url).must_equal('')
+    end
+
+    it 'propagates schema_url through to exported metric data' do
+      OpenTelemetry.meter_provider.meter('test', schema_url: 'https://opentelemetry.io/schemas/1.30.0').create_counter('a_counter').add(1)
+
+      metric_exporter.pull
+      _(metric_exporter.metric_snapshots[0].instrumentation_scope.schema_url).must_equal('https://opentelemetry.io/schemas/1.30.0')
+    end
   end
 
   describe '#create_counter' do

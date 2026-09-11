@@ -14,7 +14,7 @@ module OpenTelemetry
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
         EMPTY_ATTRIBUTES = {}.freeze
 
-        Key = Struct.new(:name, :version, :attributes)
+        Key = Struct.new(:name, :version, :schema_url, :attributes)
         private_constant(:Key)
 
         attr_reader :resource, :metric_readers, :registered_views, :exemplar_filter
@@ -29,16 +29,16 @@ module OpenTelemetry
           exemplar_filter_setup
         end
 
-        # Returns a {Meter} instance.
-        #
         # @param [String] name Instrumentation scope name
         # @param [optional String] version Instrumentation scope version
+        # @param [optional String] schema_url Schema URL that should be recorded in the emitted telemetry
         # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   Instrumentation scope attributes
         #
         # @return [Meter]
-        def meter(name, version: nil, attributes: nil)
+        def meter(name, version: nil, schema_url: nil, attributes: nil)
           version ||= ''
+          schema_url ||= ''
           attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
 
           if @stopped
@@ -46,7 +46,7 @@ module OpenTelemetry
             OpenTelemetry::Metrics::Meter.new
           else
             OpenTelemetry.logger.warn "Invalid meter name provided: #{name.nil? ? 'nil' : 'empty'} value" if name.to_s.empty?
-            @mutex.synchronize { @meter_registry[Key.new(name, version, attributes)] ||= Meter.new(name, version, self, attributes: attributes) }
+            @mutex.synchronize { @meter_registry[Key.new(name, version, schema_url, attributes)] ||= Meter.new(name, version, schema_url, self, attributes: attributes) }
           end
         end
 
@@ -181,11 +181,11 @@ module OpenTelemetry
         #     unit: A String matching an instrumentation unit, e.g. 'smidgen'
         #     meter_name: A String matching a meter name, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be 'sample_meter_name'
         #     meter_version: A String matching a meter version, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be '1.2.0'
+        #     meter_schema_url: A String matching a meter schema_url, e.g. meter_provider.meter('sample_meter_name', schema_url: 'https://opentelemetry.io/schemas/1.30.0'), would be 'https://opentelemetry.io/schemas/1.30.0'
         #
         # @return [nil] returns nil
         #
         def add_view(name, **)
-          # TODO: add schema_url as part of options
           @registered_views << View::RegisteredView.new(name, **)
           nil
         end
