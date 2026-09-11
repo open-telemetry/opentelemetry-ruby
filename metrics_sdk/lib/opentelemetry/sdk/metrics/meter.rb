@@ -67,6 +67,7 @@ module OpenTelemetry
           raise InstrumentNameError if name.nil?
           raise InstrumentNameError if name.empty?
           raise InstrumentNameError unless NAME_REGEX.match?(name)
+
           unit ||= ''
           description ||= ''
 
@@ -82,7 +83,6 @@ module OpenTelemetry
             end
           end
         end
-
       end
     end
   end
