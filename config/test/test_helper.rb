@@ -16,6 +16,7 @@ require 'opentelemetry/config'
 require 'opentelemetry/test_helpers'
 
 require 'minitest/autorun'
+require 'minitest/mock'
 require 'minitest/spec'
 require 'tempfile'
 
