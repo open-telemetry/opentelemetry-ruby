@@ -203,8 +203,6 @@ describe OpenTelemetry::SDK::Metrics::Meter do
 
   describe 'creating an instrument' do
     INSTRUMENT_NAME_ERROR = OpenTelemetry::Metrics::Meter::InstrumentNameError
-    INSTRUMENT_UNIT_ERROR = OpenTelemetry::Metrics::Meter::InstrumentUnitError
-    INSTRUMENT_DESCRIPTION_ERROR = OpenTelemetry::Metrics::Meter::InstrumentDescriptionError
     DUPLICATE_INSTRUMENT_ERROR = OpenTelemetry::Metrics::Meter::DuplicateInstrumentError
 
     it 'duplicate instrument registration logs a warning' do
@@ -240,25 +238,24 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(-> { meter.create_counter('a!') }).must_raise(INSTRUMENT_NAME_ERROR)
     end
 
-    it 'instrument unit must be ASCII' do
-      _(-> { meter.create_counter('a_counter', unit: 'á') }).must_raise(INSTRUMENT_UNIT_ERROR)
+    it 'allows any instrument unit' do
+      counter = meter.create_counter('a_counter', unit: 'á')
+
+      _(counter.instance_variable_get(:@unit)).must_equal('á')
     end
 
-    it 'instrument unit must not exceed 63 characters' do
-      long_unit = 'a' * 63
-      meter.create_counter('a_counter', unit: long_unit)
-      _(-> { meter.create_counter('b_counter', unit: long_unit + 'a') }).must_raise(INSTRUMENT_UNIT_ERROR)
+    it 'allows any instrument description' do
+      description = 'a' * 1024
+      counter = meter.create_counter('a_counter', description: description)
+
+      _(counter.instance_variable_get(:@description)).must_equal(description)
     end
 
-    it 'instrument description must be utf8mb3' do
-      _(-> { meter.create_counter('a_counter', description: +'💩') }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
-      _(-> { meter.create_counter('b_counter', description: +"\xc2") }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
-    end
+    it 'coerces nil unit and description to empty strings' do
+      counter = meter.create_counter('a_counter')
 
-    it 'instrument description must not exceed 1023 characters' do
-      long_description = 'a' * 1023
-      meter.create_counter('a_counter', description: long_description)
-      _(-> { meter.create_counter('b_counter', description: long_description + 'a') }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
+      _(counter.instance_variable_get(:@unit)).must_equal('')
+      _(counter.instance_variable_get(:@description)).must_equal('')
     end
   end
 end
