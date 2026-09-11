@@ -19,6 +19,14 @@ describe OpenTelemetry::Metrics::Meter do
       end
     end
 
+    it 'case-insensitive duplicate instrument registration logs a warning' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('requestCount')
+        meter.create_counter('RequestCount')
+        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument RequestCount/)
+      end
+    end
+
     it 'test create_counter' do
       counter = meter.create_counter('test')
       _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::Counter)

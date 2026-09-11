@@ -215,6 +215,17 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       end
     end
 
+    it 'uses the first-seen casing for case-insensitive duplicate instrument names' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        first_instrument = meter.create_counter('requestCount')
+        second_instrument = meter.create_counter('RequestCount')
+
+        _(first_instrument.instance_variable_get(:@name)).must_equal('requestCount')
+        _(second_instrument.instance_variable_get(:@name)).must_equal('requestCount')
+        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument RequestCount/)
+      end
+    end
+
     it 'instrument name must not be nil' do
       _(-> { meter.create_counter(nil) }).must_raise(INSTRUMENT_NAME_ERROR)
     end

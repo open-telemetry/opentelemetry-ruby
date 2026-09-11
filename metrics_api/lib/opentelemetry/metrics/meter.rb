@@ -30,6 +30,7 @@ module OpenTelemetry
       def initialize
         @mutex = Mutex.new
         @instrument_registry = {}
+        @instrument_name_registry = {}
       end
 
       # {https://opentelemetry.io/docs/specs/otel/metrics/api/#counter Counter} is a synchronous Instrument which supports non-negative increments.
@@ -255,9 +256,14 @@ module OpenTelemetry
 
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
         @mutex.synchronize do
-          OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
+          registry_key = name.is_a?(String) ? name.downcase : name
+          registered_name = @instrument_name_registry[registry_key]
 
-          @instrument_registry[name] = yield
+          OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if registered_name
+
+          instrument_name = registered_name || name
+          @instrument_name_registry[registry_key] = instrument_name
+          @instrument_registry[registry_key] = yield(instrument_name)
         end
       end
     end

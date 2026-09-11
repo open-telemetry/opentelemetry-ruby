@@ -39,17 +39,17 @@ module OpenTelemetry
       private
 
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
-        super do
-          next ProxyInstrument.new(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir) if @delegate.nil?
+        super do |instrument_name|
+          next ProxyInstrument.new(kind, instrument_name, unit, description, callback, exemplar_filter, exemplar_reservoir) if @delegate.nil?
 
           case kind
-          when :counter then @delegate.create_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :histogram then @delegate.create_histogram(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :gauge then @delegate.create_gauge(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
-          when :observable_gauge then @delegate.create_observable_gauge(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
-          when :observable_up_down_counter then @delegate.create_observable_up_down_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
+          when :counter then @delegate.create_counter(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
+          when :histogram then @delegate.create_histogram(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
+          when :up_down_counter then @delegate.create_up_down_counter(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
+          when :gauge then @delegate.create_gauge(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
+          when :observable_counter then @delegate.create_observable_counter(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
+          when :observable_gauge then @delegate.create_observable_gauge(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
+          when :observable_up_down_counter then @delegate.create_observable_up_down_counter(instrument_name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
           end
         end
       end
