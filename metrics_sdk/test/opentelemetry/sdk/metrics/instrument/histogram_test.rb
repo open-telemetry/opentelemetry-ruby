@@ -35,4 +35,23 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     _(last_snapshot[0].data_points[0].attributes).must_equal('foo' => 'bar')
     _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
+
+  describe 'with exponential buckets configured' do
+    before do
+      @original_env = ENV['OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION']
+      ENV['OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION'] = 'base2_exponential_bucket_histogram'
+    end
+
+    after do
+      ENV['OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION'] = @original_env
+    end
+
+    it 'uses exponential bucket aggregation' do
+      histogram.record(5, attributes: { 'foo' => 'bar' })
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+      
+      _(last_snapshot[0].data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
+    end
+  end
 end
