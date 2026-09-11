@@ -124,38 +124,51 @@ module OpenTelemetry
           return if attributes.nil?
 
           # truncate total attributes
-          truncate_attributes(attributes, @log_record_limits.attribute_count_limit)
+          discarded_attributes = truncate_attributes(
+            attributes,
+            @log_record_limits.attribute_count_limit
+          )
 
           # truncate attribute values
           truncate_attribute_values(attributes, @log_record_limits.attribute_length_limit)
 
           # validate attributes
-          validate_attributes(attributes)
+          discarded_attributes += validate_attributes(attributes)
+
+          if discarded_attributes.positive?
+            OpenTelemetry.handle_error(
+              message: "Discarded #{discarded_attributes} log record attributes due to limits or invalid values"
+            )
+          end
 
           nil
         end
 
         def truncate_attributes(attributes, attribute_limit)
           excess = attributes.size - attribute_limit
-          excess.times { attributes.shift } if excess.positive?
+          return 0 unless excess.positive?
+
+          excess.times { attributes.shift }
+          excess
         end
 
         def validate_attributes(attrs)
           # Similar to Internal.valid_attributes?, but with different messages
           # Future refactor opportunity: https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
+          discarded_attributes = 0
           attrs.keep_if do |k, v|
             if !Internal.valid_key?(k)
-              OpenTelemetry.handle_error(message: "Invalid log record attribute key type #{k.class} for " \
-                                                  "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
-              return false
+              discarded_attributes += 1
+              false
             elsif !Internal.valid_value?(v)
-              OpenTelemetry.handle_error(message: "Invalid log record attribute value type #{v.class} for key '#{k}' " \
-                                                  "on record: '#{body}'. Dropping attribute.")
-              return false
+              discarded_attributes += 1
+              false
             end
 
             true
           end
+
+          discarded_attributes
         end
 
         def truncate_attribute_values(attributes, attribute_length_limit)
