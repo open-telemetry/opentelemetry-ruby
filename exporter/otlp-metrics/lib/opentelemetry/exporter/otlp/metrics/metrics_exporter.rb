@@ -26,8 +26,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        # rubocop:disable Metrics/ClassLength
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
           include Util
 
           attr_reader :metric_snapshots
@@ -37,6 +36,7 @@ module OpenTelemetry
           private_constant(:SUCCESS, :FAILURE)
 
           # rubocop:disable Lint/DuplicateBranch
+          # Returns the SSL verify mode configured via environment variables.
           def self.ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
@@ -92,11 +92,17 @@ module OpenTelemetry
 
           # metrics Array[MetricData]
           def export(metrics, timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring export request')
+              return FAILURE
+            end
+
             @mutex.synchronize do
               send_bytes(encode(metrics), timeout: timeout)
             end
           end
 
+          # Sends the encoded request bytes to the configured OTLP endpoint.
           def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
@@ -191,6 +197,7 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
+          # Encodes metrics_data into a serialized ExportMetricsServiceRequest.
           def encode(metrics_data)
             json = @content_type == 'application/json'
             payload = as_export_metrics_service_request(metrics_data, json)
@@ -204,6 +211,7 @@ module OpenTelemetry
             nil
           end
 
+          # Builds the ExportMetricsServiceRequest for the given metrics data.
           def as_export_metrics_service_request(metrics_data, json)
             Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
               resource_metrics: metrics_data.group_by(&:resource).map do |resource, scope_metrics|
@@ -261,6 +269,7 @@ module OpenTelemetry
             end
           end
 
+          # Converts an SDK aggregation temporality symbol to its OTLP proto enum value.
           def as_otlp_aggregation_temporality(type)
             case type
             when :delta then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
@@ -269,6 +278,7 @@ module OpenTelemetry
             end
           end
 
+          # Builds an OTLP Metric for either histogram or exponential histogram data points.
           def histogram_data_point(metrics, json)
             return if metrics.data_points.empty?
 
@@ -295,6 +305,7 @@ module OpenTelemetry
             end
           end
 
+          # Converts a {HistogramDataPoint} to its OTLP proto representation.
           def explicit_histogram_data_point(hdp, json)
             Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
               attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
@@ -306,10 +317,12 @@ module OpenTelemetry
               explicit_bounds: hdp.explicit_bounds,
               exemplars: as_otlp_exemplars(hdp.exemplars, json),
               min: hdp.min,
-              max: hdp.max
+              max: hdp.max,
+              flags: hdp.flags
             )
           end
 
+          # Converts an {ExponentialHistogramDataPoint} to its OTLP proto representation.
           def exponential_histogram_data_point(ehdp, json)
             Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
               attributes: ehdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
@@ -335,12 +348,14 @@ module OpenTelemetry
             )
           end
 
+          # Converts a {NumberDataPoint} to its OTLP proto representation.
           def number_data_point(ndp, json)
             args = {
               attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
               start_time_unix_nano: ndp.start_time_unix_nano,
               time_unix_nano: ndp.time_unix_nano,
-              exemplars: as_otlp_exemplars(ndp.exemplars, json)
+              exemplars: as_otlp_exemplars(ndp.exemplars, json),
+              flags: ndp.flags
             }
 
             if ndp.value.is_a?(Float)
@@ -352,10 +367,12 @@ module OpenTelemetry
             Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
           end
 
+          # Converts a list of SDK exemplars to their OTLP proto representation.
           def as_otlp_exemplars(exemplars, json)
             exemplars&.map { |ex| as_otlp_exemplar(ex, json) } || []
           end
 
+          # Converts a single SDK exemplar to its OTLP proto representation.
           def as_otlp_exemplar(exemplar, json)
             args = {
               time_unix_nano: exemplar.time_unix_nano,
@@ -391,16 +408,22 @@ module OpenTelemetry
             SUCCESS
           end
 
+          # No-op: there is nothing to flush for this exporter.
           def force_flush(timeout: nil)
             SUCCESS
           end
 
+          # Marks this exporter as shut down so subsequent exports fail.
           def shutdown(timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring call')
+              return
+            end
+
             @shutdown = true
             SUCCESS
           end
         end
-        # rubocop:enable Metrics/ClassLength
       end
     end
   end

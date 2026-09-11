@@ -38,7 +38,7 @@ module OpenTelemetry
 
           DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Logs::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
-          # rubocop:disable Lint/DuplicateBranch
+          # rubocop:disable-next Lint/DuplicateBranch
           def self.ssl_verify_mode
             if ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER'] == 'true'
               OpenSSL::SSL::VERIFY_PEER
@@ -48,9 +48,8 @@ module OpenTelemetry
               OpenSSL::SSL::VERIFY_PEER
             end
           end
-          # rubocop:enable Lint/DuplicateBranch
 
-          # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          # rubocop:disable-next Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/logs'),
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                          client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
@@ -80,7 +79,6 @@ module OpenTelemetry
             @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
-          # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
           # Called to export sampled {OpenTelemetry::SDK::Logs::LogRecordData} structs.
           #
@@ -163,7 +161,7 @@ module OpenTelemetry
             timeout ||= @timeout
             start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
 
-            # rubocop:disable Lint/DuplicateBranch
+            # rubocop:disable-next Lint/DuplicateBranch
             around_request do
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return FAILURE if remaining_timeout.zero?
@@ -231,7 +229,6 @@ module OpenTelemetry
               OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
               return FAILURE
             end
-            # rubocop:enable Lint/DuplicateBranch
           ensure
             # Reset timeouts to defaults for the next call.
             @http.open_timeout = @timeout

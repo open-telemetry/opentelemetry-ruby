@@ -71,12 +71,13 @@ ignoreWords:
   - opentelemetrybot
   - otelbot
 words:
+  - artipacked
   - autocorrection
   - bigdecimal
   - cadvisor
   - configurator
   - confluentinc
-  - environtment # temporary, just to get through first renovate semconv release.
+  - dotenv
   - linkspector
   - loggregator
   - LOGRECORD
@@ -84,3 +85,4 @@ words:
   - semconv
   - traceid
   - tracestate
+  - zizmor

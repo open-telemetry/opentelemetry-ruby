@@ -82,7 +82,7 @@ module OpenTelemetry
 
         private
 
-        def as_otlp_span(span_data, format)
+        def as_otlp_span(span_data, format = :protobuf) # rubocop:disable Metrics/MethodLength
           parent_span_id = span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: format_id(span_data.trace_id, format),
@@ -95,36 +95,54 @@ module OpenTelemetry
             end_time_unix_nano: span_data.end_timestamp,
             attributes: span_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
             dropped_attributes_count: span_data.total_recorded_attributes - span_data.attributes&.size.to_i,
-            events: span_data.events&.map { |event| as_otlp_span_event(event) },
+            events: span_data.events&.map do |event|
+              Opentelemetry::Proto::Trace::V1::Span::Event.new(
+                time_unix_nano: event.timestamp,
+                name: event.name,
+                attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) }
+                # TODO: track dropped_attributes_count in Span#append_event
+              )
+            end,
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
-            links: span_data.links&.map { |link| as_otlp_span_link(link, format) },
+            links: span_data.links&.map do |link|
+              Opentelemetry::Proto::Trace::V1::Span::Link.new(
+                trace_id: format_id(link.span_context.trace_id, format),
+                span_id: format_id(link.span_context.span_id, format),
+                trace_state: link.span_context.tracestate.to_s,
+                attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
+                # TODO: track dropped_attributes_count in Span#trim_links
+                flags: build_span_flags(link.span_context.remote?, link.span_context.trace_flags)
+              )
+            end,
             dropped_links_count: span_data.total_recorded_links - span_data.links&.size.to_i,
             status: span_data.status&.then do |status|
               Opentelemetry::Proto::Trace::V1::Status.new(
                 code: as_otlp_status_code(status.code),
                 message: status.description
               )
+            end,
+            flags: build_span_flags(span_data.parent_span_is_remote, span_data.trace_flags)
+          )
+        end
+
+        # Builds span flags based on whether the parent span context is remote.
+        # This follows the OTLP specification for span flags.
+        def build_span_flags(parent_span_is_remote, base_flags)
+          # Extract integer value from TraceFlags object if needed
+          # Derive the low 8-bit W3C trace flags using the public API.
+          base_flags_int =
+            if base_flags.sampled?
+              1
+            else
+              0
             end
-          )
-        end
 
-        def as_otlp_span_event(event)
-          Opentelemetry::Proto::Trace::V1::Span::Event.new(
-            time_unix_nano: event.timestamp,
-            name: event.name,
-            attributes: event.attributes&.map { |k, v| as_otlp_key_value(k, v) }
-            # TODO: track dropped_attributes_count in Span#append_event
-          )
-        end
+          has_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+          is_remote_mask = Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
 
-        def as_otlp_span_link(link, format)
-          Opentelemetry::Proto::Trace::V1::Span::Link.new(
-            trace_id: format_id(link.span_context.trace_id, format),
-            span_id: format_id(link.span_context.span_id, format),
-            trace_state: link.span_context.tracestate.to_s,
-            attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) }
-            # TODO: track dropped_attributes_count in Span#trim_links
-          )
+          flags = base_flags_int | has_remote_mask
+          flags |= is_remote_mask if parent_span_is_remote
+          flags
         end
 
         # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.

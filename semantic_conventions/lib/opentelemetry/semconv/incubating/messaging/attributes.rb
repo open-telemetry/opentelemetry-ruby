@@ -50,8 +50,8 @@ module OpenTelemetry
 
         # The message destination name
         #
-        # Destination name SHOULD uniquely identify a specific queue, topic or other entity within the broker. If
-        # the broker doesn't have such notion, the destination name SHOULD uniquely identify the broker.
+        # SHOULD uniquely identify a specific queue, topic or other entity within the broker. If
+        # the broker doesn't have such notion, it SHOULD uniquely identify the broker.
         #
         # @note Stability Level: development
         MESSAGING_DESTINATION_NAME = 'messaging.destination.name'
@@ -70,7 +70,7 @@ module OpenTelemetry
 
         # Low cardinality representation of the messaging destination name
         #
-        # Destination names could be constructed from templates. An example would be a destination name involving a user name or product id. Although the destination name in this case is of high cardinality, the underlying template is of low cardinality and can be effectively used for grouping and aggregation.
+        # Destination names could be constructed from templates. An example would be a destination name involving a username or product ID. Although the destination name in this case is of high cardinality, the underlying template is of low cardinality and can be effectively used for grouping and aggregation.
         #
         # @note Stability Level: development
         MESSAGING_DESTINATION_TEMPLATE = 'messaging.destination.template'
@@ -108,7 +108,7 @@ module OpenTelemetry
         # @note Stability Level: development
         MESSAGING_GCP_PUBSUB_MESSAGE_ACK_DEADLINE = 'messaging.gcp_pubsub.message.ack_deadline'
 
-        # The ack id for a given message.
+        # The ack ID for a given message.
         #
         # @note Stability Level: development
         MESSAGING_GCP_PUBSUB_MESSAGE_ACK_ID = 'messaging.gcp_pubsub.message.ack_id'
@@ -123,6 +123,13 @@ module OpenTelemetry
         # @note Stability Level: development
         MESSAGING_GCP_PUBSUB_MESSAGE_ORDERING_KEY = 'messaging.gcp_pubsub.message.ordering_key'
 
+        # The Kafka cluster ID, obtained from the broker metadata exposed through the Kafka client (or AdminClient) API.
+        #
+        # The cluster ID is a unique identifier reported by the Kafka broker. It identifies the cluster independently of the individual brokers the client is configured to connect to, and remains stable even if broker hostnames, IP addresses, or ports change.
+        #
+        # @note Stability Level: development
+        MESSAGING_KAFKA_CLUSTER_ID = 'messaging.kafka.cluster.id'
+
         # Deprecated, use `messaging.consumer.group.name` instead.
         #
         # @note Stability Level: development
@@ -132,7 +139,7 @@ module OpenTelemetry
         # Deprecated, use `messaging.destination.partition.id` instead.
         #
         # @note Stability Level: development
-        # @deprecated Record string representation of the partition id in `messaging.destination.partition.id` attribute.
+        # @deprecated Record string representation of the partition ID in `messaging.destination.partition.id` attribute.
         MESSAGING_KAFKA_DESTINATION_PARTITION = 'messaging.kafka.destination.partition'
 
         # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message.id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set.
@@ -238,7 +245,7 @@ module OpenTelemetry
         # @note Stability Level: development
         MESSAGING_ROCKETMQ_MESSAGE_GROUP = 'messaging.rocketmq.message.group'
 
-        # Key(s) of message, another way to mark message besides message id.
+        # Key(s) of message, another way to mark message besides message ID.
         #
         # @note Stability Level: development
         MESSAGING_ROCKETMQ_MESSAGE_KEYS = 'messaging.rocketmq.message.keys'

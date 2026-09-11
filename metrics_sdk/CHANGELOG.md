@@ -1,5 +1,18 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.18.0 / 2026-09-09
+
+* BREAKING CHANGE: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
+* FIXED: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
+
+### v0.17.0 / 2026-09-01
+
+* ADDED: Add flags to metrics data model (#2302)
+
+### v0.16.0 / 2026-08-04
+
+* ADDED: Add attributes to Meter InstrumentationScope (#2273)
+
 ### v0.15.0 / 2026-06-16
 
 * BREAKING CHANGE: Metrics cardinality limit (#1909)

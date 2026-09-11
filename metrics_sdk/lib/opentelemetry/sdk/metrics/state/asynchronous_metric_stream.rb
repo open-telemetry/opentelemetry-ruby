@@ -49,6 +49,7 @@ module OpenTelemetry
             super
           end
 
+          # Invokes each registered callback and records its observed value(s).
           def invoke_callback(timeout, attributes)
             if @registered_views.empty?
 

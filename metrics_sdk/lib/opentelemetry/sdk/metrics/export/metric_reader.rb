@@ -18,14 +18,17 @@ module OpenTelemetry
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
           end
 
+          # Collects and returns the current metrics from the metric store.
           def collect
             @metric_store.collect
           end
 
+          # No-op: subclasses should override to release resources.
           def shutdown(timeout: nil)
             Export::SUCCESS
           end
 
+          # No-op: subclasses should override to force an export.
           def force_flush(timeout: nil)
             Export::SUCCESS
           end

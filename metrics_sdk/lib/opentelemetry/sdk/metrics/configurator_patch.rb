@@ -10,6 +10,7 @@ module OpenTelemetry
       # The ConfiguratorPatch implements a hook to configure the metrics
       # portion of the SDK.
       module ConfiguratorPatch
+        # Registers a metric reader with the configured meter provider.
         def add_metric_reader(metric_reader)
           @metric_readers << metric_reader
         end
@@ -38,7 +39,12 @@ module OpenTelemetry
           exporters.split(',').map do |exporter|
             case exporter.strip
             when 'none' then nil
-            when 'console' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: Metrics::Export::ConsoleMetricPullExporter.new))
+            when 'console'
+              default_console_interval = ENV['OTEL_METRIC_EXPORT_INTERVAL'] || 10_000
+              OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(
+                                                               export_interval_millis: Float(default_console_interval),
+                                                               exporter: Metrics::Export::ConsoleMetricPullExporter.new
+                                                             ))
             when 'in-memory' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
             when 'otlp'
               begin

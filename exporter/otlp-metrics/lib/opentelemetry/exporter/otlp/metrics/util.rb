@@ -15,6 +15,7 @@ module OpenTelemetry
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           DEFAULT_USER_AGENT = "OTel-OTLP-MetricsExporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
+          # Builds a configured Net::HTTP connection for the given URI.
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
             http = Net::HTTP.new(uri.hostname, uri.port)
             http.use_ssl = uri.scheme == 'https'
@@ -26,10 +27,12 @@ module OpenTelemetry
             http
           end
 
+          # Yields the block with OpenTelemetry instrumentation suppressed.
           def around_request
             OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
           end
 
+          # Converts a key/value pair to an OTLP proto KeyValue.
           def as_otlp_key_value(key, value)
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
           rescue Encoding::UndefinedConversionError => e
@@ -38,6 +41,7 @@ module OpenTelemetry
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
           end
 
+          # Converts a Ruby value to its OTLP proto AnyValue representation.
           def as_otlp_any_value(value)
             result = Opentelemetry::Proto::Common::V1::AnyValue.new
             case value
@@ -56,6 +60,7 @@ module OpenTelemetry
             result
           end
 
+          # Normalizes config_headers into a Hash, appending the default User-Agent.
           def prepare_headers(config_headers)
             headers = case config_headers
                       when String then parse_headers(config_headers)
@@ -69,6 +74,7 @@ module OpenTelemetry
             headers
           end
 
+          # Parses a comma-separated, URL-encoded header string into a Hash.
           def parse_headers(raw)
             entries = raw.split(',')
             raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
@@ -89,6 +95,7 @@ module OpenTelemetry
             end
           end
 
+          # Sleeps for a computed backoff interval and returns whether a retry should happen.
           def backoff?(retry_count:, reason:, retry_after: nil)
             return false if retry_count > RETRY_COUNT
 
@@ -110,6 +117,7 @@ module OpenTelemetry
             true
           end
 
+          # Decodes and logs an rpc.Status error response body.
           def log_status(body)
             status = Google::Rpc::Status.decode(body)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
@@ -123,6 +131,7 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
           end
 
+          # No-op: HTTP redirects are not followed.
           def handle_redirect(location); end
         end
       end

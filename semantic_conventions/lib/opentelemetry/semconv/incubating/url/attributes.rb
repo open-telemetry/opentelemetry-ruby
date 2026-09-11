@@ -33,7 +33,7 @@ module OpenTelemetry
 
         # The file extension extracted from the `url.full`, excluding the leading dot.
         #
-        # The file extension is only set if it exists, as not every url has a file extension. When the file name has multiple extensions `example.tar.gz`, only the last one should be captured `gz`, not `tar.gz`.
+        # The file extension is only set if it exists, as not every URL has a file extension. When the filename has multiple extensions `example.tar.gz`, only the last one should be captured `gz`, not `tar.gz`.
         #
         # @note Stability Level: development
         URL_EXTENSION = 'url.extension'
@@ -141,7 +141,7 @@ module OpenTelemetry
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_QUERY}.
         URL_QUERY = 'url.query'
 
-        # The highest registered url domain, stripped of the subdomain.
+        # The highest registered URL domain, stripped of the subdomain.
         #
         # This value can be determined precisely with the [public suffix list](https://publicsuffix.org/). For example, the registered domain for `foo.example.com` is `example.com`. Trying to approximate this by simply taking the last two labels will not work well for TLDs such as `co.uk`.
         #
@@ -155,7 +155,7 @@ module OpenTelemetry
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::URL::URL_SCHEME}.
         URL_SCHEME = 'url.scheme'
 
-        # The subdomain portion of a fully qualified domain name includes all of the names except the host name under the registered_domain. In a partially qualified domain, or if the qualification level of the full name cannot be determined, subdomain contains all of the names below the registered domain.
+        # The subdomain portion of a fully qualified domain name includes all of the names except the hostname under the registered_domain. In a partially qualified domain, or if the qualification level of the full name cannot be determined, subdomain contains all of the names below the registered domain.
         #
         # The subdomain portion of `www.east.mydomain.co.uk` is `east`. If the domain has multiple levels of subdomain, such as `sub2.sub1.example.com`, the subdomain field should contain `sub2.sub1`, with no trailing period.
         #

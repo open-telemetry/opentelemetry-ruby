@@ -10,7 +10,7 @@ module OpenTelemetry
       module Aggregation
         # Contains the implementation of the ExplicitBucketHistogram aggregation
         # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/metrics/sdk.md#explicit-bucket-histogram-aggregation
-        class ExplicitBucketHistogram
+        class ExplicitBucketHistogram # rubocop:disable Metrics/ClassLength
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
           attr_reader :exemplar_reservoir
 
@@ -34,6 +34,7 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
+          # Returns the current histogram data points, clearing them for delta temporality.
           def collect(start_time, end_time, data_points)
             if @aggregation_temporality.delta?
               # Set timestamps and 'move' data point values to result.
@@ -60,6 +61,7 @@ module OpenTelemetry
             end
           end
 
+          # Records amount into the histogram bucket for the given attributes.
           def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
             hdp = if data_points.key?(attributes)
                     data_points[attributes]
@@ -73,6 +75,7 @@ module OpenTelemetry
             nil
           end
 
+          # Returns the configured aggregation temporality (:delta or :cumulative).
           def aggregation_temporality
             @aggregation_temporality.temporality
           end
@@ -93,6 +96,7 @@ module OpenTelemetry
               0,                   # :sum
               empty_bucket_counts, # :bucket_counts
               @boundaries,         # :explicit_bounds
+              0,                   # :flags
               nil,                 # :exemplars
               min,                 # :min
               max                  # :max

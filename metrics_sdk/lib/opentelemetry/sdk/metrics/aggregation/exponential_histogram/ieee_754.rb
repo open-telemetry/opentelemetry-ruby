@@ -25,11 +25,13 @@ module OpenTelemetry
             MIN_NORMAL_VALUE = Float::MIN
             MAX_NORMAL_VALUE = Float::MAX
 
+            # Returns the unbiased IEEE 754 exponent of value.
             def self.get_ieee_754_exponent(value)
               bits = [value].pack('d').unpack1('Q')
               ((bits & EXPONENT_MASK) >> MANTISSA_WIDTH) - EXPONENT_BIAS
             end
 
+            # Returns the IEEE 754 mantissa bits of value.
             def self.get_ieee_754_mantissa(value)
               bits = [value].pack('d').unpack1('Q')
               bits & MANTISSA_MASK

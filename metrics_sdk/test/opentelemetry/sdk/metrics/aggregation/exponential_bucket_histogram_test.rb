@@ -62,6 +62,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[1].zero_threshold).must_equal(0)
     end
 
+    it 'includes flags on the collected data point' do
+      expbh.update(1.03, {}, data_points, cardinality_limit)
+      exphdps = expbh.collect(start_time, end_time, data_points)
+      _(exphdps[0]).must_respond_to(:flags)
+      _(exphdps[0].flags).must_equal(0)
+    end
+
     it 'rescales with alternating growth 0' do
       # Tests insertion of [2, 4, 1]. The index of 2 (i.e., 0) becomes
       # `indexBase`, the 4 goes to its right and the 1 goes in the last

@@ -11,6 +11,7 @@ module OpenTelemetry
         # TraceBasedExemplarFilter is an ExemplarFilter which makes measurements recorded
         # in the context of a sampled parent span eligible for being an Exemplar
         class TraceBasedExemplarFilter < ExemplarFilter
+          # Returns whether the measurement's context has a sampled parent span.
           def self.should_sample?(value, timestamp, attributes, context)
             current_span = ::OpenTelemetry::Trace.current_span(context)
             span_content = current_span.context
