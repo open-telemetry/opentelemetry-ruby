@@ -54,6 +54,19 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
         _(exemplar.trace_id.unpack1('H*')).must_equal '77cb6ccc522d310611014dd6ecbb70036a'
       end
     end
+
+    it 'supports concurrent offers' do
+      threads = 10.times.map do |thread_index|
+        Thread.new do
+          100.times do |i|
+            reservoir.offer(value: thread_index * 100 + i, timestamp: timestamp, attributes: attributes, context: context)
+          end
+        end
+      end
+      threads.each(&:join)
+
+      _(reservoir.collect.size).must_equal max_size
+    end
   end
 
   describe '#collect' do
