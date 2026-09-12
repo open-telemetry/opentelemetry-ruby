@@ -15,13 +15,14 @@ module OpenTelemetry
           extend self
 
           # Builds a url using the endpoint defined and if not present uses the configured sources
-          def build_uri(endpoint, path = '', primary_src = '', secondary_src = '', default = nil)
-            env_endpoint = OpenTelemetry::Common::Utilities.config_opt(primary_src, secondary_src, default: default) unless endpoint
-            endpoint ||= env_endpoint
-            raise ArgumentError, "invalid url for OTLPExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
+          def build_uri(endpoint, path = '', primary_src = '', secondary_src = 'OTEL_EXPORTER_OTLP_ENDPOINT', default = 'http://localhost:4318/')
+            endpoint ||= ENV.fetch(primary_src)
+            raise ArgumentError, "invalid url for OTLPExporter #{endpoint} set via #{primary_src}" unless endpoint.nil? || OpenTelemetry::Common::Utilities.valid_url?(endpoint)
 
-            if !env_endpoint.nil? && env_endpoint != ENV[primary_src]
-              env_endpoint += '/' unless env_endpoint.end_with?('/')
+            if endpoint.nil?
+              endpoint ||= ENV.fetch(secondary_src, default)
+              raise ArgumentError, "invalid url for OTLPExporter #{endpoint} set via #{secondary_src}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
+              endpoint += '/' unless env_endpoint.end_with?('/')
               URI.join(env_endpoint, path)
             else
               URI(endpoint)
