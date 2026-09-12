@@ -26,10 +26,19 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format to encode to, either +:protobuf+
+        #   (default, protobuf-encoded) or +:json+ (spec-compliant OTLP/JSON with
+        #   hex ids and integer enums).
         #
         # @return [String] returns an encoded ETSR of the provided span data
-        def as_encoded_etsr(span_data)
-          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(as_etsr(span_data))
+        def as_encoded_etsr(span_data, format: :protobuf)
+          etsr = as_etsr(span_data, format:)
+          if format == :json
+            # Spec-compliant OTLP/JSON: hex ids (see #format_id) and integer enums.
+            etsr.to_json(format_enums_as_integers: true)
+          else
+            Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(etsr)
+          end
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_etsr')
           nil
@@ -40,10 +49,13 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format the ETSR is destined for, either
+        #   +:protobuf+ (default) or +:json+. Controls how ids are formatted
+        #   (binary for protobuf, hex for JSON).
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
         #   returns an ETSR of the provided span data
-        def as_etsr(span_data)
+        def as_etsr(span_data, format: :protobuf)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
                             .group_by(&:resource)
@@ -60,7 +72,7 @@ module OpenTelemetry
                                                    name: il.name,
                                                    version: il.version
                                                  ),
-                                                 spans: sds.map { |sd| as_otlp_span(sd) }
+                                                 spans: sds.map { |sd| as_otlp_span(sd, format) }
                                                )
                                              end
                               )
@@ -70,12 +82,13 @@ module OpenTelemetry
 
         private
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
+        def as_otlp_span(span_data, format = :protobuf) # rubocop:disable Metrics/MethodLength
+          parent_span_id = span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id
           Opentelemetry::Proto::Trace::V1::Span.new(
-            trace_id: span_data.trace_id,
-            span_id: span_data.span_id,
+            trace_id: format_id(span_data.trace_id, format),
+            span_id: format_id(span_data.span_id, format),
             trace_state: span_data.tracestate.to_s,
-            parent_span_id: span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id,
+            parent_span_id: format_id(parent_span_id, format),
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
             start_time_unix_nano: span_data.start_timestamp,
@@ -93,8 +106,8 @@ module OpenTelemetry
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
             links: span_data.links&.map do |link|
               Opentelemetry::Proto::Trace::V1::Span::Link.new(
-                trace_id: link.span_context.trace_id,
-                span_id: link.span_context.span_id,
+                trace_id: format_id(link.span_context.trace_id, format),
+                span_id: format_id(link.span_context.span_id, format),
                 trace_state: link.span_context.tracestate.to_s,
                 attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
                 # TODO: track dropped_attributes_count in Span#trim_links
@@ -130,6 +143,16 @@ module OpenTelemetry
           flags = base_flags_int | has_remote_mask
           flags |= is_remote_mask if parent_span_is_remote
           flags
+        end
+
+        # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
+        # For the JSON path, applying initial base64 decoding to the hex string
+        # yields bytes that protobuf re-encodes back into that hex string.
+        def format_id(id_bytes, format)
+          return id_bytes unless format == :json
+          return id_bytes if id_bytes.nil? || id_bytes.empty?
+
+          id_bytes.unpack1('H*').unpack1('m0')
         end
 
         def as_otlp_status_code(code)
