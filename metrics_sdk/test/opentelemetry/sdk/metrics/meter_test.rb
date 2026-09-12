@@ -222,8 +222,31 @@ describe OpenTelemetry::SDK::Metrics::Meter do
 
         _(first_instrument.instance_variable_get(:@name)).must_equal('requestCount')
         _(second_instrument.instance_variable_get(:@name)).must_equal('requestCount')
+        _(second_instrument).must_be_same_as(first_instrument)
         _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument RequestCount/)
       end
+    end
+
+    it 'keeps different instrument kinds functional when names differ only in casing' do
+      counter = meter.create_counter('requestCount')
+      histogram = meter.create_histogram('RequestCount')
+
+      _(histogram).must_be_instance_of(OpenTelemetry::SDK::Metrics::Instrument::Histogram)
+      _(histogram.instance_variable_get(:@name)).must_equal('requestCount')
+      _(meter.create_counter('REQUESTCOUNT')).must_be_same_as(counter)
+      _(meter.create_histogram('REQUESTCOUNT')).must_be_same_as(histogram)
+      counter.add(1)
+      histogram.record(1)
+    end
+
+    it 'does not reuse instruments with different units or descriptions' do
+      counter = meter.create_counter('requestCount', unit: 's', description: 'first')
+      other_unit = meter.create_counter('RequestCount', unit: 'ms', description: 'first')
+      other_description = meter.create_counter('REQUESTCOUNT', unit: 's', description: 'second')
+
+      _(other_unit).wont_be_same_as(counter)
+      _(other_description).wont_be_same_as(counter)
+      _(meter.create_counter('RequestCount', unit: 's', description: 'first')).must_be_same_as(counter)
     end
 
     it 'instrument name must not be nil' do

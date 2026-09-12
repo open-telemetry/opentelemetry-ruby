@@ -256,14 +256,15 @@ module OpenTelemetry
 
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
         @mutex.synchronize do
-          registry_key = name.is_a?(String) ? name.downcase : name
-          registered_name = @instrument_name_registry[registry_key]
+          name_key = name.is_a?(String) ? name.downcase : name
+          registered_name = @instrument_name_registry[name_key]
 
           OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if registered_name
 
           instrument_name = registered_name || name
-          @instrument_name_registry[registry_key] = instrument_name
-          @instrument_registry[registry_key] = yield(instrument_name)
+          @instrument_name_registry[name_key] = instrument_name
+          registry_key = [name_key, kind, unit, description, callback, exemplar_filter, exemplar_reservoir]
+          @instrument_registry[registry_key] ||= yield(instrument_name)
         end
       end
     end
