@@ -20,10 +20,10 @@ module OpenTelemetry
             raise ArgumentError, "invalid url for OTLPExporter #{endpoint} set via #{primary_src}" unless endpoint.nil? || OpenTelemetry::Common::Utilities.valid_url?(endpoint)
 
             if endpoint.nil?
-              endpoint ||= ENV.fetch(secondary_src, default)
+              endpoint = ENV.fetch(secondary_src, default)
               raise ArgumentError, "invalid url for OTLPExporter #{endpoint} set via #{secondary_src}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
-              endpoint += '/' unless env_endpoint.end_with?('/')
-              URI.join(env_endpoint, path)
+              endpoint += '/' unless endpoint.end_with?('/')
+              URI.join(endpoint, path)
             else
               URI(endpoint)
             end
