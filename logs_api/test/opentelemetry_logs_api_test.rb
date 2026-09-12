@@ -11,14 +11,20 @@ describe OpenTelemetry do
   end
 
   class CustomLogger < OpenTelemetry::Logs::Logger
-    def on_emit(*)
+    attr_reader :emitted
+
+    def on_emit(**args)
+      @emitted = args
       CustomLogRecord.new
     end
   end
 
   class CustomLoggerProvider < OpenTelemetry::Logs::LoggerProvider
-    def logger(name = nil, version = nil)
-      CustomLogger.new
+    attr_reader :requested
+
+    def logger(name:, version: nil)
+      @requested = { name: name, version: version }
+      @logger ||= CustomLogger.new
     end
   end
 
@@ -51,13 +57,13 @@ describe OpenTelemetry do
     end
 
     it 'has a default proxy logger' do
-      refute_nil OpenTelemetry.logger_provider.logger
+      refute_nil OpenTelemetry.logger_provider.logger(name: 'component')
     end
 
     it 'upgrades default loggers to *real* loggers' do
       # proxy loggers do not emit any log records, nor does the API logger
       # the on_emit method is empty
-      default_logger = OpenTelemetry.logger_provider.logger
+      default_logger = OpenTelemetry.logger_provider.logger(name: 'component')
       _(default_logger.on_emit(body: 'test')).must_be_instance_of(NilClass)
       OpenTelemetry.logger_provider = CustomLoggerProvider.new
       _(default_logger.on_emit(body: 'test')).must_be_instance_of(CustomLogRecord)
@@ -66,7 +72,36 @@ describe OpenTelemetry do
     it 'upgrades the default logger provider to a *real* logger provider' do
       default_logger_provider = OpenTelemetry.logger_provider
       OpenTelemetry.logger_provider = CustomLoggerProvider.new
-      _(default_logger_provider.logger).must_be_instance_of(CustomLogger)
+      _(default_logger_provider.logger(name: 'component')).must_be_instance_of(CustomLogger)
+    end
+
+    it 'passes the instrumentation scope through when upgrading a proxy logger' do
+      OpenTelemetry.logger_provider.logger(name: 'component', version: '1.0')
+      custom_logger_provider = CustomLoggerProvider.new
+      OpenTelemetry.logger_provider = custom_logger_provider
+      _(custom_logger_provider.requested).must_equal(name: 'component', version: '1.0')
+    end
+
+    it 'forwards log record fields through an upgraded proxy logger' do
+      proxy_logger = OpenTelemetry.logger_provider.logger(name: 'component')
+      custom_logger_provider = CustomLoggerProvider.new
+      OpenTelemetry.logger_provider = custom_logger_provider
+
+      proxy_logger.on_emit(body: 'hello', severity_text: 'WARN', severity_number: 13)
+
+      _(custom_logger_provider.logger(name: 'component').emitted).must_equal(
+        timestamp: nil,
+        observed_timestamp: nil,
+        severity_number: 13,
+        severity_text: 'WARN',
+        body: 'hello',
+        trace_id: nil,
+        span_id: nil,
+        trace_flags: nil,
+        attributes: nil,
+        event_name: nil,
+        context: nil
+      )
     end
   end
 end
