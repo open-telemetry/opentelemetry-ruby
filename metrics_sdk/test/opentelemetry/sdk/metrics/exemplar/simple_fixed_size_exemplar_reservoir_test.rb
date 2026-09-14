@@ -56,10 +56,10 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir
     end
 
     it 'supports concurrent offers' do
-      threads = 10.times.map do |thread_index|
+      threads = Array.new(10) do |thread_index|
         Thread.new do
           100.times do |i|
-            reservoir.offer(value: thread_index * 100 + i, timestamp: timestamp, attributes: attributes, context: context)
+            reservoir.offer(value: (thread_index * 100) + i, timestamp: timestamp, attributes: attributes, context: context)
           end
         end
       end

@@ -82,7 +82,7 @@ describe OpenTelemetry::SDK::Metrics::Exemplar::AlignedHistogramBucketExemplarRe
     end
 
     it 'supports concurrent offers' do
-      threads = 10.times.map do
+      threads = Array.new(10) do
         Thread.new do
           100.times { reservoir.offer(value: 3, timestamp: timestamp, attributes: attributes, context: context) }
         end
