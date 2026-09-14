@@ -38,19 +38,19 @@ module OpenTelemetry
 
         @mutex.synchronize do
           @delegate = provider
-          @registry.each { |key, logger| logger.delegate = provider.logger(key.name, key.version) }
+          @registry.each { |key, logger| logger.delegate = provider.logger(name: key.name, version: key.version) }
         end
       end
 
       # Returns a {Logger} instance.
       #
-      # @param [optional String] name Instrumentation package name
-      # @param [optional String] version Instrumentation package version
+      # @param [String] name Instrumentation scope name
+      # @param [optional String] version Instrumentation scope version
       #
       # @return [Logger]
-      def logger(name = nil, version = nil)
+      def logger(name:, version: nil)
         @mutex.synchronize do
-          return @delegate.logger(name, version) unless @delegate.nil?
+          return @delegate.logger(name: name, version: version) unless @delegate.nil?
 
           @registry[Key.new(name, version)] ||= ProxyLogger.new
         end

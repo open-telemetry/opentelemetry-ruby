@@ -20,7 +20,7 @@ module OpenTelemetry
 
         # Returns whether this Counter is enabled for recording measurements.
         #
-        # Instrumentation authors need to call this API each time 
+        # Instrumentation authors need to call this API each time
         #  they record a measurement to ensure they have the most
         #  up-to-date value.
         #
