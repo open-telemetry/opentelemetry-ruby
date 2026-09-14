@@ -179,7 +179,7 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
 
     it 'serializes concurrent metric reader registration' do
       metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
-      providers = 2.times.map { OpenTelemetry::SDK::Metrics::MeterProvider.new }
+      providers = Array.new(2) { OpenTelemetry::SDK::Metrics::MeterProvider.new }
       errors = Queue.new
 
       threads = providers.map do |provider|

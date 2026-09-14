@@ -15,8 +15,9 @@ module OpenTelemetry
         EMPTY_ATTRIBUTES = {}.freeze
         READER_OWNERS = ObjectSpace::WeakMap.new
         READER_OWNERS_MUTEX = Mutex.new
+        READER_OWNERSHIP_ERROR = 'MetricReader cannot be registered with more than one MeterProvider'
 
-        private_constant :READER_OWNERS, :READER_OWNERS_MUTEX
+        private_constant :READER_OWNERS, :READER_OWNERS_MUTEX, :READER_OWNERSHIP_ERROR
 
         Key = Struct.new(:name, :version, :attributes)
         private_constant(:Key)
@@ -134,9 +135,7 @@ module OpenTelemetry
         def register_metric_reader(metric_reader)
           READER_OWNERS_MUTEX.synchronize do
             owner = READER_OWNERS[metric_reader]
-            if owner && !owner.equal?(self)
-              raise ArgumentError, 'MetricReader cannot be registered with more than one MeterProvider'
-            end
+            raise ArgumentError, READER_OWNERSHIP_ERROR if owner && !owner.equal?(self)
 
             READER_OWNERS[metric_reader] = self
           end
