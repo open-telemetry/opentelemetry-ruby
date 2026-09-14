@@ -29,10 +29,6 @@ module OpenTelemetry
 
           attr_reader :exemplar_reservoir
 
-          # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
-          DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new
-          private_constant :DEFAULT_RESERVOIR
-
           # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(
             aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', :delta),
@@ -53,7 +49,7 @@ module OpenTelemetry
             @size           = validate_size(max_size)
             @scale          = validate_scale(max_scale)
 
-            @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
+            @exemplar_reservoir = exemplar_reservoir || Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: [20, @size].min)
             @exemplar_reservoir_storage = {}
 
             @mapping = new_mapping(@scale)
