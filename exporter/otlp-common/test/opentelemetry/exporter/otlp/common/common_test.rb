@@ -88,6 +88,28 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(etsr.resource_spans[0].scope_spans.length).must_equal(2)
     end
 
+    it 'sets schema_url on scope_spans when the instrumentation scope declares one' do
+      schema_url = 'https://opentelemetry.io/schemas/1.43.0'
+      scope = OpenTelemetry::SDK::InstrumentationScope.new('scope', '1.0.0', nil, schema_url)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(instrumentation_scope: scope)
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+
+      scope_spans = etsr.resource_spans[0].scope_spans[0]
+      _(scope_spans.schema_url).must_equal(schema_url)
+      _(scope_spans.scope.name).must_equal('scope')
+      _(scope_spans.scope.version).must_equal('1.0.0')
+    end
+
+    it 'encodes a nil schema_url as an empty string' do
+      scope = OpenTelemetry::SDK::InstrumentationScope.new('scope', '1.0.0')
+      span_data = OpenTelemetry::TestHelpers.create_span_data(instrumentation_scope: scope)
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+
+      _(etsr.resource_spans[0].scope_spans[0].schema_url).must_equal('')
+    end
+
     it 'translates all the things' do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
