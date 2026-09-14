@@ -123,21 +123,13 @@ module OpenTelemetry
         def trim_attributes(attributes)
           return if attributes.nil?
 
-          # truncate total attributes
-          discarded_attributes = truncate_attributes(
-            attributes,
-            @log_record_limits.attribute_count_limit
-          )
-
-          # truncate attribute values
+          discarded = truncate_attributes(attributes, @log_record_limits.attribute_count_limit)
           truncate_attribute_values(attributes, @log_record_limits.attribute_length_limit)
+          discarded += validate_attributes(attributes)
 
-          # validate attributes
-          discarded_attributes += validate_attributes(attributes)
-
-          if discarded_attributes.positive?
+          if discarded.positive?
             OpenTelemetry.handle_error(
-              message: "Discarded #{discarded_attributes} log record attributes due to limits or invalid values"
+              message: "Discarded #{discarded} log record attributes due to limits or invalid values"
             )
           end
 
@@ -153,22 +145,17 @@ module OpenTelemetry
         end
 
         def validate_attributes(attrs)
-          # Similar to Internal.valid_attributes?, but with different messages
-          # Future refactor opportunity: https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
-          discarded_attributes = 0
+          # Similar to Internal.valid_attributes?, but counted so the caller can
+          # report a single summary. Future refactor opportunity:
+          # https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
+          discarded = 0
           attrs.keep_if do |k, v|
-            if !Internal.valid_key?(k)
-              discarded_attributes += 1
-              false
-            elsif !Internal.valid_value?(v)
-              discarded_attributes += 1
-              false
-            end
-
-            true
+            valid = Internal.valid_key?(k) && Internal.valid_value?(v)
+            discarded += 1 unless valid
+            valid
           end
 
-          discarded_attributes
+          discarded
         end
 
         def truncate_attribute_values(attributes, attribute_length_limit)
