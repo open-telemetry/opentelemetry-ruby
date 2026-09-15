@@ -222,7 +222,9 @@ describe OpenTelemetry::SDK do
         mock_exporter.pull
         last_snapshot = mock_exporter.metric_snapshots
 
-        _(last_snapshot[0].data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
+        histogram_snapshot = last_snapshot.find { |s| s.name == 'histogram' }
+        _(histogram_snapshot).wont_be_nil
+        _(histogram_snapshot.data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
       end
 
       it 'supports multiple readers with different aggregation preferences simultaneously' do
@@ -252,10 +254,14 @@ describe OpenTelemetry::SDK do
         mock_exporter_b.pull
 
         # Reader A should get Exponential buckets
-        _(mock_exporter_a.metric_snapshots[0].data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
+        snapshot_a = mock_exporter_a.metric_snapshots.find { |s| s.name == 'histogram' }
+        _(snapshot_a).wont_be_nil
+        _(snapshot_a.data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
 
         # Reader B should get Explicit buckets
-        _(mock_exporter_b.metric_snapshots[0].data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::HistogramDataPoint)
+        snapshot_b = mock_exporter_b.metric_snapshots.find { |s| s.name == 'histogram' }
+        _(snapshot_b).wont_be_nil
+        _(snapshot_b.data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::HistogramDataPoint)
       end
     end
 
