@@ -40,6 +40,15 @@ module OpenTelemetry
             start
           end
 
+          # Returns the default aggregation class for the given instrument kind.
+          def default_aggregation(instrument_kind)
+            if @exporter.respond_to?(:default_aggregation)
+              @exporter.default_aggregation(instrument_kind) || super
+            else
+              super
+            end
+          end
+
           # Shuts the @thread down and set @continue to false; it will block
           # until the shutdown thread is finished.
           #

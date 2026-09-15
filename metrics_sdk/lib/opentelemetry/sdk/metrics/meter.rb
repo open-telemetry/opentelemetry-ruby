@@ -57,8 +57,11 @@ module OpenTelemetry
 
         # @api private
         def add_metric_reader(metric_reader)
-          @instrument_registry.each_value do |instrument|
-            instrument.register_with_new_metric_store(metric_reader.metric_store)
+          @mutex.synchronize do
+            @instrument_registry.each_value do |instrument|
+              agg = OpenTelemetry::SDK::Metrics::MeterProvider.resolve_aggregation(metric_reader, instrument.instrument_kind, instrument.exemplar_reservoir)
+              instrument.register_with_new_metric_store(metric_reader.metric_store, aggregation: agg)
+            end
           end
         end
 

@@ -200,6 +200,71 @@ describe OpenTelemetry::SDK do
       _(periodic_metric_reader.alive?).must_equal false
     end
 
+    describe 'default_aggregation configuration' do
+      it 'respects the default_aggregation provided by the exporter' do
+        OpenTelemetry::SDK.configure
+
+        # Create a mock exporter that acts like our new OTLP exporter and provides a preference proc
+        mock_exporter = Class.new(OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter) do
+          def default_aggregation(instrument_kind)
+            return nil unless instrument_kind == :histogram
+
+            OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
+          end
+        end.new
+
+        OpenTelemetry.meter_provider.add_metric_reader(mock_exporter)
+        meter = OpenTelemetry.meter_provider.meter('test')
+        histogram = meter.create_histogram('histogram')
+
+        histogram.record(5, attributes: { 'foo' => 'bar' })
+
+        mock_exporter.pull
+        last_snapshot = mock_exporter.metric_snapshots
+
+        histogram_snapshot = last_snapshot.find { |s| s.name == 'histogram' }
+        _(histogram_snapshot).wont_be_nil
+        _(histogram_snapshot.data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
+      end
+
+      it 'supports multiple readers with different aggregation preferences simultaneously' do
+        OpenTelemetry::SDK.configure
+
+        # Truck A: Wants Exponential Buckets
+        mock_exporter_a = Class.new(OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter) do
+          def default_aggregation(instrument_kind)
+            return nil unless instrument_kind == :histogram
+
+            OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
+          end
+        end.new
+
+        # Truck B: Wants Explicit Buckets (Default)
+        mock_exporter_b = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+
+        OpenTelemetry.meter_provider.add_metric_reader(mock_exporter_a)
+        OpenTelemetry.meter_provider.add_metric_reader(mock_exporter_b)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+        histogram = meter.create_histogram('histogram')
+
+        histogram.record(5, attributes: { 'foo' => 'bar' })
+
+        mock_exporter_a.pull
+        mock_exporter_b.pull
+
+        # Reader A should get Exponential buckets
+        snapshot_a = mock_exporter_a.metric_snapshots.find { |s| s.name == 'histogram' }
+        _(snapshot_a).wont_be_nil
+        _(snapshot_a.data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
+
+        # Reader B should get Explicit buckets
+        snapshot_b = mock_exporter_b.metric_snapshots.find { |s| s.name == 'histogram' }
+        _(snapshot_b).wont_be_nil
+        _(snapshot_b.data_points[0]).must_be_instance_of(OpenTelemetry::SDK::Metrics::Aggregation::HistogramDataPoint)
+      end
+    end
+
     describe 'cardinality limit' do
       it 'accepts cardinality_limit parameter on initialization' do
         OpenTelemetry::SDK.configure
