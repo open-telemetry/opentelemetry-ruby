@@ -55,10 +55,12 @@ module OpenTelemetry
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                        compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                        timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                       metrics_reporter: nil)
+                       metrics_reporter: nil,
+                       protocol: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
           @uri = prepare_endpoint(endpoint)
 
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+          raise ArgumentError, "unsupported protocol #{protocol}" unless %w[http/json http/protobuf].include?(protocol)
 
           @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
@@ -66,6 +68,7 @@ module OpenTelemetry
           @headers = prepare_headers(headers)
           @timeout = timeout.to_f
           @compression = compression
+          @content_type = protocol == 'http/json' ? 'application/json' : 'application/x-protobuf'
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
           @shutdown = false
         end
@@ -141,7 +144,7 @@ module OpenTelemetry
             body = bytes
           end
           request.body = body
-          request.add_field('Content-Type', 'application/x-protobuf')
+          request.add_field('Content-Type', @content_type)
           @headers.each { |key, value| request.add_field(key, value) }
 
           retry_count = 0
@@ -275,7 +278,8 @@ module OpenTelemetry
 
         def encode(span_data)
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data)
+          format = @content_type == 'application/json' ? :json : :protobuf
+          OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data, format: format)
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
