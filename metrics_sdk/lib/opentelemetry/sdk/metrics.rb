@@ -6,6 +6,7 @@
 
 require 'opentelemetry/sdk'
 require 'opentelemetry-metrics-api'
+require 'opentelemetry/metrics/global'
 
 module OpenTelemetry
   module SDK
