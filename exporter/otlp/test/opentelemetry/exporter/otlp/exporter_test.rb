@@ -627,6 +627,34 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'exports valid UTF-8 bytes from binary-encoded attribute strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'city' => city }
+      )
+
+      encoded_data = exporter.send(:encode, [span_data])
+      decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+      exported_span = decoded.resource_spans.first.scope_spans.first.spans.first
+
+      _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'values' => [invalid_value] }
+      )
+
+      encoded_data = exporter.send(:encode, [span_data])
+      decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+      exported_value = decoded.resource_spans.first.scope_spans.first.spans.first.attributes.first.value
+
+      _(exported_value.string_value).must_equal('Encoding Error')
+    end
+
     it 'logs rpc.Status on bad request' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger
