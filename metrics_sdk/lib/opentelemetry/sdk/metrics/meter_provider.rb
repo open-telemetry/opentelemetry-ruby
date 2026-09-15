@@ -132,7 +132,12 @@ module OpenTelemetry
 
           kwargs = { exemplar_reservoir: exemplar_reservoir }
           if preferred_agg_class == OpenTelemetry::SDK::Metrics::Aggregation::Sum
-            kwargs[:monotonic] = true if %i[counter observable_counter].include?(instrument_kind)
+            kwargs[:monotonic] = case instrument_kind
+                                 when :counter, :observable_counter
+                                   true
+                                 when :up_down_counter, :observable_up_down_counter
+                                   false
+                                 end
             kwargs[:instrument_kind] = instrument_kind
           end
 
