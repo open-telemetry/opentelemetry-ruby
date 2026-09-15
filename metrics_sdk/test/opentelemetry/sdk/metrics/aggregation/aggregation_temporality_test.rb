@@ -108,6 +108,30 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality do
         _(result.temporality).must_equal :delta
         _(result.delta?).must_equal true
       end
+
+      it 'returns cumulative for up_down_counter instrument' do
+        result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+          OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
+            instrument_kind: :up_down_counter,
+            default: :delta
+          )
+        end
+        _(result.temporality).must_equal :cumulative
+        _(result.cumulative?).must_equal true
+      end
+
+      it 'returns cumulative for observable_up_down_counter instrument' do
+        result = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+          OpenTelemetry::SDK::Metrics::Aggregation::AggregationTemporality.determine_temporality(
+            aggregation_temporality: ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE', nil),
+            instrument_kind: :observable_up_down_counter,
+            default: :delta
+          )
+        end
+        _(result.temporality).must_equal :cumulative
+        _(result.cumulative?).must_equal true
+      end
     end
 
     describe 'with LOWMEMORY preference' do
