@@ -40,11 +40,18 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       _(meter).must_be_instance_of(OpenTelemetry::SDK::Metrics::Meter)
     end
 
-    it 'returns the same meter for the same name, version, and attributes' do
-      meter_a = OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: { 'key' => 'value' })
-      meter_b = OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: { 'key' => 'value' })
+    it 'repeated calls does not recreate a meter of the same name, schema_url and attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', version: '1.0', schema_url: 'http//:otel/v0.1', attributes: { foo: 'bar' })
+      meter_b = OpenTelemetry.meter_provider.meter('test', version: '1.0', schema_url: 'http//:otel/v0.1', attributes: { foo: 'bar' })
 
       _(meter_a).must_equal(meter_b)
+    end
+
+    it 'repeated calls does create a new meter of the same name, different schema_url' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', schema_url: 'http//:otel/v0.1')
+      meter_b = OpenTelemetry.meter_provider.meter('test', schema_url: 'http//:otel/v0.2')
+
+      _(meter_a).wont_equal(meter_b)
     end
 
     it 'returns different meters for different attributes' do

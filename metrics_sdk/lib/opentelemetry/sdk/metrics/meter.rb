@@ -19,15 +19,18 @@ module OpenTelemetry
         #
         # @param [String] name Instrumentation scope name
         # @param [String] version Instrumentation scope version
+        # @param [optional String] schema_url Schema URL that should be recorded in the emitted telemetry
         # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   Instrumentation scope attributes
         #
         # @return [Meter]
-        def initialize(name, version, meter_provider, attributes: nil)
+        def initialize(name, version, schema_url, meter_provider, attributes: nil)
           @mutex = Mutex.new
           @instrument_registry = {}
-          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
+          @instrumentation_scope = InstrumentationScope.new(name, version, schema_url, attributes || {}.freeze)
           @meter_provider = meter_provider
+          @schema_url = schema_url
+          @attributes = attributes
         end
 
         # Multiple-instrument callbacks
