@@ -43,7 +43,7 @@ module OpenTelemetry
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
         #   returns an ETSR of the provided span data
-        def as_etsr(span_data)
+        def as_etsr(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
                             .group_by(&:resource)
@@ -60,6 +60,7 @@ module OpenTelemetry
                                                    name: il.name,
                                                    version: il.version
                                                  ),
+                                                 schema_url: (il.schema_url if il.respond_to?(:schema_url)),
                                                  spans: sds.map { |sd| as_otlp_span(sd) }
                                                )
                                              end

@@ -18,10 +18,11 @@ module OpenTelemetry
         # @param [TracerProvider] tracer_provider TracerProvider that initialized the tracer
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   Instrumentation scope attributes
+        # @param [String] schema_url Instrumentation scope schema URL
         #
         # @return [Tracer]
-        def initialize(name, version, tracer_provider, attributes: nil)
-          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
+        def initialize(name, version, tracer_provider, attributes: nil, schema_url: nil)
+          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze, schema_url || '')
           @tracer_provider = tracer_provider
         end
 
