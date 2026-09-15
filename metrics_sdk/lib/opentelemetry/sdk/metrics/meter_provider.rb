@@ -128,7 +128,8 @@ module OpenTelemetry
 
         # @api private
         def self.resolve_aggregation(metric_reader, instrument_kind, exemplar_reservoir)
-          preferred_agg_class = metric_reader.respond_to?(:default_aggregation) ? metric_reader.default_aggregation(instrument_kind) : OpenTelemetry::SDK::Metrics::Export::MetricReader.default_aggregation(instrument_kind)
+          preferred_agg_class = metric_reader.default_aggregation(instrument_kind) if metric_reader.respond_to?(:default_aggregation)
+          preferred_agg_class ||= OpenTelemetry::SDK::Metrics::Export::MetricReader.default_aggregation(instrument_kind)
 
           kwargs = { exemplar_reservoir: exemplar_reservoir }
           if preferred_agg_class == OpenTelemetry::SDK::Metrics::Aggregation::Sum
