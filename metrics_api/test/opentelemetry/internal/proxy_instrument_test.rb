@@ -30,6 +30,11 @@ describe OpenTelemetry::Internal::ProxyInstrument do
       _(proxy_meter.create_counter('c').enabled?).must_equal(false)
     end
 
+    it '#bind returns the proxy instrument itself' do
+      instrument = proxy_meter.create_counter('c')
+      _(instrument.bind(attributes: { 'a' => 'b' })).must_equal(instrument)
+    end
+
     it 'retains advisory parameters for the eventual delegate' do
       instrument = proxy_meter.create_histogram('h', advisory: advisory)
       _(instrument.instance_variable_get(:@advisory)).must_equal(advisory)
@@ -87,6 +92,12 @@ describe OpenTelemetry::Internal::ProxyInstrument do
       instrument = proxy_meter.create_counter('c')
       install_delegate
       _(instrument.enabled?).must_equal(instrument.instance_variable_get(:@delegate).enabled?)
+    end
+
+    it 'delegates #bind to the upgraded instrument' do
+      instrument = proxy_meter.create_counter('c')
+      install_delegate
+      _(instrument.bind(attributes: { 'a' => 'b' })).must_equal(instrument.instance_variable_get(:@delegate))
     end
 
     it 'delegates recording operations to the upgraded instrument' do
