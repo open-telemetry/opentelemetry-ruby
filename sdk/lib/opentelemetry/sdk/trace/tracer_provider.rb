@@ -29,7 +29,7 @@ module OpenTelemetry
         #   TracerProvider
         #
         # @return [TracerProvider]
-        def initialize(sampler: sampler_from_environment(Samplers.parent_based(root: Samplers::ALWAYS_ON)),
+        def initialize(sampler: sampler_from_environment,
                        resource: OpenTelemetry::SDK::Resources::Resource.create,
                        id_generator: OpenTelemetry::Trace,
                        span_limits: SpanLimits::DEFAULT)
@@ -184,17 +184,19 @@ module OpenTelemetry
 
         private
 
-        def sampler_from_environment(default_sampler)
-          case ENV.fetch('OTEL_TRACES_SAMPLER', nil)
+        # rubocop:disable-next Lint/DuplicateBranch
+        def sampler_from_environment
+          samplar = ENV.fetch('OTEL_TRACES_SAMPLER', 'parentbased')
+          samplar = 'parentbased' if samplar.start_with?('parentbased')
+          case samplar
           when 'always_on' then Samplers::ALWAYS_ON
           when 'always_off' then Samplers::ALWAYS_OFF
-          when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0)))
-          when 'parentbased_always_on' then Samplers.parent_based(root: Samplers::ALWAYS_ON)
-          when 'parentbased_always_off' then Samplers.parent_based(root: Samplers::ALWAYS_OFF)
-          when 'parentbased_traceidratio' then Samplers.parent_based(root: Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0))))
-          else default_sampler
+          when 'traceidratio' then Samplers::TraceIdRatioBased.new
+          when 'parentbased' then Samplers::ParentBased.new
+          else Samplers::ParentBased.new
           end
         rescue StandardError => e
+          default_sampler = Samplers::ParentBased.new(root: Samplers::ALWAYS_ON)
           OpenTelemetry.handle_error(exception: e, message: "installing default sampler #{default_sampler.description}")
           default_sampler
         end
