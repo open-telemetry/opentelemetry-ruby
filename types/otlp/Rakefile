@@ -44,11 +44,13 @@ PROTOBUF_FILES = [
 
 desc 'Generate probobuf'
 task :generate do
+  FileUtils.rm_rf('lib/opentelemetry/proto')
+  FileUtils.rm_rf('opentelemetry-proto')
   run("git clone -b v#{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
   PROTOBUF_FILES.each do |file|
     run("protoc --experimental_allow_proto3_optional --ruby_out=lib/ --proto_path=opentelemetry-proto opentelemetry/proto/#{file}")
   end
-  run('rm -rf opentelemetry-proto')
+  FileUtils.rm_rf('opentelemetry-proto')
 end
 
 def run(cmd)
