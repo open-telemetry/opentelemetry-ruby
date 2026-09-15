@@ -53,6 +53,28 @@ describe OpenTelemetry::Metrics::Meter do
       _(proxy.create_observable_counter('REQUESTCOUNT', callback: callback)).must_be_same_as(first)
     end
 
+    it 'preserves first-seen names for distinct proxy instruments across delegation' do
+      names = []
+      delegate = OpenTelemetry::Metrics::Meter.new
+      delegate.define_singleton_method(:create_counter) do |name, **options|
+        names << name
+        super(name, **options)
+      end
+      proxy = OpenTelemetry::Internal::ProxyMeter.new
+      first = proxy.create_counter('requestCount', unit: 's')
+      second = proxy.create_counter('RequestCount', unit: 'ms')
+
+      _(second).wont_be_same_as(first)
+      proxy.delegate = delegate
+      _(names).must_equal(%w[requestCount requestCount])
+      _(proxy.create_counter('REQUESTCOUNT', unit: 'ms')).must_be_same_as(second)
+
+      proxy.create_counter('REQUESTCOUNT', unit: 's', description: 'new description')
+      _(names).must_equal(%w[requestCount requestCount requestCount])
+      first.add(1)
+      second.add(1)
+    end
+
     it 'test create_histogram' do
       counter = meter.create_histogram('test')
       _(counter.class).must_equal(OpenTelemetry::Metrics::Instrument::Histogram)

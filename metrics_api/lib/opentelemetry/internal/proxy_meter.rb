@@ -39,6 +39,7 @@ module OpenTelemetry
       private
 
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+        # Preserve the first-seen name both when upgrading a proxy and when delegating directly.
         super do |instrument_name|
           next ProxyInstrument.new(kind, instrument_name, unit, description, callback, exemplar_filter, exemplar_reservoir) if @delegate.nil?
 
