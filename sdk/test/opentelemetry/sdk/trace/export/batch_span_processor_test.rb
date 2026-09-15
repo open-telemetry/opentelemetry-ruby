@@ -395,7 +395,8 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
       bsp = BatchSpanProcessor.new(exporter,
                                    metrics_reporter: metrics_reporter,
                                    max_queue_size: 1,
-                                   max_export_batch_size: 1)
+                                   max_export_batch_size: 1,
+                                   start_thread_on_boot: false)
 
       bsp.on_finish(TestSpan.new('dropped-because-buffer-full'))
       bsp.on_finish(TestSpan.new('causes-export-failure'))
