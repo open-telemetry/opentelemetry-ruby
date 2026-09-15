@@ -110,6 +110,15 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(etsr.resource_spans[0].scope_spans[0].schema_url).must_equal('')
     end
 
+    it 'encodes an empty string schema_url when the instrumentation scope predates schema_url support' do
+      legacy_scope = Struct.new(:name, :version).new('scope', '1.0.0')
+      span_data = OpenTelemetry::TestHelpers.create_span_data(instrumentation_scope: legacy_scope)
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+
+      _(etsr.resource_spans[0].scope_spans[0].schema_url).must_equal('')
+    end
+
     it 'translates all the things' do
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')

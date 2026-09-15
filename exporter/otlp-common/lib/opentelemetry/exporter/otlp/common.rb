@@ -60,7 +60,7 @@ module OpenTelemetry
                                                    name: il.name,
                                                    version: il.version
                                                  ),
-                                                 schema_url: il.schema_url,
+                                                 schema_url: (il.schema_url if il.respond_to?(:schema_url)),
                                                  spans: sds.map { |sd| as_otlp_span(sd) }
                                                )
                                              end
