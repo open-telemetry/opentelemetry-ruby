@@ -91,4 +91,20 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
       end
     end
   end
+
+  # https://github.com/open-telemetry/opentelemetry-ruby/issues/2300
+  it 'keeps exemplar reservoirs independent per stream when streams share one aggregation instance' do
+    attrs = { 'outcome' => 'success' }
+    stream_a_dps = {}
+    stream_b_dps = {}
+
+    last_value_aggregation.update(1, attrs, stream_a_dps, cardinality_limit, exemplar_offer: true)
+    last_value_aggregation.update(2, attrs, stream_b_dps, cardinality_limit, exemplar_offer: true)
+
+    a_ndp = last_value_aggregation.collect(start_time, end_time, stream_a_dps).first
+    b_ndp = last_value_aggregation.collect(start_time, end_time, stream_b_dps).first
+
+    _(a_ndp.exemplars.map(&:value)).must_equal([1])
+    _(b_ndp.exemplars.map(&:value)).must_equal([2])
+  end
 end
