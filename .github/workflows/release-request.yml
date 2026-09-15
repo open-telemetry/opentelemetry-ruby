@@ -11,7 +11,7 @@ on:
     branches:
       - main
     paths:
-      - "semantic_conventions/semconv.yaml"
+      - "**/otel-spec.yaml"
 
 permissions:
   contents: read

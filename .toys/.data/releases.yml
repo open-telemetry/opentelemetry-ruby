@@ -88,3 +88,6 @@ gems:
   - name: opentelemetry-logs-sdk
     directory: logs_sdk
     version_rb_path: lib/opentelemetry/sdk/logs/version.rb
+
+  - name: opentelemetry-types-otlp
+    directory: types/otlp
