@@ -1,5 +1,11 @@
 # Release History: opentelemetry-logs-api
 
+### v0.5.0 / 2026-09-15
+
+* BREAKING CHANGE: Align LoggerProvider#logger with the SDK signature (#2375)
+* FIXED: Align LoggerProvider#logger with the SDK signature (#2375)
+* FIXED: Forward on_emit arguments to the delegate logger (#2376)
+
 ### v0.4.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
