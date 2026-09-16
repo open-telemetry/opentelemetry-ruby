@@ -11,7 +11,7 @@ on:
     branches:
       - main
     paths:
-      - "semantic_conventions/semconv.yaml"
+      - "**/otel-spec.yaml"
 
 permissions:
   contents: read
@@ -47,8 +47,27 @@ jobs:
       - name: Determine releases
         id: detect
         if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_BEFORE: ${{ github.event.before }}
+          GITHUB_NOW: ${{ github.sha }}
         run: |
-          echo "components=opentelemetry-semantic_conventions" >> $GITHUB_OUTPUT
+          dirs=$(git diff --name-only $GITHUB_BEFORE $GITHUB_NOW \
+            | grep "otel-spec.yml" \
+            | xargs -I {} dirname {} \
+            | sort -u)
+
+          components=""
+
+          for d in $dirs; do
+            gemspec=$(ls "$d"/*.gemspec 2>/dev/null | xargs -I {} basename {} .gemspec)
+            if [ -n "$gemspec" ]; then
+              components="${components}${gemspec},"
+            fi
+          done
+
+          components="${components%,}"
+
+          echo "components=$components" >> $GITHUB_OUTPUT
       - name: Open release pull request
         env:
           # Use an app token instead of GITHUB_TOKEN to trigger workflows
