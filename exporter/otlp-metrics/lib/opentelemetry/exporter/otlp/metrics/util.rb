@@ -130,9 +130,6 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
           end
-
-          # No-op: HTTP redirects are not followed.
-          def handle_redirect(location); end
         end
       end
     end
