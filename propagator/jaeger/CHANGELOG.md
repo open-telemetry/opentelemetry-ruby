@@ -1,5 +1,9 @@
 # Release History: opentelemetry-propagator-jaeger
 
+### v0.25.2 / 2026-09-15
+
+* FIXED: Enforce baggage limits on the Jaeger extract path (#2299)
+
 ### v0.25.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
