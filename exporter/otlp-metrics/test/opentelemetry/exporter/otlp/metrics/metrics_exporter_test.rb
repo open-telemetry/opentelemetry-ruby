@@ -948,6 +948,41 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
     end
   end
 
+  describe '#default_aggregation' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
+
+    it 'returns Sum or LastValue for non-histogram instruments' do
+      _(exporter.default_aggregation(:counter)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+      _(exporter.default_aggregation(:up_down_counter)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+      _(exporter.default_aggregation(:observable_gauge)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::LastValue)
+    end
+
+    it 'returns ExplicitBucketHistogram by default for histograms' do
+      _(exporter.default_aggregation(:histogram)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram)
+    end
+
+    it 'returns ExplicitBucketHistogram when configured to explicit_bucket_histogram via ENV' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'explicit_bucket_histogram') do
+        _(exporter.default_aggregation(:histogram)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram)
+      end
+    end
+
+    it 'returns ExponentialBucketHistogram class when configured to base2_exponential_bucket_histogram via ENV' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'base2_exponential_bucket_histogram') do
+        _(exporter.default_aggregation(:histogram)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram)
+      end
+    end
+
+    it 'warns and returns ExplicitBucketHistogram for an invalid ENV value' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'invalid_value') do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          _(exporter.default_aggregation(:histogram)).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram)
+          _(log_stream.string).must_match(/unrecognized value 'invalid_value', defaulting to explicit_bucket_histogram/)
+        end
+      end
+    end
+  end
+
   describe '#shutdown' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
 

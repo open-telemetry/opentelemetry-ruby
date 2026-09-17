@@ -80,6 +80,25 @@ module OpenTelemetry
             @shutdown = false
           end
 
+          # Returns the default aggregation class for the given instrument kind.
+          def default_aggregation(instrument_kind)
+            if instrument_kind == :histogram
+              case ENV['OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION']&.downcase
+              when 'base2_exponential_bucket_histogram'
+                OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
+              when 'explicit_bucket_histogram', nil
+                super
+              else
+                OpenTelemetry.logger.warn(
+                  "OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION: unrecognized value '#{ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', nil)}', defaulting to explicit_bucket_histogram."
+                )
+                super
+              end
+            else
+              super
+            end
+          end
+
           # consolidate the metrics data into the form of MetricData
           #
           # return MetricData
