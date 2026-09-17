@@ -974,4 +974,59 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       OpenTelemetry.logger = logger
     end
   end
+
+  describe 'HTTP redirects' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
+
+    it 'follows a redirect to a different path on the same host' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics').to_return(status: 200)
+      metrics_data = create_metrics_data
+
+      _(exporter.export([metrics_data])).must_equal(METRICS_SUCCESS)
+
+      assert_requested(:post, 'http://localhost:4318/v1/metrics')
+      assert_requested(:post, 'http://localhost:4318/v2/metrics')
+    end
+
+    it 'follows a redirect to a different host and port' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:9999/v1/metrics' })
+      stub_request(:post, 'http://localhost:9999/v1/metrics').to_return(status: 200)
+      metrics_data = create_metrics_data
+
+      _(exporter.export([metrics_data])).must_equal(METRICS_SUCCESS)
+
+      assert_requested(:post, 'http://localhost:9999/v1/metrics')
+    end
+
+    it 'resolves a relative redirect location against the current endpoint' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => '/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics').to_return(status: 200)
+      metrics_data = create_metrics_data
+
+      _(exporter.export([metrics_data])).must_equal(METRICS_SUCCESS)
+
+      assert_requested(:post, 'http://localhost:4318/v2/metrics')
+    end
+
+    it 'does not follow redirects indefinitely' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v1/metrics' })
+      metrics_data = create_metrics_data
+
+      attempts = 0
+      exporter.stub(:backoff?, ->(**_) { (attempts += 1) <= 3 }) do
+        result = exporter.export([metrics_data])
+        _(result).wont_equal(METRICS_SUCCESS)
+      end
+
+      assert_requested(:post, 'http://localhost:4318/v1/metrics', times: 2)
+      assert_requested(:post, 'http://localhost:4318/v2/metrics', times: 2)
+    end
+  end
 end
