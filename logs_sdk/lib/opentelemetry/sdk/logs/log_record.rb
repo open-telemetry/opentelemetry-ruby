@@ -123,39 +123,39 @@ module OpenTelemetry
         def trim_attributes(attributes)
           return if attributes.nil?
 
-          # truncate total attributes
-          truncate_attributes(attributes, @log_record_limits.attribute_count_limit)
-
-          # truncate attribute values
+          discarded = truncate_attributes(attributes, @log_record_limits.attribute_count_limit)
           truncate_attribute_values(attributes, @log_record_limits.attribute_length_limit)
+          discarded += validate_attributes(attributes)
 
-          # validate attributes
-          validate_attributes(attributes)
+          if discarded.positive?
+            OpenTelemetry.handle_error(
+              message: "Discarded #{discarded} log record attributes due to limits or invalid values"
+            )
+          end
 
           nil
         end
 
         def truncate_attributes(attributes, attribute_limit)
           excess = attributes.size - attribute_limit
-          excess.times { attributes.shift } if excess.positive?
+          return 0 unless excess.positive?
+
+          excess.times { attributes.shift }
+          excess
         end
 
         def validate_attributes(attrs)
-          # Similar to Internal.valid_attributes?, but with different messages
-          # Future refactor opportunity: https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
+          # Similar to Internal.valid_attributes?, but counted so the caller can
+          # report a single summary. Future refactor opportunity:
+          # https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
+          discarded = 0
           attrs.keep_if do |k, v|
-            if !Internal.valid_key?(k)
-              OpenTelemetry.handle_error(message: "Invalid log record attribute key type #{k.class} for " \
-                                                  "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
-              return false
-            elsif !Internal.valid_value?(v)
-              OpenTelemetry.handle_error(message: "Invalid log record attribute value type #{v.class} for key '#{k}' " \
-                                                  "on record: '#{body}'. Dropping attribute.")
-              return false
-            end
-
-            true
+            valid = Internal.valid_key?(k) && Internal.valid_value?(v)
+            discarded += 1 unless valid
+            valid
           end
+
+          discarded
         end
 
         def truncate_attribute_values(attributes, attribute_length_limit)
