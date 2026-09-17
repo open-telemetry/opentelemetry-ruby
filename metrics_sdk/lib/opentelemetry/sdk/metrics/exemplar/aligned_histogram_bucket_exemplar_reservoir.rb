@@ -22,7 +22,8 @@ module OpenTelemetry
           # @param boundaries [Array<Numeric>] The bucket boundaries for the histogram
           def initialize(boundaries: nil)
             @boundaries = boundaries || DEFAULT_BOUNDARIES
-            reset
+            @mutex = Mutex.new
+            reset!
           end
 
           # Offers a measurement to the reservoir for potential sampling
@@ -32,8 +33,10 @@ module OpenTelemetry
           # @param attributes [Hash] The complete set of attributes
           # @param context [Context] The OpenTelemetry context
           def offer(value: nil, timestamp: nil, attributes: nil, context: nil)
-            bucket_index = find_histogram_bucket(value)
-            @exemplar_buckets[bucket_index].offer(value: value, time_unix_nano: timestamp, attributes: attributes, context: context)
+            @mutex.synchronize do
+              bucket_index = find_histogram_bucket(value)
+              @exemplar_buckets[bucket_index].offer(value: value, time_unix_nano: timestamp, attributes: attributes, context: context)
+            end
             nil
           end
 
@@ -43,15 +46,17 @@ module OpenTelemetry
           # @param aggregation_temporality [Symbol] :delta or :cumulative
           # @return [Array<Exemplar>] The collected exemplars
           def collect(attributes: nil, aggregation_temporality: nil)
-            exemplars = @exemplar_buckets.map { |bucket| bucket.collect(point_attributes: attributes) }
-            reset if aggregation_temporality == :delta
-            exemplars.compact!
-            exemplars
+            @mutex.synchronize do
+              exemplars = @exemplar_buckets.map { |bucket| bucket.collect(point_attributes: attributes) }
+              reset! if aggregation_temporality == :delta
+              exemplars.compact!
+              exemplars
+            end
           end
 
           # Clears all sampled exemplars from the reservoir.
           def reset
-            @exemplar_buckets = Array.new(@boundaries.size + 1) { ExemplarBucket.new }
+            @mutex.synchronize { reset! }
           end
 
           private
@@ -62,6 +67,10 @@ module OpenTelemetry
           # @return [Integer] The bucket index (0 to boundaries.size)
           def find_histogram_bucket(value)
             @boundaries.bsearch_index { |boundary| boundary >= value } || @boundaries.size
+          end
+
+          def reset!
+            @exemplar_buckets = Array.new(@boundaries.size + 1) { ExemplarBucket.new }
           end
         end
       end
