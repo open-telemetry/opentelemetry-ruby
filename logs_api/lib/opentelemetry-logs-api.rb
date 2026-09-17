@@ -10,6 +10,7 @@ require 'opentelemetry/logs/version'
 require 'opentelemetry/internal/proxy_logger_provider'
 require 'opentelemetry/internal/proxy_logger'
 require 'opentelemetry/internal/global_logger_provider'
+require 'opentelemetry/logs/legacy_global_compat'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
