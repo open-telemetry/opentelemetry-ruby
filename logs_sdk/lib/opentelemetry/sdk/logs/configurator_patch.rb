@@ -26,13 +26,13 @@ module OpenTelemetry
         # The logs_configuration_hook method is where we define the setup
         # process for logs SDK.
         def logs_configuration_hook
-          OpenTelemetry.logger_provider = Logs::LoggerProvider.new(resource: @resource)
+          OpenTelemetry::Internal.logger_provider = Logs::LoggerProvider.new(resource: @resource)
           configure_log_record_processors
         end
 
         def configure_log_record_processors
           processors = @log_record_processors.empty? ? wrapped_log_exporters_from_env.compact : @log_record_processors
-          processors.each { |p| OpenTelemetry.logger_provider.add_log_record_processor(p) }
+          processors.each { |p| OpenTelemetry::Internal.logger_provider.add_log_record_processor(p) }
         end
 
         def wrapped_log_exporters_from_env
