@@ -263,7 +263,7 @@ module OpenTelemetry
 
           instrument_name = registered_name || name
           @instrument_name_registry[name_key] = instrument_name
-          registry_key = [name_key, kind, unit, description, callback, exemplar_filter, exemplar_reservoir]
+          registry_key = [name_key, kind, unit, description]
           @instrument_registry[registry_key] ||= yield(instrument_name)
         end
       end
