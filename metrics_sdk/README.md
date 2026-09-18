@@ -274,6 +274,45 @@ counter.add(1, attributes: { 'service' => 'web' })
 OpenTelemetry.meter_provider.shutdown
 ```
 
+### Bridging pre-aggregated metrics with MetricProducer
+
+Subclass `MetricProducer` when a third-party source already provides aggregated
+metric data. Implement `produce` and return a `MetricProducer::Result` containing
+`MetricData` instances. The producer receives the SDK resource, an optional
+filter, and an optional timeout from the reader.
+
+```ruby
+class ThirdPartyProducer < OpenTelemetry::SDK::Metrics::Export::MetricProducer
+  def produce(resource:, metric_filter: nil)
+    metrics = read_aggregated_metrics(resource:)
+    metrics = metric_filter.filter(metrics) if metric_filter
+    Result.new(metrics: metrics, status: OpenTelemetry::SDK::Metrics::Export::SUCCESS, errors: [])
+  rescue StandardError => e
+    Result.new(metrics: [], status: OpenTelemetry::SDK::Metrics::Export::FAILURE, errors: [e])
+  end
+end
+
+producer = ThirdPartyProducer.new(aggregation_temporality: :delta)
+reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
+  exporter: otlp_exporter,
+  metric_producers: [producer]
+)
+OpenTelemetry.meter_provider.add_metric_reader(reader)
+```
+
+The producer's aggregation temporality is required and supports `:delta` and
+`:cumulative`. A
+producer can include successfully produced metrics in a failure result so the
+reader can still export partial data. When a producer reports a non-success
+status, the reader keeps those metrics and reports the failure through
+`OpenTelemetry.handle_error`.
+
+To filter producer output, subclass `MetricFilter` and return values from
+`MetricFilter::MetricFilterResult`. Return `ACCEPT` or `DROP` from `test_metric`
+to handle an entire stream. Return `ACCEPT_PARTIAL` and implement
+`test_attributes` to decide which data points to retain. The reader passes the
+optional filter to every configured producer.
+
 ### Exemplars
 
 Exemplars attach individual raw measurements — along with the trace context active at the time of the measurement — to an exported metric data point. This lets you jump from a metric spike directly to the trace that caused it.
