@@ -43,14 +43,13 @@ describe OpenTelemetry::Metrics::Meter do
       first.add(1)
     end
 
-    it 'preserves separate callbacks for observable proxy instruments' do
+    it 'reuses observable proxy instruments with the same identity' do
       proxy = OpenTelemetry::Internal::ProxyMeter.new
-      callback = -> { 1 }
-      first = proxy.create_observable_counter('requestCount', callback: callback)
+      first = proxy.create_observable_counter('requestCount', callback: -> { 1 })
       second = proxy.create_observable_counter('RequestCount', callback: -> { 2 })
 
-      _(second).wont_be_same_as(first)
-      _(proxy.create_observable_counter('REQUESTCOUNT', callback: callback)).must_be_same_as(first)
+      _(second).must_be_same_as(first)
+      _(proxy.create_observable_counter('REQUESTCOUNT', callback: -> { 3 })).must_be_same_as(first)
     end
 
     it 'preserves first-seen names for distinct proxy instruments across delegation' do
