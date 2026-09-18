@@ -255,8 +255,6 @@ module OpenTelemetry
 
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
         @mutex.synchronize do
-          OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument #{name}") if @instrument_registry.include? name
-
           @instrument_registry[name] = yield
         end
       end

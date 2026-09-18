@@ -207,14 +207,6 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     INSTRUMENT_DESCRIPTION_ERROR = OpenTelemetry::Metrics::Meter::InstrumentDescriptionError
     DUPLICATE_INSTRUMENT_ERROR = OpenTelemetry::Metrics::Meter::DuplicateInstrumentError
 
-    it 'duplicate instrument registration logs a warning' do
-      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        meter.create_counter('a_counter')
-        meter.create_counter('a_counter')
-        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument a_counter/)
-      end
-    end
-
     it 'instrument name must not be nil' do
       _(-> { meter.create_counter(nil) }).must_raise(INSTRUMENT_NAME_ERROR)
     end
@@ -259,6 +251,76 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       long_description = 'a' * 1023
       meter.create_counter('a_counter', description: long_description)
       _(-> { meter.create_counter('b_counter', description: long_description + 'a') }).must_raise(INSTRUMENT_DESCRIPTION_ERROR)
+    end
+  end
+
+  describe 'duplicate instrument registration' do
+    let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new }
+    let(:meter) { meter_provider.meter('duplicate_registration') }
+
+    it 'returns the same instrument for identical registrations' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        instrument = meter.create_counter('a_counter', unit: 'smidgen', description: 'a description')
+
+        _(meter.create_counter('a_counter', unit: 'smidgen', description: 'a description')).must_be_same_as(instrument)
+        _(log_stream.string).must_be_empty
+      end
+    end
+
+    it 'returns a functional instrument when identifying fields conflict' do
+      first = meter.create_counter('a_counter', unit: 'smidgen')
+      second = meter.create_counter('a_counter', unit: 'flurbo')
+
+      _(second).must_be_instance_of(OpenTelemetry::SDK::Metrics::Instrument::Counter)
+      _(second).wont_be_same_as(first)
+    end
+
+    it 'reports a description conflict' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter', description: 'first')
+        meter.create_counter('a_counter', description: 'second')
+
+        _(log_stream.string).must_match(/conflicting fields: description \("first" and "second"\)/)
+      end
+    end
+
+    it 'reports a kind conflict' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter')
+        meter.create_histogram('a_counter')
+
+        _(log_stream.string).must_match(/conflicting fields: kind \(counter and histogram\)/)
+      end
+    end
+
+    it 'returns the first-seen instrument name when only the casing differs' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        instrument = meter.create_counter('requestCount')
+
+        _(meter.create_counter('RequestCount')).must_be_same_as(instrument)
+        _(log_stream.string).must_match(/case-insensitive duplicate instrument registration occurred:'RequestCount' first seen as 'requestCount'/)
+      end
+    end
+
+    it 'reports conflicting fields against the first-seen instrument name casing' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('requestCount')
+        meter.create_histogram('RequestCount')
+
+        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument name 'requestCount'/)
+        _(log_stream.string).must_match(/conflicting fields: kind \(counter and histogram\)/)
+      end
+    end
+
+    it 'reports every conflicting field' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter', unit: 'smidgen', description: 'first')
+        meter.create_histogram('a_counter', unit: 'flurbo', description: 'second')
+
+        _(log_stream.string).must_match(
+          /conflicting fields: kind \(counter and histogram\), unit \("smidgen" and "flurbo"\), description \("first" and "second"\)/
+        )
+      end
     end
   end
 end
