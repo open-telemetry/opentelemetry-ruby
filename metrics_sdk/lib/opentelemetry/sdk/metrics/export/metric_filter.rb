@@ -17,6 +17,11 @@ module OpenTelemetry
             ACCEPT_PARTIAL = :accept_partial
           end
 
+          class AttributesFilterResult
+            ACCEPT = :accept
+            DROP = :drop
+          end
+
           # Tests whether a metric stream should be accepted.
           def test_metric(instrumentation_scope:, name:, kind:, unit:)
             raise NotImplementedError, "#{self.class} must implement #test_metric"
@@ -51,9 +56,9 @@ module OpenTelemetry
           def filter_data_points(metric, arguments)
             data_points = metric.data_points.select do |data_point|
               case test_attributes(**arguments, attributes: data_point.attributes)
-              when MetricFilterResult::ACCEPT
+              when AttributesFilterResult::ACCEPT
                 true
-              when MetricFilterResult::DROP
+              when AttributesFilterResult::DROP
                 false
               else
                 raise ArgumentError, 'test_attributes must return ACCEPT or DROP'

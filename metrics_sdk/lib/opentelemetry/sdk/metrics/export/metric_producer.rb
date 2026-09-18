@@ -26,9 +26,9 @@ module OpenTelemetry
 
           attr_reader :aggregation_temporality
 
-          # @param [Symbol, Aggregation::AggregationTemporality] aggregation_temporality
+          # @param [optional Symbol, Aggregation::AggregationTemporality] aggregation_temporality
           #   The temporality of metrics produced by this source.
-          def initialize(aggregation_temporality:)
+          def initialize(aggregation_temporality: nil)
             @aggregation_temporality = resolve_temporality(aggregation_temporality)
           end
 
@@ -38,18 +38,24 @@ module OpenTelemetry
           #   to associate with the produced metrics.
           # @param [optional MetricFilter] metric_filter The filter to apply while
           #   producing metrics.
+          # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Result] produced metrics and operation status.
-          def produce(resource:, metric_filter: nil)
+          def produce(resource: nil, metric_filter: nil, timeout: nil)
             raise NotImplementedError, "#{self.class} must implement #produce"
           end
 
           private
 
           def resolve_temporality(value)
-            value = value.temporality if value.is_a?(Aggregation::AggregationTemporality)
-            return value if %i[delta cumulative].include?(value)
-
-            raise ArgumentError, 'aggregation_temporality must be :delta or :cumulative'
+            if value.is_a?(Aggregation::AggregationTemporality)
+              value.temporality
+            elsif %i[delta cumulative].include?(value)
+              value
+            else
+              # spec doesn't define if temporality is nil, we give delta as default
+              OpenTelemetry.logger.warn('Aggregation temporality not specified or invalid, defaulting to delta')
+              Aggregation::AggregationTemporality::DELTA
+            end
           end
         end
       end

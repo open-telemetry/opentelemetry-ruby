@@ -283,7 +283,7 @@ filter, and an optional timeout from the reader.
 
 ```ruby
 class ThirdPartyProducer < OpenTelemetry::SDK::Metrics::Export::MetricProducer
-  def produce(resource:, metric_filter: nil)
+  def produce(resource:, metric_filter: nil, timeout: nil)
     metrics = read_aggregated_metrics(resource:)
     metrics = metric_filter.filter(metrics) if metric_filter
     Result.new(metrics: metrics, status: OpenTelemetry::SDK::Metrics::Export::SUCCESS, errors: [])
@@ -310,8 +310,16 @@ status, the reader keeps those metrics and reports the failure through
 To filter producer output, subclass `MetricFilter` and return values from
 `MetricFilter::MetricFilterResult`. Return `ACCEPT` or `DROP` from `test_metric`
 to handle an entire stream. Return `ACCEPT_PARTIAL` and implement
-`test_attributes` to decide which data points to retain. The reader passes the
-optional filter to every configured producer.
+`test_attributes` to decide which data points to retain. Configure the filter on
+the reader, which hands it to every configured producer on each collection:
+
+```ruby
+reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
+  exporter: otlp_exporter,
+  metric_producers: [producer],
+  metric_filter: MyMetricFilter.new
+)
+```
 
 ### Exemplars
 
