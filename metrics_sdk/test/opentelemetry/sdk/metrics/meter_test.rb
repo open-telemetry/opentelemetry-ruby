@@ -275,21 +275,21 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(second).wont_be_same_as(first)
     end
 
-    it 'recommends a description View when only the descriptions conflict' do
+    it 'reports a description conflict' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         meter.create_counter('a_counter', description: 'first')
         meter.create_counter('a_counter', description: 'second')
 
-        _(log_stream.string).must_match(/Only the descriptions differ/)
+        _(log_stream.string).must_match(/conflicting fields: description \("first" and "second"\)/)
       end
     end
 
-    it 'recommends a renaming View when the instruments differ by a View selector' do
+    it 'reports a kind conflict' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         meter.create_counter('a_counter')
         meter.create_histogram('a_counter')
 
-        _(log_stream.string).must_match(/can be distinguished by a View selector/)
+        _(log_stream.string).must_match(/conflicting fields: kind \(counter and histogram\)/)
       end
     end
 
@@ -308,16 +308,18 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         meter.create_histogram('RequestCount')
 
         _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument name 'requestCount'/)
-        _(log_stream.string).must_match(/can be distinguished by a View selector/)
+        _(log_stream.string).must_match(/conflicting fields: kind \(counter and histogram\)/)
       end
     end
 
-    it 'emits a generic warning when the conflict cannot be resolved by a View' do
+    it 'reports every conflicting field' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        meter.create_counter('a_counter', unit: 'smidgen')
-        meter.create_counter('a_counter', unit: 'flurbo')
+        meter.create_counter('a_counter', unit: 'smidgen', description: 'first')
+        meter.create_histogram('a_counter', unit: 'flurbo', description: 'second')
 
-        _(log_stream.string).must_match(/cannot be distinguished by a View selector/)
+        _(log_stream.string).must_match(
+          /conflicting fields: kind \(counter and histogram\), unit \("smidgen" and "flurbo"\), description \("first" and "second"\)/
+        )
       end
     end
   end

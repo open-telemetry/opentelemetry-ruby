@@ -88,8 +88,9 @@ module OpenTelemetry
               # Found the first conflicting instrument with the same name but different attributes (kind, unit, description).
               unless descriptors.empty?
                 # TODO: implement the function that can determine if the duplicate registration can be resolved by a view
+                # (current View can't rename the instrument name and description)
                 OpenTelemetry.logger.warn("duplicate instrument registration occurred for instrument name '#{name}'")
-                duplicate_registration_resolution(descriptors.first, kind, name, unit)
+                warn_conflicting_fields(descriptors.first, kind, unit, description)
               end
 
               # Build and register a new instrument since (still build the instrument even though a conflicting one exists) it has different attributes.
@@ -145,19 +146,15 @@ module OpenTelemetry
             descriptor.description.to_s == description.to_s
         end
 
-        # Returns guidance on how to resolve a duplicate instrument registration.
-        def duplicate_registration_resolution(existing, kind, name, unit)
-          msg = if existing.kind == kind && existing.unit.to_s == unit.to_s
-                  'Only the descriptions differ; register both instruments with the same description, ' \
-                    "or configure a View for '#{name}' to set a single description."
-                elsif existing.kind != kind
-                  'The instruments can be distinguished by a View selector; configure a View to rename one of them, ' \
-                    "e.g. OpenTelemetry.meter_provider.add_view('#{name}', type: :#{existing.kind})."
-                else
-                  'The instruments cannot be distinguished by a View selector, so both metrics are exported, ' \
-                    'which is a semantic error in the OpenTelemetry data model.'
-                end
-          OpenTelemetry.logger.warn(msg)
+        # Warns which identifying fields differ from the existing registration.
+        # The spec's View-based recipes are omitted because Views cannot rename a stream or override its description.
+        def warn_conflicting_fields(existing, kind, unit, description)
+          conflicts = []
+          conflicts << "kind (#{existing.kind} and #{kind})" if existing.kind != kind
+          conflicts << "unit (#{existing.unit.inspect} and #{unit.inspect})" if existing.unit.to_s != unit.to_s
+          conflicts << "description (#{existing.description.inspect} and #{description.inspect})" if existing.description.to_s != description.to_s
+
+          OpenTelemetry.logger.warn("conflicting fields: #{conflicts.join(', ')}")
         end
       end
     end
