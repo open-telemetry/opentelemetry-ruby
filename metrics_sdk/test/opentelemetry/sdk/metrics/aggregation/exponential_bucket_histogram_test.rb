@@ -69,6 +69,20 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[0].flags).must_equal(0)
     end
 
+    it 'ignores non-normal values (NaN, +Inf, -Inf) so they do not pollute sum/min/max/count' do
+      expbh.update(1, {}, data_points, cardinality_limit)
+      expbh.update(Float::NAN, {}, data_points, cardinality_limit)
+      expbh.update(Float::INFINITY, {}, data_points, cardinality_limit)
+      expbh.update(-Float::INFINITY, {}, data_points, cardinality_limit)
+      expbh.update(2, {}, data_points, cardinality_limit)
+
+      exphdps = expbh.collect(start_time, end_time, data_points)
+      _(exphdps[0].count).must_equal(2)
+      _(exphdps[0].sum).must_equal(3)
+      _(exphdps[0].min).must_equal(1)
+      _(exphdps[0].max).must_equal(2)
+    end
+
     it 'rescales with alternating growth 0' do
       # Tests insertion of [2, 4, 1]. The index of 2 (i.e., 0) becomes
       # `indexBase`, the 4 goes to its right and the 1 goes in the last

@@ -54,6 +54,7 @@ module OpenTelemetry
 
           # Adds increment to the sum for the given attributes.
           def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
+            return if increment.to_f.nan? || increment.infinite?
             return if @monotonic && increment < 0
 
             # Check if we already have this attribute set

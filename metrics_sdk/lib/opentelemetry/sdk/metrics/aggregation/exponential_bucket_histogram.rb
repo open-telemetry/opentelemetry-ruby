@@ -221,6 +221,8 @@ module OpenTelemetry
 
           # this is aggregate in python; there is no merge in aggregate; but rescale happened
           def update(amount, attributes, data_points, cardinality_limit, exemplar_offer: false)
+            return if amount.to_f.nan? || amount.infinite?
+
             hdp = if data_points.key?(attributes)
                     data_points[attributes]
                   elsif data_points.size >= cardinality_limit - 1
