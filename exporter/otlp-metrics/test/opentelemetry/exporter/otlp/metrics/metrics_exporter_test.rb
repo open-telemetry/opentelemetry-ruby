@@ -982,6 +982,25 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       end
     end
 
+    it 'accepts an explicit default_aggregation parameter' do
+      exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+        default_aggregation: { histogram: EXPONENTIAL_BUCKET_HISTOGRAM }
+      )
+
+      _(exporter.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      _(exporter.default_aggregation[:counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+    end
+
+    it 'prefers the default_aggregation parameter over the ENV value' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'base2_exponential_bucket_histogram') do
+        exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+          default_aggregation: { histogram: EXPLICIT_BUCKET_HISTOGRAM }
+        )
+
+        _(exporter.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+      end
+    end
+
     it 'warns and uses explicit buckets for an invalid ENV value' do
       OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'invalid_value') do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
