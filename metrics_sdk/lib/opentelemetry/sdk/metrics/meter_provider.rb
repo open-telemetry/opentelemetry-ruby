@@ -127,30 +127,18 @@ module OpenTelemetry
         end
 
         # @api private
-        def self.resolve_aggregation(metric_reader, instrument_kind, exemplar_reservoir)
-          preferred_agg_class = metric_reader.default_aggregation(instrument_kind) if metric_reader.respond_to?(:default_aggregation)
-          preferred_agg_class ||= OpenTelemetry::SDK::Metrics::Export::MetricReader.default_aggregation(instrument_kind)
-
-          kwargs = { exemplar_reservoir: exemplar_reservoir }
-          if preferred_agg_class == OpenTelemetry::SDK::Metrics::Aggregation::Sum
-            kwargs[:monotonic] = case instrument_kind
-                                 when :counter, :observable_counter
-                                   true
-                                 when :up_down_counter, :observable_up_down_counter
-                                   false
-                                 end
-            kwargs[:instrument_kind] = instrument_kind
-          end
-
-          preferred_agg_class.new(**kwargs)
+        #
+        # Returns the reader's preferred aggregation classes, or nil for a reader that
+        # does not provide any. Readers are duck typed, so the method may be absent.
+        def self.reader_config(metric_reader)
+          metric_reader.default_aggregation if metric_reader.respond_to?(:default_aggregation)
         end
 
         # @api private
         def register_synchronous_instrument(instrument)
           @mutex.synchronize do
             @metric_readers.each do |mr|
-              agg = OpenTelemetry::SDK::Metrics::MeterProvider.resolve_aggregation(mr, instrument.instrument_kind, instrument.exemplar_reservoir)
-              instrument.register_with_new_metric_store(mr.metric_store, aggregation: agg)
+              instrument.register_with_new_metric_store(mr.metric_store, default_aggregation: MeterProvider.reader_config(mr))
             end
           end
         end

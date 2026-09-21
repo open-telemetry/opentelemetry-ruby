@@ -26,7 +26,9 @@ module OpenTelemetry
                          export_timeout_millis: Float(ENV.fetch('OTEL_METRIC_EXPORT_TIMEOUT', 30_000)),
                          exporter: nil,
                          aggregation_cardinality_limit: nil)
-            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
+            # The exporter knows what the destination prefers, so this reader defers to it.
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: (exporter.default_aggregation if exporter.respond_to?(:default_aggregation)))
 
             @export_interval = export_interval_millis / 1000.0
             @export_timeout = export_timeout_millis / 1000.0
@@ -38,15 +40,6 @@ module OpenTelemetry
             @export_mutex = Mutex.new
 
             start
-          end
-
-          # Returns the default aggregation class for the given instrument kind.
-          def default_aggregation(instrument_kind)
-            if @exporter.respond_to?(:default_aggregation)
-              @exporter.default_aggregation(instrument_kind) || super
-            else
-              super
-            end
           end
 
           # Shuts the @thread down and set @continue to false; it will block

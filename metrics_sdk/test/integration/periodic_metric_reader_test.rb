@@ -204,14 +204,11 @@ describe OpenTelemetry::SDK do
       it 'respects the default_aggregation provided by the exporter' do
         OpenTelemetry::SDK.configure
 
-        # Create a mock exporter that acts like our new OTLP exporter and provides a preference proc
-        mock_exporter = Class.new(OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter) do
-          def default_aggregation(instrument_kind)
-            return nil unless instrument_kind == :histogram
-
-            OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
-          end
-        end.new
+        # An exporter that prefers exponential buckets, like the OTLP exporter does
+        # when OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION is set.
+        mock_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new(
+          default_aggregation: { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+        )
 
         OpenTelemetry.meter_provider.add_metric_reader(mock_exporter)
         meter = OpenTelemetry.meter_provider.meter('test')
@@ -231,13 +228,9 @@ describe OpenTelemetry::SDK do
         OpenTelemetry::SDK.configure
 
         # Truck A: Wants Exponential Buckets
-        mock_exporter_a = Class.new(OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter) do
-          def default_aggregation(instrument_kind)
-            return nil unless instrument_kind == :histogram
-
-            OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
-          end
-        end.new
+        mock_exporter_a = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new(
+          default_aggregation: { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+        )
 
         # Truck B: Wants Explicit Buckets (Default)
         mock_exporter_b = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new

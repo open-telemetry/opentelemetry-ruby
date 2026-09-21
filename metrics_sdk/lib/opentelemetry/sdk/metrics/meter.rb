@@ -61,8 +61,8 @@ module OpenTelemetry
         # mutex here would invert that order and deadlock, so it is deliberately omitted.
         def add_metric_reader(metric_reader)
           @instrument_registry.each_value do |instrument|
-            agg = OpenTelemetry::SDK::Metrics::MeterProvider.resolve_aggregation(metric_reader, instrument.instrument_kind, instrument.exemplar_reservoir)
-            instrument.register_with_new_metric_store(metric_reader.metric_store, aggregation: agg)
+            instrument.register_with_new_metric_store(metric_reader.metric_store,
+                                                      default_aggregation: MeterProvider.reader_config(metric_reader))
           end
         end
 
