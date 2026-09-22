@@ -1,0 +1,16 @@
+services:
+  dice_roller:
+    image: dice_roller:${VERSION}
+    container_name: dice_roller_${VERSION}
+    ports:
+      - "8080:8080"
+    environment:
+      OTEL_TRACES_EXPORTER: none
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+      OTEL_SERVICE_NAME: dice_roller_ci
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/rolldice"]
+      interval: 1s
+      timeout: 1s
+      retries: 30

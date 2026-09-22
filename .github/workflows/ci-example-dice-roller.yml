@@ -91,27 +91,11 @@ jobs:
           tags: dice_roller:${{ matrix.version }}
 
       - name: Run container (${{ matrix.version }})
+        working-directory: examples/dice_roller
         run: |
           # 🐳 Start container 🐳
-          docker run -d \
-            --name dice_roller_${{ matrix.version }} \
-            -p 8080:8080 \
-            -e OTEL_TRACES_EXPORTER=none \
-            -e OTEL_METRICS_EXPORTER=none \
-            -e OTEL_LOGS_EXPORTER=none \
-            -e OTEL_SERVICE_NAME=dice_roller_ci \
-            dice_roller:${{ matrix.version }}
-          echo "Waiting for container to be ready..."
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:8080/rolldice > /dev/null 2>&1; then
-              echo "Container ready after ${i}s"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "Container did not start in time" >&2
-          docker logs dice_roller_${{ matrix.version }}
-          exit 1
+          export VERSION=${{ matrix.version }}
+          docker compose up --wait -d
 
       - name: Verify /rolldice (single roll)
         run: |
@@ -133,6 +117,7 @@ jobs:
 
       - name: Stop and remove container
         if: always()
+        working-directory: examples/dice_roller
         run: |
-          docker stop dice_roller_${{ matrix.version }} || true
-          docker rm  dice_roller_${{ matrix.version }} || true
+          export VERSION=${{ matrix.version }}
+          docker compose down --remove-orphans --volumes
