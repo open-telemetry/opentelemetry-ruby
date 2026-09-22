@@ -16,7 +16,7 @@ WORKDIR /app
 
 # Install build dependencies
 RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends build-essential && \
+    apt-get install -y --no-install-recommends build-essential curl && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------
