@@ -41,6 +41,11 @@ module OpenTelemetry
             metric_store.add_metric_stream(ms)
           end
 
+          # @api private
+          def register_view(view)
+            @metric_streams.each { |ms| ms.register_view(view) }
+          end
+
           private
 
           def update(value, attributes)
