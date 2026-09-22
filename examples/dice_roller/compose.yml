@@ -10,7 +10,7 @@ services:
       OTEL_LOGS_EXPORTER: none
       OTEL_SERVICE_NAME: dice_roller_ci
     healthcheck:
-      test: ["CMD", "curl", "-sf", "http://localhost:8080/rolldice"]
+      test: ["CMD", "bash", "-c", "curl -s -o /dev/null http://localhost:8080/rolldice"]
       interval: 1s
       timeout: 1s
       retries: 30
