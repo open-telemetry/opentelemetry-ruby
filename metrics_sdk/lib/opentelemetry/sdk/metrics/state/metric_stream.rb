@@ -86,15 +86,14 @@ module OpenTelemetry
               end
             else
               @registered_views.each do |view, data_points|
-                resolved_cardinality_limit = resolve_cardinality_limit(view)
-                @mutex.synchronize do
-                  attributes ||= {}
-                  attributes.merge!(view.attribute_keys)
+                next unless view.valid_aggregation?
 
-                  if view.valid_aggregation?
-                    exemplar_offer = should_offer_exemplar?(value, attributes)
-                    view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
-                  end
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
+                view_attributes = view.filter_attributes(attributes)
+
+                @mutex.synchronize do
+                  exemplar_offer = should_offer_exemplar?(value, view_attributes)
+                  view.aggregation.update(value, view_attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
                 end
               end
             end
