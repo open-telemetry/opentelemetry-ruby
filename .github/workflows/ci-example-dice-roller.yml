@@ -115,6 +115,11 @@ jobs:
           echo "Response: $RESPONSE"
           echo "$RESPONSE" | grep -qE '^[1-6]$'
 
+      - name: Debug container logs
+        if: failure()
+        run: |
+          docker logs dice_roller_${{ matrix.version }}
+
       - name: Stop and remove container
         if: always()
         working-directory: examples/dice_roller
