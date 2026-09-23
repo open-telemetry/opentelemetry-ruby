@@ -561,6 +561,28 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'returns METRICS_FAILURE from send_bytes when shutdown' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+      bytes = exporter.encode([create_metrics_data])
+
+      exporter.shutdown
+
+      _(exporter.send_bytes(bytes, timeout: nil)).must_equal(METRICS_FAILURE)
+      assert_not_requested(:post, 'http://localhost:4318/v1/metrics')
+    end
+
+    it 'does not collect or send metrics on pull after shutdown' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
+      meter_provider.add_metric_reader(exporter)
+      meter_provider.meter('test').create_counter('test_counter').add(5)
+
+      exporter.shutdown
+
+      _(exporter.collect).must_equal([])
+      _(exporter.pull).must_equal(METRICS_FAILURE)
+      assert_not_requested(:post, 'http://localhost:4318/v1/metrics')
+    end
+
     it 'returns METRICS_FAILURE when encryption to receiver endpoint fails' do
       exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://localhost:4318/v1/metrics')
       stub_request(:post, 'https://localhost:4318/v1/metrics').to_raise(OpenSSL::SSL::SSLError.new('enigma wedged'))

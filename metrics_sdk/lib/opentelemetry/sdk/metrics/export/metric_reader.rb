@@ -16,15 +16,24 @@ module OpenTelemetry
 
           def initialize(aggregation_cardinality_limit: nil)
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
+            @stopped = false
           end
 
           # Collects and returns the current metrics from the metric store.
+          # Returns an empty Array if the reader has been shut down.
           def collect
+            if @stopped
+              OpenTelemetry.logger.warn('MetricReader already shutdown, ignoring collect request')
+              return []
+            end
+
             @metric_store.collect
           end
 
-          # No-op: subclasses should override to release resources.
+          # Marks this reader as stopped so subsequent collections fail.
+          # Subclasses that override this method should call super.
           def shutdown(timeout: nil)
+            @stopped = true
             Export::SUCCESS
           end
 

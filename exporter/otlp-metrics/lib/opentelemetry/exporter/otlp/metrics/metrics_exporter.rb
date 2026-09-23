@@ -101,7 +101,7 @@ module OpenTelemetry
 
           # Sends the encoded request bytes to the configured OTLP endpoint.
           def send_bytes(bytes, timeout:)
-            return FAILURE if bytes.nil?
+            return FAILURE if @shutdown || bytes.nil?
 
             request = Net::HTTP::Post.new(@path)
 
@@ -409,6 +409,7 @@ module OpenTelemetry
             end
 
             @shutdown = true
+            super # marks the underlying MetricReader as stopped so subsequent collections fail
             SUCCESS
           end
         end
