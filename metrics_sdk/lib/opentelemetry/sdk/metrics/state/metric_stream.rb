@@ -63,7 +63,8 @@ module OpenTelemetry
                   metric_data << aggregate_metric_data(start_time,
                                                        end_time,
                                                        aggregation: view.aggregation,
-                                                       data_points: data_points)
+                                                       data_points: data_points,
+                                                       description: view.description)
                 end
               end
 
@@ -92,7 +93,7 @@ module OpenTelemetry
                   attributes.merge!(view.attribute_keys)
 
                   if view.valid_aggregation?
-                    exemplar_offer = should_offer_exemplar?(value, attributes)
+                    exemplar_offer = should_offer_exemplar?(value, attributes, view.exemplar_reservoir)
                     view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
                   end
                 end
@@ -101,7 +102,7 @@ module OpenTelemetry
           end
 
           # Builds a {MetricData} snapshot from the given aggregation and data points.
-          def aggregate_metric_data(start_time, end_time, aggregation: nil, data_points: nil)
+          def aggregate_metric_data(start_time, end_time, aggregation: nil, data_points: nil, description: nil)
             aggregator = aggregation || @default_aggregation
             is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
             aggregation_temporality = aggregator.respond_to?(:aggregation_temporality) ? aggregator.aggregation_temporality : nil
@@ -109,7 +110,7 @@ module OpenTelemetry
 
             MetricData.new(
               @name,
-              @description,
+              description || @description,
               @unit,
               @instrument_kind,
               @meter_provider.resource,
@@ -147,8 +148,9 @@ module OpenTelemetry
           end
 
           # Returns whether the exemplar filter accepts this measurement.
-          def should_offer_exemplar?(value, attributes)
-            return false if @exemplar_reservoir&.noop?
+          # A view-level reservoir, when given, takes precedence over the instrument's reservoir.
+          def should_offer_exemplar?(value, attributes, exemplar_reservoir = nil)
+            return false if (exemplar_reservoir || @exemplar_reservoir)&.noop?
 
             context = OpenTelemetry::Context.current
             time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
