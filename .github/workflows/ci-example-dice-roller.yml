@@ -31,7 +31,7 @@ jobs:
   dice-roller:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: ${{ matrix.version }} / Ruby ${{ matrix.ruby }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -60,7 +60,7 @@ jobs:
   dice-roller-docker:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: Docker ${{ matrix.version }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
