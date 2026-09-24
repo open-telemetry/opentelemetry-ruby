@@ -23,6 +23,25 @@ module OpenTelemetry
             @metric_store.collect
           end
 
+          # Collects the current metrics and reports whether the collection
+          # succeeded, failed, or timed out.
+          #
+          # Metrics gathered before a timeout are still returned: collecting has
+          # already advanced the metric store, so dropping them would lose data.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [CollectionResult] the collected metrics with a status of
+          #   SUCCESS, FAILURE, or TIMEOUT. On FAILURE the metrics are empty.
+          def collect_with_result(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+            metrics = collect
+            status = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)&.zero? ? Export::TIMEOUT : Export::SUCCESS
+            CollectionResult.new(metrics, status)
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'Failed to collect metrics.')
+            CollectionResult.new([], Export::FAILURE)
+          end
+
           # No-op: subclasses should override to release resources.
           def shutdown(timeout: nil)
             Export::SUCCESS

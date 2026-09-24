@@ -117,18 +117,28 @@ module OpenTelemetry
           end
 
           # Helper function for the defined exporter to export metrics.
-          # It only exports if the collected metrics are not an empty array (collect returns an Array).
+          # It only exports if the collection did not fail and the collected metrics
+          # are not empty. Metrics collected before a timeout are still exported.
           #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred
           def export(timeout: nil)
             @export_mutex.synchronize do
-              collected_metrics = collect
-              result_code = @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
+              timeout ||= @export_timeout
+              collection = collect_with_result(timeout: timeout)
+              report_collection_result(collection)
+              return collection.status if collection.failure?
+
+              collected_metrics = collection.metrics
+              result_code = @exporter.export(collected_metrics, timeout: timeout) unless collected_metrics.empty?
               report_result(result_code)
               result_code
             end
+          end
+
+          def report_collection_result(collection)
+            OpenTelemetry.logger.warn 'Timed out while collecting metrics' if collection.timeout?
           end
 
           def report_result(result_code)
