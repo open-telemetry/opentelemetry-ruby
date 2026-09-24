@@ -188,6 +188,20 @@ so by squashing, so your pull request will result in a single commit in the
 repository, and in turn will correspond to exactly one entry in the changelog.
 Therefore, please scope each pull request to include a single change.
 
+### AI-assisted contributions
+
+If you use an AI tool to help author a pull request, you (the human) are still
+responsible for writing the PR description and any comments posted on the issue
+or PR. AI agents must prompt you for the content of each section in the PR
+template and use your answers verbatim rather than generating description
+content on their own. The PR template includes an authorship checkbox that you
+must check yourself before the PR is ready for review. See [AGENTS.md](AGENTS.md)
+for the full set of rules that apply to AI-assisted contributions.
+
+Using these tools is not discouraged, but maintainers may close pull requests
+that rely on AI output the author has not reviewed, per the OpenTelemetry
+[Generative AI contribution policy][otel-genai-policy].
+
 ### Sign the Contributor License Agreement (CLA)
 
 All PRs are automatically checked for a signed CLA. Your first PR fails this
@@ -350,6 +364,7 @@ For releases to succeed, new gems MUST include the following:
 [github-draft]: https://github.blog/2019-02-14-introducing-draft-pull-requests/
 [kube-github-workflow-pr]: https://github.com/kubernetes/community/blob/master/contributors/guide/github-workflow.md#7-create-a-pull-request
 [otel-contributor-guide]: https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md
+[otel-genai-policy]: https://github.com/open-telemetry/community/blob/main/policies/genai.md
 [otel-github-workflow]: https://github.com/open-telemetry/community/blob/main/guides/contributor/processes.md#workflows
 [otel-lib-guidelines]: https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/library-guidelines.md
 [otel-specification]: https://github.com/open-telemetry/opentelemetry-specification
