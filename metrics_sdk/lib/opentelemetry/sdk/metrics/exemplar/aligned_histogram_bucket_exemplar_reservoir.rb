@@ -49,6 +49,7 @@ module OpenTelemetry
             exemplars
           end
 
+          # Clears all sampled exemplars from the reservoir.
           def reset
             @exemplar_buckets = Array.new(@boundaries.size + 1) { ExemplarBucket.new }
           end

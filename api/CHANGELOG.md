@@ -1,5 +1,14 @@
 # Release History: opentelemetry-api
 
+### v1.11.1 / 2026-09-15
+
+* FIXED: Enforce W3C Baggage limits on the extract path (#2298)
+* DOCS: Document custom error handlers (#2264)
+
+### v1.11.0 / 2026-07-21
+
+* ADDED: Add attributes support to instrumentation scope for tracers (#2094)
+
 ### v1.10.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)

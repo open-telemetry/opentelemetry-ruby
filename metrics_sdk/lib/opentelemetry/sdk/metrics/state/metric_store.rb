@@ -21,6 +21,7 @@ module OpenTelemetry
             @cardinality_limit = cardinality_limit
           end
 
+          # Collects a snapshot of metric data from all registered metric streams.
           def collect
             @mutex.synchronize do
               @epoch_end_time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
@@ -31,6 +32,7 @@ module OpenTelemetry
             end
           end
 
+          # Registers a metric stream so it is included in future collections.
           def add_metric_stream(metric_stream)
             @mutex.synchronize do
               metric_stream.cardinality_limit = @cardinality_limit

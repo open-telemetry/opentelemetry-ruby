@@ -22,6 +22,7 @@ module OpenTelemetry
             @exemplar_reservoir_storage = {}
           end
 
+          # Returns the current data points, clearing them for delta temporality.
           def collect(start_time, end_time, data_points)
             ndps = data_points.values.map! do |ndp|
               ndp.start_time_unix_nano = start_time
@@ -34,6 +35,7 @@ module OpenTelemetry
             ndps
           end
 
+          # Replaces the last recorded value for the given attributes.
           def update(increment, attributes, data_points, cardinality_limit, exemplar_offer: false)
             # Check if we already have this attribute set
             ndp = if data_points.key?(attributes)
@@ -55,6 +57,7 @@ module OpenTelemetry
               attributes,
               nil,
               nil,
+              0,
               0,
               nil
             )

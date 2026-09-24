@@ -95,7 +95,7 @@ module OpenTelemetry
         # @note Stability Level: development
         HOST_MAC = 'host.mac'
 
-        # Name of the host. On Unix systems, it may contain what the hostname command returns, or the fully qualified hostname, or another name specified by the user.
+        # Name of the host. On UNIX systems, it may contain what the hostname command returns, or the fully qualified hostname, or another name specified by the user.
         #
         # @note Stability Level: development
         HOST_NAME = 'host.name'

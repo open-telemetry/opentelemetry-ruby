@@ -564,7 +564,7 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_NODE_CONDITION_STATUS = 'k8s.node.condition.status'
 
-        # Amount of cpu allocatable on the node.
+        # Amount of CPU allocatable on the node.
         #
         # @note Stability Level: development
         K8S_NODE_CPU_ALLOCATABLE = 'k8s.node.cpu.allocatable'
@@ -576,9 +576,9 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         K8S_NODE_CPU_TIME = 'k8s.node.cpu.time'
 
-        # Node's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
+        # Node's CPU usage, measured in CPUs. Range from 0 to the number of allocatable CPUs.
         #
-        # CPU usage of the specific Node on all available CPU cores, averaged over the sample window
+        # CPU usage of the specific Node on all available CPU cores. It is calculated as the change in cumulative CPU time (k8s.node.cpu.time) over a measurement interval, divided by the elapsed time: usageCores = (cpuTimeEnd - cpuTimeStart) / elapsedSeconds
         #
         # @note Stability Level: development
         K8S_NODE_CPU_USAGE = 'k8s.node.cpu.usage'
@@ -608,6 +608,26 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_NODE_FILESYSTEM_CAPACITY = 'k8s.node.filesystem.capacity'
 
+        # The total inodes in the node's root filesystem.
+        #
+        # This metric is derived from the
+        # [FsStats.Inodes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_FILESYSTEM_INODE_COUNT = 'k8s.node.filesystem.inode.count'
+
+        # The free inodes in the node's root filesystem.
+        #
+        # This metric is derived from the
+        # [FsStats.InodesFree](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_FILESYSTEM_INODE_FREE = 'k8s.node.filesystem.inode.free'
+
         # Node filesystem usage.
         #
         # This may not equal capacity - available.
@@ -630,15 +650,16 @@ module OpenTelemetry
         # Available memory for use.  This is defined as the memory limit - workingSetBytes. If memory limit is undefined, the available bytes is omitted.
         # This metric is derived from the [MemoryStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_MEMORY_AVAILABLE = 'k8s.node.memory.available'
 
-        # Node memory paging faults.
+        # Deprecated, use `k8s.node.paging.faults` instead.
         #
         # Cumulative number of major/minor page faults.
         # This metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) fields of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `k8s.node.paging.faults`.
         K8S_NODE_MEMORY_PAGING_FAULTS = 'k8s.node.memory.paging.faults'
 
         # Node memory RSS.
@@ -646,14 +667,15 @@ module OpenTelemetry
         # The amount of anonymous and swap cache memory (includes transparent hugepages).
         # This metric is derived from the [MemoryStats.RSSBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_MEMORY_RSS = 'k8s.node.memory.rss'
 
         # Memory usage of the Node.
         #
-        # Total memory usage of the Node
+        # Total memory in use. This includes all memory regardless of when it was accessed.
+        # This metric is derived from the [MemoryStats.UsageBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_MEMORY_USAGE = 'k8s.node.memory.usage'
 
         # Node memory working set.
@@ -661,7 +683,7 @@ module OpenTelemetry
         # The amount of working set memory. This includes recently accessed memory, dirty memory, and kernel memory. WorkingSetBytes is <= UsageBytes.
         # This metric is derived from the [MemoryStats.WorkingSetBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_MEMORY_WORKING_SET = 'k8s.node.memory.working_set'
 
         # Node network errors.
@@ -673,6 +695,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         K8S_NODE_NETWORK_IO = 'k8s.node.network.io'
+
+        # Node memory paging faults.
+        #
+        # Cumulative number of major/minor page faults.
+        # This metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) fields of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_NODE_PAGING_FAULTS = 'k8s.node.paging.faults'
 
         # Amount of pods allocatable on the node.
         #
@@ -686,9 +716,9 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_NODE_SYSTEM_CONTAINER_CPU_TIME = 'k8s.node.system_container.cpu.time'
 
-        # Node's system container CPU usage, measured in cpus.
+        # Node's system container CPU usage, measured in CPUs.
         #
-        # This metric is derived from the [CPUStats.UsageNanoCores](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L233) field of the [ContainerStats](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L157C6-L157C20) of [Node.SystemContainers](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L40) of the Kubelet's stats API.
+        # CPU usage of the specific System Container on all available CPU cores. It is calculated as the change in cumulative CPU time (k8s.node.system_container.cpu.time) over a measurement interval, divided by the elapsed time: usageCores = (cpuTimeEnd - cpuTimeStart) / elapsedSeconds
         #
         # @note Stability Level: development
         K8S_NODE_SYSTEM_CONTAINER_CPU_USAGE = 'k8s.node.system_container.cpu.usage'
@@ -763,9 +793,9 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         K8S_POD_CPU_TIME = 'k8s.pod.cpu.time'
 
-        # Pod's CPU usage, measured in cpus. Range from 0 to the number of allocatable CPUs.
+        # Pod's CPU usage, measured in CPUs. Range from 0 to the number of allocatable CPUs.
         #
-        # CPU usage of the specific Pod on all available CPU cores, averaged over the sample window
+        # CPU usage of the specific Pod on all available CPU cores. It is calculated as the change in cumulative CPU time (k8s.pod.cpu.time) over a measurement interval, divided by the elapsed time: usageCores = (cpuTimeEnd - cpuTimeStart) / elapsedSeconds
         #
         # @note Stability Level: development
         K8S_POD_CPU_USAGE = 'k8s.pod.cpu.usage'
@@ -807,15 +837,16 @@ module OpenTelemetry
         # Available memory for use.  This is defined as the memory limit - workingSetBytes. If memory limit is undefined, the available bytes is omitted.
         # This metric is derived from the [MemoryStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_MEMORY_AVAILABLE = 'k8s.pod.memory.available'
 
-        # Pod memory paging faults.
+        # Deprecated, use `k8s.pod.paging.faults` instead.
         #
         # Cumulative number of major/minor page faults.
         # This metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `k8s.pod.paging.faults`.
         K8S_POD_MEMORY_PAGING_FAULTS = 'k8s.pod.memory.paging.faults'
 
         # Pod memory RSS.
@@ -823,14 +854,15 @@ module OpenTelemetry
         # The amount of anonymous and swap cache memory (includes transparent hugepages).
         # This metric is derived from the [MemoryStats.RSSBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_MEMORY_RSS = 'k8s.pod.memory.rss'
 
         # Memory usage of the Pod.
         #
-        # Total memory usage of the Pod
+        # Total memory in use. This includes all memory regardless of when it was accessed.
+        # This metric is derived from the [MemoryStats.UsageBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_MEMORY_USAGE = 'k8s.pod.memory.usage'
 
         # Pod memory working set.
@@ -838,7 +870,7 @@ module OpenTelemetry
         # The amount of working set memory. This includes recently accessed memory, dirty memory, and kernel memory. WorkingSetBytes is <= UsageBytes.
         # This metric is derived from the [MemoryStats.WorkingSetBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_MEMORY_WORKING_SET = 'k8s.pod.memory.working_set'
 
         # Pod network errors.
@@ -850,6 +882,14 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         K8S_POD_NETWORK_IO = 'k8s.pod.network.io'
+
+        # Pod memory paging faults.
+        #
+        # Cumulative number of major/minor page faults.
+        # This metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
+        #
+        # @note Stability Level: development
+        K8S_POD_PAGING_FAULTS = 'k8s.pod.paging.faults'
 
         # Describes number of K8s Pods that are currently in a given phase.
         #

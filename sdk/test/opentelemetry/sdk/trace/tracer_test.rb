@@ -18,6 +18,36 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     Samplers::ConstantSampler.new(decision: Decision::RECORD_ONLY, description: 'RecordSampler')
   end
 
+  describe 'instrumentation scope attributes' do
+    it 'creates a tracer with empty attributes by default' do
+      tracer = Tracer.new('component', '1.0', tracer_provider)
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.attributes).must_equal({})
+    end
+
+    it 'normalizes nil attributes to empty hash' do
+      tracer = Tracer.new('component', '1.0', tracer_provider, attributes: nil)
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.attributes).must_equal({})
+    end
+
+    it 'creates a tracer with attributes' do
+      attrs = { 'key' => 'value' }
+      tracer = Tracer.new('component', '1.0', tracer_provider, attributes: attrs)
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.attributes).must_equal(attrs)
+    end
+
+    it 'propagates attributes through to exported span data' do
+      attrs = { 'key' => 'value' }
+      tracer = tracer_provider.tracer('component', '1.0', attributes: attrs)
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.name).must_equal('component')
+      _(span.instrumentation_scope.version).must_equal('1.0')
+      _(span.instrumentation_scope.attributes).must_equal(attrs)
+    end
+  end
+
   describe '#start_root_span' do
     it 'provides a default name' do
       _(tracer.start_root_span(nil).name).wont_be_nil

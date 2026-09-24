@@ -10,9 +10,11 @@ module OpenTelemetry
     # implementation.
     module Metrics
       # {MeterProvider} is the SDK implementation of {OpenTelemetry::Metrics::MeterProvider}.
-      # rubocop:disable Metrics/ClassLength
+      # rubocop:disable-next Metrics/ClassLength
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
-        Key = Struct.new(:name, :version)
+        EMPTY_ATTRIBUTES = {}.freeze
+
+        Key = Struct.new(:name, :version, :attributes)
         private_constant(:Key)
 
         attr_reader :resource, :metric_readers, :registered_views, :exemplar_filter
@@ -29,18 +31,22 @@ module OpenTelemetry
 
         # Returns a {Meter} instance.
         #
-        # @param [String] name Instrumentation package name
-        # @param [optional String] version Instrumentation package version
+        # @param [String] name Instrumentation scope name
+        # @param [optional String] version Instrumentation scope version
+        # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Meter]
-        def meter(name, version: nil)
+        def meter(name, version: nil, attributes: nil)
           version ||= ''
+          attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
+
           if @stopped
             OpenTelemetry.logger.warn 'calling MeterProvider#meter after shutdown, a noop meter will be returned.'
             OpenTelemetry::Metrics::Meter.new
           else
             OpenTelemetry.logger.warn "Invalid meter name provided: #{name.nil? ? 'nil' : 'empty'} value" if name.to_s.empty?
-            @mutex.synchronize { @meter_registry[Key.new(name, version)] ||= Meter.new(name, version, self) }
+            @mutex.synchronize { @meter_registry[Key.new(name, version, attributes)] ||= Meter.new(name, version, self, attributes: attributes) }
           end
         end
 
@@ -130,6 +136,7 @@ module OpenTelemetry
         end
         alias register_asynchronous_instrument register_synchronous_instrument
 
+        # Selects the exemplar filter class based on the OTEL_METRICS_EXEMPLAR_FILTER env var.
         def exemplar_filter_setup
           case ENV.fetch('OTEL_METRICS_EXEMPLAR_FILTER', nil)
           when 'always_on'
@@ -183,7 +190,6 @@ module OpenTelemetry
           nil
         end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end

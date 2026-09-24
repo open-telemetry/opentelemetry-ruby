@@ -58,6 +58,36 @@ module OpenTelemetry
         # @note Stability Level: development
         BROWSER_PLATFORM = 'browser.platform'
 
+        # The delta between the current value and the last-reported value. See [delta](https://github.com/GoogleChrome/web-vitals?tab=readme-ov-file#report-only-the-delta-of-changes).
+        #
+        # @note Stability Level: development
+        BROWSER_WEB_VITAL_DELTA = 'browser.web_vital.delta'
+
+        # A unique ID representing this particular metric instance.
+        #
+        # @note Stability Level: development
+        BROWSER_WEB_VITAL_ID = 'browser.web_vital.id'
+
+        # Name of the web vital.
+        #
+        # @note Stability Level: development
+        BROWSER_WEB_VITAL_NAME = 'browser.web_vital.name'
+
+        # The type of navigation, as reported by the [Navigation Timing API](https://developer.mozilla.org/docs/Web/API/PerformanceNavigationTiming/type), with additional values reported by the web-vitals library.
+        #
+        # @note Stability Level: development
+        BROWSER_WEB_VITAL_NAVIGATION_TYPE = 'browser.web_vital.navigation_type'
+
+        # The rating of the web vital value against the "good", "needs improvement", and "poor" thresholds defined for the metric.
+        #
+        # @note Stability Level: development
+        BROWSER_WEB_VITAL_RATING = 'browser.web_vital.rating'
+
+        # Value of the web vital.
+        #
+        # @note Stability Level: development
+        BROWSER_WEB_VITAL_VALUE = 'browser.web_vital.value'
+
         # @!endgroup
       end
     end

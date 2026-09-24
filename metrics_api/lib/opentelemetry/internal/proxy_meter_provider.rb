@@ -13,7 +13,7 @@ module OpenTelemetry
     # It delegates to a "real" MeterProvider after the global meter provider is registered.
     # It returns {ProxyMeter} instances until the delegate is installed.
     class ProxyMeterProvider < Metrics::MeterProvider
-      Key = Struct.new(:name, :version)
+      Key = Struct.new(:name, :version, :attributes)
       private_constant(:Key)
 
       # Returns a new {ProxyMeterProvider} instance.
@@ -43,15 +43,17 @@ module OpenTelemetry
 
       # Returns a {Meter} instance.
       #
-      # @param [optional String] name Instrumentation package name
-      # @param [optional String] version Instrumentation package version
+      # @param [optional String] name Instrumentation scope name
+      # @param [optional String] version Instrumentation scope version
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+      #   Instrumentation scope attributes
       #
       # @return [Meter]
-      def meter(name = nil, version: nil)
+      def meter(name = nil, version: nil, attributes: nil)
         @mutex.synchronize do
-          return @delegate.meter(name, version: version) unless @delegate.nil?
+          return @delegate.meter(name, version: version, attributes: attributes) unless @delegate.nil?
 
-          @registry[Key.new(name, version)] ||= ProxyMeter.new
+          @registry[Key.new(name, version, attributes)] ||= ProxyMeter.new
         end
       end
     end

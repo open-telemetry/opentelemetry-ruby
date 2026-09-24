@@ -44,10 +44,20 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         PROCESS_DISK_IO = 'process.disk.io'
 
+        # Number of disk operations performed by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_DISK_OPERATIONS = 'process.disk.operations'
+
         # The amount of physical memory in use.
         #
         # @note Stability Level: release_candidate
         PROCESS_MEMORY_USAGE = 'process.memory.usage'
+
+        # Percentage of total physical memory that is used by the process.
+        #
+        # @note Stability Level: development
+        PROCESS_MEMORY_UTILIZATION = 'process.memory.utilization'
 
         # The amount of committed virtual memory.
         #
@@ -70,12 +80,17 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         PROCESS_PAGING_FAULTS = 'process.paging.faults'
 
+        # Number of pending signals for the process.
+        #
+        # @note Stability Level: development
+        PROCESS_SIGNALS_PENDING = 'process.signals_pending'
+
         # Process threads count.
         #
         # @note Stability Level: release_candidate
         PROCESS_THREAD_COUNT = 'process.thread.count'
 
-        # Number of unix file descriptors in use by the process.
+        # Number of UNIX file descriptors in use by the process.
         #
         # @note Stability Level: release_candidate
         PROCESS_UNIX_FILE_DESCRIPTOR_COUNT = 'process.unix.file_descriptor.count'

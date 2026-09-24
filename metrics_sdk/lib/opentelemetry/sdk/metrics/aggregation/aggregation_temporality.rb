@@ -67,10 +67,12 @@ module OpenTelemetry
             @temporality = temporality
           end
 
+          # Returns whether this instance's temporality is DELTA.
           def delta?
             @temporality == :delta
           end
 
+          # Returns whether this instance's temporality is CUMULATIVE.
           def cumulative?
             @temporality == :cumulative
           end

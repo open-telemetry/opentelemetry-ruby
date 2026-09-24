@@ -14,12 +14,15 @@ module OpenTelemetry
         EMPTY_LIST = [].freeze
         private_constant(:EMPTY_LIST)
 
+        # No-op because this propagator does not inject any values.
         def inject(carrier, context: Context.current, setter: Context::Propagation.text_map_setter); end
 
+        # Returns the passed context unchanged because there is nothing to extract.
         def extract(carrier, context: Context.current, getter: Context::Propagation.text_map_getter)
           context
         end
 
+        # Returns an empty list because this propagator does not use carrier fields.
         def fields
           EMPTY_LIST
         end
@@ -31,7 +34,7 @@ module OpenTelemetry
 
       private_constant :USE_MODE_UNSPECIFIED, :USE_MODE_ONE, :USE_MODE_ALL
 
-      attr_writer :propagators, :error_handler, :id_generator
+      attr_writer :propagators, :id_generator
 
       def initialize
         @instrumentation_names = []
@@ -43,6 +46,7 @@ module OpenTelemetry
         @id_generator = OpenTelemetry::Trace
       end
 
+      # Returns the configured logger or the global OpenTelemetry logger.
       def logger
         @logger ||= OpenTelemetry.logger
       end
@@ -56,6 +60,26 @@ module OpenTelemetry
         @logger = ForwardingLogger.new(new_logger, level: ENV['OTEL_LOG_LEVEL'] || Logger::INFO)
       end
 
+      # Configures the error handler that will be installed on
+      # OpenTelemetry during SDK configuration.
+      #
+      # Assigned object must respond to +#call+ and accept the keyword
+      # arguments +exception:+ and +message:+.
+      #
+      # @param [#call] error_handler The error handler to install
+      #
+      # @example Configure a custom error handler during SDK setup
+      #   OpenTelemetry::SDK.configure do |c|
+      #     c.error_handler = lambda do |exception: nil, message: nil|
+      #       OpenTelemetry.logger.warn("otel: #{[message, exception&.message].compact.join(' - ')}")
+      #     end
+      #   end
+      # rubocop:disable-next Style/TrivialAccessors
+      def error_handler=(error_handler)
+        @error_handler = error_handler
+      end
+
+      # Returns the configured error handler or the global OpenTelemetry error handler.
       def error_handler
         @error_handler ||= OpenTelemetry.error_handler
       end

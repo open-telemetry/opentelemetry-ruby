@@ -26,6 +26,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Drop do
     _(ndp.time_unix_nano).must_equal(0)
   end
 
+  it 'includes flags on the collected data point' do
+    drop_aggregation.update(0, {}, data_points, cardinality_limit)
+    ndp = drop_aggregation.collect(start_time, end_time, data_points)[0]
+    _(ndp).must_respond_to(:flags)
+    _(ndp.flags).must_equal(0)
+  end
+
   it 'aggregates and collects should collect no value for all collection' do
     drop_aggregation.update(1, {}, data_points, cardinality_limit)
     drop_aggregation.update(2, {}, data_points, cardinality_limit)

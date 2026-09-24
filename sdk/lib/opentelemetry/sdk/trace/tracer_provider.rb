@@ -9,8 +9,10 @@ module OpenTelemetry
     module Trace
       # {TracerProvider} is the SDK implementation of {OpenTelemetry::Trace::TracerProvider}.
       class TracerProvider < OpenTelemetry::Trace::TracerProvider # rubocop:disable Metrics/ClassLength
-        Key = Struct.new(:name, :version)
-        private_constant(:Key)
+        Key = Struct.new(:name, :version, :attributes)
+        EMPTY_ATTRIBUTES = {}.freeze
+
+        private_constant(:Key, :EMPTY_ATTRIBUTES)
 
         attr_accessor :span_limits, :id_generator, :sampler
         attr_reader :resource
@@ -44,15 +46,28 @@ module OpenTelemetry
 
         # Returns a {Tracer} instance.
         #
-        # @param [optional String] name Instrumentation package name
-        # @param [optional String] version Instrumentation package version
+        # Supports both positional arguments (legacy) and keyword arguments:
+        #   tracer('name', '1.0')                                    # legacy positional
+        #   tracer(name: 'name', version: '1.0', attributes: {...})  # keyword
+        #
+        # When both positional and keyword arguments are provided for the same
+        # parameter, the keyword argument takes precedence.
+        #
+        # @param [String] name Instrumentation scope name
+        # @param [String] version Instrumentation scope version
+        # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Tracer]
-        def tracer(name = nil, version = nil)
-          name ||= ''
-          version ||= ''
+        def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          name ||= deprecated_name || ''
+          version ||= deprecated_version || ''
+          attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
-          @registry_mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
+          @registry_mutex.synchronize do
+            @registry[Key.new(name, version, attributes)] ||=
+              Tracer.new(name, version, self, attributes: attributes)
+          end
         end
 
         # Attempts to stop all the activity for this {TracerProvider}. Calls

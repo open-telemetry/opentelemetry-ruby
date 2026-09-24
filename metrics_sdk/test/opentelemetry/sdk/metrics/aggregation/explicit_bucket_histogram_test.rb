@@ -130,6 +130,13 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       _(hdp.time_unix_nano).must_equal(end_time)
     end
 
+    it 'includes flags on the collected data point' do
+      ebh.update(0, {}, data_points, cardinality_limit)
+      hdp = ebh.collect(start_time, end_time, data_points)[0]
+      _(hdp).must_respond_to(:flags)
+      _(hdp.flags).must_equal(0)
+    end
+
     it 'calculates the count' do
       ebh.update(0, {}, data_points, cardinality_limit)
       ebh.update(0, {}, data_points, cardinality_limit)

@@ -24,7 +24,7 @@ module OpenTelemetry
       module DESTINATION
         # @!group Attribute Names
 
-        # Destination address - domain name if available without reverse DNS lookup; otherwise, IP address or Unix domain socket name.
+        # Destination address - domain name if available without reverse DNS lookup; otherwise, IP address or UNIX domain socket name.
         #
         # When observed from the source side, and when communicating through an intermediary, `destination.address` SHOULD represent the destination address behind any intermediaries, for example proxies, if it's available.
         #

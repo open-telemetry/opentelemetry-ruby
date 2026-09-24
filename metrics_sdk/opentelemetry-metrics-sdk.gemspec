@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'opentelemetry-api', '~> 1.1'
   spec.add_dependency 'opentelemetry-metrics-api', '~> 0.2'
-  spec.add_dependency 'opentelemetry-sdk', '~> 1.2'
+  spec.add_dependency 'opentelemetry-sdk', '~> 1.13.0'
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"

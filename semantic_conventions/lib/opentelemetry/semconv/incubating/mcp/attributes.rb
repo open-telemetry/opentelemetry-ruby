@@ -36,7 +36,7 @@ module OpenTelemetry
         # @deprecated Moved to the [OpenTelemetry GenAI semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-genai).
         MCP_PROTOCOL_VERSION = 'mcp.protocol.version'
 
-        # The value of the resource uri.
+        # The value of the resource URI.
         #
         # This is a URI of the resource provided in the following requests or notifications: `resources/read`, `resources/subscribe`, `resources/unsubscribe`, or `notifications/resources/updated`.
         #

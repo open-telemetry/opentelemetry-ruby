@@ -13,9 +13,9 @@ module OpenTelemetry
         class << self
           private :new
 
-          # Returns a newly created {Resource} with the specified attributes
+          # Returns a newly created Resource with the specified attributes
           #
-          # @param [Hash{String => String, Numeric, Boolean} attributes Hash of key-value pairs to be used
+          # @param [Hash{String => String, Numeric, Boolean}] attributes Hash of key-value pairs to be used
           #   as attributes for this resource
           # @raise [ArgumentError] If attribute keys and values are not strings
           # @return [Resource]
@@ -30,10 +30,16 @@ module OpenTelemetry
             new(frozen_attributes)
           end
 
+          # Returns the default Resource for the current process and SDK.
+          #
+          # @return [Resource]
           def default
             @default ||= create(SemanticConventions::Resource::SERVICE_NAME => 'unknown_service').merge(process).merge(telemetry_sdk).merge(service_name_from_env)
           end
 
+          # Returns a Resource describing this telemetry SDK.
+          #
+          # @return [Resource]
           def telemetry_sdk
             resource_attributes = {
               SemanticConventions::Resource::TELEMETRY_SDK_NAME => 'opentelemetry',
@@ -53,6 +59,9 @@ module OpenTelemetry
             create(resource_attributes)
           end
 
+          # Returns a Resource describing the current process.
+          #
+          # @return [Resource]
           def process
             resource_attributes = {
               SemanticConventions::Resource::PROCESS_PID => Process.pid,
@@ -75,7 +84,7 @@ module OpenTelemetry
 
         # @api private
         # The constructor is private and only for use internally by the class.
-        # Users should use the {create} factory method to obtain a {Resource}
+        # Users should use the {create} factory method to obtain a Resource
         # instance.
         #
         # @param [Hash<String, String>] frozen_attributes Frozen-hash of frozen-string
@@ -85,15 +94,15 @@ module OpenTelemetry
           @attributes = frozen_attributes
         end
 
-        # Returns an enumerator for attributes of this {Resource}
+        # Returns an enumerator for attributes of this Resource
         #
         # @return [Enumerator]
         def attribute_enumerator
           @attribute_enumerator ||= attributes.to_enum
         end
 
-        # Returns a new, merged {Resource} by merging the current {Resource} with
-        # the other {Resource}. In case of a collision, the other {Resource}
+        # Returns a new, merged Resource by merging the current Resource with
+        # the other Resource. In case of a collision, the other Resource
         # takes precedence
         #
         # @param [Resource] other The other resource to merge

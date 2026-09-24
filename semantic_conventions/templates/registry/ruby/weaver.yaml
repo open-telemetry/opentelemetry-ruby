@@ -20,6 +20,9 @@ templates:
         "exclude_root_namespace": $excluded_namespaces,
         "exclude_stability": ["experimental", "deprecated"],
         "exclude_deprecated": false
+      })| map({
+          root_namespace: .root_namespace,
+          metrics: [.metrics[] | select(.id == ("metric." + .metric_name))]
       })
     file_name: "{{ctx.root_namespace | snake_case}}/metrics.rb"
   # incubating
@@ -41,6 +44,9 @@ templates:
         "exclude_root_namespace": $excluded_namespaces,
         "exclude_stability": [],
         "exclude_deprecated": false
+      })| map({
+          root_namespace: .root_namespace,
+          metrics: [.metrics[] | select(.id == ("metric." + .metric_name))]
       })
     file_name: "incubating/{{ctx.root_namespace | snake_case}}/metrics.rb"
     params:
