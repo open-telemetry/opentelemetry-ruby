@@ -127,10 +127,18 @@ module OpenTelemetry
         end
 
         # @api private
+        #
+        # Returns the reader's preferred aggregation classes, or nil for a reader that
+        # does not provide any. Readers are duck typed, so the method may be absent.
+        def self.reader_config(metric_reader)
+          metric_reader.default_aggregation if metric_reader.respond_to?(:default_aggregation)
+        end
+
+        # @api private
         def register_synchronous_instrument(instrument)
           @mutex.synchronize do
             @metric_readers.each do |mr|
-              instrument.register_with_new_metric_store(mr.metric_store)
+              instrument.register_with_new_metric_store(mr.metric_store, default_aggregation: MeterProvider.reader_config(mr))
             end
           end
         end

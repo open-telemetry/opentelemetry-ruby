@@ -948,6 +948,69 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
     end
   end
 
+  describe '#default_aggregation' do
+    EXPLICIT_BUCKET_HISTOGRAM = OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram
+    EXPONENTIAL_BUCKET_HISTOGRAM = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
+
+    it 'uses the spec defaults for non-histogram instruments' do
+      default_aggregation = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation
+
+      _(default_aggregation[:counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+      _(default_aggregation[:up_down_counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+      _(default_aggregation[:observable_gauge]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::LastValue)
+    end
+
+    it 'defaults histograms to explicit buckets' do
+      _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+    end
+
+    it 'uses explicit buckets when configured to explicit_bucket_histogram via ENV' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'explicit_bucket_histogram') do
+        _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'uses exponential buckets when configured to base2_exponential_bucket_histogram via ENV' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'base2_exponential_bucket_histogram') do
+        _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'evaluates the ENV value case-insensitively' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => ' BASE2_Exponential_Bucket_Histogram ') do
+        _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'accepts an explicit default_aggregation parameter' do
+      exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+        default_aggregation: { histogram: EXPONENTIAL_BUCKET_HISTOGRAM }
+      )
+
+      _(exporter.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      _(exporter.default_aggregation[:counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+    end
+
+    it 'prefers the default_aggregation parameter over the ENV value' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'base2_exponential_bucket_histogram') do
+        exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+          default_aggregation: { histogram: EXPLICIT_BUCKET_HISTOGRAM }
+        )
+
+        _(exporter.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'warns and uses explicit buckets for an invalid ENV value' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'invalid_value') do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+          _(log_stream.string).must_match(/unrecognized value 'invalid_value', defaulting to explicit_bucket_histogram/)
+        end
+      end
+    end
+  end
+
   describe '#shutdown' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
 

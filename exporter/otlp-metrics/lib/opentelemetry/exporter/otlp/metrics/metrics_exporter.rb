@@ -56,12 +56,15 @@ module OpenTelemetry
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                         aggregation_cardinality_limit: nil)
+                         aggregation_cardinality_limit: nil,
+                         default_aggregation: nil)
             raise ArgumentError, "invalid url for OTLP::MetricsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             # create the MetricStore object
-            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
+            # An explicitly provided aggregation takes precedence over the environment variable.
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: self.class.histogram_aggregation_from_env.merge(default_aggregation || {}))
 
             @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
                      endpoint += '/' unless endpoint.end_with?('/')
@@ -78,6 +81,25 @@ module OpenTelemetry
             @compression = compression
             @mutex = Mutex.new
             @shutdown = false
+          end
+
+          # Returns the histogram aggregation requested by
+          # OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION, or an empty Hash
+          # when the spec default (explicit bucket histogram) applies.
+          #
+          # @return [Hash{Symbol => Class}]
+          def self.histogram_aggregation_from_env
+            case ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', 'explicit_bucket_histogram').strip.downcase
+            when 'base2_exponential_bucket_histogram'
+              { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+            when 'explicit_bucket_histogram'
+              {}
+            else
+              OpenTelemetry.logger.warn(
+                "OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION: unrecognized value '#{ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', nil)}', defaulting to explicit_bucket_histogram."
+              )
+              {}
+            end
           end
 
           # consolidate the metrics data into the form of MetricData
