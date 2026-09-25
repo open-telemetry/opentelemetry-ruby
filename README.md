@@ -33,7 +33,6 @@ The Ruby special interest group (SIG) meets regularly. See the OpenTelemetry
 ### Maintainers
 
 - [Daniel Azuma](https://github.com/dazuma), Google
-- [Francis Bogsanyi](https://github.com/fbogsany), Shopify
 - [Kayla Reopelle](https://github.com/kaylareopelle), New Relic
 - [Matthew Wear](https://github.com/mwear), Dash0
 - [Robert Laurin](https://github.com/robertlaurin), Shopify
@@ -52,6 +51,7 @@ For more information about the approver role, see the [community repository](htt
 - [Andrew Hayworth](https://github.com/ahayworth), Approver
 - [Ariel Valentin](https://github.com/arielvalentin), Approver
 - [Eric Mustin](https://github.com/ericmustin), Approver
+- [Francis Bogsanyi](https://github.com/fbogsany), Maintainer
 - [Sam Handler](https://github.com/plantfansam), Approver
 
 For more information about the emeritus role, see the
