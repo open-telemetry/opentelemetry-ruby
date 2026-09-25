@@ -11,7 +11,7 @@ module OpenTelemetry
         # Contains the implementation of the LastValue aggregation
         class LastValue
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
-          attr_reader :exemplar_reservoir
+          attr_accessor :exemplar_reservoir
 
           # if no reservoir pass from instrument, then use this empty reservoir to avoid no method found error
           DEFAULT_RESERVOIR = Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new

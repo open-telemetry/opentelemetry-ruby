@@ -181,6 +181,9 @@ module OpenTelemetry
         #     unit: A String matching an instrumentation unit, e.g. 'smidgen'
         #     meter_name: A String matching a meter name, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be 'sample_meter_name'
         #     meter_version: A String matching a meter version, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be '1.2.0'
+        #     description: A String that overrides the instrument description in the resulting metric stream
+        #     exemplar_reservoir: An instance of an exemplar reservoir class, e.g. {Exemplar::SimpleFixedSizeExemplarReservoir},
+        #       used by the view's aggregation instead of the instrument's default reservoir
         #
         # @return [nil] returns nil
         #
