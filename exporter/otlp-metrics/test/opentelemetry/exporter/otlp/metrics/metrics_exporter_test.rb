@@ -81,14 +81,21 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       end
     end
 
-    it 'only allows http/protobuf or http/json protocol' do
-      assert_raises ArgumentError do
-        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(protocol: 'grpc')
+    it 'only allows protobuf or json encoding' do
+      ['grpc', nil].each do |encoding|
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(encoding: encoding)
+        end
+      end
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_PROTOCOL' => 'grpc') do
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
+        end
       end
 
-      %w[http/protobuf http/json].each do |protocol|
-        exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(protocol: protocol)
-        expected_content_type = protocol == 'http/protobuf' ? 'application/x-protobuf' : 'application/json'
+      %w[protobuf json].each do |encoding|
+        exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(encoding: encoding)
+        expected_content_type = encoding == 'protobuf' ? 'application/x-protobuf' : 'application/json'
         _(exp.instance_variable_get(:@content_type)).must_equal(expected_content_type)
       end
 
@@ -147,7 +154,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
                                                                     client_key_file: METRICS_CLIENT_CERT_B_PATH,
                                                                     headers: { 'x' => 'y' },
                                                                     compression: 'gzip',
-                                                                    protocol: 'http/json',
+                                                                    encoding: 'json',
                                                                     ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
                                                                     timeout: 12)
       end
@@ -561,8 +568,8 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       assert_requested(stub_post)
     end
 
-    it 'encodes as JSON when protocol is http/json' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(protocol: 'http/json', compression: 'none')
+    it 'encodes as JSON when encoding is json' do
+      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(encoding: 'json', compression: 'none')
       trace_id = OpenTelemetry::Trace.generate_trace_id
       span_id = OpenTelemetry::Trace.generate_span_id
       exemplar = OpenTelemetry::SDK::Metrics::Exemplar::Exemplar.new({}, 1, 0, span_id, trace_id)

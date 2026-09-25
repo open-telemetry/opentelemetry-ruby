@@ -71,14 +71,21 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       end
     end
 
-    it 'only allows http/protobuf or http/json protocol' do
-      assert_raises ArgumentError do
-        OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(protocol: 'grpc')
+    it 'only allows protobuf or json encoding' do
+      ['grpc', nil].each do |encoding|
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(encoding: encoding)
+        end
+      end
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_PROTOCOL' => 'grpc') do
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
+        end
       end
 
-      %w[http/protobuf http/json].each do |protocol|
-        exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(protocol: protocol)
-        expected_content_type = protocol == 'http/protobuf' ? 'application/x-protobuf' : 'application/json'
+      %w[protobuf json].each do |encoding|
+        exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(encoding: encoding)
+        expected_content_type = encoding == 'protobuf' ? 'application/x-protobuf' : 'application/json'
         _(exp.instance_variable_get(:@content_type)).must_equal(expected_content_type)
       end
 
@@ -599,8 +606,8 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       _(result).must_equal(success)
     end
 
-    it 'encodes as spec-compliant JSON when protocol is http/json' do
-      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(protocol: 'http/json', compression: 'none')
+    it 'encodes as spec-compliant JSON when encoding is json' do
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(encoding: 'json', compression: 'none')
       trace_id = OpenTelemetry::Trace.generate_trace_id
       span_id = OpenTelemetry::Trace.generate_span_id
       parsed = nil
