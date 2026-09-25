@@ -121,6 +121,25 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     _(ndps[0].value).must_equal(-1)
   end
 
+  it 'ignores NaN measurements so they do not poison the sum' do
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(Float::NAN, {}, data_points, cardinality_limit)
+    sum_aggregation.update(2, {}, data_points, cardinality_limit)
+
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0].value).must_equal(3)
+  end
+
+  it 'ignores +/-Infinity measurements so they do not poison the sum' do
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(Float::INFINITY, {}, data_points, cardinality_limit)
+    sum_aggregation.update(-Float::INFINITY, {}, data_points, cardinality_limit)
+    sum_aggregation.update(2, {}, data_points, cardinality_limit)
+
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0].value).must_equal(3)
+  end
+
   it 'does not aggregate between collects' do
     sum_aggregation.update(1, {}, data_points, cardinality_limit)
     sum_aggregation.update(2, {}, data_points, cardinality_limit)
