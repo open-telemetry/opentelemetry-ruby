@@ -26,6 +26,7 @@ module OpenTelemetry
         def initialize(name, version, meter_provider, attributes: nil)
           @mutex = Mutex.new
           @instrument_registry = {}
+          @instrument_name_registry = {}
           @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
           @meter_provider = meter_provider
         end
@@ -70,15 +71,15 @@ module OpenTelemetry
           raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
           raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
 
-          super do
+          super do |instrument_name|
             case kind
-            when :counter then OpenTelemetry::SDK::Metrics::Instrument::Counter.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
-            when :observable_counter then OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter.new(name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
-            when :gauge then OpenTelemetry::SDK::Metrics::Instrument::Gauge.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
-            when :histogram then OpenTelemetry::SDK::Metrics::Instrument::Histogram.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
-            when :observable_gauge then OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge.new(name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
-            when :up_down_counter then OpenTelemetry::SDK::Metrics::Instrument::UpDownCounter.new(name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
-            when :observable_up_down_counter then OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter.new(name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :counter then OpenTelemetry::SDK::Metrics::Instrument::Counter.new(instrument_name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :observable_counter then OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter.new(instrument_name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :gauge then OpenTelemetry::SDK::Metrics::Instrument::Gauge.new(instrument_name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :histogram then OpenTelemetry::SDK::Metrics::Instrument::Histogram.new(instrument_name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :observable_gauge then OpenTelemetry::SDK::Metrics::Instrument::ObservableGauge.new(instrument_name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :up_down_counter then OpenTelemetry::SDK::Metrics::Instrument::UpDownCounter.new(instrument_name, unit, description, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
+            when :observable_up_down_counter then OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter.new(instrument_name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
             end
           end
         end
