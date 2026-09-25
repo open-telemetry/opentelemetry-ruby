@@ -13,11 +13,11 @@ module OpenTelemetry
 
       # Returns an {OpenTelemetry::Logs::Logger} instance.
       #
-      # @param [optional String] name Instrumentation package name
-      # @param [optional String] version Instrumentation package version
+      # @param [String] name Instrumentation scope name
+      # @param [optional String] version Instrumentation scope version
       #
       # @return [OpenTelemetry::Logs::Logger]
-      def logger(name = nil, version = nil)
+      def logger(name:, version: nil)
         @logger ||= NOOP_LOGGER
       end
     end

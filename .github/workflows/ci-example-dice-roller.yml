@@ -49,7 +49,7 @@ jobs:
           persist-credentials: false
 
       - name: Test Dice Roller (${{ matrix.version }}, Ruby ${{ matrix.ruby }})
-        uses: ./.github/actions/test_dice_roller
+        uses: $/.github/actions/test_dice_roller
         with:
           version: ${{ matrix.version }}
           ruby: ${{ matrix.ruby }}

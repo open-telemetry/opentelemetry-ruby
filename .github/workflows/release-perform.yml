@@ -49,5 +49,5 @@ jobs:
           bundle exec toys release perform --yes --verbose \
             "--release-ref=${{ github.sha }}" \
             $RELEASE_FLAGS \
-            "$RELEASE_NAME" "$RELEASE_VERSION" \
+            "$RELEASE_NAME=$RELEASE_VERSION" \
             < /dev/null
