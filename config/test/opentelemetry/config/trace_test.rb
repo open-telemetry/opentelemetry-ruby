@@ -93,6 +93,63 @@ describe OpenTelemetry::Config do
           _(bsp.instance_variable_get(:@batch_size)).must_equal 256
         end
       end
+
+      it 'uses declarative defaults instead of OTEL_BSP_* environment variables' do
+        OpenTelemetry::TestHelpers.with_env(
+          'OTEL_BSP_SCHEDULE_DELAY' => '17',
+          'OTEL_BSP_EXPORT_TIMEOUT' => '19',
+          'OTEL_BSP_MAX_QUEUE_SIZE' => '23',
+          'OTEL_BSP_MAX_EXPORT_BATCH_SIZE' => '7',
+          'OTEL_RUBY_BSP_START_THREAD_ON_BOOT' => 'false'
+        ) do
+          with_config(<<~YAML) do |path|
+            file_format: "1.0"
+            tracer_provider:
+              processors:
+                - batch:
+                    exporter:
+                      console:
+          YAML
+            sdk = OpenTelemetry::Config.configure_from_file(path)
+            processor = sdk.tracer_provider.instance_variable_get(:@span_processors).first
+
+            _(processor.instance_variable_get(:@delay_seconds) * 1000).must_equal 5000.0
+            _(processor.instance_variable_get(:@exporter_timeout_seconds) * 1000).must_equal 30_000.0
+            _(processor.instance_variable_get(:@max_queue_size)).must_equal 2048
+            _(processor.instance_variable_get(:@batch_size)).must_equal 512
+            _(processor.instance_variable_get(:@thread)).must_be_instance_of Thread
+          end
+        end
+      end
+
+      it 'uses declarative OTLP defaults instead of OTEL_EXPORTER_OTLP_* environment variables' do
+        OpenTelemetry::TestHelpers.with_env(
+          'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT' => 'http://env.invalid:9999/v1/traces',
+          'OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'x-env=present',
+          'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION' => 'gzip',
+          'OTEL_EXPORTER_OTLP_TRACES_TIMEOUT' => '1234',
+          'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => '1'
+        ) do
+          with_config(<<~YAML) do |path|
+            file_format: "1.0"
+            tracer_provider:
+              processors:
+                - batch:
+                    exporter:
+                      otlp_http: {}
+          YAML
+            sdk = OpenTelemetry::Config.configure_from_file(path)
+            processor = sdk.tracer_provider.instance_variable_get(:@span_processors).first
+            exporter = processor.instance_variable_get(:@exporter)
+
+            _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://localhost:4318/v1/traces'
+            _(exporter.instance_variable_get(:@compression)).must_equal 'none'
+            _(exporter.instance_variable_get(:@timeout)).must_equal 10.0
+            _(exporter.instance_variable_get(:@headers)).wont_include 'x-env'
+            _(exporter.instance_variable_get(:@http).verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
+          end
+        end
+      end
     end
 
     describe 'multiple processors' do
@@ -235,6 +292,25 @@ describe OpenTelemetry::Config do
           _(limits.link_count_limit).must_equal 16
           _(limits.event_attribute_count_limit).must_equal 8
           _(limits.link_attribute_count_limit).must_equal 4
+        end
+      end
+
+      it 'builds schema defaults instead of reusing the SDK environment-backed defaults' do
+        with_config(<<~YAML) do |path|
+          file_format: "1.0"
+          #{TRACER_PROVIDER_YAML}
+        YAML
+          sdk = OpenTelemetry::Config.configure_from_file(path)
+          limits = sdk.tracer_provider.instance_variable_get(:@span_limits)
+
+          _(limits).wont_be_same_as OpenTelemetry::SDK::Trace::SpanLimits::DEFAULT
+          _(limits.attribute_count_limit).must_equal 128
+          _(limits.attribute_length_limit).must_be_nil
+          _(limits.event_count_limit).must_equal 128
+          _(limits.link_count_limit).must_equal 128
+          _(limits.event_attribute_count_limit).must_equal 128
+          _(limits.event_attribute_length_limit).must_be_nil
+          _(limits.link_attribute_count_limit).must_equal 128
         end
       end
     end

@@ -3,6 +3,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+require 'openssl'
+
 module OpenTelemetry
   module Config
     # Trace component builder for configuring TracerProvider from declarative config.
@@ -46,15 +48,17 @@ module OpenTelemetry
         end
       end
 
-      # Builds a BatchSpanProcessor with exporter and optional tuning options.
+      # Builds a BatchSpanProcessor with exporter and schema defaults. Passing
+      # every option explicitly prevents the SDK initializer from reading OTEL_*.
       def build_batch_span_processor(cfg)
         exporter = build_span_exporter(cfg.exporter)
         opts = {
-          schedule_delay: cfg.schedule_delay&.to_f,
-          exporter_timeout: cfg.export_timeout&.to_f,
-          max_queue_size: cfg.max_queue_size&.to_i,
-          max_export_batch_size: cfg.max_export_batch_size&.to_i
-        }.compact
+          schedule_delay: cfg.schedule_delay.nil? ? 5_000 : cfg.schedule_delay.to_f,
+          exporter_timeout: cfg.export_timeout.nil? ? 30_000 : cfg.export_timeout.to_f,
+          max_queue_size: cfg.max_queue_size.nil? ? 2048 : cfg.max_queue_size.to_i,
+          max_export_batch_size: cfg.max_export_batch_size.nil? ? 512 : cfg.max_export_batch_size.to_i,
+          start_thread_on_boot: true
+        }
 
         OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter, **opts)
       end
@@ -88,17 +92,19 @@ module OpenTelemetry
         exporter
       end
 
-      # Builds an OTLP HTTP span exporter from the given endpoint/headers config.
+      # Builds an OTLP HTTP span exporter from declarative values and schema
+      # defaults, without falling back to exporter environment variables.
       def build_otlp_http_span_exporter(cfg)
-        headers = headers_to_hash(cfg)
-        opts = {
-          endpoint: cfg.endpoint,
-          headers: headers.empty? ? nil : headers,
-          compression: cfg.compression,
-          timeout: cfg.timeout && (cfg.timeout / 1000.0) # YAML ms → Ruby seconds
-        }.compact
-
-        OpenTelemetry::Exporter::OTLP::Exporter.new(**opts)
+        OpenTelemetry::Exporter::OTLP::Exporter.new(
+          endpoint: cfg.endpoint || 'http://localhost:4318/v1/traces',
+          certificate_file: cfg.tls&.ca_file,
+          client_certificate_file: cfg.tls&.cert_file,
+          client_key_file: cfg.tls&.key_file,
+          ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER,
+          headers: headers_to_hash(cfg),
+          compression: cfg.compression || 'none',
+          timeout: cfg.timeout.nil? ? 10.0 : (cfg.timeout / 1000.0)
+        )
       end
 
       # Builds a sampler from config; defaults to ParentBased(ALWAYS_ON).
@@ -139,20 +145,17 @@ module OpenTelemetry
         s.parent_based(**opts)
       end
 
-      # Builds SpanLimits from config; returns the SDK default when config is nil.
+      # Builds SpanLimits from declarative values and schema defaults.
       def build_span_limits(limits_cfg)
-        return OpenTelemetry::SDK::Trace::SpanLimits::DEFAULT unless limits_cfg
-
-        opts = {
-          attribute_count_limit: limits_cfg.attribute_count_limit,
-          attribute_length_limit: limits_cfg.attribute_value_length_limit,
-          event_count_limit: limits_cfg.event_count_limit,
-          link_count_limit: limits_cfg.link_count_limit,
-          event_attribute_count_limit: limits_cfg.event_attribute_count_limit,
-          link_attribute_count_limit: limits_cfg.link_attribute_count_limit
-        }.compact
-
-        OpenTelemetry::SDK::Trace::SpanLimits.new(**opts)
+        OpenTelemetry::SDK::Trace::SpanLimits.new(
+          attribute_count_limit: limits_cfg&.attribute_count_limit || 128,
+          attribute_length_limit: limits_cfg&.attribute_value_length_limit,
+          event_count_limit: limits_cfg&.event_count_limit || 128,
+          link_count_limit: limits_cfg&.link_count_limit || 128,
+          event_attribute_count_limit: limits_cfg&.event_attribute_count_limit || 128,
+          event_attribute_length_limit: nil,
+          link_attribute_count_limit: limits_cfg&.link_attribute_count_limit || 128
+        )
       end
 
       # Converts the OTLP exporter headers (array of NameStringValuePair structs)
