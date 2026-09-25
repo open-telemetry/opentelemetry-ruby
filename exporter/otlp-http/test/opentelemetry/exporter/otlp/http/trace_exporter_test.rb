@@ -71,6 +71,43 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       end
     end
 
+    it 'only allows protobuf or json encoding' do
+      ['grpc', nil].each do |encoding|
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(encoding: encoding)
+        end
+      end
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_PROTOCOL' => 'grpc') do
+        assert_raises ArgumentError do
+          OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
+        end
+      end
+
+      %w[protobuf json].each do |encoding|
+        exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(encoding: encoding)
+        expected_content_type = encoding == 'protobuf' ? 'application/x-protobuf' : 'application/json'
+        _(exp.instance_variable_get(:@content_type)).must_equal(expected_content_type)
+      end
+
+      [
+        { envar: 'OTEL_EXPORTER_OTLP_PROTOCOL', value: 'http/protobuf' },
+        { envar: 'OTEL_EXPORTER_OTLP_PROTOCOL', value: 'http/json' },
+        { envar: 'OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', value: 'http/protobuf' },
+        { envar: 'OTEL_EXPORTER_OTLP_TRACES_PROTOCOL', value: 'http/json' }
+      ].each do |example|
+        OpenTelemetry::TestHelpers.with_env(example[:envar] => example[:value]) do
+          exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
+          expected_content_type = example[:value] == 'http/protobuf' ? 'application/x-protobuf' : 'application/json'
+          _(exp.instance_variable_get(:@content_type)).must_equal(expected_content_type)
+        end
+      end
+    end
+
+    it 'defaults to application/x-protobuf content type' do
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new
+      _(exp.instance_variable_get(:@content_type)).must_equal('application/x-protobuf')
+    end
+
     it 'sets parameters from the environment' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
                                                 'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
@@ -567,6 +604,32 @@ describe OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter do
       span_data = OpenTelemetry::TestHelpers.create_span_data
       result = exporter.export([span_data])
       _(result).must_equal(success)
+    end
+
+    it 'encodes as spec-compliant JSON when encoding is json' do
+      exp = OpenTelemetry::Exporter::OTLP::HTTP::TraceExporter.new(encoding: 'json', compression: 'none')
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      span_id = OpenTelemetry::Trace.generate_span_id
+      parsed = nil
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
+        _(request.headers['Content-Type']).must_equal('application/json')
+        parsed = JSON.parse(request.body)
+        { status: 200 }
+      end
+
+      span_data = OpenTelemetry::TestHelpers.create_span_data(kind: :server, status: OpenTelemetry::Trace::Status.error, trace_id: trace_id, span_id: span_id)
+      result = exp.export([span_data])
+
+      _(result).must_equal(success)
+      assert_requested(stub_post)
+
+      span = parsed['resourceSpans'][0]['scopeSpans'][0]['spans'][0]
+      _(span['traceId']).must_equal(trace_id.unpack1('H*'))
+      _(span['spanId']).must_equal(span_id.unpack1('H*'))
+      _(span['traceId']).must_match(/\A[0-9a-f]{32}\z/)
+      _(span['spanId']).must_match(/\A[0-9a-f]{16}\z/)
+      _(span['kind']).must_be_kind_of(Integer)
+      _(span['status']['code']).must_be_kind_of(Integer)
     end
 
     it 'handles encoding errors with poise and grace' do
