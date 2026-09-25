@@ -186,8 +186,17 @@ module OpenTelemetry
         #
         def add_view(name, **)
           # TODO: add schema_url as part of options
-          @registered_views << View::RegisteredView.new(name, **)
-          nil
+          @mutex.synchronize do
+            if @stopped
+              OpenTelemetry.logger.warn('calling MetricProvider#add_view after shutdown.')
+            else
+              view = View::RegisteredView.new(name, **)
+              @registered_views += [view]
+              @meter_registry.each_value { |meter| meter.add_view(view) }
+            end
+
+            nil
+          end
         end
       end
     end

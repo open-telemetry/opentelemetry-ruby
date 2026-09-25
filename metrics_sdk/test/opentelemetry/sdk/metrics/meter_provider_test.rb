@@ -293,6 +293,31 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       _(registered_views.size).must_equal 1
       _(registered_views[0].aggregation).must_be_nil
     end
+
+    it 'registers the view with the instruments of already returned meters' do
+      OpenTelemetry.meter_provider.add_metric_reader(OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new)
+      counter = OpenTelemetry.meter_provider.meter('test').create_counter('test')
+
+      OpenTelemetry.meter_provider.add_view('test', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
+
+      view = OpenTelemetry.meter_provider.instance_variable_get(:@registered_views)[0]
+      metric_streams = counter.instance_variable_get(:@metric_streams)
+
+      _(metric_streams.size).must_equal 1
+      _(metric_streams[0].instance_variable_get(:@registered_views).keys).must_equal [view]
+    end
+
+    it 'does not add a view after shutdown' do
+      OpenTelemetry.meter_provider.shutdown
+
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        OpenTelemetry.meter_provider.add_view('test')
+
+        _(log_stream.string).must_match(/add_view after shutdown/)
+      end
+
+      _(OpenTelemetry.meter_provider.instance_variable_get(:@registered_views)).must_be_empty
+    end
   end
 
   private
