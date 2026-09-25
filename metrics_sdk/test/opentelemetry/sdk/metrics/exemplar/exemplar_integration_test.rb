@@ -254,20 +254,20 @@ describe OpenTelemetry::SDK do
       _(exponential_histogram.description).must_equal('data size')
       _(exponential_histogram.data_points.size).must_equal 2
 
-      # First data point: {} attributes, count=1, sum=100, 2 exemplars
+      # First data point: {} attributes, count=1, sum=100, 1 exemplar
       _(exponential_histogram.data_points[0].attributes).must_equal({})
       _(exponential_histogram.data_points[0].count).must_equal 1
       _(exponential_histogram.data_points[0].sum).must_equal 100
       _(exponential_histogram.data_points[0].scale).must_equal 20
-      _(exponential_histogram.data_points[0].exemplars.size).must_equal 2
+      _(exponential_histogram.data_points[0].exemplars.size).must_equal 1
 
-      # Second data point: {'type' => 'upload'} attributes, count=2, sum=600, 4 exemplars
+      # Second data point: {'type' => 'upload'} attributes, count=2, sum=600, 2 exemplars
       _(exponential_histogram.data_points[1].attributes).must_equal('type' => 'upload')
       _(exponential_histogram.data_points[1].count).must_equal 2
       _(exponential_histogram.data_points[1].sum).must_equal 600
       _(exponential_histogram.data_points[1].scale).must_equal 7
-      _(exponential_histogram.data_points[1].exemplars.size).must_equal 4
-      _(exponential_histogram.data_points[1].exemplars.map(&:value).sort).must_equal [200, 200, 400, 400]
+      _(exponential_histogram.data_points[1].exemplars.size).must_equal 2
+      _(exponential_histogram.data_points[1].exemplars.map(&:value).sort).must_equal [200, 400]
     end
 
     it 'emits counter metrics with exemplars and customized reservoir' do
@@ -351,13 +351,13 @@ describe OpenTelemetry::SDK do
 
       sum200 = sum_metric.data_points.find { |dp| dp.attributes['status'] == '200' }
       _(sum200.value).must_equal 30 # 10 + 20
-      _(sum200.exemplars.size).must_equal 4
-      _(sum200.exemplars.map(&:value)).must_equal [10, 10, 20, 20]
+      _(sum200.exemplars.size).must_equal 2
+      _(sum200.exemplars.map(&:value)).must_equal [10, 20]
 
       sum500 = sum_metric.data_points.find { |dp| dp.attributes['status'] == '500' }
       _(sum500.value).must_equal 3
-      _(sum500.exemplars.size).must_equal 2
-      _(sum500.exemplars.map(&:value)).must_equal [3, 3]
+      _(sum500.exemplars.size).must_equal 1
+      _(sum500.exemplars.map(&:value)).must_equal [3]
 
       # Second metric (LastValue aggregation): status='200' value=20, status='500' value=3
       lastvalue_metric = metrics_with_exemplars.find { |m| m.aggregation_temporality.nil? }
@@ -365,13 +365,13 @@ describe OpenTelemetry::SDK do
 
       lastvalue200 = lastvalue_metric.data_points.find { |dp| dp.attributes['status'] == '200' }
       _(lastvalue200.value).must_equal 20 # Last value
-      _(lastvalue200.exemplars.size).must_equal 4
-      _(lastvalue200.exemplars.map(&:value)).must_equal [10, 10, 20, 20]
+      _(lastvalue200.exemplars.size).must_equal 2
+      _(lastvalue200.exemplars.map(&:value)).must_equal [10, 20]
 
       lastvalue500 = lastvalue_metric.data_points.find { |dp| dp.attributes['status'] == '500' }
       _(lastvalue500.value).must_equal 3
-      _(lastvalue500.exemplars.size).must_equal 2
-      _(lastvalue500.exemplars.map(&:value)).must_equal [3, 3]
+      _(lastvalue500.exemplars.size).must_equal 1
+      _(lastvalue500.exemplars.map(&:value)).must_equal [3]
 
       # Verify all exemplars are properly formed
       metrics_with_exemplars.each do |metric|
