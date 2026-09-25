@@ -51,5 +51,13 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       reader.shutdown
       mock_logger.verify
     end
+
+    it 'fails to collect and does not export after shutdown' do
+      reader.shutdown
+
+      _(reader.collect).must_equal []
+      reader.force_flush
+      _(exporter.exported_metrics).must_be_empty
+    end
   end
 end

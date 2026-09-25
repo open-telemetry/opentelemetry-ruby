@@ -26,6 +26,8 @@ module OpenTelemetry
 
           # Appends the given metrics to #metric_snapshots.
           def export(metrics, timeout: nil)
+            return FAILURE if @stopped
+
             @mutex.synchronize do
               @metric_snapshots.concat(Array(metrics))
             end
@@ -37,11 +39,6 @@ module OpenTelemetry
             @mutex.synchronize do
               @metric_snapshots.clear
             end
-          end
-
-          # No-op: there is nothing to shut down for this exporter.
-          def shutdown
-            SUCCESS
           end
         end
       end
