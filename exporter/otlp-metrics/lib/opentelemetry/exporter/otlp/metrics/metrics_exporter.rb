@@ -103,18 +103,7 @@ module OpenTelemetry
           def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
-            request = Net::HTTP::Post.new(@path)
-
-            if @compression == 'gzip'
-              request.add_field('Content-Encoding', 'gzip')
-              body = Zlib.gzip(bytes)
-            else
-              body = bytes
-            end
-
-            request.body = body
-            request.add_field('Content-Type', 'application/x-protobuf')
-            @headers.each { |key, value| request.add_field(key, value) }
+            body = @compression == 'gzip' ? Zlib.gzip(bytes) : bytes
 
             retry_count = 0
             timeout ||= @timeout
@@ -123,6 +112,8 @@ module OpenTelemetry
             around_request do
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return FAILURE if remaining_timeout.zero?
+
+              request = build_request(body)
 
               @http.open_timeout = remaining_timeout
               @http.read_timeout = remaining_timeout
@@ -192,6 +183,45 @@ module OpenTelemetry
             @http.open_timeout = @timeout
             @http.read_timeout = @timeout
             @http.write_timeout = @timeout
+          end
+
+          # Builds a POST request for the current endpoint path, so that a
+          # redirect to a different path is picked up by the next retry.
+          def build_request(body)
+            request = Net::HTTP::Post.new(@path)
+            request.body = body
+            request.add_field('Content-Encoding', 'gzip') if @compression == 'gzip'
+            request.add_field('Content-Type', 'application/x-protobuf')
+            @headers.each { |key, value| request.add_field(key, value) }
+            request
+          end
+
+          # Follows an HTTP redirect by reinitializing the HTTP connection and
+          # request path from the Location response header before the retry.
+          #
+          # Relative locations are resolved against the current endpoint URI.
+          # The connection is re-created when the redirect points at a
+          # different host or port; TLS and certificate settings are kept.
+          def handle_redirect(location)
+            return if location.nil? || location.empty?
+
+            uri = URI.join(@uri, location)
+            return if uri == @uri
+
+            if uri.host != @uri.host || uri.port != @uri.port
+              old_http = @http
+              @http = Net::HTTP.new(uri.hostname, uri.port)
+              @http.use_ssl = uri.scheme == 'https'
+              @http.verify_mode = old_http.verify_mode
+              @http.ca_file = old_http.ca_file unless old_http.ca_file.nil?
+              @http.cert = old_http.cert unless old_http.cert.nil?
+              @http.key = old_http.key unless old_http.key.nil?
+              @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+            else
+              @http.use_ssl = uri.scheme == 'https'
+            end
+            @uri = uri
+            @path = uri.path
           end
 
           # Encodes metrics_data into a serialized ExportMetricsServiceRequest.
