@@ -60,7 +60,7 @@ jobs:
   dice-roller-docker:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: Docker ${{ matrix.version }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -73,37 +73,29 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+        with:
+          driver: docker-container
+
       - name: Build Docker image (${{ matrix.version }})
-        working-directory: examples/dice_roller
-        run: |
-          # 🐳 Build ${{ matrix.version }} image 🐳
-          docker build \
-            --target ${{ matrix.version }} \
-            -t dice_roller:${{ matrix.version }} \
-            .
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: examples/dice_roller
+          target: ${{ matrix.version }}
+          platforms: linux/amd64
+          load: true
+          tags: dice_roller:${{ matrix.version }}
 
       - name: Run container (${{ matrix.version }})
+        working-directory: examples/dice_roller
         run: |
           # 🐳 Start container 🐳
-          docker run -d \
-            --name dice_roller_${{ matrix.version }} \
-            -p 8080:8080 \
-            -e OTEL_TRACES_EXPORTER=none \
-            -e OTEL_METRICS_EXPORTER=none \
-            -e OTEL_LOGS_EXPORTER=none \
-            -e OTEL_SERVICE_NAME=dice_roller_ci \
-            dice_roller:${{ matrix.version }}
-          echo "Waiting for container to be ready..."
-          for i in $(seq 1 30); do
-            if curl -sf http://localhost:8080/rolldice > /dev/null 2>&1; then
-              echo "Container ready after ${i}s"
-              exit 0
-            fi
-            sleep 1
-          done
-          echo "Container did not start in time" >&2
-          docker logs dice_roller_${{ matrix.version }}
-          exit 1
+          export VERSION=${{ matrix.version }}
+          docker compose up --wait -d
 
       - name: Verify /rolldice (single roll)
         run: |
@@ -123,8 +115,14 @@ jobs:
           echo "Response: $RESPONSE"
           echo "$RESPONSE" | grep -qE '^[1-6]$'
 
+      - name: Debug container logs
+        if: failure()
+        run: |
+          docker logs dice_roller_${{ matrix.version }}
+
       - name: Stop and remove container
         if: always()
+        working-directory: examples/dice_roller
         run: |
-          docker stop dice_roller_${{ matrix.version }} || true
-          docker rm  dice_roller_${{ matrix.version }} || true
+          export VERSION=${{ matrix.version }}
+          docker compose down --remove-orphans --volumes
