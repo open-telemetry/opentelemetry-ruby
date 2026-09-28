@@ -8,12 +8,12 @@ module OpenTelemetry
   module Internal
     # @api private
     class ProxyInstrument
-      def initialize(kind, name, unit, desc, callable, exemplar_filter, exemplar_reservoir)
+      def initialize(kind, name, unit, desc, callback, exemplar_filter, exemplar_reservoir)
         @kind = kind
         @name = name
         @unit = unit
         @desc = desc
-        @callable = callable
+        @callback = callback
         @exemplar_filter    = exemplar_filter
         @exemplar_reservoir = exemplar_reservoir
         @delegate = nil

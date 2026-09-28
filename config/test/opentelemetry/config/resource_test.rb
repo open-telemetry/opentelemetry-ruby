@@ -6,6 +6,63 @@
 require 'test_helper'
 
 describe OpenTelemetry::Config do
+  describe 'private helpers' do
+    describe '.coerce_bool?' do
+      it 'falls back to boolean coercion for values outside the known cases' do
+        _(OpenTelemetry::Config.send(:coerce_bool?, 'maybe')).must_equal true
+        _(OpenTelemetry::Config.send(:coerce_bool?, nil)).must_equal false
+      end
+    end
+
+    describe '.run_detector' do
+      it 'maps each known detector name to its detector class and arguments' do
+        OpenTelemetry::Config.stub(:detect_resource, ->(class_name, *args) { [class_name, args] }) do
+          _(OpenTelemetry::Config.send(:run_detector, 'container')).must_equal ['OpenTelemetry::Resource::Detector::Container', []]
+          _(OpenTelemetry::Config.send(:run_detector, 'aws')).must_equal ['OpenTelemetry::Resource::Detector::AWS', [%i[ec2 ecs eks lambda]]]
+          _(OpenTelemetry::Config.send(:run_detector, 'azure')).must_equal ['OpenTelemetry::Resource::Detector::Azure', []]
+          _(OpenTelemetry::Config.send(:run_detector, 'google_cloud_platform')).must_equal ['OpenTelemetry::Resource::Detector::GoogleCloudPlatform', []]
+        end
+      end
+    end
+
+    describe '.detect_resource' do
+      it 'calls detect on the resolved detector class' do
+        resource = OpenTelemetry::Config.send(:detect_resource, 'OpenTelemetry::Resource::Detector::Container')
+
+        _(resource).must_be_kind_of OpenTelemetry::SDK::Resources::Resource
+      end
+
+      it 'returns an empty resource and logs a warning when the class is unavailable' do
+        resource = OpenTelemetry::Config.send(:detect_resource, 'OpenTelemetry::NonExistent::Detector')
+
+        _(resource).must_be_kind_of OpenTelemetry::SDK::Resources::Resource
+        _(resource.attribute_enumerator.to_h).must_equal({})
+      end
+    end
+
+    describe '.build_detected_attributes' do
+      it 'applies included/excluded pattern filtering to the detected attributes' do
+        detection_cfg = OpenTelemetry::Config::Model::ExperimentalResourceDetection.from_hash(
+          'detectors' => [{ 'container' => nil }],
+          'attributes' => { 'included' => ['process.*'], 'excluded' => ['process.pid'] }
+        )
+        fake_resource = OpenTelemetry::SDK::Resources::Resource.create(
+          'process.pid' => 1,
+          'process.runtime.name' => 'ruby',
+          'other.key' => 'ignored'
+        )
+
+        OpenTelemetry::Config.stub(:run_detector, fake_resource) do
+          result = OpenTelemetry::Config.send(:build_detected_attributes, detection_cfg)
+
+          _(result).must_equal('process.runtime.name' => 'ruby')
+          _(result).wont_include('process.pid')
+          _(result).wont_include('other.key')
+        end
+      end
+    end
+  end
+
   describe 'resource attributes' do
     describe 'attributes array with no type field' do
       it 'stores a plain string value' do

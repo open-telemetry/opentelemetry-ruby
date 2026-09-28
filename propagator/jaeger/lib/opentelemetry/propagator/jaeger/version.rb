@@ -7,7 +7,7 @@
 module OpenTelemetry
   module Propagator
     module Jaeger
-      VERSION = '0.25.1'
+      VERSION = '0.25.2'
     end
   end
 end
