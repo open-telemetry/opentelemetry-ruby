@@ -1,5 +1,9 @@
 # Release History: opentelemetry-sdk
 
+### v1.13.1 / 2026-09-15
+
+* DOCS: Document custom error handlers (#2264)
+
 ### v1.13.0 / 2026-07-21
 
 * ADDED: Add attributes support to instrumentation scope for tracers (#2094)
