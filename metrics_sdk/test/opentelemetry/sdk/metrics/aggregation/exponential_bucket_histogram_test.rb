@@ -27,6 +27,16 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
   let(:end_time) { Process.clock_gettime(Process::CLOCK_REALTIME, :nanosecond) + (60 * 1_000_000_000) }
   let(:cardinality_limit) { 2000 }
 
+  describe '#initialize' do
+    it 'sizes the default exemplar reservoir to the number of buckets up to 20' do
+      [[4, 4], [20, 20], [32, 20]].each do |max_size, expected_size|
+        histogram = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.new(max_size: max_size)
+
+        _(histogram.exemplar_reservoir.instance_variable_get(:@max_size)).must_equal expected_size
+      end
+    end
+  end
+
   describe '#collect' do
     it 'returns all the data points' do
       expbh.update(1.03, {}, data_points, cardinality_limit)
