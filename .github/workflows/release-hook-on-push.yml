@@ -14,7 +14,7 @@ jobs:
     permissions:
       contents: write # required for pushing changes
       pull-requests: write # required for updating open release PRs
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
