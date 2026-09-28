@@ -181,6 +181,14 @@ module OpenTelemetry
         #     unit: A String matching an instrumentation unit, e.g. 'smidgen'
         #     meter_name: A String matching a meter name, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be 'sample_meter_name'
         #     meter_version: A String matching a meter version, e.g. meter_provider.meter('sample_meter_name', version: '1.2.0'), would be '1.2.0'
+        #     attribute_keys: The measurement attribute keys to keep in the metric stream. Accepts either
+        #       an Array of keys to keep, e.g. ['http.method'], or a Hash of an allow-list and an
+        #       exclude-list, e.g. { included: ['http.method'], excluded: ['http.url'] }. Attributes whose
+        #       keys are not allowed are dropped from the stream. If omitted, all attributes are kept.
+        #     aggregation_cardinality_limit: An Integer limiting the number of data points the view emits
+        #       per collection, e.g. 1000
+        #
+        # @raise [ArgumentError] if the same attribute key is both included and excluded.
         #
         # @return [nil] returns nil
         #

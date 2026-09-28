@@ -90,11 +90,11 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
       _(key2_point.value).must_equal(8)
     end
 
-    it 'handles registered views with attribute merging' do
+    it 'handles registered views with attribute filtering' do
       view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
         'test_counter',
         aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new,
-        attribute_keys: { 'environment' => 'test' }
+        attribute_keys: ['original']
       )
       meter_provider.instance_variable_get(:@registered_views) << view
 
@@ -110,19 +110,54 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
         nil
       )
 
-      stream.update(10, { 'original' => 'value' })
-      stream.update(20, { 'original' => 'value' })
+      stream.update(10, { 'original' => 'value', 'dropped' => 'value' })
+      stream.update(20, { 'original' => 'value', 'dropped' => 'value' })
 
       snapshot = stream.collect(0, 1000)
       _(snapshot.size).must_equal(1)
 
-      # Check that attributes were merged
-      attributes = snapshot.first.data_points.first.attributes
-      _(attributes['environment']).must_equal('test')
-      _(attributes['original']).must_equal('value')
+      # Only the allowed attribute key is kept
+      _(snapshot.first.data_points.first.attributes).must_equal({ 'original' => 'value' })
 
       value = snapshot.first.data_points.first.value
       _(value).must_equal 20
+    end
+
+    it 'does not modify the measurement attributes of other registered views' do
+      view1 = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        'test_counter',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      )
+      view2 = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        'test_counter',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+        attribute_keys: { excluded: ['region'] }
+      )
+      registered_views = meter_provider.instance_variable_get(:@registered_views)
+      registered_views << view1
+      registered_views << view2
+
+      stream = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
+        'test_counter',
+        'A test counter',
+        'count',
+        :counter,
+        meter_provider,
+        instrumentation_scope,
+        aggregation,
+        nil,
+        nil
+      )
+
+      attributes = { 'env' => 'prod', 'region' => 'us-east-1' }
+      stream.update(5, attributes)
+
+      _(attributes).must_equal({ 'env' => 'prod', 'region' => 'us-east-1' })
+
+      snapshot = stream.collect(0, 1000)
+      _(snapshot.size).must_equal(2)
+      _(snapshot[0].data_points.first.attributes).must_equal({ 'env' => 'prod', 'region' => 'us-east-1' })
+      _(snapshot[1].data_points.first.attributes).must_equal({ 'env' => 'prod' })
     end
   end
 
