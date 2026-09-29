@@ -61,6 +61,7 @@ dictionaries:
   - software-tools
   - redis
 ignoreWords:
+  - INMEM
   - kwarg
   - MILLIS
   - otcorrelations

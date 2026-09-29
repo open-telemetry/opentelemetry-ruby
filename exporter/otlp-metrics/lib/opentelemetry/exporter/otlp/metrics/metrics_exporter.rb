@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/common'
+require 'opentelemetry/exporter/otlp/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
@@ -35,7 +36,7 @@ module OpenTelemetry
           FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
 
-          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/metrics'),
+          def initialize(endpoint: nil,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
@@ -47,12 +48,7 @@ module OpenTelemetry
             # create the MetricStore object
             super(aggregation_cardinality_limit: aggregation_cardinality_limit)
 
-            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                     endpoint += '/' unless endpoint.end_with?('/')
-                     URI.join(endpoint, 'v1/metrics')
-                   else
-                     URI(endpoint)
-                   end
+            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
 
             @http = OTLPHTTPClient.new(params, 'OTEL_EXPORTER_OTLP_METRICS', 'v1/metrics')
 

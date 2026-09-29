@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/common'
+require 'opentelemetry/exporter/otlp/common'
 require 'opentelemetry/sdk'
 require 'opentelemetry-logs-api' # the sdk isn't loading the api, but not sure why
 require 'opentelemetry/sdk/logs'
@@ -37,7 +38,7 @@ module OpenTelemetry
 
           DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Logs::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
-          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/logs'),
+          def initialize(endpoint: nil,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
@@ -45,12 +46,7 @@ module OpenTelemetry
             raise ArgumentError, "invalid url for OTLP::Logs::LogsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                     endpoint += '/' unless endpoint.end_with?('/')
-                     URI.join(endpoint, 'v1/logs')
-                   else
-                     URI(endpoint)
-                   end
+            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
 
             params = kwargs.value.compact.any? Config.new(**kwargs) : nil
 
@@ -146,7 +142,7 @@ module OpenTelemetry
 
               case response
               when Net::HTTPSuccess
-                response.body # Read and discard body
+                log_partial_success(response.body)
                 SUCCESS
               when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
                 response.body # Read and discard body
@@ -224,6 +220,18 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
           end
 
+          def log_partial_success(body)
+            response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
+            partial_success = response.partial_success
+            return if partial_success.nil? || partial_success.rejected_log_records <= 0
+
+            OpenTelemetry.handle_error(
+              message: "OTLP logs exporter received partial success: rejected_log_records=#{partial_success.rejected_log_records}, error_message=#{partial_success.error_message}"
+            )
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding ExportLogsServiceResponse in OTLP::Exporter#log_partial_success')
+          end
+
           def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
             return false if retry_count > RETRY_COUNT
 
@@ -283,7 +291,7 @@ module OpenTelemetry
               severity_text: log_record_data.severity_text,
               body: as_otlp_any_value(log_record_data.body),
               attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
-              dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
+              dropped_attributes_count: log_record_data.dropped_attributes_count,
               event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
               trace_id: log_record_data.trace_id,
@@ -292,9 +300,10 @@ module OpenTelemetry
           end
 
           def as_otlp_key_value(key, value)
+            key = OpenTelemetry::Common::Utilities.utf8_encode(key, placeholder: 'Encoding Error')
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
           rescue Encoding::UndefinedConversionError => e
-            encoded_value = value.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+            encoded_value = value.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
             OpenTelemetry.handle_error(exception: e, message: "encoding error for key #{key} and value #{encoded_value}")
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
           end
@@ -303,7 +312,7 @@ module OpenTelemetry
             result = Opentelemetry::Proto::Common::V1::AnyValue.new
             case value
             when String
-              result.string_value = value
+              result.string_value = OpenTelemetry::Common::Utilities.utf8_encode(value, placeholder: value)
             when Integer
               result.int_value = value
             when Float
