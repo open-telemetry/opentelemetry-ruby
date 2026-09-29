@@ -40,7 +40,7 @@ module OpenTelemetry
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-            @uri = prepare_endpoint(endpoint)
+            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/traces', 'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
 
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
@@ -86,7 +86,7 @@ module OpenTelemetry
 
           private
 
-          # rubocop:disable Lint/DuplicateBranch
+          # rubocop:disable-next Lint/DuplicateBranch
           def fetch_ssl_verify_mode
             if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
               OpenSSL::SSL::VERIFY_PEER
@@ -96,7 +96,6 @@ module OpenTelemetry
               OpenSSL::SSL::VERIFY_PEER
             end
           end
-          # rubocop:enable Lint/DuplicateBranch
 
           def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
             http = Net::HTTP.new(uri.hostname, uri.port)
@@ -256,21 +255,6 @@ module OpenTelemetry
             headers['User-Agent'] = "#{headers.fetch('User-Agent', '')} #{DEFAULT_USER_AGENT}".strip
 
             headers
-          end
-
-          def prepare_endpoint(endpoint)
-            endpoint ||= ENV.fetch('OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', nil)
-            if endpoint.nil?
-              endpoint = ENV['OTEL_EXPORTER_OTLP_ENDPOINT'] || 'http://localhost:4318'
-              endpoint += '/' unless endpoint.end_with?('/')
-              URI.join(endpoint, 'v1/traces')
-            elsif endpoint.strip.empty?
-              raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
-            else
-              URI(endpoint)
-            end
-          rescue URI::InvalidURIError
-            raise ArgumentError, "invalid url for OTLP::Exporter #{endpoint}"
           end
 
           def parse_headers(raw)

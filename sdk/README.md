@@ -97,5 +97,5 @@ The `opentelemetry-sdk` gem is distributed under the Apache 2.0 license. See [LI
 [license-github]: https://github.com/open-telemetry/opentelemetry-ruby/blob/main/LICENSE
 [examples-github]: https://github.com/open-telemetry/opentelemetry-ruby/tree/main/examples
 [ruby-sig]: https://github.com/open-telemetry/community#ruby-sig
-[community-meetings]: https://github.com/open-telemetry/community#community-meetings
+[community-meetings]: https://github.com/open-telemetry/community/blob/main/README.md#calendar
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions

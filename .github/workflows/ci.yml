@@ -37,8 +37,9 @@ jobs:
           - opentelemetry-sdk-experimental
           - opentelemetry-semantic_conventions
           - opentelemetry-test-helpers
+          - opentelemetry-config
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
           - macos-26
           - windows-2025
     name: ${{ matrix.gem }} / ${{ matrix.os }}
@@ -47,13 +48,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: "Test Ruby 4.0"
+        uses: $/.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
@@ -62,13 +68,13 @@ jobs:
           build: true
       - name: "Test JRuby"
         if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "jruby"
       - name: "Test truffleruby"
         if: startsWith(matrix.os, 'ubuntu')
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
@@ -86,7 +92,7 @@ jobs:
           - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
         os:
-          - ubuntu-24.04
+          - ubuntu-26.04
           - macos-26
           - windows-2025
         exclude:
@@ -99,13 +105,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: "Test Ruby 4.0"
+        uses: $/.github/actions/test_gem
+        with:
+          gem: "${{ matrix.gem }}"
+          ruby: "4.0"
       - name: "Test Ruby 3.4"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.4"
       - name: "Test Ruby 3.3"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "3.3"
@@ -114,7 +125,7 @@ jobs:
           build: true
       - name: "Test truffleruby"
         if: "${{ startsWith(matrix.os, 'ubuntu') && matrix.gem != 'opentelemetry-exporter-otlp-grpc' }}"
-        uses: ./.github/actions/test_gem
+        uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
           ruby: "truffleruby"
@@ -122,12 +133,12 @@ jobs:
   spelling-check:
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     name: Spelling Check
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: streetsidesoftware/cspell-action@e0668cf020899e887ee8ad4d173c31738a79eae8 # v9.0.1
+      - uses: streetsidesoftware/cspell-action@6f3c77c1406bc930f944ba97e9801a22e42caf58 # v9.1.0
         with:
           use_cspell_files: true
           config: .cspell.yml

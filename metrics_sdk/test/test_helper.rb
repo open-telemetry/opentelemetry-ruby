@@ -4,9 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# require 'simplecov'
-# # SimpleCov.start
-# # SimpleCov.minimum_coverage 85
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
+
+require 'simplecov'
+SimpleCov.start
 
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry-test-helpers'
@@ -33,7 +35,7 @@ ensure
   OpenTelemetry.logger = original_logger
 end
 
-def create_meter
+def create_meter(metric_exporter)
   ENV['OTEL_TRACES_EXPORTER'] = 'console'
   ENV['OTEL_METRICS_EXPORTER'] = 'none'
   OpenTelemetry::SDK.configure

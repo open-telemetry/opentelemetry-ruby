@@ -1,5 +1,14 @@
 # Release History: opentelemetry-metrics-api
 
+### v0.8.0 / 2026-09-29
+
+* BREAKING CHANGE: Update api for spec compliance (#2309)
+* ADDED: Update api for spec compliance (#2309)
+
+### v0.7.1 / 2026-09-15
+
+* FIXED: Pass the callback through when upgrading a proxy instrument (#2377)
+
 ### v0.7.0 / 2026-08-04
 
 * ADDED: Add attributes to Meter InstrumentationScope (#2273)

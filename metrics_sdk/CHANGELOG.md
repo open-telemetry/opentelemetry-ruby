@@ -1,5 +1,24 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.19.0 / 2026-09-29
+
+* BREAKING CHANGE: Update api for spec compliance (#2309)
+* ADDED: Update api for spec compliance (#2309)
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Scope shared aggregation state to the owning stream (#2300) (#2314)
+* FIXED: Size exponential histogram exemplars (#2392)
+* FIXED: Accept arbitrary instrument metadata (#2395)
+* FIXED: Prevent readers spanning providers (#2393)
+
+### v0.18.0 / 2026-09-09
+
+* BREAKING CHANGE: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
+* FIXED: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
+
+### v0.17.0 / 2026-09-01
+
+* ADDED: Add flags to metrics data model (#2302)
+
 ### v0.16.0 / 2026-08-04
 
 * ADDED: Add attributes to Meter InstrumentationScope (#2273)

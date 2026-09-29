@@ -1,5 +1,24 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.37.0 / 2026-09-29
+
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Default OTLP exporter compression to none (#2331)
+* FIXED: Normalize UTF-8 attribute strings (#2259)
+
+### v0.36.0 / 2026-09-09
+
+* ADDED: Use common conversion including supporting flags (#2333)
+* ADDED: Add opentelemetry-exporter-otlp as a dependency (#2333)
+
+### v0.35.1 / 2026-09-01
+
+* REVERT: Use common conversion including supporting flags (#2328)
+
+### v0.35.0 / 2026-09-01
+
+* ADDED: Use common conversion including supporting flags (#2250)
+
 ### v0.34.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
