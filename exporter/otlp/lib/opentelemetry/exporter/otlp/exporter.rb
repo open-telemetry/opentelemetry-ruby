@@ -45,7 +45,9 @@ module OpenTelemetry
 
           raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-          @http = OTLPHTTPClient.new(params, 'OTEL_EXPORTER_OTLP_TRACES', 'v1/traces')
+          params = kwargs.values.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClientConfig.new(endpoint: @uri.to_s, **kwargs) : nil
+
+          @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'OTEL_EXPORTER_OTLP_TRACES', 'v1/traces')
 
           @path = @uri.path
           @headers = prepare_headers(headers)
