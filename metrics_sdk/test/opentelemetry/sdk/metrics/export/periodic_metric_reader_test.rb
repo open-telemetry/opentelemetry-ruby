@@ -11,12 +11,15 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
   SUCCESS = OpenTelemetry::SDK::Metrics::Export::SUCCESS
 
   class TestExporter
-    def initialize(status_codes: nil)
+    def initialize(status_codes: nil, force_flush_status: SUCCESS, shutdown_status: SUCCESS)
       @status_codes = status_codes || []
       @exported_metrics = []
+      @force_flush_status = force_flush_status
+      @shutdown_status = shutdown_status
+      @force_flush_count = 0
     end
 
-    attr_reader :exported_metrics
+    attr_reader :exported_metrics, :force_flush_count, :force_flush_timeout
 
     def export(metrics, timeout: nil)
       s = @status_codes.shift
@@ -28,9 +31,13 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       end
     end
 
-    def shutdown(timeout: nil) = SUCCESS
+    def shutdown(timeout: nil) = @shutdown_status
 
-    def force_flush(timeout: nil) = SUCCESS
+    def force_flush(timeout: nil)
+      @force_flush_count += 1
+      @force_flush_timeout = timeout
+      @force_flush_status
+    end
   end
 
   describe 'succesful exporter' do
@@ -76,7 +83,9 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       timed_out = collection_result.new(['mock_metric'], export::TIMEOUT)
 
       with_test_logger do |log_stream|
-        reader.stub(:collect_with_result, timed_out) { reader.force_flush }
+        reader.stub(:collect_with_result, timed_out) do
+          _(reader.force_flush).must_equal export::TIMEOUT
+        end
 
         _(log_stream.string).must_match(/Timed out while collecting metrics/)
       end
@@ -103,6 +112,91 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       reader.stub(:collect_with_result, collect_stub) { reader.force_flush(timeout: 5) }
 
       _(captured_timeout).must_equal 5
+    end
+  end
+
+  describe '#force_flush status' do
+    export = OpenTelemetry::SDK::Metrics::Export
+
+    after { reader.shutdown }
+
+    describe 'when the export fails' do
+      let(:exporter) { TestExporter.new(status_codes: [export::FAILURE]) }
+      let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+      it 'returns FAILURE' do
+        reader.stub(:collect, ['mock_metric']) { _(reader.force_flush).must_equal export::FAILURE }
+      end
+    end
+
+    describe 'when the export times out' do
+      let(:exporter) { TestExporter.new(status_codes: [export::TIMEOUT]) }
+      let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+      it 'returns TIMEOUT' do
+        reader.stub(:collect, ['mock_metric']) { _(reader.force_flush).must_equal export::TIMEOUT }
+      end
+    end
+
+    describe "when the exporter's force_flush fails" do
+      let(:exporter) { TestExporter.new(force_flush_status: export::FAILURE) }
+      let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+      it 'returns FAILURE even though the export succeeded' do
+        reader.stub(:collect, ['mock_metric']) { _(reader.force_flush).must_equal export::FAILURE }
+        _(exporter.exported_metrics).must_equal ['mock_metric']
+      end
+    end
+
+    describe "when both the export and the exporter's force_flush fail" do
+      let(:exporter) { TestExporter.new(status_codes: [export::TIMEOUT], force_flush_status: export::FAILURE) }
+      let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+      it 'returns the most severe result' do
+        reader.stub(:collect, ['mock_metric']) { _(reader.force_flush).must_equal export::TIMEOUT }
+      end
+    end
+
+    describe 'when a timeout is given' do
+      let(:exporter) { TestExporter.new }
+      let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+      it "passes the timeout to the exporter's force_flush" do
+        reader.stub(:collect, ['mock_metric']) { reader.force_flush(timeout: 5) }
+        _(exporter.force_flush_timeout).must_equal 5
+      end
+    end
+
+    describe 'when there is nothing to export' do
+      let(:exporter) { TestExporter.new }
+      let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
+
+      it "returns SUCCESS and still calls the exporter's force_flush" do
+        reader.stub(:collect, []) { _(reader.force_flush).must_equal export::SUCCESS }
+        _(exporter.force_flush_count).must_equal 1
+      end
+    end
+  end
+
+  describe '#shutdown status' do
+    export = OpenTelemetry::SDK::Metrics::Export
+
+    it "returns FAILURE when the exporter's shutdown fails" do
+      reader = PeriodicMetricReader.new(exporter: TestExporter.new(shutdown_status: export::FAILURE))
+
+      _(reader.shutdown).must_equal export::FAILURE
+    end
+
+    it "returns FAILURE when the exporter's force_flush fails" do
+      reader = PeriodicMetricReader.new(exporter: TestExporter.new(force_flush_status: export::FAILURE))
+
+      _(reader.shutdown).must_equal export::FAILURE
+    end
+
+    it 'treats an exporter that reports no status as SUCCESS' do
+      reader = PeriodicMetricReader.new(exporter: TestExporter.new(force_flush_status: nil, shutdown_status: nil))
+
+      _(reader.shutdown).must_equal export::SUCCESS
     end
   end
 end
