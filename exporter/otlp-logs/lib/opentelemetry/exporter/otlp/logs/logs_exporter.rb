@@ -43,7 +43,6 @@ module OpenTelemetry
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          **kwargs)
-            raise ArgumentError, "invalid url for OTLP::Logs::LogsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
