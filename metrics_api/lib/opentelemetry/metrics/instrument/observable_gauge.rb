@@ -17,6 +17,16 @@ module OpenTelemetry
         #   Array values must not contain nil elements and all elements must be of
         #   the same basic type (string, numeric, boolean).
         def observe(timeout: nil, attributes: {}); end
+
+        # Registers a callback function to report Measurements for this instrument.
+        #
+        # @param [Proc] callback the callback function
+        def register_callback(callback); end
+
+        # Unregisters a callback function previously registered via {#register_callback}.
+        #
+        # @param [Proc] callback the callback function
+        def unregister(callback); end
       end
     end
   end
