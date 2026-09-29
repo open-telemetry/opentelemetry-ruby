@@ -1,6 +1,6 @@
 services:
   semconv-weaver:
-    image: otel/weaver:v0.26.0@sha256:ae8ccf529fffdfd6d2047bd3b476c2869f3765a218b920a78fa55aaa41a18e05
+    image: otel/weaver:v0.26.1@sha256:9094862c0ab261bdbcb079bb981f9a573b3659b130a6d2ab8616eca6ba37aaec
     user: "${UID}:${GID}"
     volumes:
       - ./tmp/semconvrepo/model:/source:ro

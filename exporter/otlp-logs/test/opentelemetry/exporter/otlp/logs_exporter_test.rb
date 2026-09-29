@@ -530,7 +530,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200)
-      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(total_recorded_attributes: 1, attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
 
       result = exporter.export([log_record_data])
 
@@ -541,6 +541,23 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       _(result).must_equal(SUCCESS)
     ensure
       OpenTelemetry.logger = logger
+    end
+
+    it 'exports valid UTF-8 bytes from binary-encoded strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      value = exporter.send(:as_otlp_any_value, city)
+
+      _(value.string_value).must_equal('Montréal')
+      _(value.string_value.encoding).must_equal(::Encoding::UTF_8)
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      attribute = exporter.send(:as_otlp_key_value, 'values', [invalid_value])
+
+      _(attribute.value.string_value).must_equal('Encoding Error')
     end
 
     it 'logs rpc.Status on bad request' do
@@ -635,6 +652,10 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
     it 'translates all the things' do
       stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200)
       processor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor.new(exporter)
+      logger_provider = OpenTelemetry::SDK::Logs::LoggerProvider.new(
+        resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk,
+        log_record_limits: OpenTelemetry::SDK::Logs::LogRecordLimits.new(attribute_count_limit: 6)
+      )
       logger = logger_provider.logger(name: 'logger', version: 'v0.0.1')
       other_logger = logger_provider.logger(name: 'other_logger', version: 'v0.1.0')
 
@@ -680,6 +701,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
           'int' => 42
         },
         attributes: {
+          'drop_me' => 'l8r',
           'kv_list' => { 'a' => 'b' },
           'array' => [1],
           'bool' => true,
@@ -853,7 +875,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                           )
                         )
                       ],
-                      dropped_attributes_count: 0,
+                      dropped_attributes_count: 1,
                       flags: lr3[:trace_flags].instance_variable_get(:@flags),
                       trace_id: lr3[:trace_id],
                       span_id: lr3[:span_id]

@@ -301,7 +301,7 @@ module OpenTelemetry
               severity_text: log_record_data.severity_text,
               body: as_otlp_any_value(log_record_data.body),
               attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
-              dropped_attributes_count: log_record_data.total_recorded_attributes - log_record_data.attributes&.size.to_i,
+              dropped_attributes_count: log_record_data.dropped_attributes_count,
               event_name: log_record_data.event_name,
               flags: log_record_data.trace_flags.instance_variable_get(:@flags),
               trace_id: log_record_data.trace_id,
@@ -310,9 +310,10 @@ module OpenTelemetry
           end
 
           def as_otlp_key_value(key, value)
+            key = OpenTelemetry::Common::Utilities.utf8_encode(key, placeholder: 'Encoding Error')
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
           rescue Encoding::UndefinedConversionError => e
-            encoded_value = value.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
+            encoded_value = value.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
             OpenTelemetry.handle_error(exception: e, message: "encoding error for key #{key} and value #{encoded_value}")
             Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
           end
@@ -321,7 +322,7 @@ module OpenTelemetry
             result = Opentelemetry::Proto::Common::V1::AnyValue.new
             case value
             when String
-              result.string_value = value
+              result.string_value = OpenTelemetry::Common::Utilities.utf8_encode(value, placeholder: value)
             when Integer
               result.int_value = value
             when Float
