@@ -6,6 +6,7 @@
 
 require 'opentelemetry/common'
 require 'opentelemetry/exporter/otlp/common'
+require 'opentelemetry/exporter/otlp/http/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
