@@ -18,7 +18,7 @@ describe OpenTelemetry::Internal::ProxyMeter do
 
     private
 
-    def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+    def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
       @created << { kind: kind, name: name, unit: unit }
       super
     end

@@ -44,22 +44,22 @@ module OpenTelemetry
 
       # Does not call `super`: the base registry keys instruments by name, so a repeated
       # registration would replace an earlier placeholder that then never gets upgraded.
-      def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+      def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
         @mutex.synchronize do
           if @delegate.nil?
-            instrument = ProxyInstrument.new(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+            instrument = ProxyInstrument.new(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
             @proxy_instruments << instrument
             next instrument
           end
 
           case kind
-          when :counter then @delegate.create_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :histogram then @delegate.create_histogram(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :gauge then @delegate.create_gauge(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)
-          when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
-          when :observable_gauge then @delegate.create_observable_gauge(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
-          when :observable_up_down_counter then @delegate.create_observable_up_down_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback)
+          when :counter then @delegate.create_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, advisory: advisory)
+          when :histogram then @delegate.create_histogram(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, advisory: advisory)
+          when :up_down_counter then @delegate.create_up_down_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, advisory: advisory)
+          when :gauge then @delegate.create_gauge(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, advisory: advisory)
+          when :observable_counter then @delegate.create_observable_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback, advisory: advisory)
+          when :observable_gauge then @delegate.create_observable_gauge(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback, advisory: advisory)
+          when :observable_up_down_counter then @delegate.create_observable_up_down_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir, callback: callback, advisory: advisory)
           end
         end
       end

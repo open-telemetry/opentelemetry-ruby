@@ -72,7 +72,7 @@ module OpenTelemetry
         end
 
         # Validates the given instrument options and creates the instrument of the given kind.
-        def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+        def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
           raise InstrumentNameError if invalid_name?(name)
           raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
           raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
