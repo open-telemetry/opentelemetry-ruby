@@ -19,6 +19,9 @@ module OpenTelemetry
       def initialize
         super
         @delegate = nil
+        # Every placeholder created before the delegate is set, including repeated and
+        # conflicting registrations of the same name, so that each one gets upgraded.
+        @proxy_instruments = []
       end
 
       # Set the delegate Meter. If this is called more than once, a warning will
@@ -29,7 +32,8 @@ module OpenTelemetry
         @mutex.synchronize do
           if @delegate.nil?
             @delegate = meter
-            @instrument_registry.each_value { |instrument| instrument.upgrade_with(meter) }
+            @proxy_instruments.each { |instrument| instrument.upgrade_with(meter) }
+            @proxy_instruments.clear
           else
             OpenTelemetry.logger.warn 'Attempt to reset delegate in ProxyMeter ignored.'
           end
@@ -38,9 +42,15 @@ module OpenTelemetry
 
       private
 
+      # Does not call `super`: the base registry keys instruments by name, so a repeated
+      # registration would replace an earlier placeholder that then never gets upgraded.
       def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
-        super do
-          next ProxyInstrument.new(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir) if @delegate.nil?
+        @mutex.synchronize do
+          if @delegate.nil?
+            instrument = ProxyInstrument.new(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+            @proxy_instruments << instrument
+            next instrument
+          end
 
           case kind
           when :counter then @delegate.create_counter(name, unit: unit, description: description, exemplar_filter: exemplar_filter, exemplar_reservoir: exemplar_reservoir)

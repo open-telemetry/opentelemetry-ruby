@@ -29,8 +29,8 @@ module OpenTelemetry
         # @return [Meter]
         def initialize(name, version, meter_provider, attributes: nil)
           @mutex = Mutex.new
-          @instrument_registry = {}
-          @instrument_descriptors = Hash.new { |hash, key| hash[key] = [] }
+          # Every built instrument, including conflicting duplicates, keyed by downcased name.
+          @instrument_descriptors = {}
           @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
           @meter_provider = meter_provider
         end
@@ -61,9 +61,13 @@ module OpenTelemetry
         end
 
         # @api private
+        #
+        # Not synchronized on @mutex: create_instrument holds it while waiting on the
+        # meter provider's mutex, which the caller of this method already holds.
+        # Iterates a snapshot so a concurrent registration cannot mutate the hash mid-iteration.
         def add_metric_reader(metric_reader)
-          @instrument_registry.each_value do |instrument|
-            instrument.register_with_new_metric_store(metric_reader.metric_store)
+          @instrument_descriptors.values.flatten.each do |descriptor|
+            descriptor.instrument.register_with_new_metric_store(metric_reader.metric_store)
           end
         end
 
@@ -73,16 +77,22 @@ module OpenTelemetry
           raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
           raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
 
-          # Instrument names are case-insensitive, so `super` must key the registry on the first-seen casing.
-          name = first_seen_instrument_name(name)
+          @mutex.synchronize do
+            # Read without inserting; the key is only added once an instrument is built.
+            descriptors = @instrument_descriptors.fetch(name.downcase, [])
 
-          # The block runs while the base class holds @mutex, so registry lookup,
-          # conflict detection and registration are atomic.
-          super do
-            descriptors = @instrument_descriptors[name.downcase]
+            # Instrument names are case-insensitive, so use the first-seen casing.
+            # if first_seen is count, name is Count, then name become count
+            first_seen = descriptors.first&.name
+            if first_seen && first_seen != name
+              OpenTelemetry.logger.warn("case-insensitive duplicate instrument registration occurred:'#{name}' first seen as '#{first_seen}'")
+              name = first_seen
+            end
+
             identical = descriptors.find { |descriptor| identical?(descriptor, kind, unit, description) }
 
             if identical
+              OpenTelemetry.logger.warn("repeated observable instrument creation with callbacks for instrument name '#{name}'. Ignoring new callbacks. Use Meter#register_callback to add callbacks.") if callback
               identical.instrument
             else
               # Found the first conflicting instrument with the same name but different attributes (kind, unit, description).
@@ -95,7 +105,9 @@ module OpenTelemetry
 
               # Build and register a new instrument since (still build the instrument even though a conflicting one exists) it has different attributes.
               instrument = build_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+              # Replace rather than append so arrays already snapshotted by add_metric_reader are never mutated.
               descriptors << InstrumentDescriptor.new(name, kind, unit, description, instrument)
+              @instrument_descriptors[name.downcase] = descriptors
               instrument
             end
           end
@@ -113,18 +125,6 @@ module OpenTelemetry
         end
 
         private
-
-        # Returns the instrument name that is first seen (or original)
-        def first_seen_instrument_name(name)
-          first_seen = @mutex.synchronize { @instrument_descriptors[name.downcase].first&.name }
-
-          if first_seen.nil? || first_seen == name
-            name
-          else
-            OpenTelemetry.logger.warn("case-insensitive duplicate instrument registration occurred:'#{name}' first seen as '#{first_seen}'")
-            first_seen
-          end
-        end
 
         # Returns a new SDK instrument of the given kind.
         def build_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
