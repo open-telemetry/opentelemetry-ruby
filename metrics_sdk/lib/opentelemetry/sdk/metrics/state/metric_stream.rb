@@ -29,7 +29,8 @@ module OpenTelemetry
             instrumentation_scope,
             aggregation,
             exemplar_filter,
-            exemplar_reservoir
+            exemplar_reservoir,
+            default_aggregation: nil
           )
             @name = name
             @description = description
@@ -37,7 +38,7 @@ module OpenTelemetry
             @instrument_kind = instrument_kind
             @meter_provider = meter_provider
             @instrumentation_scope = instrumentation_scope
-            @default_aggregation = aggregation
+            @default_aggregation = aggregation || build_aggregation(default_aggregation, exemplar_reservoir)
             @data_points = {}
             @registered_views = {}
             @exemplar_filter = exemplar_filter
@@ -45,6 +46,30 @@ module OpenTelemetry
 
             find_registered_view
             @mutex = Mutex.new
+          end
+
+          # Builds this stream's aggregation from the metric reader's preferred
+          # aggregation classes, falling back to the spec defaults.
+          #
+          # @param [Hash{Symbol => Class}, nil] preferred aggregation classes by instrument kind
+          # @param [Object, nil] exemplar_reservoir the instrument's exemplar reservoir
+          # @return [Object] a new aggregation, owned by this stream
+          def build_aggregation(preferred, exemplar_reservoir)
+            defaults = OpenTelemetry::SDK::Metrics::Export::MetricReader::DEFAULT_AGGREGATION
+            aggregation_class = (preferred || defaults)[@instrument_kind] || defaults[@instrument_kind]
+
+            if aggregation_class.nil?
+              OpenTelemetry.logger.warn("Unknown instrument kind: #{@instrument_kind}, defaulting to Drop aggregation")
+              aggregation_class = OpenTelemetry::SDK::Metrics::Aggregation::Drop
+            end
+
+            kwargs = { exemplar_reservoir: exemplar_reservoir }
+            if aggregation_class <= OpenTelemetry::SDK::Metrics::Aggregation::Sum
+              kwargs[:monotonic] = %i[counter observable_counter].include?(@instrument_kind)
+              kwargs[:instrument_kind] = @instrument_kind
+            end
+
+            aggregation_class.new(**kwargs)
           end
 
           # Returns a snapshot of this stream's aggregated metric data.

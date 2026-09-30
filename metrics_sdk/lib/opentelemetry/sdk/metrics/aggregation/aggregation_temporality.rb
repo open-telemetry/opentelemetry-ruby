@@ -35,6 +35,9 @@ module OpenTelemetry
             # | **Delta**        | Delta      | Delta            | Delta      | Cumulative    | Cumulative          |
             # | **LowMemory**    | Delta      | Cumulative       | Delta      | Cumulative    | Cumulative          |
             def determine_temporality(aggregation_temporality: nil, instrument_kind: nil, default: nil)
+              # UpDownCounter and ObservableUpDownCounter MUST always be Cumulative
+              return cumulative if %i[up_down_counter observable_up_down_counter].include?(instrument_kind)
+
               # aggregation_temporality can't be nil because it always has default value in symbol
               if aggregation_temporality.is_a?(::Symbol)
                 aggregation_temporality == :delta ? delta : cumulative

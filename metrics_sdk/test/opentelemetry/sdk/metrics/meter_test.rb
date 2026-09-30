@@ -258,4 +258,26 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       _(counter.instance_variable_get(:@description)).must_equal('')
     end
   end
+
+  describe '#add_metric_reader' do
+    # Instrument creation takes the meter mutex and then the meter provider mutex.
+    # Registering a reader runs under the provider mutex, so taking the meter mutex
+    # there would invert the lock order and deadlock.
+    it 'does not acquire the meter mutex' do
+      meter.create_counter('a_counter')
+      meter_mutex = meter.instance_variable_get(:@mutex)
+
+      holder = Thread.new { meter_mutex.synchronize { sleep 1 } }
+      sleep 0.1 until meter_mutex.locked?
+
+      registration = Thread.new do
+        OpenTelemetry.meter_provider.add_metric_reader(OpenTelemetry::SDK::Metrics::Export::MetricReader.new)
+      end
+
+      _(registration.join(0.5)).wont_be_nil('add_metric_reader blocked on the meter mutex, which deadlocks against instrument creation')
+    ensure
+      holder&.kill
+      registration&.kill
+    end
+  end
 end

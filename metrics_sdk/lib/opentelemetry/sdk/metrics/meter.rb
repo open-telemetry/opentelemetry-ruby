@@ -56,9 +56,13 @@ module OpenTelemetry
         end
 
         # @api private
+        # This runs while the {MeterProvider} holds its own mutex, and instrument
+        # creation takes this meter's mutex before the provider's. Taking the meter
+        # mutex here would invert that order and deadlock, so it is deliberately omitted.
         def add_metric_reader(metric_reader)
           @instrument_registry.each_value do |instrument|
-            instrument.register_with_new_metric_store(metric_reader.metric_store)
+            instrument.register_with_new_metric_store(metric_reader.metric_store,
+                                                      default_aggregation: MeterProvider.reader_config(metric_reader))
           end
         end
 
