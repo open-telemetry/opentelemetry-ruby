@@ -13,7 +13,9 @@ require 'google/rpc/status_pb'
 
 require 'opentelemetry/proto/common/v1/common_pb'
 require 'opentelemetry/proto/resource/v1/resource_pb'
+require 'opentelemetry/proto/logs/v1/logs_pb'
 require 'opentelemetry/proto/trace/v1/trace_pb'
+require 'opentelemetry/proto/collector/logs/v1/logs_service_pb'
 require 'opentelemetry/proto/collector/trace/v1/trace_service_pb'
 
 module OpenTelemetry
@@ -23,14 +25,14 @@ module OpenTelemetry
       module Common # rubocop:disable Metrics/ModuleLength
         extend self
 
-        # As encoded etsr (ExportLogsServiceRequest)
+        # As encoded elsr (ExportLogsServiceRequest)
         #
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] log_record_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
         #
         # @return [String] returns an encoded ELSR of the provided log record data
-        def as_encoded_elsr(log_record_data) # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity
+        def as_encoded_elsr(log_record_data)
           Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(as_elsr(log_record_data))
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_etsr')
@@ -48,25 +50,25 @@ module OpenTelemetry
         def as_elsr(log_record_data)
           Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
             resource_logs: log_record_data
-                            .group_by(&:resource)
-                            .map do |resource, log_record_datas|
-                              Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
-                                resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                                  attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                                ),
-                                scope_logs: log_record_datas
+                           .group_by(&:resource)
+                           .map do |resource, log_record_datas|
+                             Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
+                               resource: Opentelemetry::Proto::Resource::V1::Resource.new(
+                                 attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
+                               ),
+                               scope_logs: log_record_datas
                                            .group_by(&:instrumentation_scope)
-                                            .map do |il, lrd|
-                                              Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
-                                                scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                                                  name: il.name,
-                                                  version: il.version
-                                                ),
-                                                log_records: lrd.map { |lr| as_otlp_log_record(lr) }
-                                              )
-                                            end
-                              )
-                            end
+                                           .map do |il, lrd|
+                                             Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
+                                               scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
+                                                 name: il.name,
+                                                 version: il.version
+                                               ),
+                                               log_records: lrd.map { |lr| as_otlp_log_record(lr) }
+                                             )
+                                           end
+                             )
+                           end
           )
         end
 
@@ -134,7 +136,7 @@ module OpenTelemetry
             span_id: log_record_data.span_id
           )
         end
-        
+
         def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
           Opentelemetry::Proto::Trace::V1::Span.new(
             trace_id: span_data.trace_id,
@@ -225,7 +227,7 @@ module OpenTelemetry
           Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
         end
 
-        def as_otlp_any_value(value) # rubocop:disable Metrics/CyclomaticComplexity
+        def as_otlp_any_value(value)
           result = Opentelemetry::Proto::Common::V1::AnyValue.new
           case value
           when String
@@ -240,7 +242,7 @@ module OpenTelemetry
             values = value.map { |element| as_otlp_any_value(element) }
             result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
           when Hash
-           values = value.map { |k, v| as_otlp_key_value(k, v) }
+            values = value.map { |k, v| as_otlp_key_value(k, v) }
             result.kvlist_value = Opentelemetry::Proto::Common::V1::KeyValueList.new(values: values)
           end
           result

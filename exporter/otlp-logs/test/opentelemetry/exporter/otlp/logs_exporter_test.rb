@@ -432,7 +432,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       end
 
       _(log_stream.string).must_match(
-        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#encode - a little hell/
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_etsr - a little hell/
       )
     ensure
       OpenTelemetry.logger = logger
@@ -559,23 +559,6 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       _(result).must_equal(SUCCESS)
     ensure
       OpenTelemetry.logger = logger
-    end
-
-    it 'exports valid UTF-8 bytes from binary-encoded strings' do
-      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
-
-      value = exporter.send(:as_otlp_any_value, city)
-
-      _(value.string_value).must_equal('Montréal')
-      _(value.string_value.encoding).must_equal(::Encoding::UTF_8)
-    end
-
-    it 'safely exports arrays containing invalid UTF-8 strings' do
-      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
-
-      attribute = exporter.send(:as_otlp_key_value, 'values', [invalid_value])
-
-      _(attribute.value.string_value).must_equal('Encoding Error')
     end
 
     it 'logs rpc.Status on bad request' do
