@@ -409,7 +409,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       end
 
       _(log_stream.string).must_match(
-        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::MetricsExporter#encode - a little hell/
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_emsr - a little hell/
       )
     ensure
       OpenTelemetry.logger = logger

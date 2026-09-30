@@ -27,7 +27,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
           include Util
 
           attr_reader :metric_snapshots
