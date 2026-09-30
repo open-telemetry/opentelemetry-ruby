@@ -1,6 +1,6 @@
-# opentelemetry-exporter-otlp-common
+# opentelemetry-exporter-otlp-http-common
 
-The `opentelemetry-exporter-otlp-common` gem provides a common set of utilities for the [OTLP][proto] exporters in OpenTelemetry Ruby.
+The `opentelemetry-exporter-otlp-http-common` gem provides a common set of utilities for the [OTLP][proto] http exporters in OpenTelemetry Ruby.
 
 This gem was initially extracted from opentelemetry-exporter-otlp ([PR#1179][pr1179]). Refer to its changelog for additional history.
 
@@ -12,7 +12,7 @@ OpenTelemetry provides a single set of APIs, libraries, agents, and collector se
 
 ## How does this gem fit in?
 
-The `opentelemetry-exporter-otlp-common` gem is a set of common utilities used by OTLP exporters. To export to the OpenTelemetry Collector see our [exporters][ruby-exporters].
+The `opentelemetry-exporter-otlp-http-common` gem is a set of common utilities used by OTLP http exporters. To export to the OpenTelemetry Collector see our [exporters][ruby-exporters].
 
 ## How can I get involved?
 
@@ -22,7 +22,7 @@ The OpenTelemetry Ruby gems are maintained by the OpenTelemetry-Ruby special int
 
 ## License
 
-The `opentelemetry-exporter-otlp-common` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
+The `opentelemetry-exporter-otlp-http-common` gem is distributed under the Apache 2.0 license. See [LICENSE][license-github] for more information.
 
 [proto]: https://github.com/open-telemetry/opentelemetry-proto
 [pr1179]: https://github.com/open-telemetry/opentelemetry-ruby/pull/1179
