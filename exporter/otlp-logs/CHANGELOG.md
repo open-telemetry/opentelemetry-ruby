@@ -1,5 +1,12 @@
 # Release History: opentelemetry-exporter-otlp-logs
 
+### v0.6.0 / 2026-09-29
+
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Update total_recorded_attributes when LogRecord#attributes= is called (#2241)
+* FIXED: Normalize UTF-8 attribute strings (#2259)
+* FIXED: Handle partial success responses (#2396)
+
 ### v0.5.1 / 2026-06-02
 
 * FIXED: `URI.join` dropping path prefix in logs and metrics exporters (#2158)

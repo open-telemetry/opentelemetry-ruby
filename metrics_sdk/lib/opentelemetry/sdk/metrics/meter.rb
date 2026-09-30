@@ -63,12 +63,14 @@ module OpenTelemetry
         end
 
         # Validates the given instrument options and creates the instrument of the given kind.
-        def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
+        # TODO: advisory parameters are accepted but not yet applied to stream configuration.
+        def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
           raise InstrumentNameError if name.nil?
           raise InstrumentNameError if name.empty?
           raise InstrumentNameError unless NAME_REGEX.match?(name)
-          raise InstrumentUnitError if unit && (!unit.ascii_only? || unit.size > 63)
-          raise InstrumentDescriptionError if description && (description.size > 1023 || !utf8mb3_encoding?(description.dup))
+
+          unit ||= ''
+          description ||= ''
 
           super do
             case kind
@@ -81,12 +83,6 @@ module OpenTelemetry
             when :observable_up_down_counter then OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter.new(name, unit, description, callback, @instrumentation_scope, @meter_provider, exemplar_filter, exemplar_reservoir)
             end
           end
-        end
-
-        # Returns whether string is valid UTF-8 with no 4-byte (utf8mb4) characters.
-        def utf8mb3_encoding?(string)
-          string.force_encoding('UTF-8').valid_encoding? &&
-            string.each_char { |c| return false if c.bytesize >= 4 }
         end
       end
     end
