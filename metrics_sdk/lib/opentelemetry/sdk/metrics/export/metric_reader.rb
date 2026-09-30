@@ -12,6 +12,11 @@ module OpenTelemetry
         # It is not required to subclass this class to provide an implementation
         # of MetricReader, provided the interface is satisfied.
         class MetricReader
+          # Raised when a reader is registered with a second MeterProvider.
+          SINGLE_PROVIDER_ERROR = 'MetricReader cannot be registered with more than one MeterProvider'
+
+          private_constant :SINGLE_PROVIDER_ERROR
+
           # The default aggregation for each instrument kind, as defined by the
           # metrics SDK specification.
           # https://opentelemetry.io/docs/specs/otel/metrics/sdk/#default-aggregation
@@ -36,8 +41,18 @@ module OpenTelemetry
           # @param [optional Hash{Symbol => Class}] default_aggregation aggregation classes
           #   keyed by instrument kind, applied on top of {DEFAULT_AGGREGATION}.
           def initialize(aggregation_cardinality_limit: nil, default_aggregation: nil)
+            @mutex = Mutex.new
             @default_aggregation = DEFAULT_AGGREGATION.merge(default_aggregation || {})
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
+          end
+
+          # Registers this reader with a MeterProvider.
+          def register_meter_provider(meter_provider)
+            @mutex.synchronize do
+              raise ArgumentError, SINGLE_PROVIDER_ERROR if @meter_provider && !@meter_provider.equal?(meter_provider)
+
+              @meter_provider = meter_provider
+            end
           end
 
           # Collects and returns the current metrics from the metric store.
