@@ -1,5 +1,9 @@
 # Release History: opentelemetry-common
 
+### v0.25.2 / 2026-09-29
+
+* FIXED: Normalize UTF-8 attribute strings (#2259)
+
 ### v0.25.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
