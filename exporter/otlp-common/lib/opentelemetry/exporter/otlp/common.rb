@@ -27,9 +27,9 @@ module OpenTelemetry
 
         # As encoded elsr (ExportLogsServiceRequest)
         #
-        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] log_record_data the
-        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
-        #   encoded.
+        # @param [Enumerable<OpenTelemetry::SDK::Logs::LogRecordData>] log_record_data
+        #   the list of recorded {OpenTelemetry::SDK::Logs::LogRecordData} structs to
+        #   be encoded.
         #
         # @return [String] returns an encoded ELSR of the provided log record data
         def as_encoded_elsr(log_record_data)
@@ -41,12 +41,12 @@ module OpenTelemetry
 
         # As elsr (ExportLogsServiceRequest)
         #
-        # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
-        #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
-        #   encoded.
+        # @param [Enumerable<OpenTelemetry::SDK::Logs::LogRecordData>] log_record_data
+        #   the list of recorded {OpenTelemetry::SDK::Logs::LogRecordData} structs to
+        #   be encoded.
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportLogsServiceRequest]
-        #   returns an ETSR of the provided span data
+        #   returns an ELSR of the provided log record data
         def as_elsr(log_record_data)
           Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
             resource_logs: log_record_data
