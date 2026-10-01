@@ -24,9 +24,9 @@ module OpenTelemetry
     module LegacyGlobalCompat
       ACCESSORS = %i[logger_provider logger_provider=].freeze
 
-      WARNING = 'opentelemetry-logs-sdk 0.6.1 and earlier register the global logger ' \
+      WARNING = 'opentelemetry-logs-sdk 0.7.0 and earlier register the global logger ' \
                 'provider through a compatibility shim in opentelemetry-logs-api. ' \
-                'Upgrade to opentelemetry-logs-sdk 0.7.0 or later.'
+                'Upgrade to opentelemetry-logs-sdk 0.8.0 or later.'
 
       # Keyed on LoggerProvider rather than the SDK's Logs namespace, which
       # another gem could plausibly define without the SDK being present.
