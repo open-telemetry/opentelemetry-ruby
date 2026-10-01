@@ -1,5 +1,10 @@
 # Release History: opentelemetry-logs-sdk
 
+### v0.7.0 / 2026-09-29
+
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Update total_recorded_attributes when LogRecord#attributes= is called (#2241)
+
 ### v0.6.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)

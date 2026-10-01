@@ -357,112 +357,6 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
   end
 
-  describe 'IPv4/IPv6 compatibility' do
-    it 'handles IPv6 loopback address with brackets' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://[::1]:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-    end
-
-    it 'handles IPv6 full address with brackets' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://[2001:db8::1]:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '2001:db8::1'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles IPv6 address with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://[::1]:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv6 address with custom path' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://[::1]:8080/custom/path')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 8080
-      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
-    end
-
-    it 'handles IPv4 loopback address' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://127.0.0.1:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '127.0.0.1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-    end
-
-    it 'handles IPv4 address with custom port' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://192.168.1.100:8080/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '192.168.1.100'
-      _(http.port).must_equal 8080
-    end
-
-    it 'handles IPv4 address with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://10.0.0.1:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '10.0.0.1'
-      _(http.port).must_equal 4318
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv4 address with custom path' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://127.0.0.1:9090/custom/path')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '127.0.0.1'
-      _(http.port).must_equal 9090
-      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
-    end
-
-    it 'handles IPv4 address from environment variable' do
-      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://192.168.1.1:4318') do
-        OpenTelemetry::Exporter::OTLP::Exporter.new
-      end
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '192.168.1.1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-    end
-
-    it 'handles hostnames' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://localhost:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'localhost'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles fully qualified domain names' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://otel.example.com:4318/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'otel.example.com'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles hostnames with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'https://otel-collector.prod.example.com:443/v1/traces')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'otel-collector.prod.example.com'
-      _(http.port).must_equal 443
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv6 address from environment variable' do
-      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://[::1]:4318') do
-        OpenTelemetry::Exporter::OTLP::Exporter.new
-      end
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-    end
-  end
-
   describe 'ssl_verify_mode:' do
     it 'can be set to VERIFY_NONE by an envvar' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true') do
@@ -625,6 +519,34 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     ensure
       OpenTelemetry.logger = logger
+    end
+
+    it 'exports valid UTF-8 bytes from binary-encoded attribute strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'city' => city }
+      )
+
+      encoded_data = exporter.send(:encode, [span_data])
+      decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+      exported_span = decoded.resource_spans.first.scope_spans.first.spans.first
+
+      _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'values' => [invalid_value] }
+      )
+
+      encoded_data = exporter.send(:encode, [span_data])
+      decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+      exported_value = decoded.resource_spans.first.scope_spans.first.spans.first.attributes.first.value
+
+      _(exported_value.string_value).must_equal('Encoding Error')
     end
 
     it 'logs rpc.Status on bad request' do

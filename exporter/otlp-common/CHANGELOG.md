@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-common
 
+### v0.3.0 / 2026-09-29
+
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Normalize UTF-8 attribute strings (#2259)
+
 ### v0.2.0 / 2026-09-03
 
 * ADDED: Support InstrumentationScope, and update OTLP proto to 0.18.0 (#1345)
