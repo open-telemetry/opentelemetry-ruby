@@ -54,9 +54,12 @@ module OpenTelemetry
                 ssl_verify_mode: ssl_verify_mode
               )
               @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(nil, base_path, "OTEL_EXPORTER_OTLP_#{service}_ENDPOINT", 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
+            else
+              options.endpoint ||= "http://localhost:4318/#{base_path}"
+              raise ArgumentError, "invalid url for OTLPHttp#{service}Exporter #{options.endpoint} set via config" unless OpenTelemetry::Common::Utilities.valid_url?(options.endpoint)
+              @uri = URI(options.endpoint)
             end
 
-            @uri ||= URI(options.endpoint || "http://localhost:4318/#{base_path}")
             @http = Net::HTTP.new(@uri.hostname, @uri.port)
             @http.use_ssl = @uri.scheme == 'https'
             @http.verify_mode = options.ssl_verify_mode
