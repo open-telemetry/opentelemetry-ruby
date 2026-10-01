@@ -24,9 +24,9 @@ module OpenTelemetry
     module LegacyGlobalCompat
       ACCESSORS = %i[meter_provider meter_provider=].freeze
 
-      WARNING = 'opentelemetry-metrics-sdk 0.18.0 and earlier register the global meter ' \
+      WARNING = 'opentelemetry-metrics-sdk 0.19.0 and earlier register the global meter ' \
                 'provider through a compatibility shim in opentelemetry-metrics-api. ' \
-                'Upgrade to opentelemetry-metrics-sdk 0.19.0 or later.'
+                'Upgrade to opentelemetry-metrics-sdk 0.20.0 or later.'
 
       # Keyed on MeterProvider rather than the SDK's Metrics namespace, which
       # another gem could plausibly define without the SDK being present.
