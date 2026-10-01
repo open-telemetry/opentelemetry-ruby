@@ -29,7 +29,7 @@ module OpenTelemetry
           MIN_MAX_SIZE = 2
           MAX_MAX_SIZE = 16_384
 
-          attr_reader :exemplar_reservoir
+          attr_accessor :exemplar_reservoir
 
           # The default boundaries are calculated based on default max_size and max_scale values
           def initialize(

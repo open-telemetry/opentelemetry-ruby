@@ -14,7 +14,7 @@ module OpenTelemetry
           include StreamScopedStorage
 
           OVERFLOW_ATTRIBUTE_SET = { 'otel.metric.overflow' => true }.freeze
-          attr_reader :exemplar_reservoir
+          attr_accessor :exemplar_reservoir
 
           DEFAULT_BOUNDARIES = [0, 5, 10, 25, 50, 75, 100, 250, 500, 1000].freeze
           private_constant :DEFAULT_BOUNDARIES
