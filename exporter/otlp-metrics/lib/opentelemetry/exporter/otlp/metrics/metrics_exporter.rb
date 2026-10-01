@@ -6,6 +6,7 @@
 
 require 'opentelemetry/common'
 require 'opentelemetry/exporter/otlp/common'
+require 'opentelemetry/exporter/otlp/http/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
@@ -27,7 +28,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
           include Util
 
           attr_reader :metric_snapshots
@@ -36,36 +37,21 @@ module OpenTelemetry
           FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
 
-          # rubocop:disable Lint/DuplicateBranch
-          # Returns the SSL verify mode configured via environment variables.
-          def self.ssl_verify_mode
-            if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
-              OpenSSL::SSL::VERIFY_PEER
-            elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
-              OpenSSL::SSL::VERIFY_NONE
-            else
-              OpenSSL::SSL::VERIFY_PEER
-            end
-          end
-          # rubocop:enable Lint/DuplicateBranch
-
-          def initialize(endpoint: nil,
-                         certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
-                         client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
-                         client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
-                         ssl_verify_mode: MetricsExporter.ssl_verify_mode,
-                         headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
+          def initialize(headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                         aggregation_cardinality_limit: nil)
+                         aggregation_cardinality_limit: nil,
+                         **kwargs)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             # create the MetricStore object
             super(aggregation_cardinality_limit: aggregation_cardinality_limit)
 
-            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
-            @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+            params = kwargs.values.compact.any? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(**kwargs) : nil
 
+            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'METRICS', 'v1/metrics')
+
+            @uri = @http.uri
             @path = @uri.path
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
