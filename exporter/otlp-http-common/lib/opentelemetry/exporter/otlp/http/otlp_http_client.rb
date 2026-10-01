@@ -57,6 +57,7 @@ module OpenTelemetry
             else
               options.endpoint ||= "http://localhost:4318/#{base_path}"
               raise ArgumentError, "invalid url for OTLPHttp#{service}Exporter #{options.endpoint} set via config" unless OpenTelemetry::Common::Utilities.valid_url?(options.endpoint)
+
               @uri = URI(options.endpoint)
             end
 
