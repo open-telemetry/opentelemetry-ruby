@@ -36,9 +36,11 @@ module OpenTelemetry
                          :use_ssl?,
                          :address,
                          :port,
-                          :read_timeout=,
+                         :read_timeout=,
                          :read_timeout,
-                          :open_timeout=,
+                         :write_timeout=,
+                         :write_timeout,
+                         :open_timeout=,
                          :open_timeout
 
           def initialize(options, service, base_path = '')
