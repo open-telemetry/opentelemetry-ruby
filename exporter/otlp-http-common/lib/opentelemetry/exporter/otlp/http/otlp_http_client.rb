@@ -44,7 +44,6 @@ module OpenTelemetry
                          :open_timeout
 
           def initialize(options, service, base_path = '')
-            uri = nil
             if options.nil?
               options = OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(
                 tls: OpenTelemetry::Exporter::OTLP::HTTP::HttpTlsConfig.new(
@@ -54,12 +53,12 @@ module OpenTelemetry
                 ),
                 ssl_verify_mode: ssl_verify_mode
               )
-              uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(nil, base_path, "OTEL_EXPORTER_OTLP_#{service}_ENDPOINT", 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
+              @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(nil, base_path, "OTEL_EXPORTER_OTLP_#{service}_ENDPOINT", 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
             end
 
-            uri ||= URI(options.endpoint || "http://localhost:4318/#{base_path}")
-            @http = Net::HTTP.new(uri.hostname, uri.port)
-            @http.use_ssl = uri.scheme == 'https'
+            @uri ||= URI(options.endpoint || "http://localhost:4318/#{base_path}")
+            @http = Net::HTTP.new(@uri.hostname, @uri.port)
+            @http.use_ssl = @uri.scheme == 'https'
             @http.verify_mode = options.ssl_verify_mode
             @http.ca_file = options.tls.ca_file if options.tls.ca_file
             @http.cert = OpenSSL::X509::Certificate.new(File.read(options.tls.cert_file)) if options.tls.cert_file

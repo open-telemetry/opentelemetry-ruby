@@ -29,19 +29,17 @@ module OpenTelemetry
 
           DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::HTTP::VERSION}".freeze
 
-          def initialize(endpoint: nil,
-                         headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
+          def initialize(headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_TRACES_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          **kwargs)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/traces', 'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
-
-            params = kwargs.values.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(endpoint: @uri.to_s, **kwargs) : nil
+            params = kwargs.values.compact.any? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(**kwargs) : nil
 
             @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'TRACES', 'v1/traces')
 
+            @uri = @http.uri
             @path = @uri.path
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f

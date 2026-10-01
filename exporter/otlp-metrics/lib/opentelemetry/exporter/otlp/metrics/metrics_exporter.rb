@@ -37,8 +37,7 @@ module OpenTelemetry
           FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
           private_constant(:SUCCESS, :FAILURE)
 
-          def initialize(endpoint: nil,
-                         headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
+          def initialize(headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          aggregation_cardinality_limit: nil,
@@ -48,12 +47,11 @@ module OpenTelemetry
             # create the MetricStore object
             super(aggregation_cardinality_limit: aggregation_cardinality_limit)
 
-            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
-
-            params = kwargs.values.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(endpoint: @uri.to_s, **kwargs) : nil
+            params = kwargs.values.compact.any? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(**kwargs) : nil
 
             @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'METRICS', 'v1/metrics')
 
+            @uri = @http.uri
             @path = @uri.path
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
