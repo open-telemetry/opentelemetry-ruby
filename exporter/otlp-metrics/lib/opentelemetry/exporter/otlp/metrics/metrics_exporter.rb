@@ -28,7 +28,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
           include Util
 
           attr_reader :metric_snapshots
@@ -50,9 +50,9 @@ module OpenTelemetry
 
             @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
 
-            params = kwargs.values.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClientConfig.new(endpoint: @uri.to_s, **kwargs) : nil
+            params = kwargs.values.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(endpoint: @uri.to_s, **kwargs) : nil
 
-            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'OTEL_EXPORTER_OTLP_METRICS', 'v1/metrics')
+            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'METRICS', 'v1/metrics')
 
             @path = @uri.path
             @headers = prepare_headers(headers)

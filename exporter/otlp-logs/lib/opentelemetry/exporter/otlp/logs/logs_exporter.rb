@@ -48,9 +48,9 @@ module OpenTelemetry
 
             @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
 
-            params = kwargs.value.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClientConfig.new(endpoint: @uri.to_s, **kwargs) : nil
+            params = kwargs.values.compact.any? || !endpoint.nil? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(endpoint: @uri.to_s, **kwargs) : nil
 
-            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'OTEL_EXPORTER_OTLP_LOGS', 'v1/logs')
+            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'LOGS', 'v1/logs')
 
             @path = @uri.path
             @headers = prepare_headers(headers)

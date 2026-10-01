@@ -15,6 +15,7 @@ module OpenTelemetry
     module OTLP
       # HTTP contains the implementation for the OTLP over HTTP exporters
       module HTTP
+        # Common contains shared code for the OTLP over HTTP exporters
         module Common
         end
       end
@@ -22,6 +23,7 @@ module OpenTelemetry
   end
 end
 
-require 'opentelemetry/exporter/otlp/http/OTLPHTTPClient'
-require 'opentelemetry/exporter/otlp/http/OTLPHTTPClientConfig'
+require 'opentelemetry/exporter/otlp/http/http_tls_config'
+require 'opentelemetry/exporter/otlp/http/otlp_http_client'
+require 'opentelemetry/exporter/otlp/http/otlp_http_exporter_config'
 require 'opentelemetry/exporter/otlp/http/common/version'

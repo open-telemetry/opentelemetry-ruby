@@ -12,7 +12,7 @@ SimpleCov.start
 
 require 'opentelemetry/sdk'
 require 'opentelemetry-test-helpers'
-require 'opentelemetry-exporter-otlp-common'
+require 'opentelemetry-exporter-otlp-http-common'
 
 require 'minitest/autorun'
 require 'webmock/minitest'
