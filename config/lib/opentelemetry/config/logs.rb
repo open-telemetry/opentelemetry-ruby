@@ -65,7 +65,7 @@ module OpenTelemetry
         OpenTelemetry::SDK::Logs::Export::SimpleLogRecordProcessor.new(build_log_record_exporter(cfg.exporter))
       end
 
-      # Builds a log record exporter from config; supports console.
+      # Builds a log record exporter from config; supports console and otlp_http.
       def build_log_record_exporter(exp_cfg)
         raise ArgumentError, 'no exporter config' unless exp_cfg
 
@@ -77,10 +77,33 @@ module OpenTelemetry
           exporter = OpenTelemetry::SDK::Logs::Export::ConsoleLogRecordExporter.new
         end
 
+        if exp_cfg.otlp_http
+          configured += 1
+          exporter = build_otlp_http_log_record_exporter(exp_cfg.otlp_http)
+        end
+
         raise ArgumentError, 'must not specify multiple exporters' if configured > 1
         raise ArgumentError, 'no valid log record exporter'        if exporter.nil?
 
         exporter
+      end
+
+      # Builds an OTLP HTTP log record exporter from the given endpoint/headers config.
+      def build_otlp_http_log_record_exporter(cfg)
+        unless defined?(OpenTelemetry::Exporter::OTLP::Logs::LogsExporter)
+          raise ArgumentError, 'otlp_http requires opentelemetry-exporter-otlp-logs. ' \
+                               'Add `gem "opentelemetry-exporter-otlp-logs"` to your Gemfile.'
+        end
+
+        headers = Trace.headers_to_hash(cfg)
+        opts = {
+          endpoint: cfg.endpoint,
+          headers: headers.empty? ? nil : headers,
+          compression: cfg.compression,
+          timeout: cfg.timeout && (cfg.timeout / 1000.0)
+        }.compact
+
+        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(**opts)
       end
 
       # Builds LogRecordLimits from config; returns the SDK default when config is nil.

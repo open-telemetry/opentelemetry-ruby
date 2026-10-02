@@ -87,6 +87,48 @@ describe OpenTelemetry::Config do
       end
     end
 
+    describe 'OTLP HTTP exporter' do
+      it 'builds a LogsExporter with the correct endpoint, headers, compression, and timeout' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors:
+              - batch:
+                  exporter:
+                    otlp_http:
+                      endpoint: http://localhost:4318/v1/logs
+                      headers:
+                        - name: api-key
+                          value: "secret-token"
+                      compression: gzip
+                      timeout: 10000
+        YAML
+
+        exporter = processors[0].instance_variable_get(:@exporter)
+        _(exporter).must_be_instance_of OpenTelemetry::Exporter::OTLP::Logs::LogsExporter
+        _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://localhost:4318/v1/logs'
+        _(exporter.instance_variable_get(:@compression)).must_equal 'gzip'
+        _(exporter.instance_variable_get(:@timeout)).must_equal 10.0
+        _(exporter.instance_variable_get(:@headers)['api-key']).must_equal 'secret-token'
+      end
+
+      it 'parses headers_list when headers is not set' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors:
+              - simple:
+                  exporter:
+                    otlp_http:
+                      headers_list: "api-key=secret-token,tenant=acme"
+        YAML
+
+        headers = processors[0].instance_variable_get(:@log_record_exporter).instance_variable_get(:@headers)
+        _(headers['api-key']).must_equal 'secret-token'
+        _(headers['tenant']).must_equal 'acme'
+      end
+    end
+
     describe 'multiple processors' do
       it 'adds every configured processor in order' do
         configure(<<~YAML)
