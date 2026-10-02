@@ -31,7 +31,7 @@ module OpenTelemetry
         #   list of recorded {OpenTelemetry::SDK::Metrics::MetricData} structs to be
         #   encoded.
         #
-        # @return [String] returns an encoded ETSR of the provided span data
+        # @return [String] returns an encoded EMSR of the provided metrics data
         def as_encoded_emsr(metrics_data)
           Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(as_emsr(metrics_data))
         rescue StandardError => e
@@ -46,7 +46,7 @@ module OpenTelemetry
         #   encoded.
         #
         # @return [Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest]
-        #   returns an EMSR of the provided span data
+        #   returns an EMSR of the provided metrics data
         def as_emsr(metrics_data)
           Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
             resource_metrics: metrics_data
