@@ -1,6 +1,6 @@
 # opentelemetry-logs-api
 
-The `opentelemetry-logs-api` gem is an alpha implementation of the [OpenTelemetry Logs API][logs-api] for Ruby applications. Using `opentelemetry-logs-api`, instrumentation can code against the OpenTelemetry interfaces to emit log records.
+The `opentelemetry-logs-api` gem is an alpha implementation of the [OpenTelemetry Logs API][logs-api] for Ruby applications. When opentelemetry-logs-api is installed, instrumentation can use OpenTelemetry API methods to emit log records.
 
 ## What is OpenTelemetry?
 
