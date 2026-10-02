@@ -49,14 +49,14 @@ module OpenTelemetry
       end
 
       # Builds a BatchSpanProcessor with exporter and schema defaults. Passing
-      # every option explicitly prevents the SDK initializer from reading OTEL_*.
+      # environment-backed options explicitly prevents it from reading OTEL_*.
       def build_batch_span_processor(cfg)
         exporter = build_span_exporter(cfg.exporter)
         opts = {
-          schedule_delay: cfg.schedule_delay.nil? ? 5_000 : cfg.schedule_delay.to_f,
-          exporter_timeout: cfg.export_timeout.nil? ? 30_000 : cfg.export_timeout.to_f,
-          max_queue_size: cfg.max_queue_size.nil? ? 2048 : cfg.max_queue_size.to_i,
-          max_export_batch_size: cfg.max_export_batch_size.nil? ? 512 : cfg.max_export_batch_size.to_i,
+          schedule_delay: (cfg.schedule_delay || Defaults::BATCH_SPAN_PROCESSOR[:schedule_delay]).to_f,
+          exporter_timeout: (cfg.export_timeout || Defaults::BATCH_SPAN_PROCESSOR[:export_timeout]).to_f,
+          max_queue_size: (cfg.max_queue_size || Defaults::BATCH_SPAN_PROCESSOR[:max_queue_size]).to_i,
+          max_export_batch_size: (cfg.max_export_batch_size || Defaults::BATCH_SPAN_PROCESSOR[:max_export_batch_size]).to_i,
           start_thread_on_boot: true
         }
 
@@ -96,14 +96,14 @@ module OpenTelemetry
       # defaults, without falling back to exporter environment variables.
       def build_otlp_http_span_exporter(cfg)
         OpenTelemetry::Exporter::OTLP::Exporter.new(
-          endpoint: cfg.endpoint || 'http://localhost:4318/v1/traces',
+          endpoint: cfg.endpoint || Defaults::OTLP_HTTP_TRACES_ENDPOINT,
           certificate_file: cfg.tls&.ca_file,
           client_certificate_file: cfg.tls&.cert_file,
           client_key_file: cfg.tls&.key_file,
           ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER,
           headers: headers_to_hash(cfg),
-          compression: cfg.compression || 'none',
-          timeout: cfg.timeout.nil? ? 10.0 : (cfg.timeout / 1000.0)
+          compression: cfg.compression || Defaults::OTLP_HTTP_EXPORTER[:compression],
+          timeout: (cfg.timeout || Defaults::OTLP_HTTP_EXPORTER[:timeout]) / 1000.0
         )
       end
 
@@ -148,13 +148,13 @@ module OpenTelemetry
       # Builds SpanLimits from declarative values and schema defaults.
       def build_span_limits(limits_cfg)
         OpenTelemetry::SDK::Trace::SpanLimits.new(
-          attribute_count_limit: limits_cfg&.attribute_count_limit || 128,
-          attribute_length_limit: limits_cfg&.attribute_value_length_limit,
-          event_count_limit: limits_cfg&.event_count_limit || 128,
-          link_count_limit: limits_cfg&.link_count_limit || 128,
-          event_attribute_count_limit: limits_cfg&.event_attribute_count_limit || 128,
+          attribute_count_limit: limits_cfg&.attribute_count_limit || Defaults::SPAN_LIMITS[:attribute_count_limit],
+          attribute_length_limit: limits_cfg&.attribute_value_length_limit || Defaults::SPAN_LIMITS[:attribute_value_length_limit],
+          event_count_limit: limits_cfg&.event_count_limit || Defaults::SPAN_LIMITS[:event_count_limit],
+          link_count_limit: limits_cfg&.link_count_limit || Defaults::SPAN_LIMITS[:link_count_limit],
+          event_attribute_count_limit: limits_cfg&.event_attribute_count_limit || Defaults::SPAN_LIMITS[:event_attribute_count_limit],
           event_attribute_length_limit: nil,
-          link_attribute_count_limit: limits_cfg&.link_attribute_count_limit || 128
+          link_attribute_count_limit: limits_cfg&.link_attribute_count_limit || Defaults::SPAN_LIMITS[:link_attribute_count_limit]
         )
       end
 
