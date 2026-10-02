@@ -6,6 +6,7 @@
 require 'date'
 require 'yaml'
 
+require_relative 'config/logs'
 require_relative 'config/propagation'
 require_relative 'config/resource'
 require_relative 'config/constants'
@@ -80,11 +81,13 @@ module OpenTelemetry
 
         # tracer_provider will be noop if opentelemetry-sdk is not installed
         tracer_provider = Trace.build_tracer_provider(config.tracer_provider, resource)
+        logger_provider = Logs.build_logger_provider(config.logger_provider, resource)
 
         propagators = configure_propagation(config.propagator)
 
         RubySDK.new(
           tracer_provider: tracer_provider,
+          logger_provider: logger_provider,
           propagator: propagators,
           resource: resource
         )
