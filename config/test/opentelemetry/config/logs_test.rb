@@ -28,6 +28,56 @@ describe OpenTelemetry::Config do
       _(@sdk.logger_provider).must_be_nil
     end
 
+    describe 'install' do
+      it 'installs the configured logger provider as the global' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors: []
+        YAML
+
+        _(OpenTelemetry.logger_provider).must_be_same_as @sdk.logger_provider
+      end
+
+      it 'delegates the default proxy logger provider to the configured provider' do
+        proxy = OpenTelemetry.logger_provider
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors: []
+        YAML
+
+        _(proxy.instance_variable_get(:@delegate)).must_be_same_as @sdk.logger_provider
+      end
+
+      it 'warns instead of raising when the global setter is not defined' do
+        respond_to = OpenTelemetry.method(:respond_to?)
+        no_setter = ->(name, *rest) { name != :logger_provider= && respond_to.call(name, *rest) }
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry.stub(:respond_to?, no_setter) do
+            configure(<<~YAML)
+              file_format: "1.0"
+              logger_provider:
+                processors: []
+            YAML
+          end
+
+          _(log_stream.string).must_match(/Cannot install the configured logger provider/)
+        end
+        _(OpenTelemetry.logger_provider).must_be_instance_of OpenTelemetry::Internal::ProxyLoggerProvider
+      end
+
+      it 'leaves the global untouched when logger_provider is not configured' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          #{TRACER_PROVIDER_YAML}
+        YAML
+
+        _(OpenTelemetry.logger_provider).must_be_instance_of OpenTelemetry::Internal::ProxyLoggerProvider
+      end
+    end
+
     it 'shares the configured resource' do
       configure(<<~YAML)
         file_format: "1.0"

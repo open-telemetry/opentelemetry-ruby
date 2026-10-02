@@ -102,8 +102,20 @@ module OpenTelemetry
         return ruby_sdk if ruby_sdk.equal?(NOOP_SDK)
 
         OpenTelemetry.tracer_provider = ruby_sdk.tracer_provider if ruby_sdk.tracer_provider
+        install_logger_provider(ruby_sdk.logger_provider) if ruby_sdk.logger_provider
         OpenTelemetry.propagation = ruby_sdk.propagator if ruby_sdk.propagator
         ruby_sdk
+      end
+
+      private
+
+      def install_logger_provider(provider)
+        if OpenTelemetry.respond_to?(:logger_provider=)
+          OpenTelemetry.logger_provider = provider
+        else
+          OpenTelemetry.logger.warn('Cannot install the configured logger provider: OpenTelemetry.logger_provider= ' \
+                                    'is not defined. Require opentelemetry-logs-sdk.')
+        end
       end
     end
   end

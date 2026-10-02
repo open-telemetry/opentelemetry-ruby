@@ -41,6 +41,15 @@ Minitest::Spec.after do
   tp.shutdown if tp.respond_to?(:shutdown)
 
   OpenTelemetry::TestHelpers.reset_opentelemetry
+  reset_logger_provider
+end
+
+# Restores the default proxy logger provider. The global lives on
+# OpenTelemetry::Internal when the logs API keeps it behind an opt-in require,
+# and on OpenTelemetry otherwise.
+def reset_logger_provider
+  owner = OpenTelemetry::Internal.respond_to?(:logger_provider) ? OpenTelemetry::Internal : OpenTelemetry
+  owner.instance_variable_set(:@logger_provider, OpenTelemetry::Internal::ProxyLoggerProvider.new)
 end
 
 # Shared minimal tracer_provider YAML used by end-to-end tests.

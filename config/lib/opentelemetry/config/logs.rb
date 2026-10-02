@@ -14,7 +14,7 @@ module OpenTelemetry
       def build_logger_provider(config, resource)
         return unless config
 
-        unless defined?(OpenTelemetry::SDK::Logs)
+        unless defined?(OpenTelemetry::SDK::Logs::LoggerProvider)
           OpenTelemetry.logger.warn('logger_provider is configured but opentelemetry-logs-sdk is not loaded. ' \
                                     'Add `gem "opentelemetry-logs-sdk"` to your Gemfile.')
           return
