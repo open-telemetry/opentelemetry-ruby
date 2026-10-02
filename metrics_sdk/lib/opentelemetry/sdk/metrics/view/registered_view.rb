@@ -29,6 +29,7 @@ module OpenTelemetry
             return false if @options[:unit] && @options[:unit] != metric_stream.unit
             return false if @options[:meter_name] && @options[:meter_name] != metric_stream.instrumentation_scope.name
             return false if @options[:meter_version] && @options[:meter_version] != metric_stream.instrumentation_scope.version
+            return false if @options[:meter_schema_url] && @options[:meter_schema_url] != metric_stream.instrumentation_scope.schema_url
 
             true
           end

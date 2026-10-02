@@ -16,7 +16,7 @@ module OpenTelemetry
       #   Instrumentation scope attributes
       #
       # @return [Meter]
-      def meter(name, version: nil, attributes: nil)
+      def meter(name, version: nil, schema_url: nil, attributes: nil)
         @meter ||= Meter.new
       end
     end
