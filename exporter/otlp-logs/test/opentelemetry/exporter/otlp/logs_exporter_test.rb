@@ -436,6 +436,41 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       end
     end
 
+    it 'logs rejected records reported in a JSON partial success response' do
+      exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(encoding: 'json')
+      response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.encode_json(
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.new(
+          partial_success: Opentelemetry::Proto::Collector::Logs::V1::ExportLogsPartialSuccess.new(
+            rejected_log_records: 2,
+            error_message: 'record limit exceeded'
+          )
+        )
+      )
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200, body: response)
+
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+        _(exporter.export([log_record_data])).must_equal(SUCCESS)
+        _(log_stream.string).must_match(/rejected_log_records=2, error_message=record limit exceeded/)
+      end
+    end
+
+    it 'does not log an error for a JSON partial success response without rejected records' do
+      exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(encoding: 'json')
+      response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.encode_json(
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.new(
+          partial_success: Opentelemetry::Proto::Collector::Logs::V1::ExportLogsPartialSuccess.new
+        )
+      )
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200, body: response)
+
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+        _(exporter.export([log_record_data])).must_equal(SUCCESS)
+        _(log_stream.string).wont_match(/OpenTelemetry error/)
+      end
+    end
+
     it 'returns FAILURE on unexpected exceptions' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger

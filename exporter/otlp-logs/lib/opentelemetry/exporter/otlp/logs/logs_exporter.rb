@@ -248,7 +248,11 @@ module OpenTelemetry
           end
 
           def log_partial_success(body)
-            response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
+            response = if @content_type == 'application/json'
+                         Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode_json(body, ignore_unknown_fields: true)
+                       else
+                         Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
+                       end
             partial_success = response.partial_success
             return if partial_success.nil? || partial_success.rejected_log_records <= 0
 
