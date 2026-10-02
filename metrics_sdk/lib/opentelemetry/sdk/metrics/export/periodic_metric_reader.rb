@@ -59,6 +59,9 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Fail to shutdown PeriodicMetricReader.')
             Export::FAILURE
+          ensure
+            # set after the worker thread has finished its final export
+            @stopped = true
           end
 
           # Export all metrics to the configured `Exporter` that have not yet
