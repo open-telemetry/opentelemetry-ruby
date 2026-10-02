@@ -62,6 +62,13 @@ module OpenTelemetry
           end
         end
 
+        # @api private
+        def add_view(view)
+          @instrument_registry.each_value do |instrument|
+            instrument.register_view(view)
+          end
+        end
+
         # Validates the given instrument options and creates the instrument of the given kind.
         # TODO: advisory parameters are accepted but not yet applied to stream configuration.
         def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)

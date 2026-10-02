@@ -50,6 +50,11 @@ module OpenTelemetry
             metric_store.add_metric_stream(ms)
           end
 
+          # @api private
+          def register_view(view)
+            @metric_streams.each { |ms| ms.register_view(view) }
+          end
+
           # The API MUST support creation of asynchronous instruments by passing zero or more callback functions
           # to be permanently registered to the newly created instrument.
           def init_callback(callback)
