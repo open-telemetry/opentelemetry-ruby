@@ -1,5 +1,10 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.13.0 / 2026-09-29
+
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Normalize UTF-8 attribute strings (#2259)
+
 ### v0.12.0 / 2026-09-09
 
 * BREAKING CHANGE: Align with the spec for metrics sdk and metrics otlp exporter (#2301)
