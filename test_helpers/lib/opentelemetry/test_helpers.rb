@@ -5,13 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'logger'
-begin
-  require 'opentelemetry/sdk/logs'
-rescue LoadError
-  # The logs SDK is not available, so we will not be able to use the log
-  # helpers. This is expected in some cases, such as when running tests for
-  # the metrics SDK.
-end
 
 module OpenTelemetry
   # The TestHelpers module contains a collection of test helpers for the various
