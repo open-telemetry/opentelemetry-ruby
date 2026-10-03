@@ -8,8 +8,8 @@ require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
   describe '#as_encoded_elsr' do
-    it 'handles valid and empty metrics data' do
-      # Valid metrics data
+    it 'handles valid and empty log record data' do
+      # Valid log record data
       log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
       result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([log_record_data])
       _(result).wont_be_nil

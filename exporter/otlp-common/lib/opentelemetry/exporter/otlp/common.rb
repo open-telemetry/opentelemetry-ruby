@@ -35,7 +35,7 @@ module OpenTelemetry
         def as_encoded_elsr(log_record_data)
           Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(as_elsr(log_record_data))
         rescue StandardError => e
-          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_etsr')
+          OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_elsr')
           nil
         end
 
@@ -45,7 +45,7 @@ module OpenTelemetry
         #   the list of recorded {OpenTelemetry::SDK::Logs::LogRecordData} structs to
         #   be encoded.
         #
-        # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportLogsServiceRequest]
+        # @return [Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest]
         #   returns an ELSR of the provided log record data
         def as_elsr(log_record_data)
           Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
