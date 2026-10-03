@@ -7,6 +7,21 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
+  describe '#as_encoded_elsr' do
+    it 'handles valid and empty log record data' do
+      # Valid log record data
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([log_record_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+  end
+
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
       # Valid span data
@@ -72,6 +87,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       exported_span = etsr.resource_spans.first.scope_spans.first.spans.first
 
       _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+      _(exported_span.attributes.first.value.string_value.encoding).must_equal(::Encoding::UTF_8)
     end
 
     it 'safely exports attributes with invalid UTF-8 keys' do
