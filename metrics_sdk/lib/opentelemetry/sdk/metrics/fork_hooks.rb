@@ -20,7 +20,7 @@ module OpenTelemetry
 
         # Notifies metric readers that a fork just occurred.
         def self.after_fork
-          ::OpenTelemetry.meter_provider.metric_readers.each do |reader|
+          ::OpenTelemetry::Internal.meter_provider.metric_readers.each do |reader|
             reader.after_fork if reader.respond_to?(:after_fork)
           end
         end
