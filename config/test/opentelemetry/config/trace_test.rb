@@ -128,7 +128,13 @@ describe OpenTelemetry::Config do
           'OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'x-env=present',
           'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION' => 'gzip',
           'OTEL_EXPORTER_OTLP_TRACES_TIMEOUT' => '1234',
-          'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => '1'
+          'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => '1',
+          'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/env/global-ca.pem',
+          'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE' => '/env/global-client.pem',
+          'OTEL_EXPORTER_OTLP_CLIENT_KEY' => '/env/global-key.pem',
+          'OTEL_EXPORTER_OTLP_TRACES_CERTIFICATE' => '/env/ca.pem',
+          'OTEL_EXPORTER_OTLP_TRACES_CLIENT_CERTIFICATE' => '/env/client.pem',
+          'OTEL_EXPORTER_OTLP_TRACES_CLIENT_KEY' => '/env/client-key.pem'
         ) do
           with_config(<<~YAML) do |path|
             file_format: "1.0"
@@ -146,7 +152,56 @@ describe OpenTelemetry::Config do
             _(exporter.instance_variable_get(:@compression)).must_equal 'none'
             _(exporter.instance_variable_get(:@timeout)).must_equal 10.0
             _(exporter.instance_variable_get(:@headers)).wont_include 'x-env'
-            _(exporter.instance_variable_get(:@http).verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
+            http = exporter.instance_variable_get(:@http)
+            _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
+            _(http.ca_file).must_be_nil
+            _(http.cert).must_be_nil
+            _(http.key).must_be_nil
+          end
+        end
+      end
+    end
+
+    describe 'OTLP HTTP TLS configuration' do
+      it 'passes TLS files to the HTTP client' do
+        key = OpenSSL::PKey::RSA.new(2048)
+        cert = OpenSSL::X509::Certificate.new
+        cert.version = 2
+        cert.serial = 1
+        cert.subject = cert.issuer = OpenSSL::X509::Name.parse('/CN=test')
+        cert.public_key = key.public_key
+        cert.not_before = Time.now
+        cert.not_after = Time.now + 3600
+        cert.sign(key, OpenSSL::Digest.new('SHA256'))
+
+        Tempfile.create(['client', '.pem']) do |cert_file|
+          Tempfile.create(['client-key', '.pem']) do |key_file|
+            cert_file.write(cert.to_pem)
+            cert_file.flush
+            key_file.write(key.to_pem)
+            key_file.flush
+
+            with_config(<<~YAML) do |path|
+              file_format: "1.0"
+              tracer_provider:
+                processors:
+                  - batch:
+                      exporter:
+                        otlp_http:
+                          endpoint: https://localhost:4318/v1/traces
+                          tls:
+                            ca_file: #{cert_file.path}
+                            cert_file: #{cert_file.path}
+                            key_file: #{key_file.path}
+            YAML
+              sdk = OpenTelemetry::Config.configure_from_file(path)
+              processor = sdk.tracer_provider.instance_variable_get(:@span_processors).first
+              http = processor.instance_variable_get(:@exporter).instance_variable_get(:@http)
+
+              _(http.ca_file).must_equal cert_file.path
+              _(http.cert.to_pem).must_equal cert.to_pem
+              _(http.key.to_pem).must_equal key.to_pem
+            end
           end
         end
       end
