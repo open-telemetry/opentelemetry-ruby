@@ -25,7 +25,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 3.3'
 
   spec.add_dependency 'opentelemetry-api', '~> 1.2'
-  spec.add_dependency 'opentelemetry-logs-api', '~> 0.1'
+  spec.add_dependency 'opentelemetry-logs-api', '~> 0.6.0'
   spec.add_dependency 'opentelemetry-sdk', '~> 1.3'
 
   if spec.respond_to?(:metadata)
