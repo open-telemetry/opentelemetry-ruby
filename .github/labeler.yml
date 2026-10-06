@@ -55,30 +55,26 @@ exporter-jaeger:
   - changed-files:
       - any-glob-to-any-file:
           - "exporter/jaeger/**"
-exporter-otlp:
-  - changed-files:
-      - any-glob-to-any-file:
-          - "exporter/otlp/**"
-exporter-common:
+exporter-otlp-common:
   - changed-files:
       - any-glob-to-any-file:
           - "exporter/otlp-common/**"
-exporter-grpc:
+exporter-otlp-grpc-trace:
   - changed-files:
       - any-glob-to-any-file:
-          - "exporter-grpc/**"
-exporter-http:
+          - "exporter/otlp-grpc/**"
+exporter-otlp-http-logs:
   - changed-files:
       - any-glob-to-any-file:
-          - "exporter/http/**"
-exporter-logs:
+          - "exporter/otlp-logs/**"
+exporter-otlp-http-metrics:
   - changed-files:
       - any-glob-to-any-file:
-          - "exporter/logs/**"
-exporter-metrics:
+          - "exporter/otlp-metrics/**"
+exporter-otlp-http-trace:
   - changed-files:
       - any-glob-to-any-file:
-          - "exporter/metrics/**"
+          - "exporter/otlp/**"
 exporter-zipkin:
   - changed-files:
       - any-glob-to-any-file:
