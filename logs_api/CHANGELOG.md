@@ -1,5 +1,10 @@
 # Release History: opentelemetry-logs-api
 
+### v0.6.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global logger provider behind an opt-in require (#2415)
+* ADDED: Move the global logger provider behind an opt-in require (#2415)
+
 ### v0.5.0 / 2026-09-15
 
 * BREAKING CHANGE: Align LoggerProvider#logger with the SDK signature (#2375)
