@@ -16,7 +16,7 @@ permissions:
 jobs:
   analyze:
     name: ${{ matrix.language }}
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
     permissions:
       security-events: write # required for all workflows
