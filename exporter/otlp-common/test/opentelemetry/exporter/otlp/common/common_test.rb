@@ -20,7 +20,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(result).wont_be_nil
       _(result).must_be_kind_of(String)
     end
-  
+
     it 'handles encoding errors gracefully' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         # Encoding error in attributes
