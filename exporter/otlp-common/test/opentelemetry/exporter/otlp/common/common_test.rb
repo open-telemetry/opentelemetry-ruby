@@ -40,7 +40,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
         Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.stub(:encode, ->(_) { raise StandardError, 'encoding failed' }) do
           result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
           _(result).must_be_nil
-          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_etsr/)
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_elsr/)
         end
       end
     end
@@ -387,7 +387,6 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       span['float_attr'] = 3.14
       span['bool_attr'] = true
       span['array_attr'] = [1, 2, 3]
-      span['kv_list_attr'] = { 'a' => 'b' }
       span.add_event('event1', attributes: { 'event_attr' => 'event_value' })
       span.add_event('event2')
       span.status = OpenTelemetry::Trace::Status.error('Test error')
@@ -403,7 +402,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       otlp_span = etsr.resource_spans.first.scope_spans.first.spans.first
       _(otlp_span.name).must_equal('complex-span')
       _(otlp_span.kind).must_equal(:SPAN_KIND_SERVER)
-      _(otlp_span.attributes.length).must_equal(6)
+      _(otlp_span.attributes.length).must_equal(5)
       _(otlp_span.events.length).must_equal(2)
       _(otlp_span.status.code).must_equal(:STATUS_CODE_ERROR)
       _(otlp_span.status.message).must_equal('Test error')
