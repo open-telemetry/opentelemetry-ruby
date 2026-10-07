@@ -45,7 +45,6 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       end
     end
   end
-  end
 
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
