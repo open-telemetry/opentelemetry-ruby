@@ -7,6 +7,45 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
+  describe '#as_encoded_elsr' do
+    it 'handles valid and empty log record data' do
+      # Valid log record data
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([log_record_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+
+    it 'handles encoding errors gracefully' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        # Encoding error in attributes
+        span_data = OpenTelemetry::TestHelpers.create_log_record_data(
+          attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
+        )
+
+        result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
+
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
+        )
+        _(result).wont_be_nil
+
+        # StandardError during encoding
+        span_data = OpenTelemetry::TestHelpers.create_log_record_data
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.stub(:encode, ->(_) { raise StandardError, 'encoding failed' }) do
+          result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
+          _(result).must_be_nil
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_elsr/)
+        end
+      end
+    end
+  end
+
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
       # Valid span data
@@ -72,6 +111,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       exported_span = etsr.resource_spans.first.scope_spans.first.spans.first
 
       _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+      _(exported_span.attributes.first.value.string_value.encoding).must_equal(::Encoding::UTF_8)
     end
 
     it 'safely exports attributes with invalid UTF-8 keys' do
