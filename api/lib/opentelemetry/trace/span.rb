@@ -177,7 +177,7 @@ module OpenTelemetry
         self
       end
 
-      INVALID = new(span_context: SpanContext::INVALID)
+      INVALID = new(span_context: SpanContext::INVALID).freeze
     end
   end
 end
