@@ -72,6 +72,7 @@ module OpenTelemetry
         end
 
         # Validates the given instrument options and creates the instrument of the given kind.
+        # TODO: advisory parameters are accepted but not yet applied to stream configuration.
         def create_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir, advisory)
           raise InstrumentNameError if invalid_name?(name)
 
@@ -93,7 +94,7 @@ module OpenTelemetry
             identical = descriptors.find { |descriptor| identical?(descriptor, kind, unit, description) }
 
             if identical
-              OpenTelemetry.logger.warn("repeated observable instrument creation with callbacks for instrument name '#{name}'. Ignoring new callbacks. Use Meter#register_callback to add callbacks.") if callback
+              OpenTelemetry.logger.warn("repeated observable instrument creation with callbacks for instrument name '#{name}'. Ignoring new callbacks. Use Meter#register_callback to add callbacks.") unless Array(callback).empty?
               identical.instrument
             else
               # Found the first conflicting instrument with the same name but different attributes (kind, unit, description).
@@ -114,18 +115,12 @@ module OpenTelemetry
           end
         end
 
+        private
+
         # Return true if name is nil/empty or not match NAME_REGEX
         def invalid_name?(name)
           name.to_s.empty? || !NAME_REGEX.match?(name)
         end
-
-        # Returns whether string is valid UTF-8 with no 4-byte (utf8mb4) characters.
-        def utf8mb3_encoding?(string)
-          string.force_encoding('UTF-8').valid_encoding? &&
-            string.each_char { |c| return false if c.bytesize >= 4 }
-        end
-
-        private
 
         # Returns a new SDK instrument of the given kind.
         def build_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)

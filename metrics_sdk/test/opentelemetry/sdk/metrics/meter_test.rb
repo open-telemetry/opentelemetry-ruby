@@ -276,6 +276,15 @@ describe OpenTelemetry::SDK::Metrics::Meter do
       end
     end
 
+    it 'does not warn about callbacks on identical observable instrument registrations with an empty callback array' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_observable_counter('a_counter', callback: proc { 10 })
+        meter.create_observable_counter('a_counter', callback: [])
+
+        _(log_stream.string).wont_match(/Ignoring new callbacks/)
+      end
+    end
+
     it 'does not warn about callbacks on identical synchronous instrument registrations' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         meter.create_counter('a_counter')
