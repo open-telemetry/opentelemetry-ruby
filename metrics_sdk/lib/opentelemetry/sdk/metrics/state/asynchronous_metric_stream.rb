@@ -77,7 +77,7 @@ module OpenTelemetry
                     merged_attributes.merge!(view.attribute_keys)
 
                     if view.valid_aggregation?
-                      exemplar_offer = should_offer_exemplar?(value, merged_attributes)
+                      exemplar_offer = should_offer_exemplar?(value, merged_attributes, view.exemplar_reservoir)
                       view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
                     end
                   end
