@@ -6,6 +6,7 @@
 require 'date'
 require 'yaml'
 
+require_relative 'config/defaults'
 require_relative 'config/propagation'
 require_relative 'config/resource'
 require_relative 'config/constants'
