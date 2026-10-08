@@ -52,7 +52,7 @@ jobs:
           GITHUB_NOW: ${{ github.sha }}
         run: |
           dirs=$(git diff --name-only $GITHUB_BEFORE $GITHUB_NOW \
-            | grep "otel-spec.yml" \
+            | grep "otel-spec.yaml" \
             | xargs -I {} dirname {} \
             | sort -u)
 
