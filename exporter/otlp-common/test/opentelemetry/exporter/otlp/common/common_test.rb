@@ -46,6 +46,21 @@ describe OpenTelemetry::Exporter::OTLP::Common do
     end
   end
 
+  describe '#as_encoded_emsr' do
+    it 'handles valid and empty metrics data' do
+      # Valid metrics data
+      metrics_data = create_metrics_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr([metrics_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+  end
+
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
       # Valid span data

@@ -19,35 +19,6 @@ module OpenTelemetry
             OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
           end
 
-          # Converts a key/value pair to an OTLP proto KeyValue.
-          def as_otlp_key_value(key, value)
-            key = OpenTelemetry::Common::Utilities.utf8_encode(key, placeholder: 'Encoding Error')
-            Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
-          rescue Encoding::UndefinedConversionError => e
-            encoded_value = value.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-            OpenTelemetry.handle_error(exception: e, message: "encoding error for key #{key} and value #{encoded_value}")
-            Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
-          end
-
-          # Converts a Ruby value to its OTLP proto AnyValue representation.
-          def as_otlp_any_value(value)
-            result = Opentelemetry::Proto::Common::V1::AnyValue.new
-            case value
-            when String
-              result.string_value = OpenTelemetry::Common::Utilities.utf8_encode(value, placeholder: value)
-            when Integer
-              result.int_value = value
-            when Float
-              result.double_value = value
-            when true, false
-              result.bool_value = value
-            when Array
-              values = value.map { |element| as_otlp_any_value(element) }
-              result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
-            end
-            result
-          end
-
           # Normalizes config_headers into a Hash, appending the default User-Agent.
           def prepare_headers(config_headers)
             headers = case config_headers
