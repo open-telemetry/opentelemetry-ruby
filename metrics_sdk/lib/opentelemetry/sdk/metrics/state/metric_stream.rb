@@ -42,9 +42,9 @@ module OpenTelemetry
             @registered_views = {}
             @exemplar_filter = exemplar_filter
             @exemplar_reservoir = exemplar_reservoir
+            @mutex = Mutex.new
 
             find_registered_view
-            @mutex = Mutex.new
           end
 
           # Returns a snapshot of this stream's aggregated metric data.
@@ -126,7 +126,22 @@ module OpenTelemetry
           def find_registered_view
             return if @meter_provider.nil?
 
-            @meter_provider.registered_views.each { |view| @registered_views[view] = {} if view.match_instrument?(self) }
+            @meter_provider.registered_views.each { |view| register_view(view) }
+          end
+
+          # Caches view if it matches this instrument, so that views registered with the
+          # {MeterProvider} after this stream was created still apply to this stream.
+          #
+          # Measurements that were already aggregated by the default aggregation are not
+          # re-aggregated into the view.
+          def register_view(view)
+            return unless view.match_instrument?(self)
+
+            @mutex.synchronize do
+              return if @registered_views.key?(view)
+
+              @registered_views = @registered_views.merge(view => {})
+            end
           end
 
           # Returns whether this stream has no data points to export.
