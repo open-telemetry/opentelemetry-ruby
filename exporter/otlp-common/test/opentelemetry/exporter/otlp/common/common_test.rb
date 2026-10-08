@@ -7,6 +7,45 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
+  describe '#as_encoded_elsr' do
+    it 'handles valid and empty log record data' do
+      # Valid log record data
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([log_record_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+
+    it 'handles encoding errors gracefully' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        # Encoding error in attributes
+        span_data = OpenTelemetry::TestHelpers.create_log_record_data(
+          attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
+        )
+
+        result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
+
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
+        )
+        _(result).wont_be_nil
+
+        # StandardError during encoding
+        span_data = OpenTelemetry::TestHelpers.create_log_record_data
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.stub(:encode, ->(_) { raise StandardError, 'encoding failed' }) do
+          result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
+          _(result).must_be_nil
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_elsr/)
+        end
+      end
+    end
+  end
+
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
       # Valid span data
@@ -59,6 +98,47 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       result = OpenTelemetry::Exporter::OTLP::Common.as_etsr([])
       _(result).must_be_kind_of(Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest)
       _(result.resource_spans).must_be_empty
+    end
+
+    it 'exports valid UTF-8 bytes from binary-encoded attribute strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'city' => city }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_span = etsr.resource_spans.first.scope_spans.first.spans.first
+
+      _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+      _(exported_span.attributes.first.value.string_value.encoding).must_equal(::Encoding::UTF_8)
+    end
+
+    it 'safely exports attributes with invalid UTF-8 keys' do
+      invalid_key = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { invalid_key => 'value' }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_attribute = etsr.resource_spans.first.scope_spans.first.spans.first.attributes.first
+
+      _(exported_attribute.key).must_equal('Encoding Error')
+      _(exported_attribute.value.string_value).must_equal('value')
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'values' => [invalid_value] }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_value = etsr.resource_spans.first.scope_spans.first.spans.first.attributes.first.value
+
+      _(exported_value.string_value).must_equal('Encoding Error')
     end
 
     it 'batches per resource and instrumentation scope' do
