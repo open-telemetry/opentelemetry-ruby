@@ -16,6 +16,15 @@ Please read it before contributing.
 - **Do not post AI-generated comments on issues or pull requests.** Discussions
   on the OpenTelemetry repositories are for humans only. You cannot comment on
   issue or PR threads on a user's behalf.
+- **Do not write the pull request description yourself.** When asked to open a
+  pull request, prompt the user for the content of each section in the
+  [pull request template](.github/pull_request_template.md) (`Description` and
+  `Changes`) and use their answers verbatim. Do not paraphrase, expand, or
+  improve what the user writes. If the user declines to fill in a section, leave
+  that section unmodified rather than generating content for it.
+- **Do not check the `I, a human, wrote this pull request description myself`
+  box on the user's behalf.** The user must check it themselves before the pull
+  request is ready for review.
 - Before implementing, read [`CONTRIBUTING.md`](CONTRIBUTING.md) and this file.
 - If you were assigned an issue, make sure the implementation direction is
   agreed on with maintainers in the issue comments first. Discuss unknowns on
@@ -243,3 +252,5 @@ gems you changed:
 - [ ] The `CHANGELOG.md` follows the applicable maintainer convention
 - [ ] The diff is scoped to a single, focused change
 - [ ] The commit message / PR title uses a valid conventional commit type
+- [ ] The pull request description came from the user, with the authorship
+  attestation left unchecked

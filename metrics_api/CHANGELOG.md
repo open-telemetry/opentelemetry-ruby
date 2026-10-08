@@ -1,5 +1,15 @@
 # Release History: opentelemetry-metrics-api
 
+### v0.9.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global meter provider behind an opt-in require (#2416)
+* ADDED: Move the global meter provider behind an opt-in require (#2416)
+
+### v0.8.0 / 2026-09-29
+
+* BREAKING CHANGE: Update api for spec compliance (#2309)
+* ADDED: Update api for spec compliance (#2309)
+
 ### v0.7.1 / 2026-09-15
 
 * FIXED: Pass the callback through when upgrading a proxy instrument (#2377)
