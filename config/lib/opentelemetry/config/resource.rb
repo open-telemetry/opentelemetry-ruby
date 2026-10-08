@@ -11,7 +11,7 @@ module OpenTelemetry
 
       # Priority: attributes > attribute_list > detected > base
       def build_resource(resource_cfg)
-        base = OpenTelemetry::SDK::Resources::Resource.default
+        base = default_resource
 
         return base unless resource_cfg
 
@@ -36,6 +36,20 @@ module OpenTelemetry
         attrs = detected.merge(explicit)
         custom = OpenTelemetry::SDK::Resources::Resource.create(attrs)
         base.merge(custom)
+      end
+
+      # Builds the intrinsic SDK resource without consulting OTEL_* environment
+      # variables. File-based configuration and environment configuration are
+      # intentionally separate sources.
+      def default_resource
+        resource_class = OpenTelemetry::SDK::Resources::Resource
+
+        resource_class.create(
+          OpenTelemetry::SemanticConventions::Resource::SERVICE_NAME => 'unknown_service',
+          OpenTelemetry::SemanticConventions::Resource::TELEMETRY_SDK_NAME => 'opentelemetry',
+          OpenTelemetry::SemanticConventions::Resource::TELEMETRY_SDK_LANGUAGE => 'ruby',
+          OpenTelemetry::SemanticConventions::Resource::TELEMETRY_SDK_VERSION => OpenTelemetry::SDK::VERSION
+        ).merge(resource_class.process)
       end
 
       # type coercion

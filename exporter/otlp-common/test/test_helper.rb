@@ -12,6 +12,7 @@ SimpleCov.start
 
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry/sdk'
+require 'opentelemetry/sdk/logs'
 require 'opentelemetry-test-helpers'
 require 'opentelemetry-exporter-otlp-common'
 

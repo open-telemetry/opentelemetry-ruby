@@ -11,11 +11,11 @@ describe OpenTelemetry::Metrics::Meter do
   let(:meter) { meter_provider.meter('test-meter') }
 
   describe 'creating an instrument' do
-    it 'duplicate instrument registration logs a warning' do
+    it 'does not warn about duplicate instrument registration' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         meter.create_counter('a_counter')
         meter.create_counter('a_counter')
-        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument a_counter/)
+        _(log_stream.string).must_be_empty
       end
     end
 
