@@ -23,6 +23,7 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/exporter/otlp/http/export_result'
 require 'opentelemetry/exporter/otlp/http/http_tls_config'
 require 'opentelemetry/exporter/otlp/http/otlp_http_client'
 require 'opentelemetry/exporter/otlp/http/otlp_http_exporter_config'
