@@ -45,7 +45,7 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       end
     end
   end
-  
+
   describe '#as_encoded_emsr' do
     it 'handles valid and empty metrics data' do
       # Valid metrics data
