@@ -46,17 +46,7 @@ module OpenTelemetry
 
           def initialize(options, service, base_path = '')
             if options.nil?
-              @options = OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(
-                tls: OpenTelemetry::Exporter::OTLP::HTTP::HttpTlsConfig.new(
-                  ca_file: OpenTelemetry::Common::Utilities.config_opt("OTEL_EXPORTER_OTLP_#{service}_CERTIFICATE", 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
-                  cert_file: OpenTelemetry::Common::Utilities.config_opt("OTEL_EXPORTER_OTLP_#{service}_CLIENT_CERTIFICATE", 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
-                  key_file: OpenTelemetry::Common::Utilities.config_opt("OTEL_EXPORTER_OTLP_#{service}_CLIENT_KEY", 'OTEL_EXPORTER_OTLP_CLIENT_KEY')
-                ),
-                ssl_verify_mode: ssl_verify_mode,
-                compression: OpenTelemetry::Common::Utilities.config_opt("OTEL_EXPORTER_OTLP_#{service}_COMPRESSION", 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                timeout: OpenTelemetry::Common::Utilities.config_opt("OTEL_EXPORTER_OTLP_#{service}_TIMEOUT", 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                headers_list: OpenTelemetry::Common::Utilities.config_opt("OTEL_EXPORTER_OTLP_#{service}_HEADERS", 'OTEL_EXPORTER_OTLP_HEADERS', default: nil)
-              )
+              @options = OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new.load_from_env(service)
               @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(nil, base_path, "OTEL_EXPORTER_OTLP_#{service}_ENDPOINT", 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
             else
               @options = options
@@ -79,6 +69,7 @@ module OpenTelemetry
             set_user_agent(@options.headers, "OTel-OTLP-HTTP-#{service}-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::HTTP::Common::VERSION}")
           end
 
+          # export_bytes is a method that sends the given bytes to the configured endpoint. It returns an ExportResult object indicating success or failure.
           def export_bytes(bytes, timeout: nil) # rubocop:disable Metrics/MethodLength
             return ExportResult.new(success: false) if bytes.nil?
 
@@ -211,17 +202,6 @@ module OpenTelemetry
               existing[:value] = "#{existing[:value]} #{value_to_append}".strip
             else
               headers << { name: 'User-Agent', value: value_to_append }
-            end
-          end
-
-          # rubocop:disable-next Lint/DuplicateBranch
-          def ssl_verify_mode
-            if ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER'] == 'true'
-              OpenSSL::SSL::VERIFY_PEER
-            elsif ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE'] == 'true'
-              OpenSSL::SSL::VERIFY_NONE
-            else
-              OpenSSL::SSL::VERIFY_PEER
             end
           end
         end
