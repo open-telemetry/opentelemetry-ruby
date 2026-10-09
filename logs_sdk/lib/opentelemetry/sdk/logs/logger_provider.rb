@@ -46,7 +46,7 @@ module OpenTelemetry
             OpenTelemetry.logger.warn(
               'LoggerProvider#logger called on a stopped LoggerProvider. ' \
               'Returning a no-op Logger.'
-              )
+            )
             return OpenTelemetry::Logs::Logger.new
           end
 
