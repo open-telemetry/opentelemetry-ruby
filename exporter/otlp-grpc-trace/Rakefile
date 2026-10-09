@@ -5,7 +5,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'bundler/gem_tasks'
+require 'English'
 require 'rake/testtask'
+require 'yaml'
 require 'yard'
 
 require 'rubocop/rake_task'
@@ -28,3 +30,24 @@ default_tasks =
   end
 
 task default: default_tasks
+
+
+OTEL_SPECS = YAML.load_file('otel-spec.yaml').freeze
+PROTO_VERSION = OTEL_SPECS['opentelemetry-proto'].freeze
+
+desc 'Generate probobuf'
+task :generate do
+  FileUtils.rm_rf('lib/opentelemetry/proto')
+  FileUtils.rm_rf('opentelemetry-proto')
+  run("git clone -b v#{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto")
+  run("grpc_tools_ruby_protoc --grpc_out=lib --proto_path=opentelemetry-proto opentelemetry/proto/collector/trace/v1/trace_service.proto")
+  FileUtils.rm_rf('opentelemetry-proto')
+end
+
+def run(cmd)
+  puts cmd
+  IO.popen(cmd) do |io|
+    io.each_line { |line| puts line }
+  end
+  raise "Command failed: #{cmd}" unless $CHILD_STATUS.success?
+end
