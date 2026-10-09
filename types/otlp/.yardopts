@@ -1,0 +1,8 @@
+--no-private
+--title=OpenTelemetry Types OTLP
+--markup=markdown
+--main=README.md
+./lib/opentelemetry/proto/**/*.rb
+-
+README.md
+CHANGELOG.md

@@ -28,23 +28,3 @@ default_tasks =
   end
 
 task default: default_tasks
-
-# https://github.com/open-telemetry/opentelemetry-proto/tree/v1.8.0
-PROTO_VERSION = 'v1.8.0'
-
-namespace :protobuf do
-  desc 'Remove proto file'
-  task :clean do
-    FileUtils.rm_rf('lib/opentelemetry/proto')
-    FileUtils.rm_rf('opentelemetry-proto')
-  end
-
-  desc "Generate Ruby Source files from OTel Proto Version #{PROTO_VERSION}"
-  task generate: [:clean] do
-    system("git clone -b #{PROTO_VERSION} https://github.com/open-telemetry/opentelemetry-proto", exception: true)
-    Dir['opentelemetry-proto/opentelemetry/proto/**/*.proto'].each do |file|
-      system("protoc --ruby_out=lib/ --proto_path=opentelemetry-proto #{file.gsub('opentelemetry-proto/', '')}", exception: true)
-    end
-    FileUtils.rm_rf('opentelemetry-proto')
-  end
-end

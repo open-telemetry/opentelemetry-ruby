@@ -1,0 +1,5 @@
+[tools]
+protoc = '36.1'
+
+[settings]
+lockfile = true

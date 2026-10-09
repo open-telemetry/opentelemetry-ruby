@@ -11,7 +11,7 @@ on:
     branches:
       - main
     paths:
-      - "semantic_conventions/semconv.yaml"
+      - "**/otel-spec.yaml"
 
 permissions:
   contents: read
@@ -31,6 +31,7 @@ jobs:
         with:
           # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates
           persist-credentials: true
+          fetch-depth: 0
       - name: Install Ruby
         uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
         with:
@@ -47,9 +48,29 @@ jobs:
       - name: Determine releases
         id: detect
         if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_BEFORE: ${{ github.event.before }}
+          GITHUB_NOW: ${{ github.sha }}
         run: |
-          echo "components=opentelemetry-semantic_conventions" >> $GITHUB_OUTPUT
+          dirs=$(git diff --name-only $GITHUB_BEFORE $GITHUB_NOW \
+            | grep "otel-spec.yaml" \
+            | xargs -I {} dirname {} \
+            | sort -u)
+
+          components=""
+
+          for d in $dirs; do
+            gemspec=$(ls "$d"/*.gemspec 2>/dev/null | xargs -I {} basename {} .gemspec)
+            if [ -n "$gemspec" ]; then
+              components="${components}${gemspec},"
+            fi
+          done
+
+          components="${components%,}"
+
+          echo "components=$components" >> $GITHUB_OUTPUT
       - name: Open release pull request
+        if: ${{ github.event_name == 'workflow_dispatch' || steps.detect.outputs.components != '' }}
         env:
           # Use an app token instead of GITHUB_TOKEN to trigger workflows
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
