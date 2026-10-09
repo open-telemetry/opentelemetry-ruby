@@ -77,7 +77,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def set_attribute(key, value)
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling set_attribute on an ended Span.')
             else
@@ -105,7 +105,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_attributes(attributes)
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_attributes on an ended Span.')
             else
@@ -137,7 +137,7 @@ module OpenTelemetry
         #
         # @return [self] returns itself
         def add_link(link)
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
             else
@@ -170,7 +170,7 @@ module OpenTelemetry
         def add_event(name, attributes: nil, timestamp: nil)
           event = Event.new(name, truncate_attribute_values(attributes, @span_limits.event_attribute_length_limit), relative_timestamp(timestamp))
 
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling add_event on an ended Span.')
             else
@@ -217,7 +217,7 @@ module OpenTelemetry
         def status=(status)
           return if status.code == OpenTelemetry::Trace::Status::UNSET
 
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling status= on an ended Span.')
             elsif @status.code != OpenTelemetry::Trace::Status::OK
@@ -236,7 +236,7 @@ module OpenTelemetry
         #
         # @return [void]
         def name=(new_name)
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling name= on an ended Span.')
             else
@@ -259,21 +259,30 @@ module OpenTelemetry
         # (*) not actually non-blocking. In particular, it synchronizes on an
         # internal mutex, which will typically be uncontended, and
         # {Export::BatchSpanProcessor} will also synchronize on a mutex, if that
-        # processor is used.
+        # processor is used. The mutex is held across the {SpanProcessor#on_finishing}
+        # callbacks, so a slow processor blocks every other thread writing to
+        # this span.
+        #
+        # A {#finish} call made from within a {SpanProcessor#on_finishing}
+        # callback is ignored, with a warning logged; its `end_timestamp`
+        # argument has no effect.
         #
         # @param [Time] end_timestamp optional end timestamp for the span.
         #
         # @return [self] returns itself
         def finish(end_timestamp: nil)
-          @mutex.synchronize do
+          synchronize do
             if @ended
               OpenTelemetry.logger.warn('Calling finish on an ended Span.')
               return self
             end
-            @end_timestamp = relative_timestamp(end_timestamp)
-            @span_processors.each do |processor|
-              processor.on_finishing(self) if processor.respond_to?(:on_finishing)
+            if @ending
+              OpenTelemetry.logger.warn('Calling finish on a Span that is ending.')
+              return self
             end
+
+            @end_timestamp = relative_timestamp(end_timestamp)
+            run_on_finishing_callbacks
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
             @links.freeze
@@ -330,6 +339,7 @@ module OpenTelemetry
           @resource = resource
           @instrumentation_scope = instrumentation_scope
           @ended = false
+          @ending = false
           @status = DEFAULT_STATUS
           @total_recorded_events = 0
           @total_recorded_links = links&.size || 0
@@ -374,6 +384,24 @@ module OpenTelemetry
         attr_reader :monotonic_start_timestamp, :realtime_start_timestamp
 
         private
+
+        # The lock is held across the on_finishing callouts so that no other
+        # thread can mutate the span once it starts ending. Re-entering from
+        # that callout is the one legitimate case, and Mutex is not reentrant.
+        def synchronize(&)
+          return yield if @mutex.owned?
+
+          @mutex.synchronize(&)
+        end
+
+        def run_on_finishing_callbacks
+          @ending = true
+          @span_processors.each do |processor|
+            processor.on_finishing(self) if processor.respond_to?(:on_finishing)
+          end
+        ensure
+          @ending = false
+        end
 
         def validated_attributes(attrs)
           return attrs if Internal.valid_attributes?(name, 'span', attrs)
