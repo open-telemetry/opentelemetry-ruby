@@ -198,13 +198,29 @@ OpenTelemetry.meter_provider.add_view(
 
 #### Restrict which attribute keys are retained
 
+`attribute_keys` is an allow-list: only the listed keys are kept in the metric stream, and every other measurement attribute is dropped. Pass an array of keys to keep:
+
 ```ruby
 # Only keep the 'http.method' and 'http.status_code' attributes; all others are dropped.
 OpenTelemetry.meter_provider.add_view(
   'http.request.duration',
-  attribute_keys: { 'http.method' => nil, 'http.status_code' => nil }
+  attribute_keys: ['http.method', 'http.status_code']
 )
 ```
+
+Or pass an `included` / `excluded` Hash to keep everything except a few keys:
+
+```ruby
+# Keep every attribute except 'http.url', which may carry high-cardinality or sensitive values.
+OpenTelemetry.meter_provider.add_view(
+  'http.request.duration',
+  attribute_keys: { excluded: ['http.url'] }
+)
+```
+
+Both lists may be given together, but a key cannot appear in both — `add_view` raises `ArgumentError` if it does. Omitting `attribute_keys` keeps all attributes; passing an empty array (`attribute_keys: []`) drops all of them.
+
+Note that attributes dropped from a metric stream this way may still be exported on exemplars as filtered attributes. If that is not acceptable — for example when removing an attribute that carries sensitive data — disable exemplar sampling with the `AlwaysOff` exemplar filter (see [Disabling exemplars](#disabling-exemplars) below).
 
 #### Full view options reference
 
@@ -218,7 +234,9 @@ OpenTelemetry.meter_provider.add_view(
   unit:          'ms',         # matches instruments with this unit
   meter_name:    'my_meter',   # matches instruments from this meter
   meter_version: '1.0',        # matches instruments from this meter version
-  attribute_keys: { 'env' => nil, 'region' => nil }  # allowlist of attribute keys to retain
+  attribute_keys: ['env', 'region'],  # allow-list of attribute keys to retain; may also be
+                                      #   { included: [...], excluded: [...] }
+  aggregation_cardinality_limit: 1000 # max data points emitted per collection
 )
 ```
 

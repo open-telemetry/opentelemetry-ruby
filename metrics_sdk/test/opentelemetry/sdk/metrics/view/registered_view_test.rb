@@ -212,17 +212,17 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
 
       meter = OpenTelemetry.meter_provider.meter('test')
 
-      # Create a view that adds specific attributes
+      # Create a view that keeps only some of the observed attributes
       view_with_attributes = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
         'async_counter',
         aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
-        attribute_keys: { 'environment' => 'test', 'service' => 'metrics' }
+        attribute_keys: ['environment']
       )
       OpenTelemetry.meter_provider.instance_variable_get(:@registered_views) << view_with_attributes
 
       callback = proc { 35 }
       observable_counter = meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'an async counter', callback: callback)
-      observable_counter.add_attributes({ 'original' => 'value' })
+      observable_counter.add_attributes({ 'environment' => 'test', 'original' => 'value' })
 
       metric_exporter.pull
       last_snapshot = metric_exporter.metric_snapshots
@@ -230,11 +230,67 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       _(last_snapshot[0].data_points).wont_be_empty
       _(last_snapshot[0].data_points[0].value).must_equal 35
 
-      # Check that view attributes are merged with original attributes
-      attributes = last_snapshot[0].data_points[0].attributes
-      _(attributes['environment']).must_equal 'test'
-      _(attributes['service']).must_equal 'metrics'
-      _(attributes['original']).must_equal 'value'
+      # Attributes not in the allow-list are dropped from the stream
+      _(last_snapshot[0].data_points[0].attributes).must_equal({ 'environment' => 'test' })
+    end
+  end
+
+  describe '#filter_attributes' do
+    let(:attributes) { { 'env' => 'prod', 'region' => 'us-east-1', 'host' => 'a' } }
+
+    def view(**options)
+      OpenTelemetry::SDK::Metrics::View::RegisteredView.new('counter', **options)
+    end
+
+    it 'keeps all attributes when attribute_keys is not configured' do
+      _(view.filter_attributes(attributes)).must_equal(attributes)
+    end
+
+    it 'keeps all attributes when attribute_keys is an empty Hash' do
+      _(view(attribute_keys: {}).filter_attributes(attributes)).must_equal(attributes)
+    end
+
+    it 'returns an empty Hash for nil attributes' do
+      _(view.filter_attributes(nil)).must_equal({})
+      _(view(attribute_keys: ['env']).filter_attributes(nil)).must_equal({})
+    end
+
+    it 'keeps only the listed keys when given an Array' do
+      _(view(attribute_keys: %w[env host]).filter_attributes(attributes)).must_equal({ 'env' => 'prod', 'host' => 'a' })
+    end
+
+    it 'drops all attributes when given an empty Array' do
+      _(view(attribute_keys: []).filter_attributes(attributes)).must_equal({})
+    end
+
+    it 'keeps only the included keys' do
+      _(view(attribute_keys: { included: ['env'] }).filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
+    end
+
+    it 'drops the excluded keys and keeps the rest' do
+      _(view(attribute_keys: { excluded: ['host'] }).filter_attributes(attributes)).must_equal({ 'env' => 'prod', 'region' => 'us-east-1' })
+    end
+
+    it 'applies included and excluded together' do
+      filtered = view(attribute_keys: { included: %w[env region], excluded: ['host'] }).filter_attributes(attributes)
+      _(filtered).must_equal({ 'env' => 'prod', 'region' => 'us-east-1' })
+    end
+
+    it 'accepts a single key' do
+      _(view(attribute_keys: 'env').filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
+    end
+
+    it 'accepts symbol keys' do
+      _(view(attribute_keys: [:env]).filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
+    end
+
+    it 'treats the keys of a plain Hash as the allow-list' do
+      _(view(attribute_keys: { 'env' => nil }).filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
+    end
+
+    it 'does not modify the measurement attributes' do
+      view(attribute_keys: { excluded: ['host'] }).filter_attributes(attributes)
+      _(attributes).must_equal({ 'env' => 'prod', 'region' => 'us-east-1', 'host' => 'a' })
     end
   end
 

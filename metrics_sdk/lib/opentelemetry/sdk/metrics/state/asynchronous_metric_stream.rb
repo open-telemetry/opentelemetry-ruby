@@ -66,20 +66,18 @@ module OpenTelemetry
               end
             else
               @registered_views.each do |view, data_points|
+                next unless view.valid_aggregation?
+
                 resolved_cardinality_limit = resolve_cardinality_limit(view)
+                view_attributes = view.filter_attributes(attributes)
 
                 @mutex.synchronize do
                   @callback.each do |cb|
                     value = safe_guard_callback(cb, timeout: timeout)
                     next unless value.is_a?(Numeric) # ignore if value is not valid number
 
-                    merged_attributes = attributes || {}
-                    merged_attributes.merge!(view.attribute_keys)
-
-                    if view.valid_aggregation?
-                      exemplar_offer = should_offer_exemplar?(value, merged_attributes)
-                      view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
-                    end
+                    exemplar_offer = should_offer_exemplar?(value, view_attributes)
+                    view.aggregation.update(value, view_attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
                   end
                 end
               end
