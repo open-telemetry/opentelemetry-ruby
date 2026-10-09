@@ -42,7 +42,7 @@ PROTOBUF_FILES = [
   'trace/v1/trace.proto'
 ].freeze
 
-desc 'Generate probobuf'
+desc 'Generate probotuf types/messages'
 task :generate do
   FileUtils.rm_rf('lib/opentelemetry/proto')
   FileUtils.rm_rf('opentelemetry-proto')
