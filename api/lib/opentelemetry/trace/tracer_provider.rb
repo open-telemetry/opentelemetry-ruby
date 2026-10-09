@@ -21,9 +21,10 @@ module OpenTelemetry
       # @param [String] version Instrumentation scope version
       # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
       #   Instrumentation scope attributes
+      # @param [String] schema_url Instrumentation scope schema URL
       #
       # @return [Tracer]
-      def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil)
+      def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil, schema_url: nil)
         @tracer ||= Tracer.new
       end
     end

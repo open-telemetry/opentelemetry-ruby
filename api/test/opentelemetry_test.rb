@@ -56,6 +56,18 @@ describe OpenTelemetry do
     end
   end
 
+  class SchemaUrlAwareTracerProvider < OpenTelemetry::Trace::TracerProvider
+    attr_reader :last_name, :last_version, :last_attributes, :last_schema_url
+
+    def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil, schema_url: nil)
+      @last_name = name || deprecated_name
+      @last_version = version || deprecated_version
+      @last_attributes = attributes
+      @last_schema_url = schema_url
+      CustomTracer.new
+    end
+  end
+
   describe '.tracer_provider=' do
     after do
       # Ensure we don't leak custom tracer factories and tracers to other tests
@@ -104,6 +116,39 @@ describe OpenTelemetry do
       OpenTelemetry.tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
       _(provider.last_name).must_equal('component')
       _(provider.last_version).must_equal('1.0')
+      _(provider.last_attributes).must_equal('key' => 'value')
+    end
+
+    it 'delegates schema_url to a provider that supports it' do
+      schema_url = 'https://opentelemetry.io/schemas/1.43.0'
+      OpenTelemetry.tracer_provider.tracer('component', '1.0', schema_url: schema_url)
+      provider = SchemaUrlAwareTracerProvider.new
+      OpenTelemetry.tracer_provider = provider
+      _(provider.last_name).must_equal('component')
+      _(provider.last_version).must_equal('1.0')
+      _(provider.last_schema_url).must_equal(schema_url)
+    end
+
+    it 'delegates to a provider supporting neither attributes nor schema_url without error' do
+      OpenTelemetry.tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      OpenTelemetry.tracer_provider = CustomTracerProvider.new
+      _(OpenTelemetry.tracer_provider.tracer('component', '1.0')).must_be_instance_of(CustomTracer)
+    end
+
+    it 'drops schema_url when replaying the registry onto a provider that does not support it' do
+      OpenTelemetry.tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0', attributes: { 'key' => 'value' })
+      provider = AttributeAwareTracerProvider.new
+      OpenTelemetry.tracer_provider = provider
+      _(provider.last_name).must_equal('component')
+      _(provider.last_attributes).must_equal('key' => 'value')
+    end
+
+    it 'drops schema_url when a retained proxy delegates to a provider that does not support it' do
+      proxy = OpenTelemetry.tracer_provider
+      provider = AttributeAwareTracerProvider.new
+      OpenTelemetry.tracer_provider = provider
+      tracer = proxy.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0', attributes: { 'key' => 'value' })
+      _(tracer).must_be_instance_of(CustomTracer)
       _(provider.last_attributes).must_equal('key' => 'value')
     end
   end
