@@ -916,11 +916,32 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       attempts = 0
       exporter.stub(:backoff?, ->(**_) { (attempts += 1) <= 3 }) do
         result = exporter.export([metrics_data])
-        _(result).wont_equal(METRICS_SUCCESS)
+        _(result).must_equal(METRICS_FAILURE)
       end
 
       assert_requested(:post, 'http://localhost:4318/v1/metrics', times: 2)
       assert_requested(:post, 'http://localhost:4318/v2/metrics', times: 2)
+    end
+
+    it 'logs a warning when redirect retries are exhausted' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v1/metrics' })
+      metrics_data = create_metrics_data
+
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      attempts = 0
+      exporter.stub(:backoff?, ->(**_) { (attempts += 1) <= 3 }) do
+        exporter.export([metrics_data])
+      end
+
+      _(log_stream.string).must_match(/Net::HTTPRedirection in MetricsExporter#send_bytes/)
+    ensure
+      OpenTelemetry.logger = logger
     end
   end
 end

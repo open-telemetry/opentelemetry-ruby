@@ -139,6 +139,8 @@ module OpenTelemetry
                 @http.finish
                 handle_redirect(response['location'])
                 redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.warn('Net::HTTPRedirection in MetricsExporter#send_bytes')
+                FAILURE
               else
                 @http.finish
                 OpenTelemetry.logger.warn("Unexpected error in OTLP::MetricsExporter#send_bytes - #{response.message}")
