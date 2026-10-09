@@ -25,6 +25,7 @@ group :test, :development do
   gem 'opentelemetry-api', path: '../../api', require: false
   gem 'opentelemetry-common', path: '../../common', require: false
   gem 'opentelemetry-exporter-otlp-common', path: '../otlp-common', require: false
+  gem 'opentelemetry-exporter-otlp-http-common', path: '../otlp-http-common', require: false
   gem 'opentelemetry-registry', path: '../../registry', require: false
   gem 'opentelemetry-sdk', path: '../../sdk', require: false
   gem 'opentelemetry-semantic_conventions', path: '../../semantic_conventions', require: false

@@ -10,22 +10,9 @@ module OpenTelemetry
       module Metrics
         # Util module provide essential functionality for exporter
         module Util
-          KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           DEFAULT_USER_AGENT = "OTel-OTLP-MetricsExporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
-
-          # Builds a configured Net::HTTP connection for the given URI.
-          def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-            http = Net::HTTP.new(uri.hostname, uri.port)
-            http.use_ssl = uri.scheme == 'https'
-            http.verify_mode = ssl_verify_mode
-            http.ca_file = certificate_file unless certificate_file.nil?
-            http.cert = OpenSSL::X509::Certificate.new(File.read(client_certificate_file)) unless client_certificate_file.nil?
-            http.key = OpenSSL::PKey::RSA.new(File.read(client_key_file)) unless client_key_file.nil?
-            http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
-            http
-          end
 
           # Yields the block with OpenTelemetry instrumentation suppressed.
           def around_request
