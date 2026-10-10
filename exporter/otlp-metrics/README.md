@@ -116,7 +116,7 @@ The collector exporter can be configured explicitly in code, or via environment 
 
 `OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION` parameter values can be either `"explicit_bucket_histogram"` (the default) or `"base2_exponential_bucket_histogram"`. The value is matched case-insensitively, and an unrecognized value logs a warning and falls back to `"explicit_bucket_histogram"`.
 
-The `default_aggregation:` parameter sets the default aggregation for any instrument kind, and takes precedence over the environment variable. It is a hash of instrument kind to aggregation class, applied on top of the [default aggregation](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#default-aggregation) defined by the specification. A matching View still overrides it.
+The `default_aggregation:` parameter sets the default aggregation for any instrument kind, and takes precedence over the environment variable. It is a hash where the key is the symbolized instrument kind and the value is the aggregation class, applied on top of the [default aggregation](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#default-aggregation) defined by the specification. A matching View still overrides it.
 
 ```ruby
 OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
