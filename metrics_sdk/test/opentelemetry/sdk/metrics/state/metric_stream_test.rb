@@ -60,6 +60,35 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
     end
   end
 
+  describe '#build_aggregation' do
+    def temporality_under_delta_preference(instrument_kind)
+      stream = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+        OpenTelemetry::SDK::Metrics::State::MetricStream.new(
+          'test_instrument',
+          '',
+          '',
+          instrument_kind,
+          meter_provider,
+          instrumentation_scope,
+          nil,
+          nil,
+          nil
+        )
+      end
+      stream.update(1, {})
+      stream.aggregate_metric_data(0, 1000).aggregation_temporality
+    end
+
+    it 'defaults up_down_counter kinds to cumulative under a delta preference' do
+      _(temporality_under_delta_preference(:up_down_counter)).must_equal(:cumulative)
+      _(temporality_under_delta_preference(:observable_up_down_counter)).must_equal(:cumulative)
+    end
+
+    it 'applies a delta preference to counters' do
+      _(temporality_under_delta_preference(:counter)).must_equal(:delta)
+    end
+  end
+
   describe '#update' do
     it 'updates aggregation with various value and attribute combinations' do
       # Test updates with different attributes (should create separate data points)
