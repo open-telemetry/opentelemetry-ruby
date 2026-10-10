@@ -67,6 +67,7 @@ module OpenTelemetry
             if aggregation_class <= OpenTelemetry::SDK::Metrics::Aggregation::Sum
               kwargs[:monotonic] = %i[counter observable_counter].include?(@instrument_kind)
               kwargs[:instrument_kind] = @instrument_kind
+              kwargs[:aggregation_temporality] = :cumulative if %i[up_down_counter observable_up_down_counter].include?(@instrument_kind)
             end
 
             aggregation_class.new(**kwargs)
