@@ -205,14 +205,6 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     INSTRUMENT_NAME_ERROR = OpenTelemetry::Metrics::Meter::InstrumentNameError
     DUPLICATE_INSTRUMENT_ERROR = OpenTelemetry::Metrics::Meter::DuplicateInstrumentError
 
-    it 'duplicate instrument registration logs a warning' do
-      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        meter.create_counter('a_counter')
-        meter.create_counter('a_counter')
-        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument a_counter/)
-      end
-    end
-
     it 'instrument name must not be nil' do
       _(-> { meter.create_counter(nil) }).must_raise(INSTRUMENT_NAME_ERROR)
     end
@@ -278,6 +270,166 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     ensure
       holder&.kill
       registration&.kill
+    end
+  end
+
+  describe 'duplicate instrument registration' do
+    let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new }
+    let(:meter) { meter_provider.meter('duplicate_registration') }
+
+    it 'returns the same instrument for identical registrations' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        instrument = meter.create_counter('a_counter', unit: 'smidgen', description: 'a description')
+
+        _(meter.create_counter('a_counter', unit: 'smidgen', description: 'a description')).must_be_same_as(instrument)
+        _(log_stream.string).must_be_empty
+      end
+    end
+
+    it 'warns and ignores callbacks on identical observable instrument registrations' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        callback_first = proc { 10 }
+        callback_second = proc { 20 }
+        instrument = meter.create_observable_counter('a_counter', callback: callback_first)
+
+        _(meter.create_observable_counter('a_counter', callback: callback_second)).must_be_same_as(instrument)
+        _(instrument.instance_variable_get(:@callbacks)).must_equal([callback_first])
+        _(log_stream.string).must_match(/repeated observable instrument creation with callbacks for instrument name 'a_counter'. Ignoring new callbacks./)
+      end
+    end
+
+    it 'does not warn about callbacks on identical observable instrument registrations with an empty callback array' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_observable_counter('a_counter', callback: proc { 10 })
+        meter.create_observable_counter('a_counter', callback: [])
+
+        _(log_stream.string).wont_match(/Ignoring new callbacks/)
+      end
+    end
+
+    it 'does not warn about callbacks on identical synchronous instrument registrations' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter')
+        meter.create_counter('a_counter')
+
+        _(log_stream.string).wont_match(/Ignoring new callbacks/)
+      end
+    end
+
+    it 'keeps the callback of a conflicting observable instrument registration' do
+      callback_first = proc { 10 }
+      callback_second = proc { 20 }
+      first = meter.create_observable_counter('a_counter', unit: 'smidgen', callback: callback_first)
+      second = meter.create_observable_counter('a_counter', unit: 'flurbo', callback: callback_second)
+
+      _(first.instance_variable_get(:@callbacks)).must_equal([callback_first])
+      _(second.instance_variable_get(:@callbacks)).must_equal([callback_second])
+    end
+
+    it 'returns a functional instrument when identifying fields conflict' do
+      first = meter.create_counter('a_counter', unit: 'smidgen')
+      second = meter.create_counter('a_counter', unit: 'flurbo')
+
+      _(second).must_be_instance_of(OpenTelemetry::SDK::Metrics::Instrument::Counter)
+      _(second).wont_be_same_as(first)
+    end
+
+    it 'exports every conflicting instrument to a metric reader added later' do
+      first = meter.create_counter('a_counter', unit: 'smidgen')
+      second = meter.create_counter('a_counter', unit: 'flurbo')
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      meter_provider.add_metric_reader(metric_exporter)
+
+      first.add(1)
+      second.add(2)
+      metric_exporter.pull
+      snapshots = metric_exporter.metric_snapshots
+
+      _(snapshots.map { |s| [s.name, s.unit, s.data_points.first.value] }).must_equal([%w[a_counter smidgen] + [1], %w[a_counter flurbo] + [2]])
+    end
+
+    it 'registers an identical instrument with a metric reader added later only once' do
+      instrument = meter.create_counter('a_counter')
+      meter.create_counter('A_COUNTER')
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      meter_provider.add_metric_reader(metric_exporter)
+
+      instrument.add(1)
+      metric_exporter.pull
+
+      _(metric_exporter.metric_snapshots.size).must_equal(1)
+    end
+
+    it 'reports a description conflict' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter', description: 'first')
+        meter.create_counter('a_counter', description: 'second')
+
+        _(log_stream.string).must_match(/conflicting fields: description \("first" and "second"\)/)
+      end
+    end
+
+    it 'reports a kind conflict' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter')
+        meter.create_histogram('a_counter')
+
+        _(log_stream.string).must_match(/conflicting fields: kind \(counter and histogram\)/)
+      end
+    end
+
+    it 'returns the first-seen instrument name when only the casing differs' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        instrument = meter.create_counter('requestCount')
+
+        _(meter.create_counter('RequestCount')).must_be_same_as(instrument)
+        _(log_stream.string).must_match(/case-insensitive duplicate instrument registration occurred:'RequestCount' first seen as 'requestCount'/)
+      end
+    end
+
+    it 'resolves the first-seen name and registers in a single critical section' do
+      # Run a competing registration on another thread as soon as the first critical
+      # section is released, so any gap between name resolution and registration is exposed.
+      test_meter = meter
+      competing = nil
+      interleaved = false
+      test_meter.instance_variable_get(:@mutex).define_singleton_method(:synchronize) do |&block|
+        result = super(&block)
+        unless interleaved
+          interleaved = true
+          Thread.new { competing = test_meter.create_counter('RequestCount') }.join
+        end
+        result
+      end
+
+      first = test_meter.create_counter('requestCount')
+
+      _(competing).must_be_same_as(first)
+      _(first.instance_variable_get(:@name)).must_equal('requestCount')
+      _(test_meter.instance_variable_get(:@instrument_descriptors)['requestcount'].map(&:instrument)).must_equal([first])
+    end
+
+    it 'reports conflicting fields against the first-seen instrument name casing' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('requestCount')
+        meter.create_histogram('RequestCount')
+
+        _(log_stream.string).must_match(/duplicate instrument registration occurred for instrument name 'requestCount'/)
+        _(log_stream.string).must_match(/conflicting fields: kind \(counter and histogram\)/)
+      end
+    end
+
+    it 'reports every conflicting field' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        meter.create_counter('a_counter', unit: 'smidgen', description: 'first')
+        meter.create_histogram('a_counter', unit: 'flurbo', description: 'second')
+
+        _(log_stream.string).must_match(
+          /conflicting fields: kind \(counter and histogram\), unit \("smidgen" and "flurbo"\), description \("first" and "second"\)/
+        )
+      end
     end
   end
 end

@@ -1,5 +1,10 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.20.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global meter provider behind an opt-in require (#2416)
+* ADDED: Move the global meter provider behind an opt-in require (#2416)
+
 ### v0.19.0 / 2026-09-29
 
 * BREAKING CHANGE: Update api for spec compliance (#2309)
