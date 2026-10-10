@@ -6,11 +6,11 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'opentelemetry/exporter/otlp/grpc/version'
+require 'opentelemetry/exporter/otlp/grpc/trace/version'
 
 Gem::Specification.new do |spec|
-  spec.name        = 'opentelemetry-exporter-otlp-grpc'
-  spec.version     = OpenTelemetry::Exporter::OTLP::GRPC::VERSION
+  spec.name        = 'opentelemetry-exporter-otlp-grpc-trace'
+  spec.version     = OpenTelemetry::Exporter::OTLP::GRPC::Trace::VERSION
   spec.authors     = ['OpenTelemetry Authors']
   spec.email       = ['cncf-opentelemetry-contributors@lists.cncf.io']
 
@@ -33,7 +33,7 @@ Gem::Specification.new do |spec|
 
   if spec.respond_to?(:metadata)
     spec.metadata['changelog_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}/file/CHANGELOG.md"
-    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/exporter/otlp-grpc"
+    spec.metadata['source_code_uri'] = "https://github.com/open-telemetry/opentelemetry-ruby/tree/#{spec.name}/v#{spec.version}/exporter/otlp-grpc-trace"
     spec.metadata['bug_tracker_uri'] = 'https://github.com/open-telemetry/opentelemetry-ruby/issues'
     spec.metadata['documentation_uri'] = "https://rubydoc.info/gems/#{spec.name}/#{spec.version}"
   end
