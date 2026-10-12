@@ -36,7 +36,7 @@ module OpenTelemetry
 
       # Builds a log record processor (simple or batch) from config.
       def build_log_record_processor(proc_cfg)
-        raise ArgumentError, 'must not specify multiple log record processor type' if proc_cfg.batch && proc_cfg.simple
+        raise ArgumentError, 'must not specify multiple log record processor types' if proc_cfg.batch && proc_cfg.simple
 
         if proc_cfg.batch
           build_batch_log_record_processor(proc_cfg.batch)
