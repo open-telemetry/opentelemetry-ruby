@@ -57,6 +57,107 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricFilter do
     _(filtered[0].data_points.map(&:attributes)).must_equal([accepted])
   end
 
+  describe 'point kind' do
+    Aggregation = OpenTelemetry::SDK::Metrics::Aggregation
+
+    # Accepts every stream partially and records the kind each test received.
+    class KindRecordingMetricFilter < MetricFilter
+      attr_reader :metric_kinds, :attribute_kinds
+
+      def initialize
+        @metric_kinds = {}
+        @attribute_kinds = {}
+      end
+
+      def test_metric(instrumentation_scope:, name:, kind:, unit:)
+        @metric_kinds[name] = kind
+        MetricFilterResult::ACCEPT_PARTIAL
+      end
+
+      def test_attributes(instrumentation_scope:, name:, kind:, unit:, attributes:)
+        @attribute_kinds[name] = kind
+        AttributesFilterResult::ACCEPT
+      end
+    end
+
+    def stream(name, instrument_kind, data_points, is_monotonic: nil)
+      OpenTelemetry::SDK::Metrics::State::MetricData.new(
+        name, '', '1', instrument_kind, resource, scope, data_points, :cumulative, 0, 0, is_monotonic
+      )
+    end
+
+    it 'passes the data model point kind rather than the instrument kind' do
+      filter = KindRecordingMetricFilter.new
+      filter.filter(
+        [
+          stream('counter', :counter, [Aggregation::NumberDataPoint.new({}, 0, 0, 1, 0, [])], is_monotonic: true),
+          stream('up_down_counter', :up_down_counter, [Aggregation::NumberDataPoint.new({}, 0, 0, -1, 0, [])], is_monotonic: false),
+          stream('gauge', :gauge, [Aggregation::NumberDataPoint.new({}, 0, 0, 1, 0, [])]),
+          stream('histogram', :histogram, [Aggregation::HistogramDataPoint.new({})]),
+          stream('exponential_histogram', :histogram, [Aggregation::ExponentialHistogramDataPoint.new({})])
+        ]
+      )
+
+      expected = {
+        'counter' => :sum,
+        'up_down_counter' => :sum,
+        'gauge' => :gauge,
+        'histogram' => :histogram,
+        'exponential_histogram' => :exponential_histogram
+      }
+      _(filter.metric_kinds).must_equal(expected)
+      _(filter.attribute_kinds).must_equal(expected)
+    end
+
+    it 'passes the point kind produced by a view that changes the aggregation' do
+      filter = KindRecordingMetricFilter.new
+      filter.filter(
+        [
+          stream('last_value_counter', :counter, [Aggregation::NumberDataPoint.new({}, 0, 0, 1, 0, [])]),
+          stream('sum_histogram', :histogram, [Aggregation::NumberDataPoint.new({}, 0, 0, 1, 0, [])], is_monotonic: true),
+          stream('histogram_counter', :counter, [Aggregation::HistogramDataPoint.new({})])
+        ]
+      )
+
+      _(filter.metric_kinds).must_equal('last_value_counter' => :gauge, 'sum_histogram' => :sum, 'histogram_counter' => :histogram)
+    end
+
+    it 'falls back to the default aggregation of the instrument when a stream has no data points' do
+      filter = KindRecordingMetricFilter.new
+      filter.filter(
+        [
+          stream('observable_counter', :observable_counter, []),
+          stream('observable_gauge', :observable_gauge, []),
+          stream('histogram', :histogram, [])
+        ]
+      )
+
+      _(filter.metric_kinds).must_equal('observable_counter' => :sum, 'observable_gauge' => :gauge, 'histogram' => :histogram)
+    end
+
+    describe 'with SDK-collected metrics' do
+      before { reset_metrics_sdk }
+
+      it 'passes the point kind of each collected stream' do
+        OpenTelemetry::SDK.configure
+        OpenTelemetry.meter_provider.add_view('last_value_counter', aggregation: Aggregation::LastValue.new)
+        reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+        OpenTelemetry.meter_provider.add_metric_reader(reader)
+
+        meter = OpenTelemetry.meter_provider.meter('test')
+        meter.create_counter('counter').add(1)
+        meter.create_counter('last_value_counter').add(1)
+        meter.create_gauge('gauge').record(1)
+        meter.create_histogram('histogram').record(1)
+
+        filter = KindRecordingMetricFilter.new
+        filter.filter(reader.collect)
+
+        _(filter.metric_kinds).must_equal('counter' => :sum, 'last_value_counter' => :gauge, 'gauge' => :gauge, 'histogram' => :histogram)
+      end
+    end
+  end
+
   describe 'with a MetricProducer' do
     before { reset_metrics_sdk }
 

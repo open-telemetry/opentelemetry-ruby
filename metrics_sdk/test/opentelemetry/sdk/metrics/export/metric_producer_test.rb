@@ -193,14 +193,15 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricProducer do
     end
 
     class FailingMetricProducer < OpenTelemetry::SDK::Metrics::Export::MetricProducer
-      def initialize(status:, errors: [])
+      def initialize(status:, errors: [], metrics: [])
         super(aggregation_temporality: :cumulative)
         @status = status
         @errors = errors
+        @metrics = metrics
       end
 
       def produce(resource:, metric_filter: nil, timeout: nil)
-        Result.new(metrics: [], status: @status, errors: @errors)
+        Result.new(metrics: @metrics, status: @status, errors: @errors)
       end
     end
 
@@ -225,8 +226,26 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricProducer do
       end
     end
 
+    # Advances a fake clock while producing, like a bridge that takes time to respond.
+    class SlowMetricProducer < RecordingMetricProducer
+      def initialize(clock, duration)
+        super(aggregation_temporality: :cumulative)
+        @clock = clock
+        @duration = duration
+      end
+
+      def produce(resource:, metric_filter: nil, timeout: nil)
+        @clock[0] += @duration
+        super
+      end
+    end
+
     def build_reader(producers, **options)
       OpenTelemetry::SDK::Metrics::Export::MetricReader.new(metric_producers: producers, **options)
+    end
+
+    def with_fake_clock(clock, &)
+      OpenTelemetry::Common::Utilities.stub(:timeout_timestamp, -> { clock[0] }, &)
     end
 
     it 'keeps collecting when a producer raises' do
@@ -245,14 +264,26 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricProducer do
 
     it 'keeps partial metrics and reports a failed result' do
       error = StandardError.new('boom')
-      reader = build_reader([FailingMetricProducer.new(status: OpenTelemetry::SDK::Metrics::Export::FAILURE, errors: [error]), RecordingMetricProducer.new])
+      partial_metric = ThirdPartyMetricData.build('partial_metric', resource: OpenTelemetry::SDK::Resources::Resource.create, value: 7)
+      failing_producer = FailingMetricProducer.new(status: OpenTelemetry::SDK::Metrics::Export::FAILURE, errors: [error], metrics: [partial_metric])
+      reader = build_reader([failing_producer, RecordingMetricProducer.new])
       handled = []
+      collected = nil
 
       reader.metric_store.stub(:collect, []) do
         OpenTelemetry.stub(:handle_error, ->(exception: nil, message: nil) { handled << [exception, message] }) do
-          _(reader.collect.map(&:name)).must_equal(['recorded_metric'])
+          collected = reader.collect
         end
       end
+
+      _(collected[0].name).must_equal('partial_metric')
+      _(collected[0].data_points.first.value).must_equal(7)
+      _(collected[0].unit).must_equal('smidgen')
+      _(collected[0].instrument_kind).must_equal(:counter)
+      _(collected[0].resource).must_be_same_as(reader.resource)
+
+      _(collected[1].name).must_equal('recorded_metric')
+      _(collected[1].data_points.first.value).must_equal(1)
 
       _(handled.length).must_equal(1)
       _(handled[0][0]).must_be_same_as(error)
@@ -274,13 +305,57 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricProducer do
       _(handled[0][1]).must_match(/failed to produce metrics with status/)
     end
 
-    it 'hands the configured timeout to the producer' do
+    it 'hands the configured timeout to the producer when collect is not given one' do
       producer = RecordingMetricProducer.new
       reader = build_reader([producer], timeout: 5)
 
-      reader.metric_store.stub(:collect, []) { reader.collect }
+      with_fake_clock([0.0]) { reader.metric_store.stub(:collect, []) { reader.collect } }
 
       _(producer.timeout).must_equal(5)
+    end
+
+    it 'hands no timeout to the producer when none is configured' do
+      producer = RecordingMetricProducer.new
+      reader = build_reader([producer])
+
+      reader.metric_store.stub(:collect, []) { reader.collect }
+
+      _(producer.timeout).must_be_nil
+    end
+
+    it 'shares the collect timeout across producers' do
+      clock = [0.0]
+      first = SlowMetricProducer.new(clock, 0.4)
+      second = RecordingMetricProducer.new
+      reader = build_reader([first, second], timeout: 30)
+
+      with_fake_clock(clock) { reader.metric_store.stub(:collect, []) { reader.collect(timeout: 1) } }
+
+      _(first.timeout).must_equal(1)
+      _(second.timeout).must_be_within_delta(0.6, 1e-9)
+    end
+
+    it 'skips producers once the collect timeout runs out' do
+      clock = [0.0]
+      first = SlowMetricProducer.new(clock, 1.5)
+      second = RecordingMetricProducer.new
+      reader = build_reader([first, second])
+      handled = []
+      collected = nil
+
+      with_fake_clock(clock) do
+        reader.metric_store.stub(:collect, []) do
+          OpenTelemetry.stub(:handle_error, ->(exception: nil, message: nil) { handled << [exception, message] }) do
+            collected = reader.collect(timeout: 1)
+          end
+        end
+      end
+
+      _(collected.length).must_equal(1)
+      _(collected[0]).must_be_same_as(first.produced_metrics[0])
+      _(second.produced_metrics).must_be_nil
+      _(handled.length).must_equal(1)
+      _(handled[0][1]).must_match(/RecordingMetricProducer skipped: collect timed out/)
     end
 
     it 'hands the reader resource to the producer' do

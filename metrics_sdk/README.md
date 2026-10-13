@@ -279,7 +279,10 @@ OpenTelemetry.meter_provider.shutdown
 Subclass `MetricProducer` when a third-party source already provides aggregated
 metric data. Implement `produce` and return a `MetricProducer::Result` containing
 `MetricData` instances. The producer receives the SDK resource, an optional
-filter, and an optional timeout from the reader.
+filter, and an optional timeout from the reader. The timeout is the time left
+in the current collection: a `PeriodicMetricReader` splits its export timeout
+(or the timeout passed to `force_flush`) across its producers and then the
+exporter, and skips producers once it runs out.
 
 ```ruby
 class ThirdPartyProducer < OpenTelemetry::SDK::Metrics::Export::MetricProducer
@@ -310,7 +313,10 @@ status, the reader keeps those metrics and reports the failure through
 To filter producer output, subclass `MetricFilter` and return values from
 `MetricFilter::MetricFilterResult`. Return `ACCEPT` or `DROP` from `test_metric`
 to handle an entire stream. Return `ACCEPT_PARTIAL` and implement
-`test_attributes` to decide which data points to retain. Configure the filter on
+`test_attributes` to decide which data points to retain. Both methods receive
+the stream's data model point kind as `kind` (`:sum`, `:gauge`, `:histogram`, or
+`:exponential_histogram`) rather than its instrument kind, so a counter
+aggregated by a `LastValue` view is passed as `:gauge`. Configure the filter on
 the reader, which hands it to every configured producer on each collection:
 
 ```ruby

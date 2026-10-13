@@ -22,12 +22,37 @@ module OpenTelemetry
             DROP = :drop
           end
 
+          # Point kind assumed for a stream without data points, based on the
+          # instrument's default aggregation.
+          DEFAULT_POINT_KINDS = {
+            counter: :sum,
+            up_down_counter: :sum,
+            observable_counter: :sum,
+            observable_up_down_counter: :sum,
+            gauge: :gauge,
+            observable_gauge: :gauge,
+            histogram: :histogram
+          }.freeze
+
+          private_constant :DEFAULT_POINT_KINDS
+
           # Tests whether a metric stream should be accepted.
+          #
+          # @param [InstrumentationScope] instrumentation_scope The metric stream instrumentation scope.
+          # @param [String] name The name of the metric stream.
+          # @param [Symbol] kind The metric stream point kind: :sum, :gauge,
+          #   :histogram, or :exponential_histogram.
+          # @param [String] unit The metric stream unit.
+          # @return [Symbol] One of the {MetricFilterResult} values.
           def test_metric(instrumentation_scope:, name:, kind:, unit:)
             raise NotImplementedError, "#{self.class} must implement #test_metric"
           end
 
-          # Tests whether a data point's attributes should be accepted.
+          # Tests whether a data point's attributes should be accepted. Receives
+          # the same stream arguments as {#test_metric}, plus the data point's
+          # attributes.
+          #
+          # @return [Symbol] One of the {AttributesFilterResult} values.
           def test_attributes(instrumentation_scope:, name:, kind:, unit:, attributes:)
             raise NotImplementedError, "#{self.class} must implement #test_attributes"
           end
@@ -73,9 +98,22 @@ module OpenTelemetry
             {
               instrumentation_scope: metric.instrumentation_scope,
               name: metric.name,
-              kind: metric.instrument_kind,
+              kind: point_kind(metric),
               unit: metric.unit
             }
+          end
+
+          # Derives the data model point kind, which differs from the instrument
+          # kind when a view changes the stream's aggregation. Number data points
+          # come from either a Sum or a LastValue aggregation; only Sum sets
+          # is_monotonic.
+          def point_kind(metric)
+            case metric.data_points.first
+            when Aggregation::ExponentialHistogramDataPoint then :exponential_histogram
+            when Aggregation::HistogramDataPoint then :histogram
+            when Aggregation::NumberDataPoint then metric.is_monotonic.nil? ? :gauge : :sum
+            else DEFAULT_POINT_KINDS.fetch(metric.instrument_kind, :sum)
+            end
           end
         end
       end

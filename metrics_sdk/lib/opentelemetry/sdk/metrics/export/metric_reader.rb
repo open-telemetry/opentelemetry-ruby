@@ -26,8 +26,8 @@ module OpenTelemetry
           #   output is merged with the SDK's metric data on every #collect.
           # @param [optional MetricFilter] metric_filter The filter handed to every
           #   configured MetricProducer on #collect.
-          # @param [optional Numeric] timeout The timeout in seconds handed to every
-          #   configured MetricProducer on #collect.
+          # @param [optional Numeric] timeout The default timeout in seconds shared
+          #   by the configured MetricProducers on a #collect that is not given one.
           def initialize(aggregation_cardinality_limit: nil, metric_producers: [], metric_filter: nil, timeout: nil)
             @mutex = Mutex.new
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
@@ -37,10 +37,6 @@ module OpenTelemetry
             @resource = OpenTelemetry::SDK::Resources::Resource.create
           end
 
-          # Collects and returns the current metrics from the SDK's metric store,
-          # merged with metrics from any additional configured MetricProducers.
-          # metric_filter is optional to filter SDK batch and third-party batch metrics.
-          # Currently the metric_filter is not applied to filter the sdk collected metrics.
           # Registers this reader with a MeterProvider.
           def register_meter_provider(meter_provider)
             @mutex.synchronize do
@@ -50,10 +46,20 @@ module OpenTelemetry
             end
           end
 
-          # Collects and returns the current metrics from the metric store.
-          def collect
+          # Collects and returns the current metrics from the metric store,
+          # merged with metrics from any additional configured MetricProducers.
+          # metric_filter is optional to filter SDK batch and third-party batch metrics.
+          # Currently the metric_filter is not applied to filter the sdk collected metrics.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds shared
+          #   by all configured MetricProducers. Each producer is handed the time
+          #   remaining, and producers left once it runs out are skipped. Defaults
+          #   to the timeout the reader was created with.
+          def collect(timeout: nil)
+            timeout ||= @timeout
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             metrics = @metric_store.collect
-            metrics.concat(produce_metrics)
+            metrics.concat(produce_metrics(timeout, start_time))
           end
 
           # No-op: subclasses should override to release resources.
@@ -75,9 +81,15 @@ module OpenTelemetry
           private
 
           # Partial metrics from a failed result are kept; only the failure is reported.
-          def produce_metrics
+          def produce_metrics(timeout, start_time)
             @metric_producers.flat_map do |producer|
-              result = producer.produce(resource: @resource, metric_filter: @metric_filter, timeout: @timeout)
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              if remaining_timeout&.zero?
+                OpenTelemetry.handle_error(message: "#{producer.class} skipped: collect timed out before producing metrics.")
+                next []
+              end
+
+              result = producer.produce(resource: @resource, metric_filter: @metric_filter, timeout: remaining_timeout)
               report_producer_failure(producer, result) unless result.status == Export::SUCCESS
               with_reader_resource(result.metrics)
             rescue StandardError => e

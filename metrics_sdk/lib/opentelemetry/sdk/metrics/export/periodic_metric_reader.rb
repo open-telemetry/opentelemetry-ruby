@@ -128,12 +128,27 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred
           def export(timeout: nil)
+            timeout ||= @export_timeout
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             @export_mutex.synchronize do
-              collected_metrics = collect
-              result_code = @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
+              collected_metrics = collect(timeout: timeout)
+              result_code = export_collected(collected_metrics, OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time))
               report_result(result_code)
               result_code
             end
+          end
+
+          # Hands the collected metrics to the exporter with whatever time the
+          # producers left, so collecting and exporting share one timeout.
+          def export_collected(collected_metrics, remaining_timeout)
+            return if collected_metrics.empty?
+
+            if remaining_timeout&.zero?
+              OpenTelemetry.handle_error(message: 'PeriodicMetricReader timed out while collecting metrics; skipped exporting them.')
+              return Export::TIMEOUT
+            end
+
+            @exporter.export(collected_metrics, timeout: remaining_timeout)
           end
 
           def report_result(result_code)
