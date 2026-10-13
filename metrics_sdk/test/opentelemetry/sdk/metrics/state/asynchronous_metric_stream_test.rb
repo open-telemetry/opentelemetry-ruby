@@ -110,7 +110,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(multi_result.first.data_points.first.value).must_equal(60) # 10 + 20 + 30
     end
 
-    it 'handles multiple registered views with attribute merging' do
+    it 'handles multiple registered views with attribute filtering' do
       view1 = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
         'async_counter',
         aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
@@ -118,28 +118,29 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       view2 = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
         'async_counter',
         aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new,
-        attribute_keys: { 'environment' => 'production', 'service' => 'metrics' }
+        attribute_keys: ['service']
       )
 
       meter_provider.instance_variable_get(:@registered_views) << view1
       meter_provider.instance_variable_get(:@registered_views) << view2
 
+      observed_attributes = { 'original' => 'value', 'service' => 'metrics' }
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
         'async_counter', 'description', 'unit', :observable_counter,
         meter_provider, instrumentation_scope, aggregation,
-        callback, timeout, { 'original' => 'value' }, nil, nil
+        callback, timeout, observed_attributes, nil, nil
       )
 
       metric_data_array = stream.collect(0, 1000)
       _(metric_data_array.size).must_equal(2)
 
-      # Verify view with attribute merging
-      view_with_attrs = metric_data_array.find { |md| md.data_points.first.attributes.key?('service') }
-      _(view_with_attrs).wont_be_nil
-      attrs = view_with_attrs.data_points.first.attributes
-      _(attrs['environment']).must_equal('production')
-      _(attrs['service']).must_equal('metrics')
-      _(attrs['original']).must_equal('value')
+      # The unfiltered view keeps every observed attribute
+      _(metric_data_array[0].data_points.first.attributes).must_equal(observed_attributes)
+
+      # The filtered view keeps only the allowed key
+      _(metric_data_array[1].data_points.first.attributes).must_equal({ 'service' => 'metrics' })
+
+      _(observed_attributes).must_equal({ 'original' => 'value', 'service' => 'metrics' })
     end
 
     it 'handles callback exceptions' do
