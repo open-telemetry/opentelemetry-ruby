@@ -1,5 +1,10 @@
 # Release History: opentelemetry-logs-sdk
 
+### v0.8.1 / 2026-10-13
+
+* FIXED: Return a no-op logger if provider stopped (#2452)
+* DOCS: Add spec warning about console exporter (#2450)
+
 ### v0.8.0 / 2026-10-05
 
 * BREAKING CHANGE: Move the global logger provider behind an opt-in require (#2415)
