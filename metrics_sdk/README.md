@@ -153,6 +153,8 @@ OpenTelemetry.meter_provider.shutdown
 
 Views let you customize how metrics are collected and exported — changing the aggregation, filtering attribute keys, or dropping instruments entirely.
 
+A view applies to matching instruments that already exist as well as to instruments created later, so it can be added at any point in the process lifetime. Measurements that a matching instrument recorded before the view was added keep the aggregation they were recorded with and are not reported under the new view, so registering views during startup remains the recommendation.
+
 #### Change aggregation for a specific instrument
 
 ```ruby

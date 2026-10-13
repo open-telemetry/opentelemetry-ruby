@@ -90,6 +90,119 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
     end
   end
 
+  describe '#registered_view added after instrument creation' do
+    before { reset_metrics_sdk }
+
+    it 'applies the view to an already created instrument' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+      meter = OpenTelemetry.meter_provider.meter('test')
+      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
+
+      OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
+
+      counter.add(1)
+      counter.add(2)
+      counter.add(3)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot[0].name).must_equal('counter')
+      _(last_snapshot[0].data_points).wont_be_empty
+      _(last_snapshot[0].data_points[0].value).must_equal 3
+    end
+
+    it 'does not apply a view that does not match an already created instrument' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+      meter = OpenTelemetry.meter_provider.meter('test')
+      counter = meter.create_counter('counter', unit: 'smidgen', description: 'a small amount of something')
+
+      OpenTelemetry.meter_provider.add_view('retnuoc', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
+
+      counter.add(1)
+      counter.add(2)
+      counter.add(3)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot[0].data_points).wont_be_empty
+      _(last_snapshot[0].data_points[0].value).must_equal 6
+    end
+
+    it 'applies the view to an already created asynchronous instrument' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+      meter = OpenTelemetry.meter_provider.meter('test')
+      callback = proc { 42 }
+      meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'an async counter', callback: callback)
+
+      OpenTelemetry.meter_provider.add_view('async_counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot[0].name).must_equal('async_counter')
+      _(last_snapshot[0].data_points[0].value).must_equal 0
+    end
+
+    it 'applies the view to instruments of every meter and metric reader' do
+      OpenTelemetry::SDK.configure
+
+      first_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      second_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      OpenTelemetry.meter_provider.add_metric_reader(first_exporter)
+      OpenTelemetry.meter_provider.add_metric_reader(second_exporter)
+
+      first_counter = OpenTelemetry.meter_provider.meter('first').create_counter('counter')
+      second_counter = OpenTelemetry.meter_provider.meter('second').create_counter('counter')
+
+      OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
+
+      first_counter.add(1)
+      first_counter.add(2)
+      second_counter.add(3)
+      second_counter.add(4)
+
+      [first_exporter, second_exporter].each do |exporter|
+        exporter.pull
+
+        _(exporter.metric_snapshots.map { |snapshot| snapshot.data_points[0].value }.sort).must_equal [2, 4]
+      end
+    end
+
+    it 'does not report measurements recorded before the view was added' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+      meter = OpenTelemetry.meter_provider.meter('test')
+      counter = meter.create_counter('counter')
+      counter.add(5)
+
+      OpenTelemetry.meter_provider.add_view('counter', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Sum.new)
+
+      counter.add(1)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot[0].data_points[0].value).must_equal 1
+    end
+  end
+
   describe '#registered_view with asynchronous counters' do
     before { reset_metrics_sdk }
 

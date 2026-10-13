@@ -243,6 +243,71 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
     end
   end
 
+  describe '#register_view' do
+    let(:matching_view) do
+      OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        'test_counter',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
+      )
+    end
+
+    it 'registers a view that matches the instrument' do
+      metric_stream.register_view(matching_view)
+
+      registered_views = metric_stream.instance_variable_get(:@registered_views)
+
+      _(registered_views.size).must_equal 1
+      _(registered_views.first[0]).must_equal matching_view
+      _(registered_views.first[1]).must_be_empty
+    end
+
+    it 'ignores a view that does not match the instrument' do
+      non_matching_view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        'other_counter',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
+      )
+
+      metric_stream.register_view(non_matching_view)
+
+      _(metric_stream.instance_variable_get(:@registered_views)).must_be_empty
+    end
+
+    it 'does not register the same view twice' do
+      metric_stream.register_view(matching_view)
+      metric_stream.register_view(matching_view)
+
+      _(metric_stream.instance_variable_get(:@registered_views).size).must_equal 1
+    end
+
+    it 'keeps the data points of previously registered views' do
+      metric_stream.register_view(matching_view)
+      metric_stream.update(10, {})
+
+      wildcard_view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        '*',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      )
+      metric_stream.register_view(wildcard_view)
+
+      registered_views = metric_stream.instance_variable_get(:@registered_views)
+
+      _(registered_views.size).must_equal 2
+      _(registered_views[matching_view].values.first.value).must_equal 10
+      _(registered_views[wildcard_view]).must_be_empty
+    end
+
+    it 'aggregates subsequent measurements with the newly registered view' do
+      metric_stream.update(1, {})
+      metric_stream.register_view(matching_view)
+      metric_stream.update(2, {})
+
+      metric_data = metric_stream.collect(0, 1)
+
+      _(metric_data.size).must_equal 1
+      _(metric_data.first.data_points.first.value).must_equal 2 # reported the metrics only from the newly registered view
+    end
+  end
+
   describe '#to_s' do
     it 'returns string representation without data points' do
       str = metric_stream.to_s
