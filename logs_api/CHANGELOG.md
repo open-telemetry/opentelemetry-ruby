@@ -1,5 +1,10 @@
 # Release History: opentelemetry-logs-api
 
+### v0.7.0 / 2026-10-13
+
+* BREAKING CHANGE: Swap DEBUG2 and DEBUG3 values (#2449)
+* FIXED: Swap DEBUG2 and DEBUG3 values (#2449)
+
 ### v0.6.0 / 2026-10-05
 
 * BREAKING CHANGE: Move the global logger provider behind an opt-in require (#2415)
