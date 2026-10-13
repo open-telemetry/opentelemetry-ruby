@@ -7,6 +7,6 @@
 module OpenTelemetry
   module Metrics
     ## Current OpenTelemetry metrics version
-    VERSION = '0.7.1'
+    VERSION = '0.9.0'
   end
 end

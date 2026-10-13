@@ -14,6 +14,11 @@ module OpenTelemetry
         class MetricReader
           attr_reader :metric_store, :metric_producers, :resource
 
+          # Raised when a reader is registered with a second MeterProvider.
+          SINGLE_PROVIDER_ERROR = 'MetricReader cannot be registered with more than one MeterProvider'
+
+          private_constant :SINGLE_PROVIDER_ERROR
+
           # @param [optional Integer] aggregation_cardinality_limit The cardinality
           #   limit applied to the SDK's own metric store.
           # @param [optional Array<MetricProducer>] metric_producers Additional
@@ -24,6 +29,7 @@ module OpenTelemetry
           # @param [optional Numeric] timeout The timeout in seconds handed to every
           #   configured MetricProducer on #collect.
           def initialize(aggregation_cardinality_limit: nil, metric_producers: [], metric_filter: nil, timeout: nil)
+            @mutex = Mutex.new
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
             @metric_producers = metric_producers
             @metric_filter = metric_filter
@@ -35,6 +41,16 @@ module OpenTelemetry
           # merged with metrics from any additional configured MetricProducers.
           # metric_filter is optional to filter SDK batch and third-party batch metrics.
           # Currently the metric_filter is not applied to filter the sdk collected metrics.
+          # Registers this reader with a MeterProvider.
+          def register_meter_provider(meter_provider)
+            @mutex.synchronize do
+              raise ArgumentError, SINGLE_PROVIDER_ERROR if @meter_provider && !@meter_provider.equal?(meter_provider)
+
+              @meter_provider = meter_provider
+            end
+          end
+
+          # Collects and returns the current metrics from the metric store.
           def collect
             metrics = @metric_store.collect
             metrics.concat(produce_metrics)
