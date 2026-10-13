@@ -54,7 +54,7 @@ module OpenTelemetry
             else
               # spec doesn't define if temporality is nil, we give delta as default
               OpenTelemetry.logger.warn('Aggregation temporality not specified or invalid, defaulting to delta')
-              Aggregation::AggregationTemporality::DELTA
+              Aggregation::AggregationTemporality::CUMULATIVE
             end
           end
         end

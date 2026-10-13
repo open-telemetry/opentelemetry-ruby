@@ -46,13 +46,13 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricProducer do
 
   it 'when no aggregation or invalid temporality is given' do
     producer = OpenTelemetry::SDK::Metrics::Export::MetricProducer.new
-    _(producer.aggregation_temporality).must_equal(:delta)
+    _(producer.aggregation_temporality).must_equal(:cumulative)
   end
 
   it 'rejects an invalid aggregation temporality' do
     producer = OpenTelemetry::SDK::Metrics::Export::MetricProducer.new(aggregation_temporality: :invalid)
 
-    _(producer.aggregation_temporality).must_equal(:delta)
+    _(producer.aggregation_temporality).must_equal(:cumulative)
   end
 
   it 'requires subclasses to implement #produce' do
