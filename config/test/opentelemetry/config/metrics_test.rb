@@ -305,6 +305,233 @@ describe OpenTelemetry::Config do
       end
     end
 
+    describe 'views' do
+      # Returns the meter provider's registered views.
+      def views
+        @sdk.meter_provider.registered_views
+      end
+
+      # Attaches an in-memory reader, runs the block against a meter, and
+      # returns the pulled metric snapshots.
+      def record
+        reader = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+        @sdk.meter_provider.add_metric_reader(reader)
+        yield @sdk.meter_provider.meter('test-meter')
+        reader.pull
+        reader.metric_snapshots
+      end
+
+      it 'registers a view with selector criteria and cardinality limit' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_name: http.*
+                  instrument_type: histogram
+                  unit: ms
+                  meter_name: my-meter
+                  meter_version: 1.0.0
+                stream:
+                  aggregation:
+                    drop: {}
+                  aggregation_cardinality_limit: 50
+        YAML
+
+        _(views.size).must_equal 1
+        view = views[0]
+        _(view.name).must_equal 'http.*'
+        _(view.aggregation).must_be_instance_of OpenTelemetry::SDK::Metrics::Aggregation::Drop
+        _(view.aggregation_cardinality_limit).must_equal 50
+        options = view.instance_variable_get(:@options)
+        _(options.slice(:type, :unit, :meter_name, :meter_version))
+          .must_equal(type: :histogram, unit: 'ms', meter_name: 'my-meter', meter_version: '1.0.0')
+      end
+
+      it 'builds explicit bucket histogram aggregations with boundaries' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_name: latency
+                stream:
+                  aggregation:
+                    explicit_bucket_histogram:
+                      boundaries: [10, 1, 100]
+                      record_min_max: false
+        YAML
+
+        aggregation = views[0].aggregation
+        _(aggregation).must_be_instance_of OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram
+        _(aggregation.instance_variable_get(:@boundaries)).must_equal [1, 10, 100]
+        _(aggregation.instance_variable_get(:@record_min_max)).must_equal false
+      end
+
+      it 'builds base2 exponential bucket histogram aggregations' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_name: latency
+                stream:
+                  aggregation:
+                    base2_exponential_bucket_histogram:
+                      max_scale: 10
+                      max_size: 80
+        YAML
+
+        aggregation = views[0].aggregation
+        _(aggregation).must_be_instance_of OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
+        _(aggregation.instance_variable_get(:@scale)).must_equal 10
+        _(aggregation.instance_variable_get(:@size)).must_equal 80
+      end
+
+      it 'builds last_value aggregations' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_name: temperature
+                stream:
+                  aggregation:
+                    last_value: {}
+        YAML
+
+        _(views[0].aggregation).must_be_instance_of OpenTelemetry::SDK::Metrics::Aggregation::LastValue
+      end
+
+      it 'derives sum monotonicity from the instrument type' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_type: counter
+                stream:
+                  aggregation:
+                    sum: {}
+              - selector:
+                  instrument_type: up_down_counter
+                stream:
+                  aggregation:
+                    sum: {}
+        YAML
+
+        _(views[0].aggregation.monotonic?).must_equal true
+        _(views[1].aggregation.monotonic?).must_equal false
+      end
+
+      it 'resolves the default aggregation from the instrument type' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_name: requests
+                  instrument_type: counter
+                stream:
+                  aggregation_cardinality_limit: 1
+        YAML
+
+        snapshots = record do |meter|
+          counter = meter.create_counter('requests')
+          counter.add(1, attributes: { 'route' => '/a' })
+          counter.add(2, attributes: { 'route' => '/b' })
+        end
+
+        _(views[0].aggregation).must_be_instance_of OpenTelemetry::SDK::Metrics::Aggregation::Sum
+        _(snapshots.size).must_equal 1
+        _(snapshots[0].data_points.sum(&:value)).must_equal 3
+        _(snapshots[0].data_points.map(&:attributes)).must_include('otel.metric.overflow' => true)
+      end
+
+      it 'discards measurements for a drop view' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            views:
+              - selector:
+                  instrument_name: noisy
+                stream:
+                  aggregation:
+                    drop: {}
+        YAML
+
+        snapshots = record do |meter|
+          meter.create_counter('noisy').add(5)
+          meter.create_counter('kept').add(5)
+        end
+
+        noisy, kept = snapshots.partition { |m| m.name == 'noisy' }.map(&:first)
+        _(noisy.data_points.map(&:value)).must_equal [0]
+        _(kept.data_points.map(&:value)).must_equal [5]
+      end
+
+      it 'skips a view with default aggregation and no instrument type with a warning' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              views:
+                - selector:
+                    instrument_name: requests
+                  stream:
+                    aggregation:
+                      default: {}
+          YAML
+
+          _(log_stream.string).must_match(/default aggregation requires selector.instrument_type/)
+        end
+        _(views).must_be_empty
+      end
+
+      it 'skips a view with an unknown instrument type with a warning' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              views:
+                - selector:
+                    instrument_type: timer
+                  stream:
+                    aggregation:
+                      drop: {}
+          YAML
+
+          _(log_stream.string).must_match(/unknown instrument_type timer/)
+        end
+        _(views).must_be_empty
+      end
+
+      it 'warns about unsupported selector and stream settings and keeps the view' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              views:
+                - selector:
+                    instrument_name: requests
+                    meter_schema_url: https://example.com/schema
+                  stream:
+                    name: renamed
+                    description: renamed description
+                    attribute_keys:
+                      included: [route]
+                    aggregation:
+                      drop: {}
+          YAML
+
+          %w[selector.meter_schema_url stream.name stream.description stream.attribute_keys].each do |setting|
+            _(log_stream.string).must_match(/Ignoring unsupported meter_provider setting: #{Regexp.escape(setting)}/)
+          end
+        end
+        _(views.size).must_equal 1
+      end
+    end
+
     describe 'unsupported readers and exporters' do
       it 'skips a pull reader with a warning' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|

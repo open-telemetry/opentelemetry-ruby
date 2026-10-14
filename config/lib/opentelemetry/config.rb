@@ -7,6 +7,7 @@ require 'date'
 require 'yaml'
 
 require_relative 'config/defaults'
+require_relative 'config/metric_views'
 require_relative 'config/metrics'
 require_relative 'config/propagation'
 require_relative 'config/resource'

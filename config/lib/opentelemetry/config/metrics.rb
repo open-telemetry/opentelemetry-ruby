@@ -29,6 +29,12 @@ module OpenTelemetry
         exemplar_filter = build_exemplar_filter(config.exemplar_filter)
         mp.enable_exemplar_filter(exemplar_filter: exemplar_filter) if exemplar_filter
 
+        Array(config.views).each do |view_cfg|
+          MetricViews.add_view(mp, view_cfg)
+        rescue StandardError => e
+          OpenTelemetry.logger.warn("Failed to build view: #{e.message}")
+        end
+
         Array(config.readers).each do |reader_cfg|
           mp.add_metric_reader(build_metric_reader(reader_cfg))
         rescue StandardError => e
