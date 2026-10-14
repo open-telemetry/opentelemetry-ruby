@@ -16,6 +16,7 @@ $LOAD_PATH.unshift File.join(__dir__, '..', 'lib')
 require 'opentelemetry-sdk'
 require 'opentelemetry-exporter-otlp'
 require 'opentelemetry-metrics-sdk'
+require 'opentelemetry-exporter-otlp-metrics'
 require 'opentelemetry/config'
 require 'opentelemetry/test_helpers'
 

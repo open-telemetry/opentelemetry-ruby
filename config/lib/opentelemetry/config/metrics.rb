@@ -61,7 +61,7 @@ module OpenTelemetry
         OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(exporter: exporter, **opts)
       end
 
-      # Builds a push metric exporter from config; supports console.
+      # Builds a push metric exporter from config; supports console and otlp_http.
       def build_metric_exporter(exp_cfg)
         raise ArgumentError, 'no exporter config' unless exp_cfg
         raise ArgumentError, 'otlp_grpc metric exporter is not supported' if exp_cfg.otlp_grpc
@@ -76,10 +76,39 @@ module OpenTelemetry
           exporter = OpenTelemetry::SDK::Metrics::Export::ConsoleMetricPullExporter.new
         end
 
+        if exp_cfg.otlp_http
+          configured += 1
+          warn_unsupported_exporter_options(exp_cfg.otlp_http)
+          exporter = build_otlp_http_metric_exporter(exp_cfg.otlp_http)
+        end
+
         raise ArgumentError, 'must not specify multiple exporters' if configured > 1
         raise ArgumentError, 'no valid metric exporter'            if exporter.nil?
 
         exporter
+      end
+
+      # Builds an OTLP HTTP metric exporter from the given endpoint, headers, and TLS config.
+      def build_otlp_http_metric_exporter(cfg)
+        unless defined?(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter)
+          raise ArgumentError, 'otlp_http requires opentelemetry-exporter-otlp-metrics. ' \
+                               'Add `gem "opentelemetry-exporter-otlp-metrics"` to your Gemfile.'
+        end
+
+        warn_unsupported('encoding: json') if cfg.encoding == 'json'
+
+        headers = Trace.headers_to_hash(cfg)
+        opts = {
+          endpoint: cfg.endpoint,
+          certificate_file: cfg.tls&.ca_file,
+          client_certificate_file: cfg.tls&.cert_file,
+          client_key_file: cfg.tls&.key_file,
+          headers: headers.empty? ? nil : headers,
+          compression: cfg.compression,
+          timeout: cfg.timeout && (cfg.timeout / 1000.0)
+        }.compact
+
+        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(**opts)
       end
 
       # Warns about exporter options the metrics SDK can't apply per reader.

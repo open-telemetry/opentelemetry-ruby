@@ -152,6 +152,159 @@ describe OpenTelemetry::Config do
       end
     end
 
+    describe 'periodic reader with OTLP HTTP exporter' do
+      # Returns the exporter wrapped by the first reader.
+      def exporter
+        readers[0].instance_variable_get(:@exporter)
+      end
+
+      it 'forwards endpoint, headers, compression, and timeout to the exporter' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            readers:
+              - periodic:
+                  exporter:
+                    otlp_http:
+                      endpoint: http://collector:4318/v1/metrics
+                      headers:
+                        - name: api-key
+                          value: secret-token
+                      compression: gzip
+                      timeout: 5000
+        YAML
+
+        _(exporter).must_be_instance_of OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter
+        _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://collector:4318/v1/metrics'
+        _(exporter.instance_variable_get(:@headers)['api-key']).must_equal 'secret-token'
+        _(exporter.instance_variable_get(:@compression)).must_equal 'gzip'
+        _(exporter.instance_variable_get(:@timeout)).must_equal 5.0
+      end
+
+      it 'parses headers_list when headers is not set' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            readers:
+              - periodic:
+                  exporter:
+                    otlp_http:
+                      headers_list: "api-key=secret-token,tenant=acme"
+        YAML
+
+        _(exporter.instance_variable_get(:@headers)['api-key']).must_equal 'secret-token'
+        _(exporter.instance_variable_get(:@headers)['tenant']).must_equal 'acme'
+      end
+
+      it 'leaves omitted options to the exporter' do
+        OpenTelemetry::TestHelpers.with_env(
+          'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT' => 'http://env-collector:4318/v1/metrics',
+          'OTEL_EXPORTER_OTLP_METRICS_COMPRESSION' => 'none',
+          'OTEL_EXPORTER_OTLP_METRICS_TIMEOUT' => '3'
+        ) do
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              readers:
+                - periodic:
+                    exporter:
+                      otlp_http: {}
+          YAML
+        end
+
+        _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://env-collector:4318/v1/metrics'
+        _(exporter.instance_variable_get(:@compression)).must_equal 'none'
+        _(exporter.instance_variable_get(:@timeout)).must_equal 3.0
+      end
+
+      it 'forwards the TLS CA file to the HTTP client' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            readers:
+              - periodic:
+                  exporter:
+                    otlp_http:
+                      endpoint: https://collector:4318/v1/metrics
+                      tls:
+                        ca_file: /etc/ssl/ca.pem
+        YAML
+
+        _(exporter.instance_variable_get(:@http).ca_file).must_equal '/etc/ssl/ca.pem'
+      end
+
+      it 'warns that json encoding is ignored' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              readers:
+                - periodic:
+                    exporter:
+                      otlp_http:
+                        encoding: json
+          YAML
+
+          _(log_stream.string).must_match(/Ignoring unsupported meter_provider setting: encoding: json/)
+        end
+        _(exporter).must_be_instance_of OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter
+      end
+
+      it 'warns that temporality_preference is ignored' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              readers:
+                - periodic:
+                    exporter:
+                      otlp_http:
+                        temporality_preference: delta
+          YAML
+
+          _(log_stream.string).must_match(/Ignoring unsupported meter_provider setting: temporality_preference/)
+        end
+      end
+
+      it 'skips the reader with a warning when opentelemetry-exporter-otlp-metrics is not loaded' do
+        otlp = OpenTelemetry::Exporter::OTLP
+        metrics_exporter = otlp.send(:remove_const, :Metrics)
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              readers:
+                - periodic:
+                    exporter:
+                      otlp_http: {}
+          YAML
+
+          _(log_stream.string).must_match(/otlp_http requires opentelemetry-exporter-otlp-metrics/)
+        end
+        _(readers).must_be_empty
+      ensure
+        otlp.const_set(:Metrics, metrics_exporter) if metrics_exporter
+      end
+
+      it 'rejects multiple exporters on one reader' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              readers:
+                - periodic:
+                    exporter:
+                      console: {}
+                      otlp_http: {}
+          YAML
+
+          _(log_stream.string).must_match(/must not specify multiple exporters/)
+        end
+        _(readers).must_be_empty
+      end
+    end
+
     describe 'unsupported readers and exporters' do
       it 'skips a pull reader with a warning' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
