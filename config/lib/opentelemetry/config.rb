@@ -104,8 +104,24 @@ module OpenTelemetry
         return ruby_sdk if ruby_sdk.equal?(NOOP_SDK)
 
         OpenTelemetry.tracer_provider = ruby_sdk.tracer_provider if ruby_sdk.tracer_provider
+        install_meter_provider(ruby_sdk.meter_provider) if ruby_sdk.meter_provider
         OpenTelemetry.propagation = ruby_sdk.propagator if ruby_sdk.propagator
         ruby_sdk
+      end
+
+      private
+
+      # Installs the meter provider as the global and restarts its periodic
+      # readers in forked child processes.
+      def install_meter_provider(provider)
+        unless OpenTelemetry.respond_to?(:meter_provider=)
+          OpenTelemetry.logger.warn('Cannot install the configured meter provider: OpenTelemetry.meter_provider= ' \
+                                    'is not defined. Require opentelemetry-metrics-sdk.')
+          return
+        end
+
+        OpenTelemetry.meter_provider = provider
+        OpenTelemetry::SDK::Metrics::ForkHooks.attach!
       end
     end
   end

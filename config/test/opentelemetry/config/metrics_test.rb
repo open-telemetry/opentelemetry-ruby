@@ -28,6 +28,69 @@ describe OpenTelemetry::Config do
       _(@sdk.meter_provider).must_be_nil
     end
 
+    describe 'install' do
+      it 'installs the configured meter provider as the global' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            readers: []
+        YAML
+
+        _(OpenTelemetry.meter_provider).must_be_same_as @sdk.meter_provider
+      end
+
+      it 'delegates the default proxy meter provider to the configured provider' do
+        proxy = OpenTelemetry.meter_provider
+        configure(<<~YAML)
+          file_format: "1.0"
+          meter_provider:
+            readers: []
+        YAML
+
+        _(proxy.instance_variable_get(:@delegate)).must_be_same_as @sdk.meter_provider
+      end
+
+      it 'attaches fork hooks' do
+        attached = false
+        OpenTelemetry::SDK::Metrics::ForkHooks.stub(:attach!, -> { attached = true }) do
+          configure(<<~YAML)
+            file_format: "1.0"
+            meter_provider:
+              readers: []
+          YAML
+        end
+
+        _(attached).must_equal true
+      end
+
+      it 'warns instead of raising when the global setter is not defined' do
+        respond_to = OpenTelemetry.method(:respond_to?)
+        no_setter = ->(name, *rest) { name != :meter_provider= && respond_to.call(name, *rest) }
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry.stub(:respond_to?, no_setter) do
+            configure(<<~YAML)
+              file_format: "1.0"
+              meter_provider:
+                readers: []
+            YAML
+          end
+
+          _(log_stream.string).must_match(/Cannot install the configured meter provider/)
+        end
+        _(OpenTelemetry.meter_provider).must_be_instance_of OpenTelemetry::Internal::ProxyMeterProvider
+      end
+
+      it 'leaves the global untouched when meter_provider is not configured' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          #{TRACER_PROVIDER_YAML}
+        YAML
+
+        _(OpenTelemetry.meter_provider).must_be_instance_of OpenTelemetry::Internal::ProxyMeterProvider
+      end
+    end
+
     it 'shares the configured resource' do
       configure(<<~YAML)
         file_format: "1.0"
