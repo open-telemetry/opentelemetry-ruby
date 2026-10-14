@@ -17,6 +17,8 @@ It works with:
 - `opentelemetry-sdk` — Traces
 - `opentelemetry-exporter-otlp` — OTLP HTTP exporter
 - `opentelemetry-instrumentation-all` — Instrumentation for gems
+- `opentelemetry-metrics-sdk` — Metrics (optional, see [Metrics](#metrics))
+- `opentelemetry-exporter-otlp-metrics` — OTLP HTTP metric exporter (optional)
 
 This code is still under development and is not a complete implementation of the declarative configuration specification. Until the code becomes stable, declarative configuration functionality will live outside stable OpenTelemetry libraries.
 
@@ -184,6 +186,50 @@ propagator:
 ```
 
 Supported propagator names: `tracecontext`, `baggage`, `b3`, `b3multi`, `jaeger`, `ottrace`, `xray`, `google_cloud_trace_context`.
+
+### Metrics
+
+Metrics support is optional. Add `opentelemetry-metrics-sdk` to your Gemfile, along with `opentelemetry-exporter-otlp-metrics` if you use the `otlp_http` exporter, and require them before calling `configure`. If a required gem isn't loaded, the meter provider or reader that needs it is skipped with a warning.
+
+```ruby
+require 'opentelemetry-sdk'
+require 'opentelemetry-metrics-sdk'
+require 'opentelemetry-exporter-otlp-metrics'
+require 'opentelemetry-config'
+```
+
+The configured meter provider is installed as `OpenTelemetry.meter_provider`, and periodic readers restart in forked child processes.
+
+```yaml
+meter_provider:
+  exemplar_filter: trace_based
+  readers:
+    - periodic:
+        interval: 60000
+        exporter:
+          otlp_http:
+            endpoint: http://localhost:4318/v1/metrics
+  views:
+    - selector:
+        instrument_name: http.server.request.duration
+        instrument_type: histogram
+      stream:
+        aggregation:
+          explicit_bucket_histogram:
+            boundaries: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5]
+```
+
+Supported readers: `periodic`. Supported exporters: `console`, `otlp_http`. Supported view aggregations: `default`, `drop`, `sum`, `last_value`, `explicit_bucket_histogram`, `base2_exponential_bucket_histogram`. A view with the `default` aggregation, or no aggregation, must set `selector.instrument_type`.
+
+Settings omitted from `meter_provider` use the metrics SDK and exporter defaults, which read `OTEL_*` environment variables.
+
+The following settings are not supported. They are ignored with a warning, or the reader or view that uses them is skipped:
+
+- `pull` readers and the `otlp_grpc` and `otlp_file/development` exporters
+- `producers`
+- per-instrument-kind `cardinality_limits`; only `default` applies
+- exporter `temporality_preference`, `default_histogram_aggregation`, and `encoding: json`
+- view `stream.name`, `stream.description`, `stream.attribute_keys`, and `selector.meter_schema_url`
 
 ## Examples
 
