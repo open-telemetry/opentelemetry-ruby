@@ -136,6 +136,40 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         end
       end
 
+      it 'logs attribute validation errors at most once per log record' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          Logs::LogRecord.new(attributes: { 'a' => Class.new, 'b' => Class.new, 'c' => Class.new })
+
+          assert_equal(1, log_stream.string.scan(/Invalid log record attribute value type/).length)
+        end
+      end
+
+      it 'logs attribute count-limit discards at most once per log record' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 1)
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          Logs::LogRecord.new(
+            log_record_limits: limits,
+            attributes: { 'a' => 'a', 'b' => 'b', 'c' => 'c' }
+          )
+
+          assert_equal(1, log_stream.string.scan(/attribute count limit exceeded/i).length)
+        end
+      end
+
+      it 'logs at most once when count and validation limits both discard attributes' do
+        limits = Logs::LogRecordLimits.new(attribute_count_limit: 2)
+
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          Logs::LogRecord.new(
+            log_record_limits: limits,
+            attributes: { 'a' => Class.new, 'b' => Class.new, 'c' => 'c' }
+          )
+
+          assert_equal(1, log_stream.string.lines.length)
+        end
+      end
+
       it 'uses the default limits if none provided' do
         log_record = Logs::LogRecord.new
         default = Logs::LogRecordLimits::DEFAULT
