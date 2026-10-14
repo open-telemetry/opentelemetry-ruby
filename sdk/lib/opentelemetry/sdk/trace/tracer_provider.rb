@@ -186,9 +186,9 @@ module OpenTelemetry
 
         # rubocop:disable-next Lint/DuplicateBranch
         def sampler_from_environment
-          samplar = ENV.fetch('OTEL_TRACES_SAMPLER', 'parentbased')
-          samplar = 'parentbased' if samplar.start_with?('parentbased')
-          case samplar
+          sampler = ENV.fetch('OTEL_TRACES_SAMPLER', 'parentbased')
+          sampler = 'parentbased' if sampler.start_with?('parentbased')
+          case sampler
           when 'always_on' then Samplers::ALWAYS_ON
           when 'always_off' then Samplers::ALWAYS_OFF
           when 'traceidratio' then Samplers::TraceIdRatioBased.new
