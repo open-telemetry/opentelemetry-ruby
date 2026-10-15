@@ -168,7 +168,7 @@ module ConstantsGenerator
     end
     if capture_additional
       known = props.keys.map { |k| "'#{k}'" }.join(', ')
-      assignments << "      additional_properties: h.reject { |k, _| [#{known}].include?(k) }"
+      assignments << "      additional_properties: h.except(#{known})"
     end
 
     <<~RUBY
