@@ -57,8 +57,12 @@ module OpenTelemetry
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                         aggregation_cardinality_limit: nil)
+                         aggregation_cardinality_limit: nil,
+                         encoding: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+
+            encoding = encoding&.delete_prefix('http/')
+            raise ArgumentError, "unsupported encoding #{encoding}" unless %w[json protobuf].include?(encoding)
 
             # create the MetricStore object
             super(aggregation_cardinality_limit: aggregation_cardinality_limit)
@@ -70,6 +74,8 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @format = encoding.to_sym
+            @content_type = encoding == 'json' ? 'application/json' : 'application/x-protobuf'
             @mutex = Mutex.new
             @shutdown = false
           end
@@ -89,7 +95,7 @@ module OpenTelemetry
             end
 
             @mutex.synchronize do
-              send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr(metrics), timeout: timeout)
+              send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr(metrics, format: @format), timeout: timeout)
             end
           end
 
@@ -107,7 +113,7 @@ module OpenTelemetry
             end
 
             request.body = body
-            request.add_field('Content-Type', 'application/x-protobuf')
+            request.add_field('Content-Type', @content_type)
             @headers.each { |key, value| request.add_field(key, value) }
 
             retry_count = 0
