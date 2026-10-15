@@ -70,6 +70,24 @@ File-based configuration uses the values in the YAML file and the schema default
 for omitted settings. It does not inherit the SDK's `OTEL_*` environment-variable
 defaults.
 
+To use an environment variable in the file, reference it in a value as
+`${NAME}`, `${env:NAME}`, or `${NAME:-default}`. The default applies when the
+variable is unset or empty. Use `$$` for a literal `$`. Values are typed after
+substitution, so quote a reference to keep it a string.
+
+```yaml
+resource:
+  attributes:
+    - name: service.name
+      value: ${OTEL_SERVICE_NAME:-unknown_service}
+tracer_provider:
+  processors:
+    - batch:
+        exporter:
+          otlp_http:
+            endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4318}/v1/traces
+```
+
 Some Ruby-specific SDK settings have no equivalent in the configuration schema:
 
 - `OTEL_RUBY_BSP_START_THREAD_ON_BOOT` is ignored. A configured batch span
