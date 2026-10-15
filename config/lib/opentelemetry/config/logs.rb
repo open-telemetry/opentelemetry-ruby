@@ -88,7 +88,7 @@ module OpenTelemetry
         exporter
       end
 
-      # Builds an OTLP HTTP log record exporter from the given endpoint/headers config.
+      # Builds an OTLP HTTP log record exporter from the given endpoint, headers, and TLS config.
       def build_otlp_http_log_record_exporter(cfg)
         unless defined?(OpenTelemetry::Exporter::OTLP::Logs::LogsExporter)
           raise ArgumentError, 'otlp_http requires opentelemetry-exporter-otlp-logs. ' \
@@ -98,6 +98,9 @@ module OpenTelemetry
         headers = Trace.headers_to_hash(cfg)
         opts = {
           endpoint: cfg.endpoint,
+          certificate_file: cfg.tls&.ca_file,
+          client_certificate_file: cfg.tls&.cert_file,
+          client_key_file: cfg.tls&.key_file,
           headers: headers.empty? ? nil : headers,
           compression: cfg.compression,
           timeout: cfg.timeout && (cfg.timeout / 1000.0)

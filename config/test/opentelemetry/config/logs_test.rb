@@ -177,6 +177,23 @@ describe OpenTelemetry::Config do
         _(headers['api-key']).must_equal 'secret-token'
         _(headers['tenant']).must_equal 'acme'
       end
+
+      it 'forwards the TLS CA file to the HTTP client' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors:
+              - simple:
+                  exporter:
+                    otlp_http:
+                      endpoint: https://collector:4318/v1/logs
+                      tls:
+                        ca_file: /etc/ssl/ca.pem
+        YAML
+
+        exporter = processors[0].instance_variable_get(:@log_record_exporter)
+        _(exporter.instance_variable_get(:@http).ca_file).must_equal '/etc/ssl/ca.pem'
+      end
     end
 
     describe 'multiple processors' do
