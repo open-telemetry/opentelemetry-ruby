@@ -15,6 +15,8 @@ $LOAD_PATH.unshift File.join(__dir__, '..', 'lib')
 
 require 'opentelemetry-sdk'
 require 'opentelemetry-exporter-otlp'
+require 'opentelemetry-metrics-sdk'
+require 'opentelemetry-exporter-otlp-metrics'
 require 'opentelemetry/config'
 require 'opentelemetry/test_helpers'
 
@@ -39,6 +41,7 @@ Minitest::Spec.after do
   tp.shutdown if tp.respond_to?(:shutdown)
 
   OpenTelemetry::TestHelpers.reset_opentelemetry
+  OpenTelemetry::Internal.instance_variable_set(:@meter_provider, OpenTelemetry::Internal::ProxyMeterProvider.new)
 end
 
 # Shared minimal tracer_provider YAML used by end-to-end tests.
