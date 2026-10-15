@@ -15,6 +15,7 @@ group :test, :development do
   gem 'yard', '~> 0.9.45'
 
   # Local path overrides for gems developed in this monorepo
+  gem 'opentelemetry-exporter-otlp',             path: '../exporter/otlp',             require: false
   gem 'opentelemetry-exporter-otlp-common',      path: '../exporter/otlp-common',      require: false
   gem 'opentelemetry-registry',                  path: '../registry',                  require: false
   gem 'opentelemetry-test-helpers',              path: '../test_helpers',              require: false
