@@ -12,7 +12,7 @@ module OpenTelemetry
       module ContextKeys
         extend self
 
-        BAGGAGE_KEY = Context.create_key('baggage')
+        BAGGAGE_KEY = Context.create_key('baggage').freeze
         private_constant :BAGGAGE_KEY
 
         # Returns the context key that baggage are indexed by

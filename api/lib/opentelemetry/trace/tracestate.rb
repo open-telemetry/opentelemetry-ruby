@@ -155,7 +155,7 @@ module OpenTelemetry
         @hash == other.to_h
       end
 
-      DEFAULT = new({})
+      DEFAULT = new({}).freeze
     end
   end
 end
