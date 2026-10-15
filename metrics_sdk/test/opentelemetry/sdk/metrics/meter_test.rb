@@ -409,5 +409,23 @@ describe OpenTelemetry::SDK::Metrics::Meter do
         )
       end
     end
+
+    it 'preserves first-seen casing when proxy instruments are upgraded' do
+      proxy = OpenTelemetry::Internal::ProxyMeter.new
+      first_counter = proxy.create_counter('requestCount')
+      second_counter = proxy.create_counter('RequestCount')
+      proxy.delegate = meter
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      meter_provider.add_metric_reader(metric_exporter)
+
+      first_counter.add(1)
+      second_counter.add(2)
+      metric_exporter.pull
+      snapshots = metric_exporter.metric_snapshots
+
+      _(snapshots.map(&:name)).must_equal(['requestCount'])
+      _(snapshots.first.data_points.first.value).must_equal(3)
+    end
   end
 end
