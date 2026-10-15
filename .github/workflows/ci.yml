@@ -89,6 +89,7 @@ jobs:
           - opentelemetry-exporter-otlp-common
           - opentelemetry-exporter-otlp-grpc
           - opentelemetry-exporter-otlp-http
+          - opentelemetry-exporter-otlp-http-common
           - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
         os:
