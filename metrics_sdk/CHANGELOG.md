@@ -1,5 +1,14 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.21.0 / 2026-10-13
+
+* ADDED: Fix duplicate instrument registration warning (#2417)
+
+### v0.20.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global meter provider behind an opt-in require (#2416)
+* ADDED: Move the global meter provider behind an opt-in require (#2416)
+
 ### v0.19.0 / 2026-09-29
 
 * BREAKING CHANGE: Update api for spec compliance (#2309)

@@ -71,6 +71,7 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @format = encoding.to_sym
             @content_type = encoding == 'json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
@@ -86,7 +87,7 @@ module OpenTelemetry
             OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down') if @shutdown
             return FAILURE if @shutdown
 
-            send_bytes(encode(log_record_data), timeout: timeout)
+            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data, format: @format), timeout: timeout)
           end
 
           # Called when {OpenTelemetry::SDK::Logs::LoggerProvider#force_flush} is called, if
@@ -282,96 +283,6 @@ module OpenTelemetry
 
             sleep(sleep_interval)
             true
-          end
-
-          def encode(log_record_data)
-            json = @content_type == 'application/json'
-            payload = as_export_logs_service_request(log_record_data, json)
-            if json
-              payload.to_json(format_enums_as_integers: true)
-            else
-              Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(payload)
-            end
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
-            nil
-          end
-
-          def as_export_logs_service_request(log_record_data, json)
-            Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
-              resource_logs: log_record_data.group_by(&:resource).map do |resource, log_record_datas|
-                Opentelemetry::Proto::Logs::V1::ResourceLogs.new(
-                  resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                    attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                  ),
-                  scope_logs: log_record_datas.group_by(&:instrumentation_scope).map do |il, lrd|
-                    Opentelemetry::Proto::Logs::V1::ScopeLogs.new(
-                      scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                        name: il.name,
-                        version: il.version
-                      ),
-                      log_records: lrd.map { |lr| as_otlp_log_record(lr, json) }
-                    )
-                  end
-                )
-              end
-            )
-          end
-
-          def as_otlp_log_record(log_record_data, json)
-            Opentelemetry::Proto::Logs::V1::LogRecord.new(
-              time_unix_nano: log_record_data.timestamp,
-              observed_time_unix_nano: log_record_data.observed_timestamp,
-              severity_number: log_record_data.severity_number,
-              severity_text: log_record_data.severity_text,
-              body: as_otlp_any_value(log_record_data.body),
-              attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
-              dropped_attributes_count: log_record_data.dropped_attributes_count,
-              event_name: log_record_data.event_name,
-              flags: log_record_data.trace_flags.instance_variable_get(:@flags),
-              trace_id: format_id(log_record_data.trace_id, json),
-              span_id: format_id(log_record_data.span_id, json)
-            )
-          end
-
-          # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
-          # For the JSON path, applying initial base64 decoding to the hex string
-          # yields bytes that protobuf re-encodes back into that hex string.
-          def format_id(id_bytes, json)
-            return id_bytes unless json
-            return id_bytes if id_bytes.nil? || id_bytes.empty?
-
-            id_bytes.unpack1('H*').unpack1('m0')
-          end
-
-          def as_otlp_key_value(key, value)
-            key = OpenTelemetry::Common::Utilities.utf8_encode(key, placeholder: 'Encoding Error')
-            Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value(value))
-          rescue Encoding::UndefinedConversionError => e
-            encoded_value = value.to_s.encode('UTF-8', invalid: :replace, undef: :replace, replace: '�')
-            OpenTelemetry.handle_error(exception: e, message: "encoding error for key #{key} and value #{encoded_value}")
-            Opentelemetry::Proto::Common::V1::KeyValue.new(key: key, value: as_otlp_any_value('Encoding Error'))
-          end
-
-          def as_otlp_any_value(value) # rubocop:disable Metrics/CyclomaticComplexity
-            result = Opentelemetry::Proto::Common::V1::AnyValue.new
-            case value
-            when String
-              result.string_value = OpenTelemetry::Common::Utilities.utf8_encode(value, placeholder: value)
-            when Integer
-              result.int_value = value
-            when Float
-              result.double_value = value
-            when true, false
-              result.bool_value = value
-            when Array
-              values = value.map { |element| as_otlp_any_value(element) }
-              result.array_value = Opentelemetry::Proto::Common::V1::ArrayValue.new(values: values)
-            when Hash
-              values = value.map { |k, v| as_otlp_key_value(k, v) }
-              result.kvlist_value = Opentelemetry::Proto::Common::V1::KeyValueList.new(values: values)
-            end
-            result
           end
 
           def prepare_headers(config_headers)

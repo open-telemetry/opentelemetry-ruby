@@ -56,7 +56,7 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
       end
 
       meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
-      ::OpenTelemetry.stub(:meter_provider, meter_provider) do
+      ::OpenTelemetry::Internal.stub(:meter_provider, meter_provider) do
         forking_pid, forked_pid = fork_with_fork_hooks(after_fork_lambda)
         pid_from_after_fork = JSON.parse(after_fork_read_io.gets.chomp)['after_fork_pid'].to_i
 
@@ -81,7 +81,7 @@ describe OpenTelemetry::SDK::Metrics::ForkHooks do
     meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
     meter_provider.add_metric_reader(reader1)
     meter_provider.add_metric_reader(reader2)
-    ::OpenTelemetry.stub(:meter_provider, meter_provider) do
+    ::OpenTelemetry::Internal.stub(:meter_provider, meter_provider) do
       OpenTelemetry::SDK::Metrics::ForkHooks.after_fork
     end
     assert(reader1.after_fork_called)
