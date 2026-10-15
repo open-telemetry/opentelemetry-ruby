@@ -23,4 +23,21 @@ describe OpenTelemetry::Config::Model do
       end
     end
   end
+
+  describe 'nullable object properties' do
+    it 'parses a property with a null value as present with defaults' do
+      exporter = OpenTelemetry::Config::Model::SpanExporter.from_hash('otlp_http' => nil)
+
+      _(exporter.otlp_http).must_be_kind_of OpenTelemetry::Config::Model::OtlpHttpExporter
+      _(exporter.otlp_http.endpoint).must_be_nil
+    end
+
+    it 'parses an omitted property as nil' do
+      _(OpenTelemetry::Config::Model::SpanExporter.from_hash({}).otlp_http).must_be_nil
+    end
+
+    it 'parses a property with a non-hash value as nil' do
+      _(OpenTelemetry::Config::Model::SpanExporter.from_hash('otlp_http' => 'invalid').otlp_http).must_be_nil
+    end
+  end
 end

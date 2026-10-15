@@ -115,6 +115,12 @@ module ConstantsGenerator
     body.is_a?(Hash) && body['properties'].is_a?(Hash) && !body['properties'].empty?
   end
 
+  # Returns true when the +name+ definition allows null, which the schema uses
+  # for objects that may be present with every property omitted.
+  def nullable?(defs, name)
+    Array(defs.dig(name, 'type')).include?('null')
+  end
+
   # Returns true when +name+ is a presence-only marker object (no properties, no enum).
   def marker?(defs, name)
     body = defs[name]
@@ -136,7 +142,9 @@ module ConstantsGenerator
   def value_expr(prop, defs, key)
     direct = ref_name(prop)
 
-    if direct && struct?(defs, direct)
+    if direct && struct?(defs, direct) && nullable?(defs, direct)
+      "h.key?('#{key}') ? #{direct}.from_hash(h['#{key}'] || {}) : nil"
+    elsif direct && struct?(defs, direct)
       "#{direct}.from_hash(h['#{key}'])"
     elsif direct && marker?(defs, direct)
       "h.key?('#{key}')"
