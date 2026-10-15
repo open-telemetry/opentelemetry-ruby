@@ -27,8 +27,8 @@ module OpenTelemetry
           new(
             default: h.key?('default'),
             drop: h.key?('drop'),
-            explicit_bucket_histogram: ExplicitBucketHistogramAggregation.from_hash(h['explicit_bucket_histogram']),
-            base2_exponential_bucket_histogram: Base2ExponentialBucketHistogramAggregation.from_hash(h['base2_exponential_bucket_histogram']),
+            explicit_bucket_histogram: h.key?('explicit_bucket_histogram') ? ExplicitBucketHistogramAggregation.from_hash(h['explicit_bucket_histogram'] || {}) : nil,
+            base2_exponential_bucket_histogram: h.key?('base2_exponential_bucket_histogram') ? Base2ExponentialBucketHistogramAggregation.from_hash(h['base2_exponential_bucket_histogram'] || {}) : nil,
             last_value: h.key?('last_value'),
             sum: h.key?('sum')
           )
@@ -276,8 +276,8 @@ module OpenTelemetry
             always_off: h.key?('always_off'),
             always_on: h.key?('always_on'),
             parent_threshold: ExperimentalComposableParentThresholdSampler.from_hash(h['parent_threshold']),
-            probability: ExperimentalComposableProbabilitySampler.from_hash(h['probability']),
-            rule_based: ExperimentalComposableRuleBasedSampler.from_hash(h['rule_based']),
+            probability: h.key?('probability') ? ExperimentalComposableProbabilitySampler.from_hash(h['probability'] || {}) : nil,
+            rule_based: h.key?('rule_based') ? ExperimentalComposableRuleBasedSampler.from_hash(h['rule_based'] || {}) : nil,
             additional_properties: h.except('always_off', 'always_on', 'parent_threshold', 'probability', 'rule_based')
           )
         end
@@ -736,9 +736,9 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            otlp_http: OtlpHttpExporter.from_hash(h['otlp_http']),
-            otlp_grpc: OtlpGrpcExporter.from_hash(h['otlp_grpc']),
-            otlp_file_development: ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development']),
+            otlp_http: h.key?('otlp_http') ? OtlpHttpExporter.from_hash(h['otlp_http'] || {}) : nil,
+            otlp_grpc: h.key?('otlp_grpc') ? OtlpGrpcExporter.from_hash(h['otlp_grpc'] || {}) : nil,
+            otlp_file_development: h.key?('otlp_file/development') ? ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development'] || {}) : nil,
             console: h.key?('console'),
             additional_properties: h.except('otlp_http', 'otlp_grpc', 'otlp_file/development', 'console')
           )
@@ -907,7 +907,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: GrpcTls.from_hash(h['tls']),
+            tls: h.key?('tls') ? GrpcTls.from_hash(h['tls'] || {}) : nil,
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -932,7 +932,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: GrpcTls.from_hash(h['tls']),
+            tls: h.key?('tls') ? GrpcTls.from_hash(h['tls'] || {}) : nil,
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -958,7 +958,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: HttpTls.from_hash(h['tls']),
+            tls: h.key?('tls') ? HttpTls.from_hash(h['tls'] || {}) : nil,
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -985,7 +985,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: HttpTls.from_hash(h['tls']),
+            tls: h.key?('tls') ? HttpTls.from_hash(h['tls'] || {}) : nil,
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -1063,7 +1063,7 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            prometheus_development: ExperimentalPrometheusMetricExporter.from_hash(h['prometheus/development']),
+            prometheus_development: h.key?('prometheus/development') ? ExperimentalPrometheusMetricExporter.from_hash(h['prometheus/development'] || {}) : nil,
             additional_properties: h.except('prometheus/development')
           )
         end
@@ -1098,10 +1098,10 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            otlp_http: OtlpHttpMetricExporter.from_hash(h['otlp_http']),
-            otlp_grpc: OtlpGrpcMetricExporter.from_hash(h['otlp_grpc']),
-            otlp_file_development: ExperimentalOtlpFileMetricExporter.from_hash(h['otlp_file/development']),
-            console: ConsoleMetricExporter.from_hash(h['console']),
+            otlp_http: h.key?('otlp_http') ? OtlpHttpMetricExporter.from_hash(h['otlp_http'] || {}) : nil,
+            otlp_grpc: h.key?('otlp_grpc') ? OtlpGrpcMetricExporter.from_hash(h['otlp_grpc'] || {}) : nil,
+            otlp_file_development: h.key?('otlp_file/development') ? ExperimentalOtlpFileMetricExporter.from_hash(h['otlp_file/development'] || {}) : nil,
+            console: h.key?('console') ? ConsoleMetricExporter.from_hash(h['console'] || {}) : nil,
             additional_properties: h.except('otlp_http', 'otlp_grpc', 'otlp_file/development', 'console')
           )
         end
@@ -1144,10 +1144,10 @@ module OpenTelemetry
             always_off: h.key?('always_off'),
             always_on: h.key?('always_on'),
             composite_development: ExperimentalComposableSampler.from_hash(h['composite/development']),
-            jaeger_remote_development: ExperimentalJaegerRemoteSampler.from_hash(h['jaeger_remote/development']),
-            parent_based: ParentBasedSampler.from_hash(h['parent_based']),
-            probability_development: ExperimentalProbabilitySampler.from_hash(h['probability/development']),
-            trace_id_ratio_based: TraceIdRatioBasedSampler.from_hash(h['trace_id_ratio_based']),
+            jaeger_remote_development: h.key?('jaeger_remote/development') ? ExperimentalJaegerRemoteSampler.from_hash(h['jaeger_remote/development'] || {}) : nil,
+            parent_based: h.key?('parent_based') ? ParentBasedSampler.from_hash(h['parent_based'] || {}) : nil,
+            probability_development: h.key?('probability/development') ? ExperimentalProbabilitySampler.from_hash(h['probability/development'] || {}) : nil,
+            trace_id_ratio_based: h.key?('trace_id_ratio_based') ? TraceIdRatioBasedSampler.from_hash(h['trace_id_ratio_based'] || {}) : nil,
             additional_properties: h.except('always_off', 'always_on', 'composite/development', 'jaeger_remote/development', 'parent_based', 'probability/development', 'trace_id_ratio_based')
           )
         end
@@ -1191,9 +1191,9 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            otlp_http: OtlpHttpExporter.from_hash(h['otlp_http']),
-            otlp_grpc: OtlpGrpcExporter.from_hash(h['otlp_grpc']),
-            otlp_file_development: ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development']),
+            otlp_http: h.key?('otlp_http') ? OtlpHttpExporter.from_hash(h['otlp_http'] || {}) : nil,
+            otlp_grpc: h.key?('otlp_grpc') ? OtlpGrpcExporter.from_hash(h['otlp_grpc'] || {}) : nil,
+            otlp_file_development: h.key?('otlp_file/development') ? ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development'] || {}) : nil,
             console: h.key?('console'),
             additional_properties: h.except('otlp_http', 'otlp_grpc', 'otlp_file/development', 'console')
           )
