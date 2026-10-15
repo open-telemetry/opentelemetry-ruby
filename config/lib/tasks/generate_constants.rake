@@ -6,7 +6,7 @@
 # rake generate:constants
 #
 # Downloads the upstream opentelemetry-configuration JSON Schema (YAML format)
-# and regenerates lib/opentelemetry/constants/generated_constants.rb from it.
+# and regenerates lib/opentelemetry/config/generated_constants.rb from it.
 #
 # Usage:
 #   bundle exec rake generate:constants
@@ -23,7 +23,7 @@ require 'rubygems/package'
 
 SCHEMA_VERSION = ENV.fetch('SCHEMA_VERSION', 'v1.0.0-rc.3')
 SCHEMA_TARBALL = "https://api.github.com/repos/open-telemetry/opentelemetry-configuration/tarball/#{SCHEMA_VERSION}".freeze
-OUTPUT_FILE    = File.expand_path('../opentelemetry/constants/generated_constants.rb', __dir__)
+OUTPUT_FILE    = File.expand_path('../opentelemetry/config/generated_constants.rb', __dir__)
 
 # Ruby tarball downloader
 module SchemaDownloader
@@ -90,7 +90,7 @@ module SchemaReader
   end
 end
 
-# schema $defs → ruby struct definitions in constants/generated_constants.rb
+# schema $defs → ruby struct definitions in config/generated_constants.rb
 module ConstantsGenerator
   module_function
 
@@ -233,7 +233,7 @@ module ConstantsGenerator
 end
 
 namespace :generate do
-  desc "Download OTel configuration schema (#{SCHEMA_VERSION}) and regenerate lib/opentelemetry/constants/generated_constants.rb"
+  desc "Download OTel configuration schema (#{SCHEMA_VERSION}) and regenerate lib/opentelemetry/config/generated_constants.rb"
   task :constants do
     schema_dir = ENV.fetch('SCHEMA_DIR', nil)
 
