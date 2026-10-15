@@ -238,6 +238,196 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
     end
   end
 
+  describe '#registered_view stream configuration' do
+    let(:metric_exporter) { OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new }
+    let(:meter) { OpenTelemetry.meter_provider.meter('test') }
+
+    before do
+      reset_metrics_sdk
+      OpenTelemetry::SDK.configure
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+    end
+
+    it 'exposes description and exemplar_reservoir from options' do
+      reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 1)
+      view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        'counter',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+        description: 'view description',
+        exemplar_reservoir: reservoir
+      )
+
+      _(view.description).must_equal('view description')
+      _(view.exemplar_reservoir).must_equal(reservoir)
+      _(view.aggregation.exemplar_reservoir).must_equal(reservoir)
+    end
+
+    it 'defaults description and exemplar_reservoir to nil' do
+      aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      default_reservoir = aggregation.exemplar_reservoir
+      view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new('counter', aggregation: aggregation)
+
+      _(view.description).must_be_nil
+      _(view.exemplar_reservoir).must_be_nil
+      _(view.aggregation.exemplar_reservoir).must_equal(default_reservoir)
+    end
+
+    it 'ignores exemplar_reservoir for aggregations without a reservoir' do
+      reservoir = OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 1)
+      view = OpenTelemetry::SDK::Metrics::View::RegisteredView.new(
+        'counter',
+        aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Drop.new,
+        exemplar_reservoir: reservoir
+      )
+
+      _(view.exemplar_reservoir).must_equal(reservoir)
+      _(view.valid_aggregation?).must_equal true
+    end
+
+    it 'overrides the instrument description with the view description' do
+      OpenTelemetry.meter_provider.add_view('counter',
+                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+                                            description: 'view description')
+
+      counter = meter.create_counter('counter', unit: 'smidgen', description: 'instrument description')
+      counter.add(1)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot.size).must_equal 1
+      _(last_snapshot[0].description).must_equal('view description')
+      _(last_snapshot[0].data_points[0].value).must_equal 1
+    end
+
+    it 'keeps the instrument description when the view has no description' do
+      OpenTelemetry.meter_provider.add_view('counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new)
+
+      counter = meter.create_counter('counter', unit: 'smidgen', description: 'instrument description')
+      counter.add(1)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot[0].description).must_equal('instrument description')
+    end
+
+    it 'applies description per view when multiple views match' do
+      OpenTelemetry.meter_provider.add_view('counter',
+                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+                                            description: 'sum view')
+      OpenTelemetry.meter_provider.add_view('counter',
+                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
+
+      counter = meter.create_counter('counter', description: 'instrument description')
+      counter.add(1)
+      counter.add(2)
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot.size).must_equal 2
+      _(last_snapshot[0].description).must_equal('sum view')
+      _(last_snapshot[0].data_points[0].value).must_equal 3
+      _(last_snapshot[1].description).must_equal('instrument description')
+      _(last_snapshot[1].data_points[0].value).must_equal 2
+    end
+
+    it 'overrides the asynchronous instrument description with the view description' do
+      OpenTelemetry.meter_provider.add_view('async_counter',
+                                            aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+                                            description: 'view description')
+
+      callback = proc { 10 }
+      async_counter = meter.create_observable_counter('async_counter', unit: 'smidgen', description: 'instrument description', callback: callback)
+      async_counter.observe
+
+      metric_exporter.pull
+      last_snapshot = metric_exporter.metric_snapshots
+
+      _(last_snapshot[0].description).must_equal('view description')
+    end
+
+    describe 'exemplar_reservoir' do
+      before do
+        OpenTelemetry.meter_provider.enable_exemplar_filter(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
+      end
+
+      it 'uses the view exemplar_reservoir for the view aggregation' do
+        OpenTelemetry.meter_provider.add_view(
+          'counter',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+          exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 1)
+        )
+
+        counter = meter.create_counter('counter')
+        counter.add(1, attributes: { 'a' => 'b' })
+        counter.add(2, attributes: { 'a' => 'b' })
+        counter.add(3, attributes: { 'a' => 'b' })
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points[0].value).must_equal 6
+        _(last_snapshot[0].data_points[0].exemplars.size).must_equal 1
+      end
+
+      it 'drops exemplars when the view exemplar_reservoir is noop' do
+        OpenTelemetry.meter_provider.add_view(
+          'counter',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+          exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir.new
+        )
+
+        counter = meter.create_counter('counter')
+        counter.add(1)
+        counter.add(2)
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points[0].value).must_equal 3
+        _(last_snapshot[0].data_points[0].exemplars).must_be_empty
+      end
+
+      it 'uses the view exemplar_reservoir for histogram aggregation' do
+        OpenTelemetry.meter_provider.add_view(
+          'histogram',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new,
+          exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::SimpleFixedSizeExemplarReservoir.new(max_size: 1)
+        )
+
+        histogram = meter.create_histogram('histogram')
+        histogram.record(1)
+        histogram.record(50)
+        histogram.record(500)
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points[0].count).must_equal 3
+        _(last_snapshot[0].data_points[0].exemplars.size).must_equal 1
+      end
+
+      it 'uses the view exemplar_reservoir for asynchronous instruments' do
+        OpenTelemetry.meter_provider.add_view(
+          'async_counter',
+          aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+          exemplar_reservoir: OpenTelemetry::SDK::Metrics::Exemplar::NoopExemplarReservoir.new
+        )
+
+        callback = proc { 10 }
+        async_counter = meter.create_observable_counter('async_counter', callback: callback)
+        async_counter.observe
+
+        metric_exporter.pull
+        last_snapshot = metric_exporter.metric_snapshots
+
+        _(last_snapshot[0].data_points[0].exemplars).must_be_empty
+      end
+    end
+  end
+
   describe '#registered_view select instrument' do
     let(:registered_view) { OpenTelemetry::SDK::Metrics::View::RegisteredView.new(nil, aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new) }
     let(:instrumentation_scope) do
