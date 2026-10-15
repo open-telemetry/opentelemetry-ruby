@@ -36,8 +36,6 @@ module Opentelemetry
               self.unmarshal_class_method = :decode
               self.service_name = 'opentelemetry.proto.collector.trace.v1.TraceService'
 
-              # For performance reasons, it is recommended to keep this RPC
-              # alive for the entire life of the application.
               rpc :Export, ::Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest, ::Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceResponse
             end
 

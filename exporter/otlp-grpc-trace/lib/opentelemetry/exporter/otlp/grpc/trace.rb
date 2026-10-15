@@ -15,10 +15,13 @@ module OpenTelemetry
     module OTLP
       # GRPC contains the implementation for the OTLP over GRPC exporter
       module GRPC
+        # Trace contains an implementation of the OTLP over GRPC exporter for traces
+        module Trace
+        end
       end
     end
   end
 end
 
 require 'opentelemetry/exporter/otlp/grpc/trace_exporter'
-require 'opentelemetry/exporter/otlp/grpc/version'
+require 'opentelemetry/exporter/otlp/grpc/trace/version'
