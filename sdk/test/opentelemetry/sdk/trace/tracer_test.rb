@@ -48,6 +48,31 @@ describe OpenTelemetry::SDK::Trace::Tracer do
     end
   end
 
+  describe 'instrumentation scope schema_url' do
+    it 'defaults to an empty string when not provided' do
+      tracer = Tracer.new('component', '1.0', tracer_provider)
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.schema_url).must_equal('')
+    end
+
+    it 'propagates schema_url and attributes from the provider through to span data' do
+      tracer = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' }, schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.name).must_equal('component')
+      _(span.instrumentation_scope.version).must_equal('1.0')
+      _(span.instrumentation_scope.attributes).must_equal('key' => 'value')
+      _(span.instrumentation_scope.schema_url).must_equal('https://opentelemetry.io/schemas/1.43.0')
+    end
+
+    it 'freezes the recorded schema_url without freezing the string it was given' do
+      schema_url = +'https://opentelemetry.io/schemas/1.43.0'
+      tracer = tracer_provider.tracer('component', '1.0', schema_url: schema_url)
+      span = tracer.start_root_span('test')
+      _(span.instrumentation_scope.schema_url.frozen?).must_equal(true)
+      _(schema_url.frozen?).must_equal(false)
+    end
+  end
+
   describe '#start_root_span' do
     it 'provides a default name' do
       _(tracer.start_root_span(nil).name).wont_be_nil
