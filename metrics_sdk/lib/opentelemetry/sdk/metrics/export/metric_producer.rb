@@ -34,6 +34,11 @@ module OpenTelemetry
 
           # Produces a batch of metrics for a {MetricReader}.
           #
+          # Each produced {OpenTelemetry::SDK::Metrics::State::MetricData} carries an
+          # +instrumentation_scope+. Per the spec, implementations SHOULD use a single
+          # {OpenTelemetry::SDK::InstrumentationScope} which identifies this
+          # MetricProducer for all metrics in the batch.
+          #
           # @param [OpenTelemetry::SDK::Resources::Resource] resource The resource
           #   to associate with the produced metrics.
           # @param [optional MetricFilter] metric_filter The filter to apply while
@@ -52,8 +57,8 @@ module OpenTelemetry
             elsif %i[delta cumulative].include?(value)
               value
             else
-              # spec doesn't define if temporality is nil, we give delta as default
-              OpenTelemetry.logger.warn('Aggregation temporality not specified or invalid, defaulting to delta')
+              # spec doesn't define if temporality is nil, we give cumulative as default
+              OpenTelemetry.logger.warn('Aggregation temporality not specified or invalid, defaulting to cumulative')
               Aggregation::AggregationTemporality::CUMULATIVE
             end
           end

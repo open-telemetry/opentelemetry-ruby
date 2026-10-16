@@ -286,8 +286,8 @@ exporter, and skips producers once it runs out.
 
 ```ruby
 class ThirdPartyProducer < OpenTelemetry::SDK::Metrics::Export::MetricProducer
-  def produce(resource:, metric_filter: nil, timeout: nil)
-    metrics = read_aggregated_metrics(resource:)
+  def produce(resource: nil, metric_filter: nil, timeout: nil)
+    metrics = read_aggregated_metrics # any source that returns an Array of OpenTelemetry::SDK::Metrics::State::MetricData
     metrics = metric_filter.filter(metrics) if metric_filter
     Result.new(metrics: metrics, status: OpenTelemetry::SDK::Metrics::Export::SUCCESS, errors: [])
   rescue StandardError => e
