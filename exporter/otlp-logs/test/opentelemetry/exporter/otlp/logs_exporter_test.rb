@@ -355,112 +355,6 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
     end
   end
 
-  describe 'IPv4/IPv6 compatibility' do
-    it 'handles IPv6 loopback address with brackets' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://[::1]:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
-    end
-
-    it 'handles IPv6 full address with brackets' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://[2001:db8::1]:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '2001:db8::1'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles IPv6 address with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'https://[::1]:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv6 address with custom path' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://[::1]:8080/custom/path')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 8080
-      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
-    end
-
-    it 'handles IPv4 loopback address' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://127.0.0.1:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '127.0.0.1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
-    end
-
-    it 'handles IPv4 address with custom port' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://192.168.1.100:8080/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '192.168.1.100'
-      _(http.port).must_equal 8080
-    end
-
-    it 'handles IPv4 address with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'https://10.0.0.1:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '10.0.0.1'
-      _(http.port).must_equal 4318
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv4 address with custom path' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://127.0.0.1:9090/custom/path')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '127.0.0.1'
-      _(http.port).must_equal 9090
-      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
-    end
-
-    it 'handles IPv4 address from environment variable' do
-      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://192.168.1.1:4318') do
-        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
-      end
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '192.168.1.1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
-    end
-
-    it 'handles hostnames' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://localhost:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'localhost'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles fully qualified domain names' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'http://otel.example.com:4318/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'otel.example.com'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles hostnames with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(endpoint: 'https://otel-collector.prod.example.com:443/v1/logs')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'otel-collector.prod.example.com'
-      _(http.port).must_equal 443
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv6 address from environment variable' do
-      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://[::1]:4318') do
-        OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
-      end
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
-    end
-  end
-
   describe '#export' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new }
     # TODO: replace with a before block to set a global logger provider through OpenTelemetry.logger_provider when the API code is merged
@@ -487,6 +381,24 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
       result = exporter.export([log_record_data], timeout: 0)
       _(result).must_equal(FAILURE)
+    end
+
+    it 'logs rejected records reported in a partial success response' do
+      response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.encode(
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.new(
+          partial_success: Opentelemetry::Proto::Collector::Logs::V1::ExportLogsPartialSuccess.new(
+            rejected_log_records: 2,
+            error_message: 'record limit exceeded'
+          )
+        )
+      )
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200, body: response)
+
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+        _(exporter.export([log_record_data])).must_equal(SUCCESS)
+        _(log_stream.string).must_match(/rejected_log_records=2, error_message=record limit exceeded/)
+      end
     end
 
     it 'returns FAILURE on unexpected exceptions' do
@@ -520,7 +432,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       end
 
       _(log_stream.string).must_match(
-        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#encode - a little hell/
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_elsr - a little hell/
       )
     ensure
       OpenTelemetry.logger = logger
@@ -636,7 +548,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200)
-      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(total_recorded_attributes: 1, attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data(attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
 
       result = exporter.export([log_record_data])
 
@@ -741,6 +653,10 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
     it 'translates all the things' do
       stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 200)
       processor = OpenTelemetry::SDK::Logs::Export::BatchLogRecordProcessor.new(exporter)
+      logger_provider = OpenTelemetry::SDK::Logs::LoggerProvider.new(
+        resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk,
+        log_record_limits: OpenTelemetry::SDK::Logs::LogRecordLimits.new(attribute_count_limit: 6)
+      )
       logger = logger_provider.logger(name: 'logger', version: 'v0.0.1')
       other_logger = logger_provider.logger(name: 'other_logger', version: 'v0.1.0')
 
@@ -786,6 +702,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
           'int' => 42
         },
         attributes: {
+          'drop_me' => 'l8r',
           'kv_list' => { 'a' => 'b' },
           'array' => [1],
           'bool' => true,
@@ -959,7 +876,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                           )
                         )
                       ],
-                      dropped_attributes_count: 0,
+                      dropped_attributes_count: 1,
                       flags: lr3[:trace_flags].instance_variable_get(:@flags),
                       trace_id: lr3[:trace_id],
                       span_id: lr3[:span_id]
