@@ -22,7 +22,6 @@ This code is still under development and is not a complete implementation of the
 
 Some features we still need to implement include:
 
-- Configuration file precedence over environment variables
 - Using declarative configuration without a call in your code
 - Declarative configuration instrumentation API and SDK
 
@@ -63,6 +62,36 @@ If you have a config file path at hand, call `configure_from_file` instead:
 
 ```ruby
 sdk = OpenTelemetry::Config.configure_from_file('/path/to/otel-config.yaml')
+```
+
+### Environment variables and SDK-specific settings
+
+File-based configuration uses the values in the YAML file and the schema defaults
+for omitted settings. It does not inherit the SDK's `OTEL_*` environment-variable
+defaults.
+
+Some Ruby-specific SDK settings have no equivalent in the configuration schema:
+
+- `OTEL_RUBY_BSP_START_THREAD_ON_BOOT` is ignored. A configured batch span
+  processor starts its worker thread during construction. Applications that need
+  to delay worker startup should use programmatic SDK configuration instead.
+- `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE` and
+  `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` are ignored. The OTLP HTTP exporter
+  verifies the server certificate. For a private certificate authority, set
+  `tls.ca_file` rather than disabling verification. For mutual TLS, also set
+  `tls.cert_file` and `tls.key_file`.
+
+```yaml
+tracer_provider:
+  processors:
+    - batch:
+        exporter:
+          otlp_http:
+            endpoint: https://collector.example.com:4318/v1/traces
+            tls:
+              ca_file: /path/to/ca.pem
+              cert_file: /path/to/client.pem
+              key_file: /path/to/client-key.pem
 ```
 
 ### Parse, create, and install

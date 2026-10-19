@@ -22,18 +22,24 @@ This code is still under development and is not a complete implementation of the
 
 ## How do I get started?
 
-Install the gem using:
+Install the gems using:
 
 ```sh
-gem install opentelemetry-metrics-api
+gem install opentelemetry-sdk
+gem install opentelemetry-metrics-sdk
 ```
 
-Or, if you use [bundler][bundler-home], include `opentelemetry-metrics-api` in your `Gemfile`.
+Or, if you use [bundler][bundler-home], include `opentelemetry-sdk` and `opentelemetry-metrics-sdk` in your `Gemfile`. The SDK depends on `opentelemetry-metrics-api`.
 
-Then, use the OpenTelemetry interfaces to produces traces and other telemetry data. Following is a basic example.
+Requiring `opentelemetry-metrics-sdk` defines the global `OpenTelemetry.meter_provider` accessor. Requiring `opentelemetry-metrics-api` on its own does not. See [Upgrading to 0.9.0](#upgrading-to-090).
+
+Then, use the OpenTelemetry interfaces to produce metrics and other telemetry data. Following is a basic example.
 
 ```ruby
-require 'opentelemetry-metrics-api'
+require 'opentelemetry/sdk'
+require 'opentelemetry-metrics-sdk'
+
+OpenTelemetry::SDK.configure
 
 # Obtain the current default meter provider
 provider = OpenTelemetry.meter_provider
@@ -49,6 +55,20 @@ histogram.record(123, attributes: {'foo' => 'bar'})
 ```
 
 For additional examples, see the [examples on github][examples-github].
+
+## Upgrading to 0.9.0
+
+The Metrics API is experimental. To keep it off the public `OpenTelemetry` module until it stabilizes, `opentelemetry-metrics-api` 0.9.0 no longer defines `OpenTelemetry.meter_provider` or `OpenTelemetry.meter_provider=`. `opentelemetry-metrics-sdk` 0.20.0 and later define both when required.
+
+- **Applications using `opentelemetry-metrics-sdk`:** Upgrade the SDK to 0.20.0 or later. No code changes are needed.
+- **Code that requires only `opentelemetry-metrics-api`:** Calling `OpenTelemetry.meter_provider` raises `NoMethodError`. Require `opentelemetry-metrics-sdk`, or `opentelemetry/metrics/global` to define the accessors without the SDK.
+- **Applications on `opentelemetry-metrics-sdk` 0.19.0 or earlier:** These versions allow `opentelemetry-metrics-api` 0.9.0, so bundler can pair them. A compatibility shim in the API keeps them working and logs this warning:
+
+  ```text
+  opentelemetry-metrics-sdk 0.19.0 and earlier register the global meter provider through a compatibility shim in opentelemetry-metrics-api. Upgrade to opentelemetry-metrics-sdk 0.20.0 or later.
+  ```
+
+  The shim will be removed in a future release ([#2414][2414]). Upgrade the SDK to clear the warning.
 
 ## How can I get involved?
 
@@ -76,3 +96,4 @@ The `opentelemetry-api` gem is distributed under the Apache 2.0 license. See [LI
 [community-meetings]: https://github.com/open-telemetry/community#community-meetings
 [discussions-url]: https://github.com/open-telemetry/opentelemetry-ruby/discussions
 [1662]: https://github.com/open-telemetry/opentelemetry-ruby/issues/1662
+[2414]: https://github.com/open-telemetry/opentelemetry-ruby/issues/2414

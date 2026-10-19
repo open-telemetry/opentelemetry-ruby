@@ -590,5 +590,34 @@ describe OpenTelemetry::Config do
         end
       end
     end
+
+    describe 'environment precedence' do
+      it 'does not inherit environment-backed SDK resource defaults' do
+        env_backed_default = OpenTelemetry::SDK::Resources::Resource.create(
+          'service.name' => 'from-env',
+          'deployment.environment' => 'from-env'
+        )
+
+        OpenTelemetry::SDK::Resources::Resource.stub(:default, env_backed_default) do
+          OpenTelemetry::TestHelpers.with_env(
+            'OTEL_SERVICE_NAME' => 'from-env',
+            'OTEL_RESOURCE_ATTRIBUTES' => 'deployment.environment=from-env'
+          ) do
+            with_config(<<~YAML) do |path|
+              file_format: "1.0"
+              #{TRACER_PROVIDER_YAML}
+            YAML
+              sdk = OpenTelemetry::Config.configure_from_file(path)
+              attrs = sdk.resource.attribute_enumerator.to_h
+
+              _(attrs['service.name']).must_equal 'unknown_service'
+              _(attrs).wont_include 'deployment.environment'
+              _(attrs['telemetry.sdk.name']).must_equal 'opentelemetry'
+              _(attrs['telemetry.sdk.language']).must_equal 'ruby'
+            end
+          end
+        end
+      end
+    end
   end
 end

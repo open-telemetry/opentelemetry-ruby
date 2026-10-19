@@ -53,7 +53,9 @@ module OpenTelemetry
           # The API MUST support creation of asynchronous instruments by passing zero or more callback functions
           # to be permanently registered to the newly created instrument.
           def init_callback(callback)
-            if callback.instance_of?(Proc)
+            if callback.nil?
+              nil # zero callbacks permanently registered at creation is permitted
+            elsif callback.instance_of?(Proc)
               @callbacks << callback
             elsif callback.instance_of?(Array)
               callback.each { |cb| @callbacks << cb if cb.instance_of?(Proc) }
