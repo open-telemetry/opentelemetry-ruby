@@ -1,5 +1,9 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.22.0 / 2026-10-20
+
+* ADDED: Support OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION env var (#2389)
+
 ### v0.21.0 / 2026-10-13
 
 * ADDED: Fix duplicate instrument registration warning (#2417)
