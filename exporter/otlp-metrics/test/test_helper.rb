@@ -4,10 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  SimpleCov.start
-end
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
+
+require 'simplecov'
+SimpleCov.start
 
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/otlp_metrics'
@@ -17,7 +18,7 @@ require 'webmock/minitest'
 OpenTelemetry.logger = Logger.new(File::NULL)
 
 module MockSum
-  def collect(start_time, end_time)
+  def collect(start_time, end_time, data_points)
     start_time = 1_699_593_427_329_946_585 # rubocop:disable Lint/ShadowedArgument
     end_time   = 1_699_593_427_329_946_586 # rubocop:disable Lint/ShadowedArgument
     super
@@ -26,6 +27,8 @@ end
 
 OpenTelemetry::SDK::Metrics::Aggregation::Sum.prepend(MockSum)
 OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.prepend(MockSum)
+OpenTelemetry::SDK::Metrics::Aggregation::LastValue.prepend(MockSum)
+OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram.prepend(MockSum)
 
 def create_metrics_data(name: '', description: '', unit: '', instrument_kind: :counter, resource: nil,
                         instrumentation_scope: OpenTelemetry::SDK::InstrumentationScope.new('', 'v0.0.1'),

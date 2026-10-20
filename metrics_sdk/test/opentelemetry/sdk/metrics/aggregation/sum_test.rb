@@ -7,46 +7,131 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
-  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: aggregation_temporality) }
+  let(:data_points) { {} }
+  let(:sum_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality:, monotonic:) }
   let(:aggregation_temporality) { :delta }
+  let(:monotonic) { false }
+  let(:cardinality_limit) { 2000 }
 
   # Time in nano
   let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
   let(:end_time) { ((Time.now + 60).to_r * 1_000_000_000).to_i }
 
+  describe '#initialize' do
+    it 'defaults to the cumulative aggregation temporality' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'sets parameters from the environment to cumulative' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      end
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'sets parameters from the environment to delta' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      end
+      _(exp.aggregation_temporality).must_equal :delta
+    end
+
+    it 'sets parameters from the environment and converts them to symbols' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'potato') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new
+      end
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'invalid aggregation_temporality from parameters return default to cumulative' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'pickles')
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'valid aggregation_temporality delta from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'delta')
+      _(exp.aggregation_temporality).must_equal :delta
+    end
+
+    it 'valid aggregation_temporality cumulative from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'cumulative')
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'valid aggregation_temporality delta as symbol from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta)
+      _(exp.aggregation_temporality).must_equal :delta
+    end
+
+    it 'valid aggregation_temporality cumulative as symbol from parameters' do
+      exp = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :cumulative)
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'prefers explicit parameters rather than the environment and converts them to symbols' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'potato') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: 'pickles')
+      end
+      _(exp.aggregation_temporality).must_equal :cumulative
+    end
+
+    it 'function arguments have higher priority than environment' do
+      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'cumulative') do
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta)
+      end
+      _(exp.aggregation_temporality).must_equal :delta
+    end
+  end
+
   it 'sets the timestamps' do
-    sum_aggregation.update(0, {})
-    ndp = sum_aggregation.collect(start_time, end_time)[0]
+    sum_aggregation.update(0, {}, data_points, cardinality_limit)
+    ndp = sum_aggregation.collect(start_time, end_time, data_points)[0]
     _(ndp.start_time_unix_nano).must_equal(start_time)
     _(ndp.time_unix_nano).must_equal(end_time)
   end
 
+  it 'includes flags on the collected data point' do
+    sum_aggregation.update(0, {}, data_points, cardinality_limit)
+    ndp = sum_aggregation.collect(start_time, end_time, data_points)[0]
+    _(ndp).must_respond_to(:flags)
+    _(ndp.flags).must_equal(0)
+  end
+
   it 'aggregates and collects' do
-    sum_aggregation.update(1, {})
-    sum_aggregation.update(2, {})
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(2, {}, data_points, cardinality_limit)
 
-    sum_aggregation.update(2, 'foo' => 'bar')
-    sum_aggregation.update(2, 'foo' => 'bar')
+    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
+    sum_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
 
-    ndps = sum_aggregation.collect(start_time, end_time)
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
     _(ndps[0].value).must_equal(3)
-    _(ndps[0].attributes).must_equal({})
+    _(ndps[0].attributes).must_equal({}, data_points)
 
     _(ndps[1].value).must_equal(4)
     _(ndps[1].attributes).must_equal('foo' => 'bar')
   end
 
-  it 'does not aggregate between collects' do
-    sum_aggregation.update(1, {})
-    sum_aggregation.update(2, {})
-    ndps = sum_aggregation.collect(start_time, end_time)
+  it 'aggregates and collects negative values' do
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(-2, {}, data_points, cardinality_limit)
 
-    sum_aggregation.update(1, {})
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0].value).must_equal(-1)
+  end
+
+  it 'does not aggregate between collects' do
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
+    sum_aggregation.update(2, {}, data_points, cardinality_limit)
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
+
+    sum_aggregation.update(1, {}, data_points, cardinality_limit)
     # Assert that the recent update does not
     # impact the already collected metrics
     _(ndps[0].value).must_equal(3)
 
-    ndps = sum_aggregation.collect(start_time, end_time)
+    ndps = sum_aggregation.collect(start_time, end_time, data_points)
     # Assert that we are not accumulating values
     # between calls to collect
     _(ndps[0].value).must_equal(1)
@@ -56,20 +141,83 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     let(:aggregation_temporality) { :not_delta }
 
     it 'allows metrics to accumulate' do
-      sum_aggregation.update(1, {})
-      sum_aggregation.update(2, {})
-      ndps = sum_aggregation.collect(start_time, end_time)
+      sum_aggregation.update(1, {}, data_points, cardinality_limit)
+      sum_aggregation.update(2, {}, data_points, cardinality_limit)
+      ndps = sum_aggregation.collect(start_time, end_time, data_points)
 
-      sum_aggregation.update(1, {})
+      sum_aggregation.update(1, {}, data_points, cardinality_limit)
       # Assert that the recent update does not
       # impact the already collected metrics
       _(ndps[0].value).must_equal(3)
 
-      ndps = sum_aggregation.collect(start_time, end_time)
+      ndps = sum_aggregation.collect(start_time, end_time, data_points)
       # Assert that we are accumulating values
       # and not just capturing the delta since
       # the previous collect call
       _(ndps[0].value).must_equal(4)
     end
+  end
+
+  describe 'when sum type is monotonic' do
+    let(:aggregation_temporality) { :not_delta }
+    let(:monotonic) { true }
+
+    it 'does not allow negative values to accumulate' do
+      sum_aggregation.update(1, {}, data_points, cardinality_limit)
+      sum_aggregation.update(-2, {}, data_points, cardinality_limit)
+      ndps = sum_aggregation.collect(start_time, end_time, data_points)
+
+      _(ndps[0].value).must_equal(1)
+    end
+  end
+
+  describe 'cardinality limit' do
+    describe 'with cumulative aggregation' do
+      it 'preserves pre-overflow attributes after overflow starts' do
+        cardinality_limit = 3
+        sum_aggregation.update(1, { 'key' => 'a' }, data_points, cardinality_limit)
+        sum_aggregation.update(2, { 'key' => 'b' }, data_points, cardinality_limit)
+        sum_aggregation.update(3, { 'key' => 'c' }, data_points, cardinality_limit)
+        sum_aggregation.update(4, { 'key' => 'd' }, data_points, cardinality_limit) # This should overflow
+        sum_aggregation.update(5, { 'key' => 'e' }, data_points, cardinality_limit)
+        sum_aggregation.update(5, { 'key' => 'a' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(3) # 2 original + 1 overflow
+        _(data_points[{ 'key' => 'a' }].value).must_equal(6) # 1 + 5
+        _(data_points[{ 'key' => 'b' }].value).must_equal(2)
+        _(data_points[{ 'otel.metric.overflow' => true }].value).must_equal(12)
+        _(data_points[{ 'key' => 'd' }]).must_be_nil
+        _(data_points[{ 'key' => 'e' }]).must_be_nil
+      end
+    end
+
+    describe 'edge cases' do
+      it 'handles cardinality limits 0' do
+        # Test cardinality limit of 0 - everything overflows
+        cardinality_limit = 0
+        sum_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+        sum_aggregation.update(12, { 'key' => 'd' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(1)
+        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
+        _(overflow_point.value).must_equal(22)
+      end
+    end
+  end
+
+  # https://github.com/open-telemetry/opentelemetry-ruby/issues/2300
+  it 'keeps exemplar reservoirs independent per stream when streams share one aggregation instance' do
+    attrs = { 'outcome' => 'success' }
+    stream_a_dps = {}
+    stream_b_dps = {}
+
+    sum_aggregation.update(1, attrs, stream_a_dps, cardinality_limit, exemplar_offer: true)
+    sum_aggregation.update(2, attrs, stream_b_dps, cardinality_limit, exemplar_offer: true)
+
+    a_ndp = sum_aggregation.collect(start_time, end_time, stream_a_dps).first
+    b_ndp = sum_aggregation.collect(start_time, end_time, stream_b_dps).first
+
+    _(a_ndp.exemplars.map(&:value)).must_equal([1])
+    _(b_ndp.exemplars.map(&:value)).must_equal([2])
   end
 end

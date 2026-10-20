@@ -9,7 +9,7 @@ module OpenTelemetry
     module OTLP
       module Common
         ## Current OpenTelemetry OTLP exporter common version
-        VERSION = '0.0.0'
+        VERSION = '0.4.0'
       end
     end
   end

@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+require 'uri'
+
 module OpenTelemetry
   module Common
     # Utilities contains common helpers.
@@ -40,13 +42,21 @@ module OpenTelemetry
         Process.clock_gettime(Process::CLOCK_MONOTONIC)
       end
 
+      # Converts the provided timestamp to nanosecond integer
+      #
+      # @param timestamp [Time] the timestamp to convert, defaults to Time.now
+      # @return [Integer]
+      def time_in_nanoseconds(timestamp = Time.now)
+        (timestamp.to_r * 1_000_000_000).to_i
+      end
+
       # Encodes a string in utf8
       #
       # @param [String] string The string to be utf8 encoded
       # @param [optional boolean] binary This option is for displaying binary data
-      # @param [optional String] placeholder The fallback string to be used if encoding fails
+      # @param [String, nil] placeholder The fallback value to be used if encoding fails
       #
-      # @return [String]
+      # @return [String, nil]
       def utf8_encode(string, binary: false, placeholder: STRING_PLACEHOLDER)
         string = string.to_s
 
@@ -56,6 +66,11 @@ module OpenTelemetry
           string.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
         elsif string.encoding == ::Encoding::UTF_8
           string
+        elsif string.encoding == ::Encoding::ASCII_8BIT
+          utf8_string = string.dup.force_encoding(::Encoding::UTF_8)
+          raise Encoding::InvalidByteSequenceError, 'binary string is not valid UTF-8' unless utf8_string.valid_encoding?
+
+          utf8_string
         else
           string.encode(::Encoding::UTF_8)
         end
@@ -72,7 +87,7 @@ module OpenTelemetry
       #
       # @return [String]
       def truncate(string, size)
-        string.size > size ? "#{string[0...size - 3]}..." : string
+        string.size > size ? "#{string[0...(size - 3)]}..." : string
       end
 
       def truncate_attribute_value(value, limit)
@@ -86,10 +101,17 @@ module OpenTelemetry
         end
       end
 
-      # Disables tracing within the provided block.
-      def untraced
-        Context.with_value(UNTRACED_KEY, true) do |ctx, _|
-          yield ctx
+      # Disables tracing within the provided block
+      # If no block is provided instead returns an
+      # untraced ctx.
+      #
+      # @param [optional Context] context Accepts an explicit context, defaults to current
+      def untraced(context = Context.current)
+        context = context.set_value(UNTRACED_KEY, true)
+        if block_given?
+          Context.with_current(context) { |ctx| yield ctx } # rubocop:disable Style/ExplicitBlockArgument
+        else
+          context
         end
       end
 
@@ -120,7 +142,7 @@ module OpenTelemetry
       # @param default The fallback value to return if the requested
       #  env var(s) are not present
       #
-      # @returns [String]
+      # @return [String]
       def config_opt(*env_vars, default: nil)
         ENV.values_at(*env_vars).compact.fetch(0, default)
       end
@@ -147,4 +169,4 @@ module OpenTelemetry
   end
 end
 
-require_relative './http/client_context'
+require_relative 'http/client_context'

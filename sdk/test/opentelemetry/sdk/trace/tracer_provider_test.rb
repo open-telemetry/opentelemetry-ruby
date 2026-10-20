@@ -49,7 +49,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     let(:mock_span_processor2) { Minitest::Mock.new }
 
     it 'notifies the span processor' do
-      mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_span_processor.expect(:shutdown, nil, [], timeout: nil)
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.shutdown
       mock_span_processor.verify
@@ -66,7 +66,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'only notifies the span processor once' do
-      mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_span_processor.expect(:shutdown, nil, [], timeout: nil)
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.shutdown
       tracer_provider.shutdown
@@ -74,8 +74,8 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'supports multiple span processors' do
-      mock_span_processor.expect(:shutdown, nil, [{ timeout: nil }])
-      mock_span_processor2.expect(:shutdown, nil, [{ timeout: nil }])
+      mock_span_processor.expect(:shutdown, nil, [], timeout: nil)
+      mock_span_processor2.expect(:shutdown, nil, [], timeout: nil)
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.add_span_processor(mock_span_processor2)
       tracer_provider.shutdown
@@ -98,15 +98,15 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     let(:mock_span_processor2) { Minitest::Mock.new }
 
     it 'notifies the span processor' do
-      mock_span_processor.expect(:force_flush, nil, [{ timeout: nil }])
+      mock_span_processor.expect(:force_flush, nil, [], timeout: nil)
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.force_flush
       mock_span_processor.verify
     end
 
     it 'supports multiple span processors' do
-      mock_span_processor.expect(:force_flush, nil, [{ timeout: nil }])
-      mock_span_processor2.expect(:force_flush, nil, [{ timeout: nil }])
+      mock_span_processor.expect(:force_flush, nil, [], timeout: nil)
+      mock_span_processor2.expect(:force_flush, nil, [], timeout: nil)
       tracer_provider.add_span_processor(mock_span_processor)
       tracer_provider.add_span_processor(mock_span_processor2)
       tracer_provider.force_flush
@@ -134,7 +134,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
     end
 
     it 'adds multiple span processors to the active span processors' do
-      mock_processors = Array.new(2) { MiniTest::Mock.new }
+      mock_processors = Array.new(2) { Minitest::Mock.new }
       mock_processors.each do |p|
         p.expect(:on_start, nil, [Span, Context])
         p.expect(:on_finish, nil, [Span])
@@ -147,6 +147,7 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
   end
 
   describe '#tracer' do
+    # Legacy positional calling conventions
     it 'returns the same tracer for the same arguments' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         tracer1 = tracer_provider.tracer('component', '1.0')
@@ -154,6 +155,11 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
         _(tracer1).must_equal(tracer2)
         _(log_stream.string).must_be_empty
       end
+    end
+
+    it 'defaults version to empty string when given positional name only' do
+      tracer = tracer_provider.tracer('component')
+      _(tracer).wont_be_nil
     end
 
     it 'returns different tracers for different names' do
@@ -168,11 +174,68 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
       _(tracer1).wont_equal(tracer2)
     end
 
-    it 'warn when no name is passed for the tracer' do
+    it 'warns when no name is passed for the tracer' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
         tracer_provider.tracer
         _(log_stream.string).must_match(/calling TracerProvider#tracer without providing a tracer name./)
       end
+    end
+
+    # Keyword calling conventions
+    it 'accepts all keyword arguments' do
+      tracer = tracer_provider.tracer(name: 'component', version: '1.0', attributes: { 'key' => 'value' })
+      _(tracer).wont_be_nil
+    end
+
+    it 'returns the same tracer for equivalent positional and keyword arguments' do
+      tracer1 = tracer_provider.tracer('component', '1.0')
+      tracer2 = tracer_provider.tracer(name: 'component', version: '1.0')
+      _(tracer1).must_equal(tracer2)
+    end
+
+    # Mixed positional + keyword
+    it 'accepts positional name with keyword version' do
+      tracer = tracer_provider.tracer('component', version: '1.0')
+      _(tracer).wont_be_nil
+    end
+
+    it 'prefers keyword arguments over positional arguments' do
+      tracer1 = tracer_provider.tracer('positional', '1.0')
+      tracer2 = tracer_provider.tracer('positional', '1.0', name: 'keyword', version: '2.0')
+      _(tracer1).wont_equal(tracer2)
+    end
+
+    # Attributes
+    it 'returns the same tracer for the same name, version, and attributes' do
+      tracer1 = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
+      tracer2 = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
+      _(tracer1).must_equal(tracer2)
+    end
+
+    it 'returns different tracers for different attributes' do
+      tracer1 = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value1' })
+      tracer2 = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value2' })
+      _(tracer1).wont_equal(tracer2)
+    end
+
+    it 'returns different tracers for attributes vs no attributes' do
+      tracer1 = tracer_provider.tracer('component', '1.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
+      _(tracer1).wont_equal(tracer2)
+    end
+
+    it 'treats nil attributes the same as no attributes' do
+      tracer1 = tracer_provider.tracer('component', '1.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', attributes: nil)
+      _(tracer1).must_equal(tracer2)
+    end
+
+    it 'does not allow mutation of attributes after tracer creation' do
+      attrs = { 'key' => 'value' }
+      tracer_provider.tracer('component', '1.0', attributes: attrs)
+      attrs['key'] = 'mutated'
+      tracer = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
+      _(tracer).wont_be_nil
     end
   end
 end

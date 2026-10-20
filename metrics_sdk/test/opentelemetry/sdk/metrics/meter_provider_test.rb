@@ -9,7 +9,11 @@ require 'test_helper'
 describe OpenTelemetry::SDK::Metrics::MeterProvider do
   before do
     reset_metrics_sdk
-    OpenTelemetry::SDK.configure
+    # The MeterProvider tests deal with mock MetricReaders that are manually added
+    # Run the tests without the configuration patch interfering with the setup
+    OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXPORTER' => 'none') do
+      OpenTelemetry::SDK.configure
+    end
   end
 
   describe '#meter' do
@@ -26,6 +30,49 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     it 'repeated calls does not recreate a meter of the same name' do
       meter_a = OpenTelemetry.meter_provider.meter('test')
       meter_b = OpenTelemetry.meter_provider.meter('test')
+
+      _(meter_a).must_equal(meter_b)
+    end
+
+    it 'accepts attributes' do
+      meter = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value' })
+
+      _(meter).must_be_instance_of(OpenTelemetry::SDK::Metrics::Meter)
+    end
+
+    it 'returns the same meter for the same name, version, and attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: { 'key' => 'value' })
+      meter_b = OpenTelemetry.meter_provider.meter('test', version: '1.0', attributes: { 'key' => 'value' })
+
+      _(meter_a).must_equal(meter_b)
+    end
+
+    it 'returns different meters for different attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value1' })
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value2' })
+
+      _(meter_a).wont_equal(meter_b)
+    end
+
+    it 'returns different meters for attributes vs no attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test')
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value' })
+
+      _(meter_a).wont_equal(meter_b)
+    end
+
+    it 'treats nil attributes the same as no attributes' do
+      meter_a = OpenTelemetry.meter_provider.meter('test')
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: nil)
+
+      _(meter_a).must_equal(meter_b)
+    end
+
+    it 'does not allow mutation of attributes after meter creation' do
+      attrs = { 'key' => 'value' }
+      meter_a = OpenTelemetry.meter_provider.meter('test', attributes: attrs)
+      attrs['key'] = 'mutated'
+      meter_b = OpenTelemetry.meter_provider.meter('test', attributes: { 'key' => 'value' })
 
       _(meter_a).must_equal(meter_b)
     end
@@ -105,6 +152,48 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
       _(OpenTelemetry.meter_provider.instance_variable_get(:@metric_readers)).must_equal([metric_reader])
     end
 
+    it 'does not allow a metric reader to be registered with multiple providers' do
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      first_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      second_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+
+      first_provider.add_metric_reader(metric_reader)
+
+      _ { second_provider.add_metric_reader(metric_reader) }.must_raise(ArgumentError)
+      _(second_provider.metric_readers).must_equal([])
+    end
+
+    it 'does not allow a duck-typed metric reader to be registered with multiple providers' do
+      metric_reader = Struct.new(:metric_store) do
+        def shutdown(timeout: nil); end
+        def force_flush(timeout: nil); end
+      end.new(nil)
+      first_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      second_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+
+      first_provider.add_metric_reader(metric_reader)
+
+      _ { second_provider.add_metric_reader(metric_reader) }.must_raise(ArgumentError)
+      _(second_provider.metric_readers).must_equal([])
+    end
+
+    it 'serializes concurrent metric reader registration' do
+      metric_reader = OpenTelemetry::SDK::Metrics::Export::MetricReader.new
+      providers = Array.new(2) { OpenTelemetry::SDK::Metrics::MeterProvider.new }
+      errors = Queue.new
+
+      threads = providers.map do |provider|
+        Thread.new do
+          metric_reader.register_meter_provider(provider)
+        rescue ArgumentError => e
+          errors << e
+        end
+      end
+      threads.each(&:join)
+
+      _(errors.size).must_equal 1
+    end
+
     it 'associates the metric store with instruments created before the metric reader' do
       meter_a = OpenTelemetry.meter_provider.meter('a').create_counter('meter_a')
 
@@ -134,8 +223,118 @@ describe OpenTelemetry::SDK::Metrics::MeterProvider do
     end
   end
 
-  # TODO: OpenTelemetry.meter_provider.add_view
+  describe 'exemplar' do
+    describe '#exemplar_filter_setup' do
+      it 'without OTEL_METRICS_EXEMPLAR_FILTER' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => nil) do
+            meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+            _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          end
+
+          _(log_stream.string).wont_match(/OTEL_METRICS_EXEMPLAR_FILTER/)
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as empty string' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => '') do
+            meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+            _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          end
+
+          _(log_stream.string).wont_match(/OTEL_METRICS_EXEMPLAR_FILTER/)
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as trace_based' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'trace_based') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as always_on' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_on') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as always_off' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_off') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+        end
+      end
+
+      it 'with OTEL_METRICS_EXEMPLAR_FILTER as invalid option' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'better_on') do
+            meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+            _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+          end
+
+          _(log_stream.string).must_match(/OTEL_METRICS_EXEMPLAR_FILTER better_on is not part of the provided exemplar filters. Using trace_based./)
+        end
+      end
+    end
+
+    describe '#disable_exemplar_filter' do
+      it 'will turn it off' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_on') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter
+
+          meter_provider.disable_exemplar_filter
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+        end
+      end
+    end
+
+    describe '#enable_exemplar_filter' do
+      it 'will turn it on with default exemplar filter' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_off') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+
+          meter_provider.enable_exemplar_filter
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::TraceBasedExemplarFilter
+        end
+      end
+
+      it 'will turn it on with customized always on' do
+        OpenTelemetry::TestHelpers.with_env('OTEL_METRICS_EXEMPLAR_FILTER' => 'always_off') do
+          meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOffExemplarFilter
+
+          meter_provider.enable_exemplar_filter(exemplar_filter: OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter)
+          _(meter_provider.exemplar_filter).must_equal OpenTelemetry::SDK::Metrics::Exemplar::AlwaysOnExemplarFilter
+        end
+      end
+    end
+  end
+
   describe '#add_view' do
+    it 'adds a view with aggregation' do
+      OpenTelemetry.meter_provider.add_view('test', aggregation: ::OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
+
+      registered_views = OpenTelemetry.meter_provider.instance_variable_get(:@registered_views)
+
+      _(registered_views.size).must_equal 1
+      _(registered_views[0].class).must_equal ::OpenTelemetry::SDK::Metrics::View::RegisteredView
+      _(registered_views[0].name).must_equal 'test'
+      _(registered_views[0].aggregation.class).must_equal ::OpenTelemetry::SDK::Metrics::Aggregation::Drop
+    end
+
+    it 'add a view without aggregation but aggregation as nil' do
+      OpenTelemetry.meter_provider.add_view('test')
+
+      registered_views = OpenTelemetry.meter_provider.instance_variable_get(:@registered_views)
+
+      _(registered_views.size).must_equal 1
+      _(registered_views[0].aggregation).must_be_nil
+    end
   end
 
   private

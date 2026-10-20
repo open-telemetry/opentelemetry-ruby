@@ -6,6 +6,7 @@
 
 require 'opentelemetry/metrics/instrument/counter'
 require 'opentelemetry/metrics/instrument/histogram'
+require 'opentelemetry/metrics/instrument/gauge'
 require 'opentelemetry/metrics/instrument/observable_counter'
 require 'opentelemetry/metrics/instrument/observable_gauge'
 require 'opentelemetry/metrics/instrument/observable_up_down_counter'

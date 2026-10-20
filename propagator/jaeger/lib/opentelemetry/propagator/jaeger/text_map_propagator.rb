@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'cgi'
+require 'uri'
 
 # OpenTelemetry is an open source observability framework, providing a
 # general-purpose API, SDK, and related tools required for the instrumentation
@@ -24,12 +24,16 @@ module OpenTelemetry
         SAMPLED_FLAG_BIT = 0x01
         DEBUG_FLAG_BIT   = 0x02
         FIELDS = [IDENTITY_KEY].freeze
-        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>([0-9a-f]){1,16}):[0-9a-f]{1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
+        TRACE_SPAN_IDENTITY_REGEX = /\A(?<trace_id>(?:[0-9a-f]){1,32}):(?<span_id>(?:[0-9a-f]){1,16}):(?:[0-9a-f]){1,16}:(?<sampling_flags>[0-9a-f]{1,2})\z/
         ZERO_ID_REGEX = /^0+$/
+        BAGGAGE_KEY_PREFIX = 'uberctx-'
+        MAX_BAGGAGE_ENTRIES = 180
+        MAX_BAGGAGE_ENTRY_BYTES = 4096
+        MAX_BAGGAGE_TOTAL_BYTES = 8192
 
-        private_constant \
-          :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT,
-          :FIELDS, :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX
+        private_constant :IDENTITY_KEY, :DEFAULT_FLAG_BIT, :SAMPLED_FLAG_BIT, :DEBUG_FLAG_BIT, :FIELDS,
+                         :TRACE_SPAN_IDENTITY_REGEX, :ZERO_ID_REGEX, :BAGGAGE_KEY_PREFIX,
+                         :MAX_BAGGAGE_ENTRIES, :MAX_BAGGAGE_ENTRY_BYTES, :MAX_BAGGAGE_TOTAL_BYTES
 
         # Extract trace context from the supplied carrier.
         # If extraction fails, the original context will be returned
@@ -47,12 +51,12 @@ module OpenTelemetry
           header = getter.get(carrier, IDENTITY_KEY)
           return context unless header
           return context unless (match = header.match(TRACE_SPAN_IDENTITY_REGEX))
-          return context if match['trace_id'] =~ ZERO_ID_REGEX
-          return context if match['span_id'] =~ ZERO_ID_REGEX
+          return context if ZERO_ID_REGEX.match?(match['trace_id'])
+          return context if ZERO_ID_REGEX.match?(match['span_id'])
 
           sampling_flags = match['sampling_flags'].to_i
           span = build_span(match, sampling_flags)
-          context = Jaeger.context_with_debug(context) if sampling_flags & DEBUG_FLAG_BIT != 0
+          context = Jaeger.context_with_debug(context) if sampling_flags.anybits?(DEBUG_FLAG_BIT)
           context = context_with_extracted_baggage(carrier, context, getter)
           Trace.context_with_span(span, parent_context: context)
         end
@@ -73,11 +77,7 @@ module OpenTelemetry
             span_context.hex_trace_id, span_context.hex_span_id, '0', flags
           ].join(':')
           setter.set(carrier, IDENTITY_KEY, trace_span_identity_value)
-          OpenTelemetry::Baggage.values(context: context).each do |key, value|
-            baggage_key = 'uberctx-' + key
-            encoded_value = CGI.escape(value)
-            setter.set(carrier, baggage_key, encoded_value)
-          end
+          inject_baggage(carrier, context, setter)
           carrier
         end
 
@@ -102,18 +102,47 @@ module OpenTelemetry
           OpenTelemetry::Trace.non_recording_span(span_context)
         end
 
+        def inject_baggage(carrier, context, setter)
+          count = 0
+          total_bytes = 0
+          OpenTelemetry::Baggage.values(context: context).each do |key, value|
+            break unless count < MAX_BAGGAGE_ENTRIES
+
+            encoded_value = URI.encode_uri_component(value)
+            entry_bytes = key.to_s.bytesize + encoded_value.bytesize
+            next unless within_baggage_limits?(entry_bytes, total_bytes)
+
+            setter.set(carrier, "#{BAGGAGE_KEY_PREFIX}#{key}", encoded_value)
+            count += 1
+            total_bytes += entry_bytes
+          end
+        end
+
         def context_with_extracted_baggage(carrier, context, getter)
-          baggage_key_prefix = 'uberctx-'
           OpenTelemetry::Baggage.build(context: context) do |b|
+            count = 0
+            total_bytes = 0
             getter.keys(carrier).each do |carrier_key|
-              baggage_key = carrier_key.start_with?(baggage_key_prefix) && carrier_key[baggage_key_prefix.length..-1]
+              break unless count < MAX_BAGGAGE_ENTRIES
+
+              baggage_key = carrier_key.start_with?(BAGGAGE_KEY_PREFIX) && carrier_key[BAGGAGE_KEY_PREFIX.length..]
               next unless baggage_key
 
               raw_value = getter.get(carrier, carrier_key)
-              value = CGI.unescape(raw_value)
-              b.set_value(baggage_key, value)
+              next unless raw_value
+
+              entry_bytes = baggage_key.bytesize + raw_value.bytesize
+              next unless within_baggage_limits?(entry_bytes, total_bytes)
+
+              b.set_value(baggage_key, URI.decode_uri_component(raw_value))
+              count += 1
+              total_bytes += entry_bytes
             end
           end
+        end
+
+        def within_baggage_limits?(entry_bytes, total_bytes)
+          entry_bytes <= MAX_BAGGAGE_ENTRY_BYTES && total_bytes + entry_bytes <= MAX_BAGGAGE_TOTAL_BYTES
         end
 
         def to_jaeger_flags(context, span_context)
@@ -129,7 +158,7 @@ module OpenTelemetry
         end
 
         def to_trace_flags(sampling_flags)
-          if (sampling_flags & SAMPLED_FLAG_BIT) != 0
+          if sampling_flags.anybits?(SAMPLED_FLAG_BIT)
             Trace::TraceFlags::SAMPLED
           else
             Trace::TraceFlags::DEFAULT

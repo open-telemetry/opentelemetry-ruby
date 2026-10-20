@@ -1,0 +1,110 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'test_helper'
+
+describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
+  let(:data_points) { {} }
+  let(:last_value_aggregation) { OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new }
+  let(:cardinality_limit) { 2000 }
+  # Time in nano
+  let(:start_time) { (Time.now.to_r * 1_000_000_000).to_i }
+  let(:end_time) { ((Time.now + 60).to_r * 1_000_000_000).to_i }
+
+  it 'sets the timestamps' do
+    last_value_aggregation.update(0, {}, data_points, cardinality_limit)
+    ndp = last_value_aggregation.collect(start_time, end_time, data_points)[0]
+    _(ndp.start_time_unix_nano).must_equal(start_time)
+    _(ndp.time_unix_nano).must_equal(end_time)
+  end
+
+  it 'includes flags on the collected data point' do
+    last_value_aggregation.update(0, {}, data_points, cardinality_limit)
+    ndp = last_value_aggregation.collect(start_time, end_time, data_points)[0]
+    _(ndp).must_respond_to(:flags)
+    _(ndp.flags).must_equal(0)
+  end
+
+  it 'aggregates and collects should collect the last value' do
+    last_value_aggregation.update(1, {}, data_points, cardinality_limit)
+    last_value_aggregation.update(2, {}, data_points, cardinality_limit)
+
+    last_value_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
+    last_value_aggregation.update(2, { 'foo' => 'bar' }, data_points, cardinality_limit)
+
+    ndps = last_value_aggregation.collect(start_time, end_time, data_points)
+    _(ndps[0].value).must_equal(2)
+    _(ndps[0].attributes).must_equal({}, data_points)
+
+    _(ndps[1].value).must_equal(2)
+    _(ndps[1].attributes).must_equal('foo' => 'bar')
+  end
+
+  describe 'cardinality limit' do
+    let(:cardinality_limit) { 2 }
+
+    it 'creates overflow data point when cardinality limit is exceeded' do
+      last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+      last_value_aggregation.update(20, { 'key' => 'a' }, data_points, cardinality_limit)
+      last_value_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit)
+      last_value_aggregation.update(30, { 'key' => 'c' }, data_points, cardinality_limit) # This should overflow
+      last_value_aggregation.update(40, { 'key' => 'e' }, data_points, cardinality_limit) # This should overflow
+
+      ndps = last_value_aggregation.collect(start_time, end_time, data_points)
+
+      _(ndps.size).must_equal(2)
+
+      assert_equal({ 'key' => 'a' }, ndps[0].attributes)
+      _(ndps[0].value).must_equal 20
+
+      assert_equal({ 'otel.metric.overflow' => true }, ndps[1].attributes)
+      _(ndps[1].value).must_equal 40
+
+      overflow_point = ndps.find { |ndp| ndp.attributes == { 'otel.metric.overflow' => true } }
+      _(overflow_point.value).must_equal(40)
+    end
+
+    it 'updates existing attribute sets without triggering overflow' do
+      cardinality_limit = 3
+      last_value_aggregation.update(10, { 'key' => 'a' }, data_points, cardinality_limit)
+      last_value_aggregation.update(20, { 'key' => 'b' }, data_points, cardinality_limit)
+      last_value_aggregation.update(15, { 'key' => 'a' }, data_points, cardinality_limit) # Update existing
+
+      _(data_points.size).must_equal(2)
+      _(data_points[{ 'key' => 'a' }].value).must_equal(15)
+      _(data_points[{ 'key' => 'b' }].value).must_equal(20)
+    end
+
+    describe 'edge cases' do
+      it 'handles cardinality limits 0' do
+        # Test cardinality limit of 0 - everything overflows
+        cardinality_limit = 0
+        last_value_aggregation.update(42, { 'key' => 'value' }, data_points, cardinality_limit)
+        last_value_aggregation.update(30, { 'key' => 'value' }, data_points, cardinality_limit)
+
+        _(data_points.size).must_equal(1)
+        overflow_point = data_points[{ 'otel.metric.overflow' => true }]
+        _(overflow_point.value).must_equal(30)
+      end
+    end
+  end
+
+  # https://github.com/open-telemetry/opentelemetry-ruby/issues/2300
+  it 'keeps exemplar reservoirs independent per stream when streams share one aggregation instance' do
+    attrs = { 'outcome' => 'success' }
+    stream_a_dps = {}
+    stream_b_dps = {}
+
+    last_value_aggregation.update(1, attrs, stream_a_dps, cardinality_limit, exemplar_offer: true)
+    last_value_aggregation.update(2, attrs, stream_b_dps, cardinality_limit, exemplar_offer: true)
+
+    a_ndp = last_value_aggregation.collect(start_time, end_time, stream_a_dps).first
+    b_ndp = last_value_aggregation.collect(start_time, end_time, stream_b_dps).first
+
+    _(a_ndp.exemplars.map(&:value)).must_equal([1])
+    _(b_ndp.exemplars.map(&:value)).must_equal([2])
+  end
+end

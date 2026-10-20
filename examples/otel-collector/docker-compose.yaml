@@ -3,7 +3,7 @@ services:
 
   # Jaeger
   jaeger-all-in-one:
-    image: jaegertracing/all-in-one:latest
+    image: jaegertracing/jaeger:2.22.0@sha256:836b967b5abcf1f7758066aa6b348619267a2f1459f72d472840570f9bd88a17
     ports:
       - "16686:16686"
       - "14268"
@@ -11,13 +11,13 @@ services:
 
   # Zipkin
   zipkin-all-in-one:
-    image: openzipkin/zipkin:latest
+    image: openzipkin/zipkin:3.6.1@sha256:d17e856dcbba7ffeefbbfc252f89ab78a4ab6faed47e646d46daad78f91b5ee2
     ports:
       - "9411:9411"
 
   # Collector
   otel-collector:
-    image: ${OTELCOL_IMG}
+    image: otel/opentelemetry-collector:0.163.1@sha256:f0e23036dce3db3f9cb80d907c75a0d034cd32e93511a1943482d46129b9ae9c
     command: ["--config=/etc/otel-collector-config.yaml", "${OTELCOL_ARGS}"]
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml

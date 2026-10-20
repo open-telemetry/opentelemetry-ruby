@@ -21,7 +21,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     histogram.record(5, attributes: { 'foo' => 'bar' })
     histogram.record(6, attributes: { 'foo' => 'bar' })
     metric_exporter.pull
-    last_snapshot = metric_exporter.metric_snapshots.last
+    last_snapshot = metric_exporter.metric_snapshots
 
     _(last_snapshot[0].name).must_equal('histogram')
     _(last_snapshot[0].unit).must_equal('smidgen')
@@ -33,6 +33,6 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Histogram do
     _(last_snapshot[0].data_points[0].max).must_equal(6)
     _(last_snapshot[0].data_points[0].bucket_counts).must_equal([0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0])
     _(last_snapshot[0].data_points[0].attributes).must_equal('foo' => 'bar')
-    _(last_snapshot[0].aggregation_temporality).must_equal(:delta)
+    _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
 end

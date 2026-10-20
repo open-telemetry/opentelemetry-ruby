@@ -10,10 +10,11 @@ require 'opentelemetry/trace/propagation/trace_context/text_map_propagator'
 module OpenTelemetry
   module Trace
     module Propagation
-      # The TraceContext module contains injectors, extractors, and utilties
+      # The TraceContext module contains injectors, extractors, and utilities
       # for context propagation in the W3C Trace Context format.
       module TraceContext
         extend self
+
         TEXT_MAP_PROPAGATOR = TextMapPropagator.new
 
         private_constant :TEXT_MAP_PROPAGATOR

@@ -26,7 +26,7 @@ module OpenTelemetry
       # spans.
       PRODUCER = :producer
 
-      # Indicates that the span describes consumer recieving a message from a broker. Unlike client
+      # Indicates that the span describes consumer receiving a message from a broker. Unlike client
       # and server, there is no direct critical path latency relationship between producer and
       # consumer spans.
       CONSUMER = :consumer

@@ -9,8 +9,10 @@ module OpenTelemetry
     module Trace
       # {TracerProvider} is the SDK implementation of {OpenTelemetry::Trace::TracerProvider}.
       class TracerProvider < OpenTelemetry::Trace::TracerProvider # rubocop:disable Metrics/ClassLength
-        Key = Struct.new(:name, :version)
-        private_constant(:Key)
+        Key = Struct.new(:name, :version, :attributes)
+        EMPTY_ATTRIBUTES = {}.freeze
+
+        private_constant(:Key, :EMPTY_ATTRIBUTES)
 
         attr_accessor :span_limits, :id_generator, :sampler
         attr_reader :resource
@@ -44,15 +46,28 @@ module OpenTelemetry
 
         # Returns a {Tracer} instance.
         #
-        # @param [optional String] name Instrumentation package name
-        # @param [optional String] version Instrumentation package version
+        # Supports both positional arguments (legacy) and keyword arguments:
+        #   tracer('name', '1.0')                                    # legacy positional
+        #   tracer(name: 'name', version: '1.0', attributes: {...})  # keyword
+        #
+        # When both positional and keyword arguments are provided for the same
+        # parameter, the keyword argument takes precedence.
+        #
+        # @param [String] name Instrumentation scope name
+        # @param [String] version Instrumentation scope version
+        # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Tracer]
-        def tracer(name = nil, version = nil)
-          name ||= ''
-          version ||= ''
+        def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+          name ||= deprecated_name || ''
+          version ||= deprecated_version || ''
+          attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
-          @registry_mutex.synchronize { @registry[Key.new(name, version)] ||= Tracer.new(name, version, self) }
+          @registry_mutex.synchronize do
+            @registry[Key.new(name, version, attributes)] ||=
+              Tracer.new(name, version, self, attributes: attributes)
+          end
         end
 
         # Attempts to stop all the activity for this {TracerProvider}. Calls
@@ -126,7 +141,7 @@ module OpenTelemetry
         end
 
         # @api private
-        def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/MethodLength
+        def internal_start_span(name, kind, attributes, links, start_timestamp, parent_context, instrumentation_scope) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
           parent_span = OpenTelemetry::Trace.current_span(parent_context)
           parent_span_context = parent_span.context
 
@@ -134,8 +149,13 @@ module OpenTelemetry
             parent_span_id = parent_span_context.span_id
             trace_id = parent_span_context.trace_id
           end
-
           trace_id ||= @id_generator.generate_trace_id
+
+          if OpenTelemetry::Common::Utilities.untraced?(parent_context)
+            span_id = parent_span_id || @id_generator.generate_span_id
+            return OpenTelemetry::Trace.non_recording_span(OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: span_id))
+          end
+
           result = @sampler.should_sample?(trace_id: trace_id, parent_context: parent_context, links: links, name: name, kind: kind, attributes: attributes)
           span_id = @id_generator.generate_span_id
           if result.recording? && !@stopped
@@ -165,7 +185,7 @@ module OpenTelemetry
         private
 
         def sampler_from_environment(default_sampler)
-          case ENV['OTEL_TRACES_SAMPLER']
+          case ENV.fetch('OTEL_TRACES_SAMPLER', nil)
           when 'always_on' then Samplers::ALWAYS_ON
           when 'always_off' then Samplers::ALWAYS_OFF
           when 'traceidratio' then Samplers.trace_id_ratio_based(Float(ENV.fetch('OTEL_TRACES_SAMPLER_ARG', 1.0)))

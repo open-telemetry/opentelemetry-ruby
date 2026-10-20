@@ -53,8 +53,9 @@ module OpenTelemetry
     # Returns a context containing the span, derived from the optional parent
     # context, or the current context if one was not provided.
     #
-    # @param [optional Context] context The context to use as the parent for
-    #   the returned context
+    # @param [Span] span The span to store in the returned context.
+    # @param [Context] parent_context The optional context to use as the parent
+    #   for the returned context.
     def context_with_span(span, parent_context: Context.current)
       parent_context.set_value(CURRENT_SPAN_KEY, span)
     end

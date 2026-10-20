@@ -19,12 +19,34 @@ describe OpenTelemetry::Common::Utilities do
 
   describe '#untraced?' do
     it 'returns true within an untraced block' do
-      assert_equal(true, common_utils.untraced { common_utils.untraced? })
+      assert(common_utils.untraced { common_utils.untraced? })
     end
 
     it 'returns false outside an untraced block' do
       common_utils.untraced {}
-      assert_equal(false, common_utils.untraced?)
+      refute_predicate common_utils, :untraced?
+    end
+
+    it 'supports non block format' do
+      token = OpenTelemetry::Context.attach(common_utils.untraced)
+      assert_predicate common_utils, :untraced?
+      OpenTelemetry::Context.detach(token)
+      refute_predicate common_utils, :untraced?
+    end
+  end
+
+  describe '#time_in_nanoseconds' do
+    it 'returns Time.now in nanoseconds when called without an argument' do
+      Time.stub :now, Time.at(0) do
+        expectation = (Time.now.to_r * 1_000_000_000).to_i
+        assert_equal expectation, common_utils.time_in_nanoseconds
+      end
+    end
+
+    it 'can accept a timestamp to be converted' do
+      time = Time.now
+      expectation = (time.to_r * 1_000_000_000).to_i
+      assert_equal expectation, common_utils.time_in_nanoseconds(time)
     end
   end
 
@@ -41,7 +63,7 @@ describe OpenTelemetry::Common::Utilities do
     end
 
     it 'with invalid conversion' do
-      time_bomb = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      time_bomb = (+"\xC2").force_encoding(::Encoding::ASCII_8BIT)
 
       # making sure this is indeed a problem
       assert_raises(Encoding::UndefinedConversionError) do
@@ -54,8 +76,24 @@ describe OpenTelemetry::Common::Utilities do
       assert_equal('?', common_utils.utf8_encode(time_bomb, placeholder: '?'))
     end
 
+    it 'preserves valid UTF-8 bytes from a binary-encoded string' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+
+      encoded = common_utils.utf8_encode(city)
+
+      assert_equal('Montréal', encoded)
+      assert_equal(::Encoding::UTF_8, encoded.encoding)
+      assert_equal(::Encoding::ASCII_8BIT, city.encoding)
+    end
+
+    it 'does not validate an already UTF-8-tagged string' do
+      invalid = "\xC3".dup.force_encoding(::Encoding::UTF_8)
+
+      assert_same(invalid, common_utils.utf8_encode(invalid, placeholder: '?'))
+    end
+
     it 'with binary data' do
-      byte_array = "keep what\xC2 is valid".dup.force_encoding(::Encoding::ASCII_8BIT)
+      byte_array = (+"keep what\xC2 is valid").force_encoding(::Encoding::ASCII_8BIT)
 
       assert_equal('keep what is valid', common_utils.utf8_encode(byte_array, binary: true))
     end

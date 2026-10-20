@@ -19,7 +19,7 @@ This gem can be used with any OpenTelemetry SDK implementation. This can be the 
 
 Install the gem using:
 
-```
+```sh
 gem install opentelemetry-propagator-jaeger
 ```
 

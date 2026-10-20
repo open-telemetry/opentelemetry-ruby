@@ -20,7 +20,7 @@ describe OpenTelemetry::SDK::Trace::SpanLimits do
       _(span_limits.link_attribute_count_limit).must_equal 128
     end
 
-    it 'prioritizes specific environment varibles for attribute value length limits' do
+    it 'prioritizes specific environment variables for attribute value length limits' do
       OpenTelemetry::TestHelpers.with_env('OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '35',
                                           'OTEL_SPAN_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '33',
                                           'OTEL_EVENT_ATTRIBUTE_VALUE_LENGTH_LIMIT' => '32') do

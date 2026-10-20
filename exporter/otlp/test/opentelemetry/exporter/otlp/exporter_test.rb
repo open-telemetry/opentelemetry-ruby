@@ -12,6 +12,12 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
   FAILURE = OpenTelemetry::SDK::Trace::Export::FAILURE
   VERSION = OpenTelemetry::Exporter::OTLP::VERSION
   DEFAULT_USER_AGENT = OpenTelemetry::Exporter::OTLP::Exporter::DEFAULT_USER_AGENT
+  CLIENT_CERT_A_PATH = File.dirname(__FILE__) + '/mtls-client-a.pem'
+  CLIENT_CERT_A = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT_A_PATH))
+  CLIENT_KEY_A = OpenSSL::PKey::RSA.new(File.read(CLIENT_CERT_A_PATH))
+  CLIENT_CERT_B_PATH = File.dirname(__FILE__) + '/mtls-client-b.pem'
+  CLIENT_CERT_B = OpenSSL::X509::Certificate.new(File.read(CLIENT_CERT_B_PATH))
+  CLIENT_KEY_B = OpenSSL::PKey::RSA.new(File.read(CLIENT_CERT_B_PATH))
 
   describe '#initialize' do
     it 'initializes with defaults' do
@@ -20,9 +26,11 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => DEFAULT_USER_AGENT)
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
-      _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
+      _(exp.instance_variable_get(:@compression)).must_equal 'none'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_be_nil
+      _(http.cert).must_be_nil
+      _(http.key).must_be_nil
       _(http.use_ssl?).must_equal false
       _(http.address).must_equal 'localhost'
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER
@@ -76,7 +84,9 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
 
     it 'sets parameters from the environment' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
-                                                'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
+                                                'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar/cacert',
+                                                'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE' => CLIENT_CERT_A_PATH,
+                                                'OTEL_EXPORTER_OTLP_CLIENT_KEY' => CLIENT_CERT_A_PATH,
                                                 'OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d',
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'gzip',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => 'true',
@@ -88,7 +98,9 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@path)).must_equal '/v1/traces'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
-      _(http.ca_file).must_equal '/foo/bar'
+      _(http.ca_file).must_equal '/foo/bar/cacert'
+      _(http.cert).must_equal CLIENT_CERT_A
+      _(http.key.params).must_equal CLIENT_KEY_A.params
       _(http.use_ssl?).must_equal true
       _(http.address).must_equal 'localhost'
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
@@ -98,12 +110,16 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'prefers explicit parameters rather than the environment' do
       exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'https://localhost:1234',
                                                 'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/foo/bar',
+                                                'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE' => CLIENT_CERT_A_PATH,
+                                                'OTEL_EXPORTER_OTLP_CLIENT_KEY' => CLIENT_CERT_A_PATH,
                                                 'OTEL_EXPORTER_OTLP_HEADERS' => 'a:b,c:d',
                                                 'OTEL_EXPORTER_OTLP_COMPRESSION' => 'flate',
                                                 'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER' => 'true',
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Exporter.new(endpoint: 'http://localhost:4321',
                                                     certificate_file: '/baz',
+                                                    client_certificate_file: CLIENT_CERT_B_PATH,
+                                                    client_key_file: CLIENT_CERT_B_PATH,
                                                     headers: { 'x' => 'y' },
                                                     compression: 'gzip',
                                                     ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
@@ -115,6 +131,8 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
       http = exp.instance_variable_get(:@http)
       _(http.ca_file).must_equal '/baz'
+      _(http.cert).must_equal CLIENT_CERT_B
+      _(http.key.params).must_equal CLIENT_KEY_B.params
       _(http.use_ssl?).must_equal false
       _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_NONE
       _(http.address).must_equal 'localhost'
@@ -382,6 +400,17 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     end
 
+    it 'records metrics' do
+      metrics_reporter = Minitest::Mock.new
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip', metrics_reporter: metrics_reporter)
+      stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
+      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.encode_duration' }
+      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.uncompressed_size' }
+      metrics_reporter.expect(:record_value, nil) { |m, _, _| m == 'otel.otlp_exporter.message.compressed_size' }
+      metrics_reporter.expect(:add_to_counter, nil) { |m, _, _| m == 'otel.otlp_exporter.failure' }
+      exporter.export([OpenTelemetry::TestHelpers.create_span_data])
+    end
+
     it 'retries on timeout' do
       stub_request(:post, 'http://localhost:4318/v1/traces').to_timeout.then.to_return(status: 200)
       span_data = OpenTelemetry::TestHelpers.create_span_data
@@ -427,7 +456,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       end
 
       _(log_stream.string).must_match(
-        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Exporter#encode - a little hell/
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_etsr - a little hell/
       )
     ensure
       OpenTelemetry.logger = logger
@@ -479,7 +508,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.logger = ::Logger.new(log_stream)
 
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
-      span_data = OpenTelemetry::TestHelpers.create_span_data(total_recorded_attributes: 1, attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) })
+      span_data = OpenTelemetry::TestHelpers.create_span_data(total_recorded_attributes: 1, attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) })
 
       result = exporter.export([span_data])
 
@@ -490,6 +519,34 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       _(result).must_equal(SUCCESS)
     ensure
       OpenTelemetry.logger = logger
+    end
+
+    it 'exports valid UTF-8 bytes from binary-encoded attribute strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'city' => city }
+      )
+
+      encoded_data = exporter.send(:encode, [span_data])
+      decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+      exported_span = decoded.resource_spans.first.scope_spans.first.spans.first
+
+      _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'values' => [invalid_value] }
+      )
+
+      encoded_data = exporter.send(:encode, [span_data])
+      decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+      exported_value = decoded.resource_spans.first.scope_spans.first.spans.first.attributes.first.value
+
+      _(exported_value.string_value).must_equal('Encoding Error')
     end
 
     it 'logs rpc.Status on bad request' do
@@ -533,6 +590,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'handles Zlib gzip compression errors' do
+      exporter = OpenTelemetry::Exporter::OTLP::Exporter.new(compression: 'gzip')
       stub_request(:post, 'http://localhost:4318/v1/traces').to_raise(Zlib::DataError.new('data error'))
       span_data = OpenTelemetry::TestHelpers.create_span_data
       exporter.stub(:backoff?, ->(**_) { false }) do
@@ -546,6 +604,20 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       OpenTelemetry.tracer_provider.add_span_processor(processor)
       OpenTelemetry.tracer_provider.tracer.start_root_span('foo').finish
       OpenTelemetry.tracer_provider.shutdown
+      assert_requested(stub_post)
+    end
+
+    it 'does not compress by default' do
+      stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
+        _(request.headers).wont_include('Content-Encoding')
+        Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(request.body)
+        { status: 200 }
+      end
+
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+      result = exporter.export([span_data])
+
+      _(result).must_equal(SUCCESS)
       assert_requested(stub_post)
     end
 
@@ -566,8 +638,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     it 'batches per resource' do
       etsr = nil
       stub_post = stub_request(:post, 'http://localhost:4318/v1/traces').to_return do |request|
-        proto = Zlib.gunzip(request.body)
-        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(proto)
+        etsr = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(request.body)
         { status: 200 }
       end
 
@@ -582,9 +653,6 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
     end
 
     it 'translates all the things' do
-      # TODO: See issue #1507 to fix
-      skip 'Intermittently fails' if RUBY_ENGINE == 'truffleruby'
-
       stub_request(:post, 'http://localhost:4318/v1/traces').to_return(status: 200)
       processor = OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor.new(exporter)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
@@ -646,6 +714,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_INTERNAL,
                       start_time_unix_nano: (start_timestamp.to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
                       )
@@ -658,6 +730,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CLIENT,
                       start_time_unix_nano: ((start_timestamp + 2).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -670,6 +746,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_CONSUMER,
                       start_time_unix_nano: ((start_timestamp + 5).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -714,11 +794,19 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                           span_id: root_span_id,
                           attributes: [
                             Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 4))
-                          ]
+                          ],
+                          flags: (
+                            Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                            1
+                          )
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     )
                   ]
@@ -736,6 +824,10 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
                       kind: Opentelemetry::Proto::Trace::V1::Span::SpanKind::SPAN_KIND_SERVER,
                       start_time_unix_nano: ((start_timestamp + 3).to_r * 1_000_000_000).to_i,
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
+                      ),
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
                       )
@@ -749,7 +841,7 @@ describe OpenTelemetry::Exporter::OTLP::Exporter do
       )
 
       assert_requested(:post, 'http://localhost:4318/v1/traces') do |req|
-        req.body == Zlib.gzip(encoded_etsr)
+        req.body == encoded_etsr
       end
     end
   end

@@ -1,5 +1,6 @@
 inherit_from: ../../contrib/rubocop.yml
 
-Naming/FileName:
+AllCops:
   Exclude:
-    - "lib/opentelemetry-exporter-otlp-grpc.rb"
+    - 'lib/opentelemetry/proto/**/*'
+    - 'vendor/**/*'

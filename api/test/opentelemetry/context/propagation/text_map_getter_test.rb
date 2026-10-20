@@ -20,7 +20,7 @@ describe OpenTelemetry::Context::Propagation::TextMapGetter do
       _(getter.get(carrier, 'x-source-id')).must_equal('123')
     end
 
-    it 'returns nil for non-existant key' do
+    it 'returns nil for non-existent key' do
       _(getter.get(carrier, 'not-here')).must_be_nil
     end
   end

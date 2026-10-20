@@ -11,10 +11,12 @@ module OpenTelemetry
         # https://www.w3.org/TR/trace-context/
         # {Trace::SpanContext}
         class TraceParent
+          # rubocop:disable Style/EmptyClassDefinition
           InvalidFormatError = Class.new(Error)
           InvalidVersionError = Class.new(Error)
           InvalidTraceIDError = Class.new(Error)
           InvalidSpanIDError = Class.new(Error)
+          # rubocop:enable Style/EmptyClassDefinition
 
           TRACE_PARENT_HEADER = 'traceparent'
           SUPPORTED_VERSION = 0

@@ -5,3 +5,4 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require_relative 'opentelemetry/semantic_conventions'
+require_relative 'opentelemetry/semconv'

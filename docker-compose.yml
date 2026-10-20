@@ -14,19 +14,11 @@ x-shared-config:
       - bundle:/bundle
 
 services:
-  api:
-    <<: *base
-    working_dir: /app/api
-
   app:
     <<: *base
     build:
       context: .
     working_dir: /app
-
-  sdk:
-    <<: *base
-    working_dir: /app/sdk
 
 volumes:
   bundle:

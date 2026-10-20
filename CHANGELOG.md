@@ -8,7 +8,7 @@ All notable changes to this project were documented in this file. This is of his
 
 ### Bug Fix
 
-* [#299](https://github.com/open-telemetry/opentelemetry-ruby/pull/299) Fix probabilility sampler. ([@fbogsany](https://github.com/fbogsany))
+* [#299](https://github.com/open-telemetry/opentelemetry-ruby/pull/299) Fix probability sampler. ([@fbogsany](https://github.com/fbogsany))
 
 * [#301](https://github.com/open-telemetry/opentelemetry-ruby/pull/301) Fix require 'opentelemetry/instrumentation'. ([@fbogsany](https://github.com/fbogsany))
 
@@ -46,6 +46,6 @@ All notable changes to this project were documented in this file. This is of his
 
 * [#286](https://github.com/open-telemetry/opentelemetry-ruby/pull/286) Update Schedule. ([@fbogsany](https://github.com/fbogsany))
 
-* [#288](https://github.com/open-telemetry/opentelemetry-ruby/pull/288) Fix api/sdk gem install instuctions. ([@mwlang](https://github.com/mwlang))
+* [#288](https://github.com/open-telemetry/opentelemetry-ruby/pull/288) Fix api/sdk gem install instructions. ([@mwlang](https://github.com/mwlang))
 
 * [#294](https://github.com/open-telemetry/opentelemetry-ruby/pull/294) Add CHANGELOG. ([@ericmustin](https://github.com/ericmustin))

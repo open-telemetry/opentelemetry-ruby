@@ -31,9 +31,12 @@ runs:
     - name: Setup
       id: setup
       shell: bash
+      env:
+        GEM: ${{ inputs.gem }}
+        RUBY_VERSION: ${{ inputs.ruby }}
       run: |
         # 🛠️ Setup 🛠️
-        dir=$(find . -iname '${{ inputs.gem }}.gemspec' -exec dirname {} \;)
+        dir=$(find . -iname "${GEM}.gemspec" -exec dirname {} \;)
         echo "gem_dir=${dir}" >> $GITHUB_OUTPUT
 
         # We install multiple ruby versions here, and that makes for some
@@ -43,9 +46,9 @@ runs:
         rm -f "${dir}/Gemfile.lock"
 
         echo "cache_key=mri" >> $GITHUB_OUTPUT
-        if [[ "${{ inputs.ruby }}" == "jruby" ]]; then
+        if [[ "$RUBY_VERSION" == "jruby" ]]; then
           echo "cache_key=jruby" >> $GITHUB_OUTPUT
-        elif [[ "${{ inputs.ruby }}" == "truffleruby" ]]; then
+        elif [[ "$RUBY_VERSION" == "truffleruby" ]]; then
           echo "cache_key=truffleruby" >> $GITHUB_OUTPUT
         fi
 
@@ -58,21 +61,21 @@ runs:
     # ...but not for appraisals, sadly.
     - name: Install Ruby ${{ inputs.ruby }} with dependencies
       if: "${{ steps.setup.outputs.appraisals == 'false' }}"
-      uses: ruby/setup-ruby@v1.165.1
+      uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1.331.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
-        bundler:  "latest"
+        bundler: "latest"
         bundler-cache: true
         cache-version: "v1-${{ steps.setup.outputs.cache_key }}"
 
     # If we're using appraisals, do it all manually.
     - name: Install Ruby ${{ inputs.ruby }} without dependencies
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
-      uses: ruby/setup-ruby@v1.165.1
+      uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1.331.0
       with:
         ruby-version: "${{ inputs.ruby }}"
-        bundler:  "latest"
+        bundler: "latest"
         working-directory: "${{ steps.setup.outputs.gem_dir }}"
     - name: Install dependencies and generate appraisals
       if: "${{ steps.setup.outputs.appraisals == 'true' }}"
@@ -85,6 +88,8 @@ runs:
 
     - name: Test Gem
       shell: bash
+      env:
+        SIMPLECOV_FINALIZE_MERGE: false
       run: |
         # 🍿 Test Gem 🍿
         if [[ -f "Appraisals" ]]; then
@@ -108,6 +113,15 @@ runs:
         bundle exec rake yard
       working-directory: "${{ steps.setup.outputs.gem_dir }}"
 
+    - name: Coverage
+      shell: bash
+      env:
+        GEM_DIR: "${{ steps.setup.outputs.gem_dir }}"
+      # This merges with the existing coverage reports generated during testing into 1 report.
+      run: |
+        bundle install --quiet --jobs=3 --retry=4
+        bundle exec rake collate_simplecov["${GEM_DIR}"]
+
     - name: Rubocop
       shell: bash
       if: "${{ inputs.rubocop == 'true' }}"
@@ -119,7 +133,9 @@ runs:
     - name: Build Gem
       shell: bash
       if: "${{ inputs.build == 'true' }}"
+      env:
+        GEM: ${{ inputs.gem }}
       run: |
         # 📦 Build Gem 📦
-        gem build ${{ inputs.gem }}.gemspec
+        gem build "${GEM}.gemspec"
       working-directory: "${{ steps.setup.outputs.gem_dir }}"

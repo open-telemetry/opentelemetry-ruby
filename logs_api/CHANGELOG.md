@@ -1,1 +1,38 @@
 # Release History: opentelemetry-logs-api
+
+### v0.7.0 / 2026-10-13
+
+* BREAKING CHANGE: Swap DEBUG2 and DEBUG3 values (#2449)
+* FIXED: Swap DEBUG2 and DEBUG3 values (#2449)
+
+### v0.6.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global logger provider behind an opt-in require (#2415)
+* ADDED: Move the global logger provider behind an opt-in require (#2415)
+
+### v0.5.0 / 2026-09-15
+
+* BREAKING CHANGE: Align LoggerProvider#logger with the SDK signature (#2375)
+* FIXED: Align LoggerProvider#logger with the SDK signature (#2375)
+* FIXED: Forward on_emit arguments to the delegate logger (#2376)
+
+### v0.4.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
+### v0.4.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.3.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
+### v0.2.0 / 2025-02-25
+
+- ADDED: Support 3.1 Min Version
+
+### v0.1.0 / 2024-12-04
+
+Initial release.

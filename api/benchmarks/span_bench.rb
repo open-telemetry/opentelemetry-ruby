@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'benchmark/ipsa'
+require 'benchmark/ips'
 require 'opentelemetry/sdk'
 
 OpenTelemetry::SDK.configure
@@ -18,7 +18,7 @@ attributes = {
   'http.url' => 'blogs/index'
 }
 
-Benchmark.ipsa do |x|
+Benchmark.ips do |x|
   x.report 'name=' do
     span.name = 'new_name'
   end

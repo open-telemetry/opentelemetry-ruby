@@ -181,7 +181,7 @@ module OpenTelemetry
 # precise value possible. For example, gettimeofday or syncing nanoTime
 # against a tick of currentTimeMillis.
 # 
-# For compatibilty with instrumentation that precede this field, collectors
+# For compatibility with instrumentation that precede this field, collectors
 # or span stores can derive this via Annotation.timestamp.
 # For example, SERVER_RECV.timestamp or CLIENT_SEND.timestamp.
 # 
@@ -194,7 +194,7 @@ module OpenTelemetry
 # precise measurement decoupled from problems of clocks, such as skew or NTP
 # updates causing time to move backwards.
 # 
-# For compatibilty with instrumentation that precede this field, collectors
+# For compatibility with instrumentation that precede this field, collectors
 # or span stores can derive this by subtracting Annotation.timestamp.
 # For example, SERVER_SEND.timestamp - SERVER_RECV.timestamp.
 # 

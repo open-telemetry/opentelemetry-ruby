@@ -26,7 +26,7 @@ module OpenTelemetry
         # the process after an invocation, but before the `Processor` exports
         # the completed spans.
         #
-        # @param [Numeric] timeout An optional timeout in seconds.
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def force_flush(timeout: nil)
@@ -35,7 +35,7 @@ module OpenTelemetry
 
         # Called when {LoggerProvider#shutdown} is called.
         #
-        # @param [Numeric] timeout An optional timeout in seconds.
+        # @param [optional Numeric] timeout An optional timeout in seconds.
         # @return [Integer] Export::SUCCESS if no error occurred, Export::FAILURE if
         #   a non-specific failure occurred, Export::TIMEOUT if a timeout occurred.
         def shutdown(timeout: nil)

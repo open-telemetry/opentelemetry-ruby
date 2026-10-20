@@ -11,19 +11,23 @@ module OpenTelemetry
         # {SynchronousInstrument} contains the common functionality shared across
         # the synchronous instruments SDK instruments.
         class SynchronousInstrument
-          def initialize(name, unit, description, instrumentation_scope, meter_provider)
+          attr_reader :exemplar_reservoir
+
+          def initialize(name, unit, description, instrumentation_scope, meter_provider, exemplar_filter, exemplar_reservoir)
             @name = name
             @unit = unit
             @description = description
             @instrumentation_scope = instrumentation_scope
             @meter_provider = meter_provider
             @metric_streams = []
+            @exemplar_filter = exemplar_filter || meter_provider.exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
 
             meter_provider.register_synchronous_instrument(self)
           end
 
           # @api private
-          def register_with_new_metric_store(metric_store, aggregation: default_aggregation)
+          def register_with_new_metric_store(metric_store, aggregation: nil, default_aggregation: nil)
             ms = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
               @name,
               @description,
@@ -31,7 +35,10 @@ module OpenTelemetry
               instrument_kind,
               @meter_provider,
               @instrumentation_scope,
-              aggregation
+              aggregation,
+              @exemplar_filter,
+              @exemplar_reservoir,
+              default_aggregation: default_aggregation
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)

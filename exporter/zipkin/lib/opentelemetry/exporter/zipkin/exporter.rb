@@ -24,8 +24,7 @@ module OpenTelemetry
         # Default timeouts in seconds.
         KEEP_ALIVE_TIMEOUT = 30
         RETRY_COUNT = 5
-        WRITE_TIMEOUT_SUPPORTED = Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('2.6')
-        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT, :WRITE_TIMEOUT_SUPPORTED)
+        private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
 
         def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_ENDPOINT', default: 'http://localhost:9411/api/v2/spans'),
                        headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_ZIPKIN_TRACES_HEADERS', 'OTEL_EXPORTER_ZIPKIN_HEADERS'),
@@ -102,7 +101,7 @@ module OpenTelemetry
         end
 
         def around_request
-          OpenTelemetry::Common::Utilities.untraced { yield }
+          OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
         end
 
         def valid_headers?(headers)
@@ -119,7 +118,7 @@ module OpenTelemetry
           retry_count = 0
           timeout ||= @timeout
           start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
-          around_request do # rubocop:disable Metrics/BlockLength
+          around_request do
             request = Net::HTTP::Post.new(@path)
             request.body = JSON.generate(zipkin_spans)
             request.add_field('Content-Type', 'application/json')
@@ -130,12 +129,12 @@ module OpenTelemetry
 
             @http.open_timeout = remaining_timeout
             @http.read_timeout = remaining_timeout
-            @http.write_timeout = remaining_timeout if WRITE_TIMEOUT_SUPPORTED
+            @http.write_timeout = remaining_timeout
             @http.start unless @http.started?
 
             response = measure_request_duration { @http.request(request) }
             response.body # Read and discard body
-            # in opentelemetry-js 200-399 is succcess, in opentelemetry-collector zipkin exporter,200-299 is a success
+            # in opentelemetry-js 200-399 is success, in opentelemetry-collector zipkin exporter,200-299 is a success
             # zipkin api docs list 202 as default success code
             # https://zipkin.io/zipkin-api/#/default/post_spans
             # TODO: redirect
@@ -182,11 +181,7 @@ module OpenTelemetry
           sleep_interval = nil
           unless retry_after.nil?
             sleep_interval =
-              begin
-                Integer(retry_after)
-              rescue ArgumentError
-                nil
-              end
+              Integer(retry_after, exception: false)
             sleep_interval ||=
               begin
                 Time.httpdate(retry_after) - Time.now

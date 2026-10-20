@@ -4,7 +4,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'cgi'
+require 'uri'
 
 module OpenTelemetry
   module Baggage
@@ -34,7 +34,7 @@ module OpenTelemetry
           return if baggage.nil? || baggage.empty?
 
           encoded_baggage = encode(baggage)
-          setter.set(carrier, BAGGAGE_KEY, encoded_baggage) unless encoded_baggage&.empty?
+          setter.set(carrier, BAGGAGE_KEY, encoded_baggage) if encoded_baggage && !encoded_baggage.empty?
           nil
         end
 
@@ -55,17 +55,10 @@ module OpenTelemetry
           header = getter.get(carrier, BAGGAGE_KEY)
           return context if header.nil? || header.empty?
 
-          entries = header.gsub(/\s/, '').split(',')
+          entries = split_entries(header)
 
           OpenTelemetry::Baggage.build(context: context) do |builder|
-            entries.each do |entry|
-              # Note metadata is currently unused in OpenTelemetry, but is part
-              # the W3C spec where it's referred to as properties. We preserve
-              # the properties (as-is) so that they can be propagated elsewhere.
-              kv, meta = entry.split(';', 2)
-              k, v = kv.split('=').map!(&CGI.method(:unescape))
-              builder.set_value(k, v, metadata: meta)
-            end
+            decode_entries(entries, builder)
           end
         rescue StandardError => e
           OpenTelemetry.logger.debug "Error extracting W3C baggage: #{e.message}"
@@ -81,6 +74,38 @@ module OpenTelemetry
         end
 
         private
+
+        def split_entries(header)
+          return header.split(',') if header.bytesize <= MAX_TOTAL_LENGTH
+
+          window = header.byteslice(0, MAX_TOTAL_LENGTH + 1)
+          last_separator = window.byterindex(',')
+          return [] unless last_separator
+
+          window.byteslice(0, last_separator).split(',')
+        end
+
+        def decode_entries(entries, builder)
+          decoded_length = 0
+          decoded_count = 0
+          entries.each do |raw_entry|
+            break unless decoded_count < MAX_ENTRIES
+
+            entry = raw_entry.gsub(/\s/, '')
+            next if entry.empty?
+            next unless entry.bytesize <= MAX_ENTRY_LENGTH &&
+                        entry.bytesize + decoded_length <= MAX_TOTAL_LENGTH
+
+            # Note metadata is currently unused in OpenTelemetry, but is part
+            # the W3C spec where it's referred to as properties. We preserve
+            # the properties (as-is) so that they can be propagated elsewhere.
+            kv, meta = entry.split(';', 2)
+            k, v = kv.split('=').map! { |part| URI.decode_uri_component(part) }
+            builder.set_value(k, v, metadata: meta)
+            decoded_length += entry.bytesize + 1
+            decoded_count += 1
+          end
+        end
 
         def encode(baggage)
           result = +''
@@ -99,8 +124,8 @@ module OpenTelemetry
         end
 
         def encode_value(key, entry)
-          result = +"#{CGI.escape(key.to_s)}=#{CGI.escape(entry.value.to_s)}"
-          # We preserve metadata recieved on extract and assume it's already formatted
+          result = "#{URI.encode_uri_component(key.to_s)}=#{URI.encode_uri_component(entry.value.to_s)}"
+          # We preserve metadata received on extract and assume it's already formatted
           # for transport. It's sent as-is without further processing.
           result << ";#{entry.metadata}" if entry.metadata
           result

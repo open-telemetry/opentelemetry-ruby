@@ -1,1 +1,52 @@
 # Release History: opentelemetry-logs-sdk
+
+### v0.8.1 / 2026-10-13
+
+* FIXED: Return a no-op logger if provider stopped (#2452)
+* DOCS: Add spec warning about console exporter (#2450)
+
+### v0.8.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global logger provider behind an opt-in require (#2415)
+* ADDED: Move the global logger provider behind an opt-in require (#2415)
+
+### v0.7.0 / 2026-09-29
+
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Update total_recorded_attributes when LogRecord#attributes= is called (#2241)
+
+### v0.6.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
+### v0.6.0 / 2026-05-12
+
+* ADDED: Add event_name field to Logs (#2077)
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.5.1 / 2026-04-15
+
+* FIXED: Move the logs-sdk requires to support "require 'opentelemetry/sdk/logs'" (#1956)
+
+### v0.5.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+
+### v0.4.0 / 2025-09-16
+
+* BREAKING CHANGE: Add OTEL_LOGRECORD_ATTRIBUTE_* env vars. Remove OTEL_LOG_RECORD_ATTRIBUTE_* env vars.
+
+* ADDED: Add OTEL_LOGRECORD_ATTRIBUTE_* env vars. Remove OTEL_LOG_RECORD_ATTRIBUTE_* env vars.
+
+### v0.3.0 / 2025-08-14
+
+- ADDED: Update error message for invalid log record attribute
+- ADDED: Set logs exporter default to OTLP
+
+### v0.2.0 / 2025-02-25
+
+- ADDED: Support 3.1 Min Version
+
+### v0.1.0 / 2024-12-04
+
+Initial release.

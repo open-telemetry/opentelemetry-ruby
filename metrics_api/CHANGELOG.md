@@ -1,1 +1,58 @@
 # Release History: opentelemetry-metrics-api
+
+### v0.10.0 / 2026-10-13
+
+* ADDED: Fix duplicate instrument registration warning (#2417)
+
+### v0.9.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global meter provider behind an opt-in require (#2416)
+* ADDED: Move the global meter provider behind an opt-in require (#2416)
+
+### v0.8.0 / 2026-09-29
+
+* BREAKING CHANGE: Update api for spec compliance (#2309)
+* ADDED: Update api for spec compliance (#2309)
+
+### v0.7.1 / 2026-09-15
+
+* FIXED: Pass the callback through when upgrading a proxy instrument (#2377)
+
+### v0.7.0 / 2026-08-04
+
+* ADDED: Add attributes to Meter InstrumentationScope (#2273)
+
+### v0.6.1 / 2026-07-08
+
+* DOCS: Update source for gemspec links to RubyDoc (#2123)
+
+### v0.6.0 / 2026-05-12
+
+* ADDED: Add git tag to source URI in gemspec (#2101)
+
+### v0.5.0 / 2026-04-07
+
+* ADDED: Min Ruby Version 3.3 (#2070)
+* ADDED: Add basic support for metrics exemplar (#1609)
+
+### v0.4.0 / 2025-08-14
+
+- ADDED: Support asynchronous instruments: ObservableGauge, ObservableCounter and ObservableUpDownCounter
+- FIXED: Update max instrument name length from 63 to 255 characters and allow `/` in instrument names
+
+### v0.3.0 / 2025-02-25
+
+- ADDED: Support 3.1 Min Version
+
+### v0.2.0 / 2025-01-08
+
+- ADDED: Add synchronous gauge
+- DOCS: Add documentation for Metrics API instruments
+
+### v0.1.1 / 2024-10-22
+
+- FIXED: Refactor instrument validation
+
+### v0.1.0 / 2024-07-31
+
+Initial release.

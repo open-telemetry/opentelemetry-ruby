@@ -13,13 +13,15 @@ module OpenTelemetry
         #
         # Returns a new {Tracer} instance.
         #
-        # @param [String] name Instrumentation package name
-        # @param [String] version Instrumentation package version
+        # @param [String] name Instrumentation scope name
+        # @param [String] version Instrumentation scope version
         # @param [TracerProvider] tracer_provider TracerProvider that initialized the tracer
+        # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
+        #   Instrumentation scope attributes
         #
         # @return [Tracer]
-        def initialize(name, version, tracer_provider)
-          @instrumentation_scope = InstrumentationScope.new(name, version)
+        def initialize(name, version, tracer_provider, attributes: nil)
+          @instrumentation_scope = InstrumentationScope.new(name, version, attributes || {}.freeze)
           @tracer_provider = tracer_provider
         end
 
@@ -29,8 +31,6 @@ module OpenTelemetry
 
         def start_span(name, with_parent: nil, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
           with_parent ||= Context.current
-          return super(name, with_parent: with_parent, attributes: attributes, links: links, start_timestamp: start_timestamp, kind: kind) if Common::Utilities.untraced?(with_parent)
-
           name ||= 'empty'
           kind ||= :internal
 

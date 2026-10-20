@@ -10,6 +10,7 @@ require 'yard'
 
 require 'rubocop/rake_task'
 RuboCop::RakeTask.new
+YARD::Rake::YardocTask.new
 
 Rake::TestTask.new :test do |t|
   t.libs << 'test'
@@ -19,20 +20,20 @@ Rake::TestTask.new :test do |t|
   t.test_files = FileList['test/**/*_test.rb']
 end
 
-YARD::Rake::YardocTask.new do |t|
-  t.stats_options = ['--list-undoc']
-end
+default_tasks =
+  if RUBY_ENGINE == 'truffleruby'
+    %i[test]
+  else
+    %i[test rubocop yard]
+  end
 
-if RUBY_ENGINE == 'truffleruby'
-  task default: %i[test]
-else
-  task default: %i[test rubocop yard]
-end
+task default: default_tasks
 
-# https://github.com/open-telemetry/opentelemetry-proto/tree/v0.20.0
-PROTO_VERSION = 'v0.20.0'
+# https://github.com/open-telemetry/opentelemetry-proto/tree/v1.8.0
+PROTO_VERSION = 'v1.8.0'
 
 namespace :protobuf do
+  desc 'Remove proto file'
   task :clean do
     FileUtils.rm_rf('lib/opentelemetry/proto')
     FileUtils.rm_rf('opentelemetry-proto')

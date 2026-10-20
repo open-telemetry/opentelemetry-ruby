@@ -1,0 +1,62 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
+
+require 'simplecov'
+SimpleCov.start
+
+require 'bundler/setup'
+
+$LOAD_PATH.unshift File.join(__dir__, '..', 'lib')
+
+require 'opentelemetry-sdk'
+require 'opentelemetry-exporter-otlp'
+require 'opentelemetry-logs-sdk'
+require 'opentelemetry-exporter-otlp-logs'
+require 'opentelemetry/config'
+require 'opentelemetry/test_helpers'
+
+require 'minitest/autorun'
+require 'minitest/mock'
+require 'minitest/spec'
+require 'tempfile'
+
+# Writes +yaml+ to a Tempfile and yields its path, then deletes the file.
+def with_config(yaml)
+  tmp = Tempfile.new(['otel-config', '.yaml'])
+  tmp.write(yaml)
+  tmp.close
+  yield tmp.path
+ensure
+  tmp.unlink
+end
+
+# Reset after every test across all spec files.
+Minitest::Spec.after do
+  tp = OpenTelemetry.tracer_provider
+  tp.shutdown if tp.respond_to?(:shutdown)
+
+  OpenTelemetry::TestHelpers.reset_opentelemetry
+  reset_logger_provider
+end
+
+# Restores the default proxy logger provider. The global lives on
+# OpenTelemetry::Internal when the logs API keeps it behind an opt-in require,
+# and on OpenTelemetry otherwise.
+def reset_logger_provider
+  owner = OpenTelemetry::Internal.respond_to?(:logger_provider) ? OpenTelemetry::Internal : OpenTelemetry
+  owner.instance_variable_set(:@logger_provider, OpenTelemetry::Internal::ProxyLoggerProvider.new)
+end
+
+# Shared minimal tracer_provider YAML used by end-to-end tests.
+TRACER_PROVIDER_YAML = <<~PROVIDER
+  tracer_provider:
+    processors:
+      - simple:
+          exporter:
+            console:
+PROVIDER

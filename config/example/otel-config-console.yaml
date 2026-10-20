@@ -1,0 +1,46 @@
+file_format: "1.0"
+disabled: false
+log_level: info
+
+resource:
+  attributes:
+    - name: service.name
+      value: "declare-config-example"
+    - name: service.version
+      value: "1.0.0"
+    - name: deployment.environment
+      value: "development"
+
+tracer_provider:
+  processors:
+    - simple:
+        exporter:
+          console:
+  limits:
+    attribute_value_length_limit: 4096
+    attribute_count_limit: 128
+    event_count_limit: 128
+    link_count_limit: 128
+  sampler:
+    parent_based:
+      root:
+        always_on:
+      remote_parent_sampled:
+        always_on:
+      remote_parent_not_sampled:
+        always_off:
+      local_parent_sampled:
+        always_on:
+      local_parent_not_sampled:
+        always_off:
+
+propagator:
+  composite:
+    - tracecontext:
+    - baggage:
+
+instrumentation/development:
+  general:
+    net_http:
+      untraced_hosts:
+        - google.ca

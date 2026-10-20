@@ -1,0 +1,65 @@
+name: PR Validation
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+  merge_group:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }} # Ensure that only one instance of this workflow is running per Pull Request or ref
+  cancel-in-progress: true # Cancel any previous runs of this workflow
+
+jobs:
+  validate-commits:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    name: PR Title
+    runs-on: ubuntu-26.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # restrict checks to pull requests to avoid issues blocking the merge queue
+      - name: Validate conventional commit style title
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
+        id: lint_pr_title
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            chore
+            ci
+            docs
+            feat
+            fix
+            perf
+            refactor
+            release
+            revert
+            squash
+            style
+            test
+      - name: Extract PR Title
+        id: pr
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Title: $TITLE" > pr_title.md
+      - name: Check PR Title spelling
+        if: ${{ steps.lint_pr_title.outputs.scope != 'deps' }}
+        uses: streetsidesoftware/cspell-action@ce1816e4ce36532956ac6e983737392774b6e169 # v9.2.0
+        with:
+          config: .cspell.yml
+          suggestions: true
+          treat_flagged_words_as_errors: true
+          incremental_files_only: false
+          files: |
+            pr_title.md

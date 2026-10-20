@@ -36,6 +36,12 @@ describe OpenTelemetry::Trace::Span do
     end
   end
 
+  describe '#add_link' do
+    it 'returns self' do
+      _(span.add_link(OpenTelemetry::Trace::Link.new(span_context))).must_equal(span)
+    end
+  end
+
   describe '#add_event' do
     it 'returns self' do
       _(span.add_event('event-name')).must_equal(span)

@@ -7,8 +7,6 @@
 require 'test_helper'
 
 describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
-  Context = OpenTelemetry::Context
-
   class TestInjector
     def initialize(key)
       @key = key
@@ -74,11 +72,10 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
 
       it 'accepts explicit context' do
         Context.with_values('k1' => 'v1', 'k2' => 'v2') do
-          ctx = Context.current.set_value('k3', 'v3') do
-            carrier = {}
-            propagator.inject(carrier, context: ctx)
-            _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
-          end
+          ctx = Context.current.set_value('k3', 'v3')
+          carrier = {}
+          propagator.inject(carrier, context: ctx)
+          _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
         end
       end
 

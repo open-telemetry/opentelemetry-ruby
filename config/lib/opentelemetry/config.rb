@@ -1,0 +1,127 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+require 'date'
+require 'yaml'
+
+require_relative 'config/defaults'
+require_relative 'config/env_substitution'
+require_relative 'config/logs'
+require_relative 'config/propagation'
+require_relative 'config/resource'
+require_relative 'config/constants'
+require_relative 'config/trace'
+
+module OpenTelemetry
+  # Config module handles declarative configuration of OpenTelemetry components
+  # from YAML files.
+  module Config
+    ENV_CONFIG_FILE = 'OTEL_CONFIG_FILE'
+    private_constant :ENV_CONFIG_FILE
+
+    class << self
+      # Parses the file referenced by +OTEL_CONFIG_FILE+, creates the components
+      # it describes, and installs them as the global OpenTelemetry state.
+      #
+      # @return [RubySDK] the installed SDK handle
+      def configure
+        install(create(parse(ENV.fetch(ENV_CONFIG_FILE, nil))))
+      end
+
+      # Same as {configure}, but reads the configuration from an explicit path.
+      #
+      # @param path [String] path to a declarative configuration YAML file
+      # @return [RubySDK] the installed SDK handle
+      def configure_from_file(path)
+        install(create(parse(path)))
+      end
+
+      # Parses a declarative configuration file into the configuration model.
+      #
+      # @param path [String, nil] path to a declarative configuration YAML file
+      # @return [Model::OpenTelemetryConfiguration, nil] nil when the file is
+      #   unset, missing, or invalid
+      def parse(path)
+        if path.to_s.empty?
+          OpenTelemetry.logger.info('No OTEL_CONFIG_FILE defined.')
+          return nil
+        end
+
+        content = File.read(path)
+        OpenTelemetry::Config::Model::OpenTelemetryConfiguration.from_hash(EnvSubstitution.load(content))
+      rescue Errno::ENOENT => e
+        OpenTelemetry.logger.error("Config file not found: #{e.message}")
+        nil
+      rescue Psych::SyntaxError => e
+        OpenTelemetry.logger.error("YAML parse error: #{e.message}")
+        nil
+      rescue EnvSubstitution::Error => e
+        OpenTelemetry.logger.error("Config file substitution error: #{e.message}")
+        nil
+      end
+
+      # Creates the components described by a configuration model without
+      # modifying global OpenTelemetry state.
+      #
+      # @param config [Model::OpenTelemetryConfiguration, nil]
+      # @return [RubySDK] {NOOP_SDK} when the configuration is absent, invalid,
+      #   disabled, or opentelemetry-sdk isn't loaded
+      def create(config)
+        return NOOP_SDK if config.nil?
+
+        unless defined?(OpenTelemetry::SDK)
+          warn '[opentelemetry-config] opentelemetry-sdk is not loaded. ' \
+               'Add `gem "opentelemetry-sdk"` to your Gemfile.'
+          return NOOP_SDK
+        end
+
+        if config.disabled
+          OpenTelemetry.logger.info('OpenTelemetry SDK disabled by configuration.')
+          return NOOP_SDK
+        end
+
+        resource = build_resource(config.resource)
+
+        # tracer_provider will be noop if opentelemetry-sdk is not installed
+        tracer_provider = Trace.build_tracer_provider(config.tracer_provider, resource)
+        logger_provider = Logs.build_logger_provider(config.logger_provider, resource)
+
+        propagators = configure_propagation(config.propagator)
+
+        RubySDK.new(
+          tracer_provider: tracer_provider,
+          logger_provider: logger_provider,
+          propagator: propagators,
+          resource: resource
+        )
+      end
+
+      # Assigns the components of a RubySDK to the global OpenTelemetry state.
+      # NOOP_SDK will skip installation and leave the global state untouched.
+      #
+      # @param ruby_sdk [RubySDK]
+      # @return [RubySDK] the same SDK handle
+      def install(ruby_sdk)
+        return ruby_sdk if ruby_sdk.equal?(NOOP_SDK)
+
+        OpenTelemetry.tracer_provider = ruby_sdk.tracer_provider if ruby_sdk.tracer_provider
+        install_logger_provider(ruby_sdk.logger_provider) if ruby_sdk.logger_provider
+        OpenTelemetry.propagation = ruby_sdk.propagator if ruby_sdk.propagator
+        ruby_sdk
+      end
+
+      private
+
+      def install_logger_provider(provider)
+        if OpenTelemetry.respond_to?(:logger_provider=)
+          OpenTelemetry.logger_provider = provider
+        else
+          OpenTelemetry.logger.warn('Cannot install the configured logger provider: OpenTelemetry.logger_provider= ' \
+                                    'is not defined. Require opentelemetry-logs-sdk.')
+        end
+      end
+    end
+  end
+end

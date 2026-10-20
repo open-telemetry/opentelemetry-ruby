@@ -39,7 +39,7 @@ module OpenTelemetry
 
         def to_zipkin_span(span_d, resource)
           start_time = span_d.start_timestamp / 1_000
-          duration = span_d.end_timestamp / 1_000 - start_time
+          duration = (span_d.end_timestamp / 1_000) - start_time
           tags = {}
           service_name = DEFAULT_SERVICE_NAME
           resource.attribute_enumerator.select do |key, value|
@@ -50,7 +50,7 @@ module OpenTelemetry
           add_status_tags(span_d, tags)
           tags = aggregate_span_tags(span_d, tags)
 
-          # TOOO: set debug flag? (is that represented in tracestate?)
+          # TODO: set debug flag? (is that represented in tracestate?)
           # https://github.com/openzipkin/b3-propagation#why-is-debug-encoded-as-x-b3-flags-1
           # https://github.com/openzipkin/zipkin-api/blob/7692ca7be4dc3be9225db550d60c4d30e6e9ec59/zipkin2-api.yaml#L475
           # TODO: shared key mapping
@@ -115,14 +115,14 @@ module OpenTelemetry
           return if span_data.events.nil? || span_data.events.empty?
 
           events = span_data.events.map do |event|
-            if event.attributes.keys.length.zero?
+            if event.attributes.keys.empty?
               {
-                timestamp: (event.timestamp / 1_000).to_s,
+                timestamp: event.timestamp / 1_000,
                 value: event.name
               }
             else
               {
-                timestamp: (event.timestamp / 1_000).to_s,
+                timestamp: event.timestamp / 1_000,
                 value: { event.name => event.attributes.transform_values(&:to_s) }.to_json
               }
             end

@@ -1,0 +1,109 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+module OpenTelemetry
+  module Exporter
+    module OTLP
+      module Metrics
+        # Util module provide essential functionality for exporter
+        module Util
+          KEEP_ALIVE_TIMEOUT = 30
+          RETRY_COUNT = 5
+          ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
+          DEFAULT_USER_AGENT = "OTel-OTLP-MetricsExporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Metrics::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
+
+          # Builds a configured Net::HTTP connection for the given URI.
+          def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+            http = Net::HTTP.new(uri.hostname, uri.port)
+            http.use_ssl = uri.scheme == 'https'
+            http.verify_mode = ssl_verify_mode
+            http.ca_file = certificate_file unless certificate_file.nil?
+            http.cert = OpenSSL::X509::Certificate.new(File.read(client_certificate_file)) unless client_certificate_file.nil?
+            http.key = OpenSSL::PKey::RSA.new(File.read(client_key_file)) unless client_key_file.nil?
+            http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+            http
+          end
+
+          # Yields the block with OpenTelemetry instrumentation suppressed.
+          def around_request
+            OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
+          end
+
+          # Normalizes config_headers into a Hash, appending the default User-Agent.
+          def prepare_headers(config_headers)
+            headers = case config_headers
+                      when String then parse_headers(config_headers)
+                      when Hash then config_headers.dup
+                      else
+                        raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
+                      end
+
+            headers['User-Agent'] = "#{headers.fetch('User-Agent', '')} #{DEFAULT_USER_AGENT}".strip
+
+            headers
+          end
+
+          # Parses a comma-separated, URL-encoded header string into a Hash.
+          def parse_headers(raw)
+            entries = raw.split(',')
+            raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
+
+            entries.each_with_object({}) do |entry, headers|
+              k, v = entry.split('=', 2).map { |part| URI.decode_uri_component part }
+              begin
+                k = k.to_s.strip
+                v = v.to_s.strip
+              rescue Encoding::CompatibilityError
+                raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
+              rescue ArgumentError => e
+                raise e, ERROR_MESSAGE_INVALID_HEADERS
+              end
+              raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if k.empty? || v.empty?
+
+              headers[k] = v
+            end
+          end
+
+          # Sleeps for a computed backoff interval and returns whether a retry should happen.
+          def backoff?(retry_count:, reason:, retry_after: nil)
+            return false if retry_count > RETRY_COUNT
+
+            sleep_interval = nil
+            unless retry_after.nil?
+              sleep_interval =
+                Integer(retry_after, exception: false)
+              sleep_interval ||=
+                begin
+                  Time.httpdate(retry_after) - Time.now
+                rescue # rubocop:disable Style/RescueStandardError
+                  nil
+                end
+              sleep_interval = nil unless sleep_interval&.positive?
+            end
+            sleep_interval ||= rand(2**retry_count)
+
+            sleep(sleep_interval)
+            true
+          end
+
+          # Decodes and logs an rpc.Status error response body.
+          def log_status(body)
+            status = Google::Rpc::Status.decode(body)
+            pool = ::Google::Protobuf::DescriptorPool.generated_pool
+            details = status.details.filter_map do |detail|
+              type_name = detail.type_url.to_s.split('/').last.to_s
+              klass = pool.lookup(type_name)&.msgclass
+              detail.unpack(klass) if klass
+            end
+            OpenTelemetry.handle_error(message: "OTLP metrics_exporter received rpc.Status{message=#{status.message}, details=#{details}}")
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
+          end
+        end
+      end
+    end
+  end
+end

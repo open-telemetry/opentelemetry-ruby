@@ -7,14 +7,15 @@
 require 'opentelemetry/context/key'
 require 'opentelemetry/context/propagation'
 
-module OpenTelemetry
+module OpenTelemetry # rubocop:disable Style/Documentation
+  Fiber.attr_accessor :opentelemetry_context
+
   # Manages context on a per-fiber basis
   class Context
     EMPTY_ENTRIES = {}.freeze
-    STACK_KEY = :__opentelemetry_context_storage__
-    private_constant :EMPTY_ENTRIES, :STACK_KEY
+    private_constant :EMPTY_ENTRIES
 
-    DetachError = Class.new(OpenTelemetry::Error)
+    DetachError = Class.new(OpenTelemetry::Error) # rubocop:disable Style/EmptyClassDefinition
 
     class << self
       # Returns a key used to index a value in a Context
@@ -66,6 +67,7 @@ module OpenTelemetry
       #
       # @param [Context] ctx The context to be made active
       # @yield [context] Yields context to the block
+      # @yieldparam [Context] context The active context
       def with_current(ctx)
         token = attach(ctx)
         yield ctx
@@ -78,9 +80,10 @@ module OpenTelemetry
 
       # @param [String] key The lookup key
       # @param [Object] value The object stored under key
-      # @param [Callable] Block to execute in a new context
       # @yield [context, value] Yields the newly created context and value to
       #   the block
+      # @yieldparam [Context] context The newly created context
+      # @yieldparam [Object] value The object stored under key
       def with_value(key, value)
         ctx = current.set_value(key, value)
         token = attach(ctx)
@@ -92,12 +95,12 @@ module OpenTelemetry
       # Execute a block in a new context where its values are merged with the
       # incoming values. Restores the previous context after the block executes.
 
-      # @param [String] key The lookup key
       # @param [Hash] values Will be merged with values of the current context
       #  and returned in a new context
-      # @param [Callable] Block to execute in a new context
       # @yield [context, values] Yields the newly created context and values
       #   to the block
+      # @yieldparam [Context] context The newly created context
+      # @yieldparam [Hash] values The values merged into the new context
       def with_values(values)
         ctx = current.set_values(values)
         token = attach(ctx)
@@ -113,13 +116,14 @@ module OpenTelemetry
         current.value(key)
       end
 
-      # Clears the fiber-local Context stack. This allocates a new array for the
-      # stack, which is important in some use-cases to avoid sharing the backing
-      # array between fibers.
+      # Clears the fiber-local Context stack.
       def clear
-        Thread.current[STACK_KEY] = []
+        Fiber.current.opentelemetry_context = []
       end
 
+      # Returns an empty context.
+      #
+      # @return [Context]
       def empty
         new(EMPTY_ENTRIES)
       end
@@ -127,7 +131,7 @@ module OpenTelemetry
       private
 
       def stack
-        Thread.current[STACK_KEY] ||= []
+        Fiber.current.opentelemetry_context ||= []
       end
     end
 
@@ -161,9 +165,8 @@ module OpenTelemetry
     #
     # @param [Hash] values The values to be merged with the current context's
     #   entries.
-    # @param [Object] value Object to be stored under key
     # @return [Context]
-    def set_values(values) # rubocop:disable Naming/AccessorMethodName:
+    def set_values(values) # rubocop:disable Naming/AccessorMethodName
       Context.new(@entries.merge(values))
     end
 

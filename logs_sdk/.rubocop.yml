@@ -1,16 +1,12 @@
 inherit_from: ../contrib/rubocop.yml
 
-AllCops:
-  NewCops: disable
-
-Metrics/AbcSize:
-  Max: 30
-Metrics/MethodLength:
-  Max: 50
-Metrics/PerceivedComplexity:
-  Max: 30
-Metrics/CyclomaticComplexity:
-  Max: 20
-Naming/FileName:
+Lint/EmptyClass:
   Exclude:
-    - 'lib/opentelemetry-logs-sdk.rb'
+    - 'test/opentelemetry/sdk/logs/export/batch_log_record_processor_test.rb'
+
+Metrics/MethodLength:
+  Max: 23
+Metrics/PerceivedComplexity:
+  Max: 10
+Metrics/CyclomaticComplexity:
+  Max: 10

@@ -15,7 +15,13 @@ module OpenTelemetry
   end
 end
 
+require 'opentelemetry/sdk/metrics/aggregation/aggregation_temporality'
+require 'opentelemetry/sdk/metrics/aggregation/stream_scoped_storage'
 require 'opentelemetry/sdk/metrics/aggregation/number_data_point'
 require 'opentelemetry/sdk/metrics/aggregation/histogram_data_point'
 require 'opentelemetry/sdk/metrics/aggregation/explicit_bucket_histogram'
 require 'opentelemetry/sdk/metrics/aggregation/sum'
+require 'opentelemetry/sdk/metrics/aggregation/last_value'
+require 'opentelemetry/sdk/metrics/aggregation/drop'
+require 'opentelemetry/sdk/metrics/aggregation/exponential_histogram_data_point'
+require 'opentelemetry/sdk/metrics/aggregation/exponential_bucket_histogram'

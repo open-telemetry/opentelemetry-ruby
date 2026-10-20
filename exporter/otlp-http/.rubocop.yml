@@ -6,9 +6,6 @@ AllCops:
     - "vendor/**/*"
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Max: 23
 Metrics/PerceivedComplexity:
-  Enabled: false
-Naming/FileName:
-  Exclude:
-    - "lib/opentelemetry-exporter-otlp-http.rb"
+  Max: 20

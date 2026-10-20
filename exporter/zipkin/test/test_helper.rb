@@ -4,10 +4,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-if RUBY_ENGINE == 'ruby'
-  require 'simplecov'
-  SimpleCov.start
-end
+require 'dotenv'
+Dotenv.load(File.expand_path('.env', __dir__))
+
+require 'simplecov'
+SimpleCov.start
 
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/zipkin'
@@ -42,6 +43,7 @@ end
 # Test helper for Zipkin Exporter
 class InMemoryMetricsReporter
   include OpenTelemetry::SDK::Trace::Export::MetricsReporter
+
   attr_reader :counters, :records, :observes
 
   def initialize

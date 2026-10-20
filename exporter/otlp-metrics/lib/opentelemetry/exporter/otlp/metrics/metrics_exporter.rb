@@ -1,0 +1,269 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'opentelemetry/common'
+require 'opentelemetry/exporter/otlp/common'
+require 'opentelemetry/sdk'
+require 'net/http'
+require 'zlib'
+
+require 'google/rpc/status_pb'
+
+require 'opentelemetry/proto/common/v1/common_pb'
+require 'opentelemetry/proto/resource/v1/resource_pb'
+require 'opentelemetry/proto/metrics/v1/metrics_pb'
+require 'opentelemetry/proto/collector/metrics/v1/metrics_service_pb'
+
+require 'opentelemetry/metrics'
+require 'opentelemetry/sdk/metrics'
+
+require_relative 'util'
+
+module OpenTelemetry
+  module Exporter
+    module OTLP
+      module Metrics
+        # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
+          include Util
+
+          attr_reader :metric_snapshots
+
+          SUCCESS = OpenTelemetry::SDK::Metrics::Export::SUCCESS
+          FAILURE = OpenTelemetry::SDK::Metrics::Export::FAILURE
+          private_constant(:SUCCESS, :FAILURE)
+
+          # rubocop:disable Lint/DuplicateBranch
+          # Returns the SSL verify mode configured via environment variables.
+          def self.ssl_verify_mode
+            if ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER')
+              OpenSSL::SSL::VERIFY_PEER
+            elsif ENV.key?('OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE')
+              OpenSSL::SSL::VERIFY_NONE
+            else
+              OpenSSL::SSL::VERIFY_PEER
+            end
+          end
+          # rubocop:enable Lint/DuplicateBranch
+
+          def initialize(endpoint: nil,
+                         certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+                         client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
+                         client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
+                         ssl_verify_mode: MetricsExporter.ssl_verify_mode,
+                         headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
+                         compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         aggregation_cardinality_limit: nil,
+                         default_aggregation: nil)
+            raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+
+            # create the MetricStore object
+            # An explicitly provided aggregation takes precedence over the environment variable.
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: self.class.histogram_aggregation_from_env.merge(default_aggregation || {}))
+
+            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
+            @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+
+            @path = @uri.path
+            @headers = prepare_headers(headers)
+            @timeout = timeout.to_f
+            @compression = compression
+            @mutex = Mutex.new
+            @shutdown = false
+          end
+
+          # Returns the histogram aggregation requested by
+          # OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION, or an empty Hash
+          # when the spec default (explicit bucket histogram) applies.
+          #
+          # @return [Hash{Symbol => Class}]
+          def self.histogram_aggregation_from_env
+            case ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', 'explicit_bucket_histogram').strip.downcase
+            when 'base2_exponential_bucket_histogram'
+              { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+            when 'explicit_bucket_histogram'
+              {}
+            else
+              OpenTelemetry.logger.warn(
+                "OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION: unrecognized value '#{ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', nil)}', defaulting to explicit_bucket_histogram."
+              )
+              {}
+            end
+          end
+
+          # consolidate the metrics data into the form of MetricData
+          #
+          # return MetricData
+          def pull
+            export(collect)
+          end
+
+          # metrics Array[MetricData]
+          def export(metrics, timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring export request')
+              return FAILURE
+            end
+
+            @mutex.synchronize do
+              send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr(metrics), timeout: timeout)
+            end
+          end
+
+          # Sends the encoded request bytes to the configured OTLP endpoint.
+          def send_bytes(bytes, timeout:)
+            return FAILURE if bytes.nil?
+
+            body = @compression == 'gzip' ? Zlib.gzip(bytes) : bytes
+
+            retry_count = 0
+            timeout ||= @timeout
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+
+            around_request do
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              return FAILURE if remaining_timeout.zero?
+
+              request = build_request(body)
+
+              @http.open_timeout = remaining_timeout
+              @http.read_timeout = remaining_timeout
+              @http.write_timeout = remaining_timeout
+              @http.start unless @http.started?
+              response = @http.request(request)
+              case response
+              when Net::HTTPSuccess
+                response.body # Read and discard body
+                SUCCESS
+              when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
+                response.body # Read and discard body
+                redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.warn('Net::HTTPServiceUnavailable/Net::HTTPTooManyRequests in MetricsExporter#send_bytes')
+                FAILURE
+              when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
+                response.body # Read and discard body
+                redo if backoff?(retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.warn('Net::HTTPRequestTimeOut/Net::HTTPGatewayTimeOut/Net::HTTPBadGateway in MetricsExporter#send_bytes')
+                FAILURE
+              when Net::HTTPNotFound
+                OpenTelemetry.handle_error(message: "OTLP metrics_exporter received http.code=404 for uri: '#{@path}'")
+                FAILURE
+              when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+                log_status(response.body)
+                OpenTelemetry.logger.warn('Net::HTTPBadRequest/Net::HTTPClientError/Net::HTTPServerError in MetricsExporter#send_bytes')
+                FAILURE
+              when Net::HTTPRedirection
+                @http.finish
+                handle_redirect(response['location'])
+                redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.warn('Net::HTTPRedirection in MetricsExporter#send_bytes')
+                FAILURE
+              else
+                @http.finish
+                OpenTelemetry.logger.warn("Unexpected error in OTLP::MetricsExporter#send_bytes - #{response.message}")
+                FAILURE
+              end
+            rescue Net::OpenTimeout, Net::ReadTimeout
+              retry if backoff?(retry_count: retry_count += 1, reason: 'timeout')
+              OpenTelemetry.logger.warn('Net::OpenTimeout/Net::ReadTimeout in MetricsExporter#send_bytes')
+              return FAILURE
+            rescue OpenSSL::SSL::SSLError
+              retry if backoff?(retry_count: retry_count += 1, reason: 'openssl_error')
+              OpenTelemetry.logger.warn('OpenSSL::SSL::SSLError in MetricsExporter#send_bytes')
+              return FAILURE
+            rescue SocketError
+              retry if backoff?(retry_count: retry_count += 1, reason: 'socket_error')
+              OpenTelemetry.logger.warn('SocketError in MetricsExporter#send_bytes')
+              return FAILURE
+            rescue SystemCallError => e
+              retry if backoff?(retry_count: retry_count += 1, reason: e.class.name)
+              OpenTelemetry.logger.warn('SystemCallError in MetricsExporter#send_bytes')
+              return FAILURE
+            rescue EOFError
+              retry if backoff?(retry_count: retry_count += 1, reason: 'eof_error')
+              OpenTelemetry.logger.warn('EOFError in MetricsExporter#send_bytes')
+              return FAILURE
+            rescue Zlib::DataError
+              retry if backoff?(retry_count: retry_count += 1, reason: 'zlib_error')
+              OpenTelemetry.logger.warn('Zlib::DataError in MetricsExporter#send_bytes')
+              return FAILURE
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::MetricsExporter#send_bytes')
+              return FAILURE
+            end
+          ensure
+            # Reset timeouts to defaults for the next call.
+            @http.open_timeout = @timeout
+            @http.read_timeout = @timeout
+            @http.write_timeout = @timeout
+          end
+
+          # Builds a POST request for the current endpoint path, so that a
+          # redirect to a different path is picked up by the next retry.
+          def build_request(body)
+            request = Net::HTTP::Post.new(@path)
+            request.body = body
+            request.add_field('Content-Encoding', 'gzip') if @compression == 'gzip'
+            request.add_field('Content-Type', 'application/x-protobuf')
+            @headers.each { |key, value| request.add_field(key, value) }
+            request
+          end
+
+          # Follows an HTTP redirect by reinitializing the HTTP connection and
+          # request path from the Location response header before the retry.
+          #
+          # Relative locations are resolved against the current endpoint URI.
+          # The connection is re-created when the redirect points at a
+          # different host or port; TLS and certificate settings are kept.
+          def handle_redirect(location)
+            return if location.nil? || location.empty?
+
+            uri = URI.join(@uri, location)
+            return if uri == @uri
+
+            if uri.host != @uri.host || uri.port != @uri.port
+              old_http = @http
+              @http = Net::HTTP.new(uri.hostname, uri.port)
+              @http.use_ssl = uri.scheme == 'https'
+              @http.verify_mode = old_http.verify_mode
+              @http.ca_file = old_http.ca_file unless old_http.ca_file.nil?
+              @http.cert = old_http.cert unless old_http.cert.nil?
+              @http.key = old_http.key unless old_http.key.nil?
+              @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+            else
+              @http.use_ssl = uri.scheme == 'https'
+            end
+            @uri = uri
+            @path = uri.path
+          end
+
+          # may not need this
+          def reset
+            SUCCESS
+          end
+
+          # No-op: there is nothing to flush for this exporter.
+          def force_flush(timeout: nil)
+            SUCCESS
+          end
+
+          # Marks this exporter as shut down so subsequent exports fail.
+          def shutdown(timeout: nil)
+            if @shutdown
+              OpenTelemetry.logger.warn('Exporter already shutdown, ignoring call')
+              return
+            end
+
+            @shutdown = true
+            SUCCESS
+          end
+        end
+      end
+    end
+  end
+end

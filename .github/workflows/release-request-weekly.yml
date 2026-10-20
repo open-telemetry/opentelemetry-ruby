@@ -1,0 +1,45 @@
+name: Open release request - Weekly
+
+on:
+  schedule:
+    - cron: "0 15 * * 2"
+
+permissions:
+  contents: read
+
+jobs:
+  release-request:
+    if: ${{ github.repository == 'open-telemetry/opentelemetry-ruby' }}
+    permissions:
+      contents: write # required for pushing changes
+      pull-requests: write # required for creating release PRs
+    runs-on: ubuntu-26.04
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates
+          persist-credentials: true
+      - name: Install Ruby
+        uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1.331.0
+        with:
+          ruby-version: "4.0.7"
+          bundler-cache: true
+      - name: Create otelbot app token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
+        id: app-token
+        with:
+          client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
+          private-key: ${{ secrets.OTELBOT_RUBY_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - name: Open release pull request
+        env:
+          # Use an app token instead of GITHUB_TOKEN to trigger workflows
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          bundle exec toys release request --yes --verbose \
+            "--target-branch=${GITHUB_REF}" \
+            < /dev/null

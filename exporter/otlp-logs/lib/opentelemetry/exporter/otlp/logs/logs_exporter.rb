@@ -1,0 +1,314 @@
+# frozen_string_literal: true
+
+# Copyright The OpenTelemetry Authors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+require 'opentelemetry/common'
+require 'opentelemetry/exporter/otlp/common'
+require 'opentelemetry/sdk'
+require 'opentelemetry-logs-api' # the sdk isn't loading the api, but not sure why
+require 'opentelemetry/sdk/logs'
+require 'net/http'
+require 'zlib'
+
+require 'google/rpc/status_pb'
+
+require 'opentelemetry/proto/common/v1/common_pb'
+require 'opentelemetry/proto/resource/v1/resource_pb'
+require 'opentelemetry/proto/logs/v1/logs_pb'
+require 'opentelemetry/proto/collector/logs/v1/logs_service_pb'
+
+module OpenTelemetry
+  module Exporter
+    module OTLP
+      module Logs
+        # An OpenTelemetry log exporter that sends log records over HTTP as Protobuf encoded OTLP ExportLogsServiceRequests.
+        class LogsExporter # rubocop:disable Metrics/ClassLength
+          SUCCESS = OpenTelemetry::SDK::Logs::Export::SUCCESS
+          FAILURE = OpenTelemetry::SDK::Logs::Export::FAILURE
+          private_constant(:SUCCESS, :FAILURE)
+
+          # Default timeouts in seconds.
+          KEEP_ALIVE_TIMEOUT = 30
+          RETRY_COUNT = 5
+          private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
+
+          ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
+          private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
+
+          DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Logs::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
+
+          # rubocop:disable-next Lint/DuplicateBranch
+          def self.ssl_verify_mode
+            if ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER'] == 'true'
+              OpenSSL::SSL::VERIFY_PEER
+            elsif ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE'] == 'true'
+              OpenSSL::SSL::VERIFY_NONE
+            else
+              OpenSSL::SSL::VERIFY_PEER
+            end
+          end
+
+          def initialize(endpoint: nil,
+                         certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
+                         client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
+                         client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
+                         ssl_verify_mode: LogsExporter.ssl_verify_mode,
+                         headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
+                         compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+            raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+
+            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
+            @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+
+            @path = @uri.path
+            @headers = prepare_headers(headers)
+            @timeout = timeout.to_f
+            @compression = compression
+            @shutdown = false
+          end
+
+          # Called to export sampled {OpenTelemetry::SDK::Logs::LogRecordData} structs.
+          #
+          # @param [Enumerable<OpenTelemetry::SDK::Logs::LogRecordData>] log_record_data the
+          #   list of recorded {OpenTelemetry::SDK::Logs::LogRecordData} structs to be
+          #   exported.
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] the result of the export.
+          def export(log_record_data, timeout: nil)
+            OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down') if @shutdown
+            return FAILURE if @shutdown
+
+            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data), timeout: timeout)
+          end
+
+          # Called when {OpenTelemetry::SDK::Logs::LoggerProvider#force_flush} is called, if
+          # this exporter is registered to a {OpenTelemetry::SDK::Logs::LoggerProvider}
+          # object.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          def force_flush(timeout: nil)
+            SUCCESS
+          end
+
+          # Called when {OpenTelemetry::SDK::Logs::LoggerProvider#shutdown} is called, if
+          # this exporter is registered to a {OpenTelemetry::SDK::Logs::LoggerProvider}
+          # object.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          def shutdown(timeout: nil)
+            @shutdown = true
+            @http.finish if @http.started?
+            SUCCESS
+          end
+
+          private
+
+          def handle_http_error(response)
+            OpenTelemetry.handle_error(message: "OTLP logs exporter received #{response.class.name}, http.code=#{response.code}, for uri: '#{@path}'")
+          end
+
+          def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+            http = Net::HTTP.new(uri.hostname, uri.port)
+            http.use_ssl = uri.scheme == 'https'
+            http.verify_mode = ssl_verify_mode
+            http.ca_file = certificate_file unless certificate_file.nil?
+            http.cert = OpenSSL::X509::Certificate.new(File.read(client_certificate_file)) unless client_certificate_file.nil?
+            http.key = OpenSSL::PKey::RSA.new(File.read(client_key_file)) unless client_key_file.nil?
+            http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+            http
+          end
+
+          # The around_request is a private method that provides an extension
+          # point for the exporters network calls. The default behaviour
+          # is to not record these operations.
+          #
+          # An example use case would be to prepend a patch, or extend this class
+          # and override this method's behaviour to explicitly record the HTTP request.
+          # This would allow you to create log records for your export pipeline.
+          def around_request
+            OpenTelemetry::Common::Utilities.untraced { yield } # rubocop:disable Style/ExplicitBlockArgument
+          end
+
+          def send_bytes(bytes, timeout:) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+            return FAILURE if bytes.nil?
+
+            request = Net::HTTP::Post.new(@path)
+            if @compression == 'gzip'
+              request.add_field('Content-Encoding', 'gzip')
+              body = Zlib.gzip(bytes)
+            else
+              body = bytes
+            end
+
+            request.body = body
+            request.add_field('Content-Type', 'application/x-protobuf')
+            @headers.each { |key, value| request.add_field(key, value) }
+
+            retry_count = 0
+            timeout ||= @timeout
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+
+            # rubocop:disable-next Lint/DuplicateBranch
+            around_request do
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              return FAILURE if remaining_timeout.zero?
+
+              @http.open_timeout = remaining_timeout
+              @http.read_timeout = remaining_timeout
+              @http.write_timeout = remaining_timeout
+              @http.start unless @http.started?
+              response = @http.request(request)
+
+              case response
+              when Net::HTTPSuccess
+                log_partial_success(response.body)
+                SUCCESS
+              when Net::HTTPServiceUnavailable, Net::HTTPTooManyRequests
+                response.body # Read and discard body
+                handle_http_error(response)
+                redo if backoff?(retry_after: response['Retry-After'], retry_count: retry_count += 1)
+                FAILURE
+              when Net::HTTPRequestTimeOut, Net::HTTPGatewayTimeOut, Net::HTTPBadGateway
+                response.body # Read and discard body
+                handle_http_error(response)
+                redo if backoff?(retry_count: retry_count += 1)
+                FAILURE
+              when Net::HTTPNotFound
+                handle_http_error(response)
+                FAILURE
+              when Net::HTTPBadRequest, Net::HTTPClientError, Net::HTTPServerError
+                log_status(response.body)
+                FAILURE
+              when Net::HTTPRedirection
+                @http.finish
+                handle_redirect(response['location'])
+                redo if backoff?(retry_after: 0, retry_count: retry_count += 1)
+              else
+                @http.finish
+                handle_http_error(response)
+                FAILURE
+              end
+            rescue Net::OpenTimeout, Net::ReadTimeout => e
+              OpenTelemetry.handle_error(exception: e)
+              retry if backoff?(retry_count: retry_count += 1)
+              return FAILURE
+            rescue OpenSSL::SSL::SSLError => e
+              OpenTelemetry.handle_error(exception: e)
+              retry if backoff?(retry_count: retry_count += 1)
+              return FAILURE
+            rescue SocketError => e
+              OpenTelemetry.handle_error(exception: e)
+              retry if backoff?(retry_count: retry_count += 1)
+              return FAILURE
+            rescue SystemCallError => e
+              retry if backoff?(retry_count: retry_count += 1)
+              OpenTelemetry.handle_error(exception: e)
+              return FAILURE
+            rescue EOFError => e
+              OpenTelemetry.handle_error(exception: e)
+              retry if backoff?(retry_count: retry_count += 1)
+              return FAILURE
+            rescue Zlib::DataError => e
+              OpenTelemetry.handle_error(exception: e)
+              retry if backoff?(retry_count: retry_count += 1)
+              return FAILURE
+            rescue StandardError => e
+              OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#send_bytes')
+              return FAILURE
+            end
+          ensure
+            # Reset timeouts to defaults for the next call.
+            @http.open_timeout = @timeout
+            @http.read_timeout = @timeout
+            @http.write_timeout = @timeout
+          end
+
+          def handle_redirect(location)
+            # TODO: figure out destination and reinitialize @http and @path
+          end
+
+          def log_status(body)
+            status = Google::Rpc::Status.decode(body)
+            pool = ::Google::Protobuf::DescriptorPool.generated_pool
+            details = status.details.filter_map do |detail|
+              klass = pool.lookup(detail.type_name).msgclass
+              detail.unpack(klass) if klass
+            end
+            OpenTelemetry.handle_error(message: "OTLP logs exporter received rpc.Status{message=#{status.message}, details=#{details}}")
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::Exporter#log_status')
+          end
+
+          def log_partial_success(body)
+            response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
+            partial_success = response.partial_success
+            return if partial_success.nil? || partial_success.rejected_log_records <= 0
+
+            OpenTelemetry.handle_error(
+              message: "OTLP logs exporter received partial success: rejected_log_records=#{partial_success.rejected_log_records}, error_message=#{partial_success.error_message}"
+            )
+          rescue StandardError => e
+            OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding ExportLogsServiceResponse in OTLP::Exporter#log_partial_success')
+          end
+
+          def backoff?(retry_count:, retry_after: nil) # rubocop:disable Metrics/CyclomaticComplexity
+            return false if retry_count > RETRY_COUNT
+
+            sleep_interval = nil
+            unless retry_after.nil?
+              sleep_interval =
+                Integer(retry_after, exception: false)
+              sleep_interval ||=
+                begin
+                  Time.httpdate(retry_after) - Time.now
+                rescue # rubocop:disable Style/RescueStandardError
+                  nil
+                end
+              sleep_interval = nil unless sleep_interval&.positive?
+            end
+            sleep_interval ||= rand(2**retry_count)
+
+            sleep(sleep_interval)
+            true
+          end
+
+          def prepare_headers(config_headers)
+            headers = case config_headers
+                      when String then parse_headers(config_headers)
+                      when Hash then config_headers.dup
+                      else
+                        raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
+                      end
+
+            headers['User-Agent'] = "#{headers.fetch('User-Agent', '')} #{DEFAULT_USER_AGENT}".strip
+
+            headers
+          end
+
+          def parse_headers(raw)
+            entries = raw.split(',')
+            raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if entries.empty?
+
+            entries.each_with_object({}) do |entry, headers|
+              k, v = entry.split('=', 2).map { |part| URI.decode_uri_component part }
+              begin
+                k = k.to_s.strip
+                v = v.to_s.strip
+              rescue Encoding::CompatibilityError
+                raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS
+              rescue ArgumentError => e
+                raise e, ERROR_MESSAGE_INVALID_HEADERS
+              end
+              raise ArgumentError, ERROR_MESSAGE_INVALID_HEADERS if k.empty? || v.empty?
+
+              headers[k] = v
+            end
+          end
+        end
+      end
+    end
+  end
+end

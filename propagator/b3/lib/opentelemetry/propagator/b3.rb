@@ -35,7 +35,7 @@ module OpenTelemetry
   end
 end
 
-require_relative './b3/version'
-require_relative './b3/text_map_extractor'
-require_relative './b3/multi'
-require_relative './b3/single'
+require_relative 'b3/version'
+require_relative 'b3/text_map_extractor'
+require_relative 'b3/multi'
+require_relative 'b3/single'

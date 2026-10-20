@@ -12,8 +12,13 @@ module OpenTelemetry
         #
         # The MetricStream class provides SDK internal functionality that is not a part of the
         # public API.
+        #
+        # rubocop:disable-next Metrics/ClassLength
         class MetricStream
           attr_reader :name, :description, :unit, :instrument_kind, :instrumentation_scope, :data_points
+          attr_writer :cardinality_limit
+
+          DEFAULT_CARDINALITY_LIMIT = 2000
 
           def initialize(
             name,
@@ -22,7 +27,10 @@ module OpenTelemetry
             instrument_kind,
             meter_provider,
             instrumentation_scope,
-            aggregation
+            aggregation,
+            exemplar_filter,
+            exemplar_reservoir,
+            default_aggregation: nil
           )
             @name = name
             @description = description
@@ -30,39 +38,157 @@ module OpenTelemetry
             @instrument_kind = instrument_kind
             @meter_provider = meter_provider
             @instrumentation_scope = instrumentation_scope
-            @aggregation = aggregation
+            @default_aggregation = aggregation || build_aggregation(default_aggregation, exemplar_reservoir)
+            @data_points = {}
+            @registered_views = {}
+            @exemplar_filter = exemplar_filter
+            @exemplar_reservoir = exemplar_reservoir
 
+            find_registered_view
             @mutex = Mutex.new
           end
 
+          # Builds this stream's aggregation from the metric reader's preferred
+          # aggregation classes, falling back to the spec defaults.
+          #
+          # @param [Hash{Symbol => Class}, nil] preferred aggregation classes by instrument kind
+          # @param [Object, nil] exemplar_reservoir the instrument's exemplar reservoir
+          # @return [Object] a new aggregation, owned by this stream
+          def build_aggregation(preferred, exemplar_reservoir)
+            defaults = OpenTelemetry::SDK::Metrics::Export::MetricReader::DEFAULT_AGGREGATION
+            aggregation_class = (preferred || defaults)[@instrument_kind] || defaults[@instrument_kind]
+
+            if aggregation_class.nil?
+              OpenTelemetry.logger.warn("Unknown instrument kind: #{@instrument_kind}, defaulting to Drop aggregation")
+              aggregation_class = OpenTelemetry::SDK::Metrics::Aggregation::Drop
+            end
+
+            kwargs = { exemplar_reservoir: exemplar_reservoir }
+            if aggregation_class <= OpenTelemetry::SDK::Metrics::Aggregation::Sum
+              kwargs[:monotonic] = %i[counter observable_counter].include?(@instrument_kind)
+              kwargs[:instrument_kind] = @instrument_kind
+              kwargs[:aggregation_temporality] = :cumulative if %i[up_down_counter observable_up_down_counter].include?(@instrument_kind)
+            end
+
+            aggregation_class.new(**kwargs)
+          end
+
+          # Returns a snapshot of this stream's aggregated metric data.
           def collect(start_time, end_time)
             @mutex.synchronize do
-              MetricData.new(
-                @name,
-                @description,
-                @unit,
-                @instrument_kind,
-                @meter_provider.resource,
-                @instrumentation_scope,
-                @aggregation.collect(start_time, end_time),
-                @aggregation.aggregation_temporality,
-                start_time,
-                end_time
-              )
+              metric_data = []
+
+              # data points are required to export over OTLP
+              return metric_data if empty_data_point?
+
+              if @registered_views.empty?
+                metric_data << aggregate_metric_data(start_time,
+                                                     end_time)
+              else
+                @registered_views.each do |view, data_points|
+                  metric_data << aggregate_metric_data(start_time,
+                                                       end_time,
+                                                       aggregation: view.aggregation,
+                                                       data_points: data_points)
+                end
+              end
+
+              metric_data
             end
           end
 
+          # view has the cardinality, pass to aggregation update
+          # to determine if aggregation have the cardinality
+          # if the aggregation does not have the cardinality, then it will be default 2000
+          # it better to move overflowed data_points during update because if do it in collect,
+          # then we need to sort the entire data_points (~ 2000) based on time, which is time-consuming
+          # view will modify the data_point that is not suitable when there are multiple views
           def update(value, attributes)
-            @mutex.synchronize { @aggregation.update(value, attributes) }
+            if @registered_views.empty?
+              resolved_cardinality_limit = resolve_cardinality_limit(nil)
+              @mutex.synchronize do
+                exemplar_offer = should_offer_exemplar?(value, attributes)
+                @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
+              end
+            else
+              @registered_views.each do |view, data_points|
+                resolved_cardinality_limit = resolve_cardinality_limit(view)
+                @mutex.synchronize do
+                  attributes ||= {}
+                  attributes.merge!(view.attribute_keys)
+
+                  if view.valid_aggregation?
+                    exemplar_offer = should_offer_exemplar?(value, attributes)
+                    view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
+                  end
+                end
+              end
+            end
           end
 
+          # Builds a {MetricData} snapshot from the given aggregation and data points.
+          def aggregate_metric_data(start_time, end_time, aggregation: nil, data_points: nil)
+            aggregator = aggregation || @default_aggregation
+            is_monotonic = aggregator.respond_to?(:monotonic?) ? aggregator.monotonic? : nil
+            aggregation_temporality = aggregator.respond_to?(:aggregation_temporality) ? aggregator.aggregation_temporality : nil
+            data_point = data_points || @data_points
+
+            MetricData.new(
+              @name,
+              @description,
+              @unit,
+              @instrument_kind,
+              @meter_provider.resource,
+              @instrumentation_scope,
+              aggregator.collect(start_time, end_time, data_point),
+              aggregation_temporality,
+              start_time,
+              end_time,
+              is_monotonic
+            )
+          end
+
+          # Finds and caches views from the meter provider that match this instrument.
+          def find_registered_view
+            return if @meter_provider.nil?
+
+            @meter_provider.registered_views.each { |view| @registered_views[view] = {} if view.match_instrument?(self) }
+          end
+
+          # Returns whether this stream has no data points to export.
+          def empty_data_point?
+            if @registered_views.empty?
+              @data_points.empty?
+            else
+              @registered_views.each_value do |data_points|
+                return false unless data_points.empty?
+              end
+            end
+          end
+
+          # Returns the non-negative cardinality limit to use for the given view.
+          def resolve_cardinality_limit(view)
+            cardinality_limit = view&.aggregation_cardinality_limit || @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
+            [cardinality_limit, 0].max # if cardinality_limit is negative, then give it 0
+          end
+
+          # Returns whether the exemplar filter accepts this measurement.
+          def should_offer_exemplar?(value, attributes)
+            return false if @exemplar_reservoir&.noop?
+
+            context = OpenTelemetry::Context.current
+            time = OpenTelemetry::Common::Utilities.time_in_nanoseconds
+            @exemplar_filter&.should_sample?(value, time, attributes, context)
+          end
+
+          # Returns a human-readable summary of this stream's data points.
           def to_s
-            instrument_info = String.new
+            instrument_info = +''
             instrument_info << "name=#{@name}"
             instrument_info << " description=#{@description}" if @description
             instrument_info << " unit=#{@unit}" if @unit
             @data_points.map do |attributes, value|
-              metric_stream_string = String.new
+              metric_stream_string = +''
               metric_stream_string << instrument_info
               metric_stream_string << " attributes=#{attributes}" if attributes
               metric_stream_string << " #{value}"

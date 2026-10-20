@@ -11,7 +11,6 @@ describe OpenTelemetry::SDK::Trace::Span do
   SpanKind = OpenTelemetry::Trace::SpanKind
   Status = OpenTelemetry::Trace::Status
   Context = OpenTelemetry::Context
-  SpanLimits = OpenTelemetry::SDK::Trace::SpanLimits
 
   let(:context) { OpenTelemetry::Trace::SpanContext.new }
   let(:mock_span_processor) { Minitest::Mock.new }
@@ -164,6 +163,47 @@ describe OpenTelemetry::SDK::Trace::Span do
     it 'accepts an array value' do
       span.add_attributes('foo' => [1, 2, 3])
       _(span.attributes).must_equal('foo' => [1, 2, 3])
+    end
+  end
+
+  describe '#add_link' do
+    it 'does not add a link if span is ended' do
+      span.finish
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      _(span.links).must_be_nil
+    end
+
+    it 'adds a link' do
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      links = span.links
+      _(links.size).must_equal(1)
+      _(links.first.span_context).must_equal(context)
+    end
+
+    it 'adds a link with attributes' do
+      attrs = { 'foo' => 'bar' }
+      span.add_link(OpenTelemetry::Trace::Link.new(context, attrs))
+      links = span.links
+      _(links.size).must_equal(1)
+      _(links.first.attributes).must_equal(attrs)
+    end
+
+    it 'updates the links count' do
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      _(span.to_span_data.total_recorded_links).must_equal(2)
+    end
+
+    it 'trims excess links' do
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      span.add_link(OpenTelemetry::Trace::Link.new(context))
+      _(span.links.size).must_equal(1)
+    end
+
+    it 'prunes invalid links' do
+      invalid_context = OpenTelemetry::Trace::SpanContext.new(trace_id: OpenTelemetry::Trace::INVALID_TRACE_ID)
+      span.add_link(OpenTelemetry::Trace::Link.new(invalid_context))
+      _(span.links.size).must_equal(0)
     end
   end
 
@@ -337,7 +377,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'encodes the stacktrace' do
       begin
-        raise "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+        raise (+"\xC2").force_encoding(::Encoding::ASCII_8BIT)
       rescue StandardError => e
         span.record_exception(e)
       end
@@ -466,7 +506,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
   describe '#instrumentation_library' do
     it 'is identical to the instrumentation_scope' do
-      mock_span_processor.expect(:on_start, nil) { |s| yielded_span = s } # rubocop:disable Lint/UselessAssignment
+      mock_span_processor.expect(:on_start, nil) { |_s| pass }
       span = Span.new(
         context,
         Context.empty,
@@ -591,6 +631,6 @@ describe OpenTelemetry::SDK::Trace::Span do
       timestamps[clock_id]
     end
 
-    Process.stub(:clock_gettime, clock_gettime_mock) { yield }
+    Process.stub(:clock_gettime, clock_gettime_mock) { yield } # rubocop:disable Style/ExplicitBlockArgument
   end
 end

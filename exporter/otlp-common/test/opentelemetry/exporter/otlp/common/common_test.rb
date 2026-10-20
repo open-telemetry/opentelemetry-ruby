@@ -7,29 +7,160 @@
 require 'test_helper'
 
 describe OpenTelemetry::Exporter::OTLP::Common do
-  describe '#as_encoded_etsr' do
-    it 'handles encoding errors with poise and grace' do
+  describe '#as_encoded_elsr' do
+    it 'handles valid and empty log record data' do
+      # Valid log record data
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([log_record_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+
+    it 'handles encoding errors gracefully' do
       OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-        span_data = OpenTelemetry::TestHelpers.create_span_data(
-          total_recorded_attributes: 1,
-          attributes: { 'a' => "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT) }
+        # Encoding error in attributes
+        span_data = OpenTelemetry::TestHelpers.create_log_record_data(
+          attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
         )
 
-        OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+        result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
 
         _(log_stream.string).must_match(
           /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
         )
+        _(result).wont_be_nil
+
+        # StandardError during encoding
+        span_data = OpenTelemetry::TestHelpers.create_log_record_data
+        Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.stub(:encode, ->(_) { raise StandardError, 'encoding failed' }) do
+          result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr([span_data])
+          _(result).must_be_nil
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_elsr/)
+        end
+      end
+    end
+  end
+
+  describe '#as_encoded_emsr' do
+    it 'handles valid and empty metrics data' do
+      # Valid metrics data
+      metrics_data = create_metrics_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr([metrics_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+  end
+
+  describe '#as_encoded_etsr' do
+    it 'handles valid and empty span data' do
+      # Valid span data
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([])
+      _(result).wont_be_nil
+      _(result).must_be_kind_of(String)
+    end
+
+    it 'handles encoding errors gracefully' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        # Encoding error in attributes
+        span_data = OpenTelemetry::TestHelpers.create_span_data(
+          total_recorded_attributes: 1,
+          attributes: { 'a' => (+"\xC2").force_encoding(::Encoding::ASCII_8BIT) }
+        )
+
+        result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+
+        _(log_stream.string).must_match(
+          /ERROR -- : OpenTelemetry error: encoding error for key a and value �/
+        )
+        _(result).wont_be_nil
+
+        # StandardError during encoding
+        span_data = OpenTelemetry::TestHelpers.create_span_data
+        Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.stub(:encode, ->(_) { raise StandardError, 'encoding failed' }) do
+          result = OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr([span_data])
+          _(result).must_be_nil
+          _(log_stream.string).must_match(/ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_etsr/)
+        end
       end
     end
   end
 
   describe '#as_etsr' do
-    it 'batches per resource' do
-      resource_one = OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1')
-      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_one)
+    it 'handles valid and empty span data' do
+      # Valid span data
+      span_data = OpenTelemetry::TestHelpers.create_span_data
+      result = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      _(result).must_be_kind_of(Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest)
+      _(result.resource_spans).wont_be_empty
 
+      # Empty array
+      result = OpenTelemetry::Exporter::OTLP::Common.as_etsr([])
+      _(result).must_be_kind_of(Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest)
+      _(result.resource_spans).must_be_empty
+    end
+
+    it 'exports valid UTF-8 bytes from binary-encoded attribute strings' do
+      city = 'Montréal'.dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'city' => city }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_span = etsr.resource_spans.first.scope_spans.first.spans.first
+
+      _(exported_span.attributes.first.value.string_value).must_equal('Montréal')
+      _(exported_span.attributes.first.value.string_value.encoding).must_equal(::Encoding::UTF_8)
+    end
+
+    it 'safely exports attributes with invalid UTF-8 keys' do
+      invalid_key = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { invalid_key => 'value' }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_attribute = etsr.resource_spans.first.scope_spans.first.spans.first.attributes.first
+
+      _(exported_attribute.key).must_equal('Encoding Error')
+      _(exported_attribute.value.string_value).must_equal('value')
+    end
+
+    it 'safely exports arrays containing invalid UTF-8 strings' do
+      invalid_value = "\xC2".dup.force_encoding(::Encoding::ASCII_8BIT)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(
+        total_recorded_attributes: 1,
+        attributes: { 'values' => [invalid_value] }
+      )
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      exported_value = etsr.resource_spans.first.scope_spans.first.spans.first.attributes.first.value
+
+      _(exported_value.string_value).must_equal('Encoding Error')
+    end
+
+    it 'batches per resource and instrumentation scope' do
+      # Test resource batching
+      resource_one = OpenTelemetry::SDK::Resources::Resource.create('k1' => 'v1')
       resource_two = OpenTelemetry::SDK::Resources::Resource.create('k2' => 'v2')
+      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_one)
       span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
       span_data3 = OpenTelemetry::TestHelpers.create_span_data(resource: resource_two)
 
@@ -38,12 +169,21 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       _(etsr.resource_spans.length).must_equal(2)
       _(etsr.resource_spans[0].scope_spans[0].spans.length).must_equal(1)
       _(etsr.resource_spans[1].scope_spans[0].spans.length).must_equal(2)
+
+      # Test scope batching
+      resource = OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'test')
+      scope1 = OpenTelemetry::SDK::InstrumentationScope.new('scope1', '1.0.0')
+      scope2 = OpenTelemetry::SDK::InstrumentationScope.new('scope2', '2.0.0')
+      span_data1 = OpenTelemetry::TestHelpers.create_span_data(resource: resource, instrumentation_scope: scope1)
+      span_data2 = OpenTelemetry::TestHelpers.create_span_data(resource: resource, instrumentation_scope: scope2)
+      span_data3 = OpenTelemetry::TestHelpers.create_span_data(resource: resource, instrumentation_scope: scope1)
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data1, span_data2, span_data3])
+      _(etsr.resource_spans.length).must_equal(1)
+      _(etsr.resource_spans[0].scope_spans.length).must_equal(2)
     end
 
     it 'translates all the things' do
-      # TODO: See issue #1507 to fix
-      skip 'Intermittently fails' if RUBY_ENGINE == 'truffleruby'
-
       OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk)
       tracer = OpenTelemetry.tracer_provider.tracer('tracer', 'v0.0.1')
       other_tracer = OpenTelemetry.tracer_provider.tracer('other_tracer')
@@ -118,6 +258,10 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_OK
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -130,6 +274,10 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -142,6 +290,10 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     ),
                     Opentelemetry::Proto::Trace::V1::Span.new(
@@ -184,11 +336,19 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                           span_id: root_span_id,
                           attributes: [
                             Opentelemetry::Proto::Common::V1::KeyValue.new(key: 'attr', value: Opentelemetry::Proto::Common::V1::AnyValue.new(int_value: 4))
-                          ]
+                          ],
+                          flags: (
+                            Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                            1
+                          )
                         )
                       ],
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_ERROR
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     )
                   ]
@@ -208,6 +368,10 @@ describe OpenTelemetry::Exporter::OTLP::Common do
                       end_time_unix_nano: (end_timestamp.to_r * 1_000_000_000).to_i,
                       status: Opentelemetry::Proto::Trace::V1::Status.new(
                         code: Opentelemetry::Proto::Trace::V1::Status::StatusCode::STATUS_CODE_UNSET
+                      ),
+                      flags: (
+                        Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+                        1
                       )
                     )
                   ]
@@ -219,6 +383,216 @@ describe OpenTelemetry::Exporter::OTLP::Common do
       )
 
       _(encoded_etsr).must_equal(expected_encoded_etsr)
+    end
+  end
+
+  describe 'integration tests' do
+    it 'handles complex spans with all features' do
+      OpenTelemetry.tracer_provider = OpenTelemetry::SDK::Trace::TracerProvider.new(
+        resource: OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'test-service', 'service.version' => '1.0.0')
+      )
+
+      tracer = OpenTelemetry.tracer_provider.tracer('test-tracer', '1.0.0')
+      trace_id = OpenTelemetry::Trace.generate_trace_id
+      span_id = OpenTelemetry::Trace.generate_span_id
+
+      span = OpenTelemetry::TestHelpers.with_ids(trace_id, span_id) { tracer.start_root_span('complex-span', kind: :server) }
+      span['string_attr'] = 'value'
+      span['int_attr'] = 42
+      span['float_attr'] = 3.14
+      span['bool_attr'] = true
+      span['array_attr'] = [1, 2, 3]
+      span.add_event('event1', attributes: { 'event_attr' => 'event_value' })
+      span.add_event('event2')
+      span.status = OpenTelemetry::Trace::Status.error('Test error')
+      span.finish
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span.to_span_data])
+
+      _(etsr.resource_spans.length).must_equal(1)
+      _(etsr.resource_spans.first.resource.attributes.length).must_equal(2)
+      _(etsr.resource_spans.first.scope_spans.first.scope.name).must_equal('test-tracer')
+      _(etsr.resource_spans.first.scope_spans.first.scope.version).must_equal('1.0.0')
+
+      otlp_span = etsr.resource_spans.first.scope_spans.first.spans.first
+      _(otlp_span.name).must_equal('complex-span')
+      _(otlp_span.kind).must_equal(:SPAN_KIND_SERVER)
+      _(otlp_span.attributes.length).must_equal(5)
+      _(otlp_span.events.length).must_equal(2)
+      _(otlp_span.status.code).must_equal(:STATUS_CODE_ERROR)
+      _(otlp_span.status.message).must_equal('Test error')
+    end
+
+    it 'handles multiple resources, scopes, and attributes' do
+      resource1 = OpenTelemetry::SDK::Resources::Resource.create('service' => 'service1')
+      resource2 = OpenTelemetry::SDK::Resources::Resource.create('service' => 'service2')
+      scope1 = OpenTelemetry::SDK::InstrumentationScope.new('scope1', '1.0')
+      scope2 = OpenTelemetry::SDK::InstrumentationScope.new('scope2', '2.0')
+
+      spans = [
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource1, instrumentation_scope: scope1),
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource1, instrumentation_scope: scope2),
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource2, instrumentation_scope: scope1),
+        OpenTelemetry::TestHelpers.create_span_data(resource: resource2, instrumentation_scope: scope2)
+      ]
+
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr(spans)
+      _(etsr.resource_spans.length).must_equal(2)
+      _(etsr.resource_spans[0].scope_spans.length).must_equal(2)
+      _(etsr.resource_spans[1].scope_spans.length).must_equal(2)
+
+      # Test resource attributes preservation
+      resource = OpenTelemetry::SDK::Resources::Resource.create(
+        'service.name' => 'my-service', 'service.version' => '1.2.3', 'deployment.environment' => 'production'
+      )
+      span_data = OpenTelemetry::TestHelpers.create_span_data(resource: resource)
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+
+      resource_attrs = etsr.resource_spans.first.resource.attributes
+      _(resource_attrs.length).must_equal(3)
+      attr_map = resource_attrs.to_h { |kv| [kv.key, kv.value.string_value] }
+      _(attr_map['service.name']).must_equal('my-service')
+      _(attr_map['service.version']).must_equal('1.2.3')
+      _(attr_map['deployment.environment']).must_equal('production')
+
+      # Test scope without version
+      scope = OpenTelemetry::SDK::InstrumentationScope.new('test-scope', nil)
+      span_data = OpenTelemetry::TestHelpers.create_span_data(instrumentation_scope: scope)
+      etsr = OpenTelemetry::Exporter::OTLP::Common.as_etsr([span_data])
+      _(etsr.resource_spans.first.scope_spans.first.scope.name).must_equal('test-scope')
+      _(etsr.resource_spans.first.scope_spans.first.scope.version).must_be_empty
+    end
+  end
+
+  describe 'span flags' do
+    let(:common) { OpenTelemetry::Exporter::OTLP::Common }
+    let(:trace_id) { OpenTelemetry::Trace.generate_trace_id }
+    let(:span_id) { OpenTelemetry::Trace.generate_span_id }
+    let(:parent_span_id) { OpenTelemetry::Trace.generate_span_id }
+    let(:resource) { OpenTelemetry::SDK::Resources::Resource.create('service.name' => 'test-service') }
+    let(:instrumentation_scope) { OpenTelemetry::SDK::InstrumentationScope.new('test-lib', '1.0.0') }
+
+    describe 'build_span_flags' do
+      it 'sets flags to HAS_IS_REMOTE for local parent span context' do
+        flags = common.send(:build_span_flags, false, OpenTelemetry::Trace::TraceFlags::DEFAULT)
+        _(flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+
+      it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
+        flags = common.send(:build_span_flags, true, OpenTelemetry::Trace::TraceFlags::DEFAULT)
+        _(flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+
+      it 'preserves base trace flags' do
+        flags = common.send(:build_span_flags, false, OpenTelemetry::Trace::TraceFlags::SAMPLED)
+        _(flags).must_equal(
+          0x01 |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    describe 'as_otlp_span with flags' do
+      it 'sets flags to HAS_IS_REMOTE for local parent span context' do
+        span_data = create_span_data(parent_span_is_remote: false)
+        span = common.send(:as_otlp_span, span_data)
+        _(span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+
+      it 'sets flags to HAS_IS_REMOTE | IS_REMOTE for remote parent span context' do
+        span_data = create_span_data(parent_span_is_remote: true)
+        span = common.send(:as_otlp_span, span_data)
+        _(span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    describe 'as_otlp_span with link flags' do
+      it 'sets link flags to HAS_IS_REMOTE for local link context' do
+        local_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: false)
+        local_link = create_link(local_span_context)
+        span_data = create_span_data(links: [local_link])
+        span = common.send(:as_otlp_span, span_data)
+        _(span.links.first.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK
+        )
+      end
+
+      it 'sets link flags to HAS_IS_REMOTE | IS_REMOTE for remote link context' do
+        remote_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: true)
+        remote_link = create_link(remote_span_context)
+        span_data = create_span_data(links: [remote_link])
+        span = common.send(:as_otlp_span, span_data)
+        _(span.links.first.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    describe 'export with flags' do
+      it 'includes flags in exported spans' do
+        span_data = create_span_data(parent_span_is_remote: true)
+        encoded_data = common.send(:as_encoded_etsr, [span_data])
+        decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+        exported_span = decoded.resource_spans.first.scope_spans.first.spans.first
+        _(exported_span.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+
+      it 'includes flags in exported links' do
+        remote_span_context = OpenTelemetry::Trace::SpanContext.new(trace_id: trace_id, span_id: parent_span_id, remote: true)
+        remote_link = create_link(remote_span_context)
+        span_data = create_span_data(links: [remote_link])
+        encoded_data = common.send(:as_encoded_etsr, [span_data])
+        decoded = Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.decode(encoded_data)
+        exported_link = decoded.resource_spans.first.scope_spans.first.spans.first.links.first
+        _(exported_link.flags).must_equal(
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_HAS_IS_REMOTE_MASK |
+          Opentelemetry::Proto::Trace::V1::SpanFlags::SPAN_FLAGS_CONTEXT_IS_REMOTE_MASK
+        )
+      end
+    end
+
+    private
+
+    def create_span_data(parent_span_is_remote: false, links: [])
+      OpenTelemetry::SDK::Trace::SpanData.new(
+        'test-span',                    # name
+        :internal,                      # kind
+        OpenTelemetry::Trace::Status.ok, # status
+        parent_span_id, # parent_span_id
+        0,                             # total_recorded_attributes
+        0,                             # total_recorded_events
+        links.size,                    # total_recorded_links
+        Time.now.to_i * 1_000_000_000, # start_timestamp
+        Time.now.to_i * 1_000_000_000, # end_timestamp
+        {},                            # attributes
+        links,                         # links
+        [],                            # events
+        resource,                      # resource
+        instrumentation_scope,         # instrumentation_scope
+        span_id,                       # span_id
+        trace_id,                      # trace_id
+        OpenTelemetry::Trace::TraceFlags::DEFAULT, # trace_flags
+        OpenTelemetry::Trace::Tracestate::DEFAULT, # tracestate
+        parent_span_is_remote # parent_span_is_remote
+      )
+    end
+
+    def create_link(span_context)
+      OpenTelemetry::Trace::Link.new(span_context, { 'link-attribute' => 'link-value' })
     end
   end
 end

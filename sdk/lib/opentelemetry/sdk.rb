@@ -23,7 +23,7 @@ module OpenTelemetry
     # ConfigurationError is an exception type used to wrap configuration errors
     # passed to OpenTelemetry.error_handler. This can be used to distinguish
     # errors reported during SDK configuration.
-    ConfigurationError = Class.new(OpenTelemetry::Error)
+    ConfigurationError = Class.new(OpenTelemetry::Error) # rubocop:disable Style/EmptyClassDefinition
 
     # Configures SDK and instrumentation
     #
@@ -61,6 +61,11 @@ module OpenTelemetry
     #       c.use_all
     #     end
     def configure
+      if ENV['OTEL_SDK_DISABLED'] == 'true'
+        OpenTelemetry.logger.warn 'Environment variable OTEL_SDK_DISABLED is defined as true. SDK is disabled.'
+        return
+      end
+
       configurator = Configurator.new
       yield configurator if block_given?
       configurator.configure

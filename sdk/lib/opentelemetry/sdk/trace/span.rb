@@ -14,7 +14,7 @@ module OpenTelemetry
       # Instrumentation should use the API provided by {OpenTelemetry::Trace::Span}
       # and should consider {Span} to be write-only.
       #
-      # rubocop:disable Metrics/ClassLength
+      # rubocop:disable-next Metrics/ClassLength
       class Span < OpenTelemetry::Trace::Span
         DEFAULT_STATUS = OpenTelemetry::Trace::Status.unset
         EMPTY_ATTRIBUTES = {}.freeze
@@ -113,6 +113,37 @@ module OpenTelemetry
               @attributes.merge!(attributes)
               trim_span_attributes(@attributes)
               @total_recorded_attributes += attributes.size
+            end
+          end
+          self
+        end
+
+        # Add a link to a {Span}.
+        #
+        # Adding links at span creation using the `links` option is preferred
+        # to calling add_link later, because head sampling decisions can only
+        # consider information present during span creation.
+        #
+        # Example:
+        #
+        #   span.add_link(OpenTelemetry::Trace::Link.new(span_to_link_from.context))
+        #
+        # Note that the OpenTelemetry project
+        # {https://github.com/open-telemetry/opentelemetry-specification/blob/master/specification/data-semantic-conventions.md
+        # documents} certain "standard attributes" that have prescribed semantic
+        # meanings.
+        #
+        # @param [OpenTelemetry::Trace::Link] link The link object to add on the {Span}.
+        #
+        # @return [self] returns itself
+        def add_link(link)
+          @mutex.synchronize do
+            if @ended
+              OpenTelemetry.logger.warn('Calling add_link on an ended Span.')
+            else
+              @links ||= []
+              @links = trim_links(@links << link, @span_limits.link_count_limit, @span_limits.link_attribute_count_limit)
+              @total_recorded_links += 1
             end
           end
           self
@@ -240,8 +271,12 @@ module OpenTelemetry
               return self
             end
             @end_timestamp = relative_timestamp(end_timestamp)
+            @span_processors.each do |processor|
+              processor.on_finishing(self) if processor.respond_to?(:on_finishing)
+            end
             @attributes = validated_attributes(@attributes).freeze
             @events.freeze
+            @links.freeze
             @ended = true
           end
           @span_processors.each { |processor| processor.on_finish(self) }
@@ -277,17 +312,19 @@ module OpenTelemetry
             context.span_id,
             context.trace_id,
             context.trace_flags,
-            context.tracestate
+            context.tracestate,
+            @parent_span_is_remote
           )
         end
 
         # @api private
-        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity
+        def initialize(context, parent_context, parent_span, name, kind, parent_span_id, span_limits, span_processors, attributes, links, start_timestamp, resource, instrumentation_scope) # rubocop:disable Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
           super(span_context: context)
           @mutex = Mutex.new
           @name = name
           @kind = kind
           @parent_span_id = parent_span_id.freeze || OpenTelemetry::Trace::INVALID_SPAN_ID
+          @parent_span_is_remote = parent_span&.context&.remote? || false
           @span_limits = span_limits
           @span_processors = span_processors
           @resource = resource
@@ -373,7 +410,7 @@ module OpenTelemetry
 
           if links.size <= link_count_limit &&
              links.all? { |link| link.span_context.valid? && link.attributes.size <= link_attribute_count_limit && Internal.valid_attributes?(name, 'link', link.attributes) }
-            return links.frozen? ? links : links.clone.freeze
+            return links
           end
 
           # Slow path: trim attributes for each Link.
@@ -381,12 +418,12 @@ module OpenTelemetry
           excess_link_count = valid_links.size - link_count_limit
           valid_links.pop(excess_link_count) if excess_link_count.positive?
           valid_links.map! do |link|
-            attrs = Hash[link.attributes] # link.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs = link.attributes.to_h.dup # link.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - link_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
             OpenTelemetry::Trace::Link.new(link.span_context, attrs)
-          end.freeze
+          end
         end
 
         def append_event(events, event) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -407,7 +444,7 @@ module OpenTelemetry
 
           excess = event.attributes.size - event_attribute_count_limit
           if excess.positive? || !valid_attributes
-            attrs = Hash[event.attributes] # event.attributes is frozen, so we need an unfrozen copy to adjust.
+            attrs = event.attributes.to_h.dup # event.attributes is frozen, so we need an unfrozen copy to adjust.
             attrs.keep_if { |key, value| Internal.valid_key?(key) && Internal.valid_value?(value) }
             excess = attrs.size - event_attribute_count_limit
             excess.times { attrs.shift } if excess.positive?
@@ -438,7 +475,6 @@ module OpenTelemetry
           Process.clock_gettime(Process::CLOCK_MONOTONIC, :nanosecond)
         end
       end
-      # rubocop:enable Metrics/ClassLength
     end
   end
 end
