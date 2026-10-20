@@ -42,6 +42,14 @@ module OpenTelemetry
         #
         # @return [OpenTelemetry::SDK::Logs::Logger]
         def logger(name:, version: nil)
+          if @stopped
+            OpenTelemetry.logger.warn(
+              'LoggerProvider#logger called on a stopped LoggerProvider. ' \
+              'Returning a no-op Logger.'
+            )
+            return OpenTelemetry::Logs::Logger.new
+          end
+
           version ||= ''
 
           if !name.is_a?(String) || name.empty?

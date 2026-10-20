@@ -465,6 +465,21 @@ describe OpenTelemetry::Config do
           _(attrs['service.name']).must_equal 'schema-test'
         end
       end
+
+      it 'warns that schema_url is not supported' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          with_config(<<~YAML) do |path|
+            file_format: "1.0"
+            resource:
+              schema_url: "https://opentelemetry.io/schemas/1.21.0"
+            #{TRACER_PROVIDER_YAML}
+          YAML
+            OpenTelemetry::Config.configure_from_file(path)
+          end
+
+          _(log_stream.string).must_match(/schema_url is not supported; ignoring/)
+        end
+      end
     end
 
     describe 'detection/development' do
@@ -587,6 +602,35 @@ describe OpenTelemetry::Config do
 
           _(tp_attrs['service.name']).must_equal 'shared-service'
           _(tp_attrs['deployment.environment']).must_equal 'staging'
+        end
+      end
+    end
+
+    describe 'environment precedence' do
+      it 'does not inherit environment-backed SDK resource defaults' do
+        env_backed_default = OpenTelemetry::SDK::Resources::Resource.create(
+          'service.name' => 'from-env',
+          'deployment.environment' => 'from-env'
+        )
+
+        OpenTelemetry::SDK::Resources::Resource.stub(:default, env_backed_default) do
+          OpenTelemetry::TestHelpers.with_env(
+            'OTEL_SERVICE_NAME' => 'from-env',
+            'OTEL_RESOURCE_ATTRIBUTES' => 'deployment.environment=from-env'
+          ) do
+            with_config(<<~YAML) do |path|
+              file_format: "1.0"
+              #{TRACER_PROVIDER_YAML}
+            YAML
+              sdk = OpenTelemetry::Config.configure_from_file(path)
+              attrs = sdk.resource.attribute_enumerator.to_h
+
+              _(attrs['service.name']).must_equal 'unknown_service'
+              _(attrs).wont_include 'deployment.environment'
+              _(attrs['telemetry.sdk.name']).must_equal 'opentelemetry'
+              _(attrs['telemetry.sdk.language']).must_equal 'ruby'
+            end
+          end
         end
       end
     end

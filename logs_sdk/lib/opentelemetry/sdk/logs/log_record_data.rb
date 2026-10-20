@@ -20,7 +20,7 @@ module OpenTelemetry
                                  :trace_flags,               # optional Integer (8-bit byte of bit flags)
                                  :resource,                  # optional OpenTelemetry::SDK::Resources::Resource
                                  :instrumentation_scope,     # optional OpenTelemetry::SDK::InstrumentationScope
-                                 :total_recorded_attributes) # Integer
+                                 :dropped_attributes_count)  # Integer
     end
   end
 end

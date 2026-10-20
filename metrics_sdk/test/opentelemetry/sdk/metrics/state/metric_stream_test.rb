@@ -60,6 +60,60 @@ describe OpenTelemetry::SDK::Metrics::State::MetricStream do
     end
   end
 
+  describe '#build_aggregation' do
+    def temporality_under_delta_preference(instrument_kind)
+      stream = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+        OpenTelemetry::SDK::Metrics::State::MetricStream.new(
+          'test_instrument',
+          '',
+          '',
+          instrument_kind,
+          meter_provider,
+          instrumentation_scope,
+          nil,
+          nil,
+          nil
+        )
+      end
+      stream.update(1, {})
+      stream.aggregate_metric_data(0, 1000).aggregation_temporality
+    end
+
+    it 'defaults up_down_counter kinds to cumulative under a delta preference' do
+      _(temporality_under_delta_preference(:up_down_counter)).must_equal(:cumulative)
+      _(temporality_under_delta_preference(:observable_up_down_counter)).must_equal(:cumulative)
+    end
+
+    it 'lets a view set delta temporality on an up_down_counter' do
+      meter_provider.add_view('test_instrument',
+                              aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta))
+      stream = OpenTelemetry::SDK::Metrics::State::MetricStream.new(
+        'test_instrument',
+        '',
+        '',
+        :up_down_counter,
+        meter_provider,
+        instrumentation_scope,
+        nil,
+        nil,
+        nil
+      )
+
+      stream.update(5, {})
+      first = stream.collect(0, 1000).first
+      stream.update(3, {})
+      second = stream.collect(1000, 2000).first
+
+      _(first.aggregation_temporality).must_equal(:delta)
+      _(first.data_points.first.value).must_equal(5)
+      _(second.data_points.first.value).must_equal(3)
+    end
+
+    it 'applies a delta preference to counters' do
+      _(temporality_under_delta_preference(:counter)).must_equal(:delta)
+    end
+  end
+
   describe '#update' do
     it 'updates aggregation with various value and attribute combinations' do
       # Test updates with different attributes (should create separate data points)

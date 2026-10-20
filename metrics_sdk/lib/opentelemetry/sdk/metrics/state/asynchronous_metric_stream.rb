@@ -27,10 +27,12 @@ module OpenTelemetry
             timeout,
             attributes,
             exemplar_filter,
-            exemplar_reservoir
+            exemplar_reservoir,
+            default_aggregation: nil
           )
             # Call parent constructor with common parameters
-            super(name, description, unit, instrument_kind, meter_provider, instrumentation_scope, aggregation, exemplar_filter, exemplar_reservoir)
+            super(name, description, unit, instrument_kind, meter_provider, instrumentation_scope, aggregation, exemplar_filter, exemplar_reservoir,
+                  default_aggregation: default_aggregation)
 
             # Initialize asynchronous-specific attributes
             @callback = callback

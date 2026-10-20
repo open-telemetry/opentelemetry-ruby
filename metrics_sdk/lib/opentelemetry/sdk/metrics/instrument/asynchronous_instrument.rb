@@ -13,6 +13,8 @@ module OpenTelemetry
         class AsynchronousInstrument
           NOOP_EXEMPLAR_RESERVOIR = Exemplar::NoopExemplarReservoir.new
 
+          attr_reader :exemplar_reservoir
+
           def initialize(name, unit, description, callback, instrumentation_scope, meter_provider, exemplar_filter, exemplar_reservoir)
             @name = name
             @unit = unit
@@ -31,7 +33,7 @@ module OpenTelemetry
           end
 
           # @api private
-          def register_with_new_metric_store(metric_store, aggregation: default_aggregation)
+          def register_with_new_metric_store(metric_store, aggregation: nil, default_aggregation: nil)
             ms = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
               @name,
               @description,
@@ -44,7 +46,8 @@ module OpenTelemetry
               @timeout,
               @attributes,
               @exemplar_filter,
-              @exemplar_reservoir
+              @exemplar_reservoir,
+              default_aggregation: default_aggregation
             )
             @metric_streams << ms
             metric_store.add_metric_stream(ms)
@@ -53,7 +56,9 @@ module OpenTelemetry
           # The API MUST support creation of asynchronous instruments by passing zero or more callback functions
           # to be permanently registered to the newly created instrument.
           def init_callback(callback)
-            if callback.instance_of?(Proc)
+            if callback.nil?
+              nil # zero callbacks permanently registered at creation is permitted
+            elsif callback.instance_of?(Proc)
               @callbacks << callback
             elsif callback.instance_of?(Array)
               callback.each { |cb| @callbacks << cb if cb.instance_of?(Proc) }
