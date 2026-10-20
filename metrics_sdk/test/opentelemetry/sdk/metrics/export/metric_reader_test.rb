@@ -7,14 +7,13 @@
 require 'test_helper'
 
 describe OpenTelemetry::SDK::Metrics::Export::MetricReader do
+  export = OpenTelemetry::SDK::Metrics::Export
 
   let(:sum) { OpenTelemetry::SDK::Metrics::Aggregation::Sum }
   let(:last_value) { OpenTelemetry::SDK::Metrics::Aggregation::LastValue }
   let(:explicit_bucket_histogram) { OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram }
   let(:exponential_bucket_histogram) { OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
   let(:reader) { export::MetricReader.new }
-
-  export = OpenTelemetry::SDK::Metrics::Export
 
   before do
     reset_metrics_sdk

@@ -457,7 +457,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
     it 'returns METRICS_FAILURE from send_bytes when shutdown' do
       stub_request(:post, 'http://localhost:4318/v1/metrics').to_return(status: 200)
-      bytes = exporter.encode([create_metrics_data])
+      bytes = OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr([create_metrics_data])
 
       exporter.shutdown
 
