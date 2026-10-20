@@ -12,6 +12,11 @@ module OpenTelemetry
         #
         # Potentially useful for exploratory purposes.
         class ConsoleMetricPullExporter < MetricReader
+          def initialize(aggregation_cardinality_limit: nil, default_aggregation: nil)
+            super
+            @stopped = false
+          end
+
           # Collects and exports the current metrics to the console.
           def pull
             export(collect)

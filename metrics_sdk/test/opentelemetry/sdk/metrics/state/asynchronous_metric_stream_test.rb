@@ -279,5 +279,17 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(dropped_data.size).must_equal(1)
       _(dropped_data.first.data_points.first.value).must_equal(0) # Dropped value
     end
+
+    it 'lets a view set delta temporality on an observable_up_down_counter' do
+      meter_provider.add_view('async_up_down_counter',
+                              aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta))
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_up_down_counter', 'description', 'unit', :observable_up_down_counter,
+        meter_provider, instrumentation_scope, nil,
+        callback, timeout, attributes, nil, nil
+      )
+
+      _(stream.collect(0, 1000).first.aggregation_temporality).must_equal(:delta)
+    end
   end
 end

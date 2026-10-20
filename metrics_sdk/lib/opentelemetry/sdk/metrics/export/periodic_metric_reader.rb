@@ -26,7 +26,9 @@ module OpenTelemetry
                          export_timeout_millis: Float(ENV.fetch('OTEL_METRIC_EXPORT_TIMEOUT', 30_000)),
                          exporter: nil,
                          aggregation_cardinality_limit: nil)
-            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
+            # The exporter knows what the destination prefers, so this reader defers to it.
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: (exporter.default_aggregation if exporter.respond_to?(:default_aggregation)))
 
             @export_interval = export_interval_millis / 1000.0
             @export_timeout = export_timeout_millis / 1000.0

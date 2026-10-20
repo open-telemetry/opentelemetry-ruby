@@ -10,13 +10,13 @@
 # ---------------------------------------------------------------------------
 ARG APP_VERSION=instrumented
 
-FROM ruby:3.3.12-slim@sha256:9d6e20500e6d10c9125895491dfa5cccdbb0497f0e8a0f38ca2d7e4f410c6283 AS base
+FROM ruby:3.3.12-slim@sha256:af55abc3e35217b7bf17a9f4a456b35e2e73550eaaa2e3be949f9db7f6e65396 AS base
 
 WORKDIR /app
 
 # Install build dependencies
 RUN apt-get update -qq && \
-    apt-get install -y --no-install-recommends build-essential && \
+    apt-get install -y --no-install-recommends build-essential curl && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------------------------------------

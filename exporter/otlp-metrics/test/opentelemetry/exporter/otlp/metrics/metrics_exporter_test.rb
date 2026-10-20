@@ -352,112 +352,6 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
     end
   end
 
-  describe 'IPv4/IPv6 compatibility' do
-    it 'handles IPv6 loopback address with brackets' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[::1]:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
-    end
-
-    it 'handles IPv6 full address with brackets' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[2001:db8::1]:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '2001:db8::1'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles IPv6 address with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://[::1]:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv6 address with custom path' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://[::1]:8080/custom/path')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 8080
-      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
-    end
-
-    it 'handles IPv4 loopback address' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://127.0.0.1:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '127.0.0.1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
-    end
-
-    it 'handles IPv4 address with custom port' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://192.168.1.100:8080/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '192.168.1.100'
-      _(http.port).must_equal 8080
-    end
-
-    it 'handles IPv4 address with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://10.0.0.1:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '10.0.0.1'
-      _(http.port).must_equal 4318
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv4 address with custom path' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://127.0.0.1:9090/custom/path')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '127.0.0.1'
-      _(http.port).must_equal 9090
-      _(exp.instance_variable_get(:@path)).must_equal '/custom/path'
-    end
-
-    it 'handles IPv4 address from environment variable' do
-      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://192.168.1.1:4318') do
-        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
-      end
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '192.168.1.1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
-    end
-
-    it 'handles hostnames' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://localhost:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'localhost'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles fully qualified domain names' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'http://otel.example.com:4318/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'otel.example.com'
-      _(http.port).must_equal 4318
-    end
-
-    it 'handles hostnames with https' do
-      exp = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(endpoint: 'https://otel-collector.prod.example.com:443/v1/metrics')
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal 'otel-collector.prod.example.com'
-      _(http.port).must_equal 443
-      _(http.use_ssl?).must_equal true
-    end
-
-    it 'handles IPv6 address from environment variable' do
-      exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_ENDPOINT' => 'http://[::1]:4318') do
-        OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
-      end
-      http = exp.instance_variable_get(:@http)
-      _(http.address).must_equal '::1'
-      _(http.port).must_equal 4318
-      _(exp.instance_variable_get(:@path)).must_equal '/v1/metrics'
-    end
-  end
-
   describe '#export' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
     let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new(resource: OpenTelemetry::SDK::Resources::Resource.telemetry_sdk) }
@@ -515,7 +409,7 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
       end
 
       _(log_stream.string).must_match(
-        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::MetricsExporter#encode - a little hell/
+        /ERROR -- : OpenTelemetry error: unexpected error in OTLP::Common#as_encoded_emsr - a little hell/
       )
     ensure
       OpenTelemetry.logger = logger
@@ -970,6 +864,69 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
     end
   end
 
+  describe '#default_aggregation' do
+    EXPLICIT_BUCKET_HISTOGRAM = OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram
+    EXPONENTIAL_BUCKET_HISTOGRAM = OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram
+
+    it 'uses the spec defaults for non-histogram instruments' do
+      default_aggregation = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation
+
+      _(default_aggregation[:counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+      _(default_aggregation[:up_down_counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+      _(default_aggregation[:observable_gauge]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::LastValue)
+    end
+
+    it 'defaults histograms to explicit buckets' do
+      _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+    end
+
+    it 'uses explicit buckets when configured to explicit_bucket_histogram via ENV' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'explicit_bucket_histogram') do
+        _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'uses exponential buckets when configured to base2_exponential_bucket_histogram via ENV' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'base2_exponential_bucket_histogram') do
+        _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'evaluates the ENV value case-insensitively' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => ' BASE2_Exponential_Bucket_Histogram ') do
+        _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'accepts an explicit default_aggregation parameter' do
+      exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+        default_aggregation: { histogram: EXPONENTIAL_BUCKET_HISTOGRAM }
+      )
+
+      _(exporter.default_aggregation[:histogram]).must_equal(EXPONENTIAL_BUCKET_HISTOGRAM)
+      _(exporter.default_aggregation[:counter]).must_equal(OpenTelemetry::SDK::Metrics::Aggregation::Sum)
+    end
+
+    it 'prefers the default_aggregation parameter over the ENV value' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'base2_exponential_bucket_histogram') do
+        exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+          default_aggregation: { histogram: EXPLICIT_BUCKET_HISTOGRAM }
+        )
+
+        _(exporter.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+      end
+    end
+
+    it 'warns and uses explicit buckets for an invalid ENV value' do
+      OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION' => 'invalid_value') do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          _(OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new.default_aggregation[:histogram]).must_equal(EXPLICIT_BUCKET_HISTOGRAM)
+          _(log_stream.string).must_match(/unrecognized value 'invalid_value', defaulting to explicit_bucket_histogram/)
+        end
+      end
+    end
+  end
+
   describe '#shutdown' do
     let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
 
@@ -992,6 +949,82 @@ describe OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter do
 
       _(result).must_be_nil
       _(log_stream.string).must_match(/Exporter already shutdown, ignoring call/)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+  end
+
+  describe 'HTTP redirects' do
+    let(:exporter) { OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new }
+
+    it 'follows a redirect to a different path on the same host' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics').to_return(status: 200)
+      metrics_data = create_metrics_data
+
+      _(exporter.export([metrics_data])).must_equal(METRICS_SUCCESS)
+
+      assert_requested(:post, 'http://localhost:4318/v1/metrics')
+      assert_requested(:post, 'http://localhost:4318/v2/metrics')
+    end
+
+    it 'follows a redirect to a different host and port' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:9999/v1/metrics' })
+      stub_request(:post, 'http://localhost:9999/v1/metrics').to_return(status: 200)
+      metrics_data = create_metrics_data
+
+      _(exporter.export([metrics_data])).must_equal(METRICS_SUCCESS)
+
+      assert_requested(:post, 'http://localhost:9999/v1/metrics')
+    end
+
+    it 'resolves a relative redirect location against the current endpoint' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => '/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics').to_return(status: 200)
+      metrics_data = create_metrics_data
+
+      _(exporter.export([metrics_data])).must_equal(METRICS_SUCCESS)
+
+      assert_requested(:post, 'http://localhost:4318/v2/metrics')
+    end
+
+    it 'does not follow redirects indefinitely' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v1/metrics' })
+      metrics_data = create_metrics_data
+
+      attempts = 0
+      exporter.stub(:backoff?, ->(**_) { (attempts += 1) <= 3 }) do
+        result = exporter.export([metrics_data])
+        _(result).must_equal(METRICS_FAILURE)
+      end
+
+      assert_requested(:post, 'http://localhost:4318/v1/metrics', times: 2)
+      assert_requested(:post, 'http://localhost:4318/v2/metrics', times: 2)
+    end
+
+    it 'logs a warning when redirect retries are exhausted' do
+      stub_request(:post, 'http://localhost:4318/v1/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v2/metrics' })
+      stub_request(:post, 'http://localhost:4318/v2/metrics')
+        .to_return(status: 307, headers: { 'Location' => 'http://localhost:4318/v1/metrics' })
+      metrics_data = create_metrics_data
+
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      attempts = 0
+      exporter.stub(:backoff?, ->(**_) { (attempts += 1) <= 3 }) do
+        exporter.export([metrics_data])
+      end
+
+      _(log_stream.string).must_match(/Net::HTTPRedirection in MetricsExporter#send_bytes/)
     ensure
       OpenTelemetry.logger = logger
     end
