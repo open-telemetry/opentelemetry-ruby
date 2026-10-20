@@ -24,14 +24,14 @@ module OpenTelemetry
 
         # The metrics_configuration_hook method is where we define the setup process for the metrics SDK.
         def metrics_configuration_hook
-          OpenTelemetry.meter_provider = Metrics::MeterProvider.new(resource: @resource)
+          OpenTelemetry::Internal.meter_provider = Metrics::MeterProvider.new(resource: @resource)
           configure_metric_readers
           attach_fork_hooks!
         end
 
         def configure_metric_readers
           readers = @metric_readers.empty? ? wrapped_metric_exporters_from_env.compact : @metric_readers
-          readers.each { |r| OpenTelemetry.meter_provider.add_metric_reader(r) }
+          readers.each { |r| OpenTelemetry::Internal.meter_provider.add_metric_reader(r) }
         end
 
         def wrapped_metric_exporters_from_env
@@ -41,14 +41,14 @@ module OpenTelemetry
             when 'none' then nil
             when 'console'
               default_console_interval = ENV['OTEL_METRIC_EXPORT_INTERVAL'] || 10_000
-              OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(
-                                                               export_interval_millis: Float(default_console_interval),
-                                                               exporter: Metrics::Export::ConsoleMetricPullExporter.new
-                                                             ))
-            when 'in-memory' then OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
+              OpenTelemetry::Internal.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(
+                                                                         export_interval_millis: Float(default_console_interval),
+                                                                         exporter: Metrics::Export::ConsoleMetricPullExporter.new
+                                                                       ))
+            when 'in-memory' then OpenTelemetry::Internal.meter_provider.add_metric_reader(Metrics::Export::InMemoryMetricPullExporter.new)
             when 'otlp'
               begin
-                OpenTelemetry.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new))
+                OpenTelemetry::Internal.meter_provider.add_metric_reader(Metrics::Export::PeriodicMetricReader.new(exporter: OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new))
               rescue NameError
                 OpenTelemetry.logger.warn 'The otlp metrics exporter cannot be configured - please add opentelemetry-exporter-otlp-metrics to your Gemfile, metrics will not be exported'
                 nil

@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'opentelemetry/common'
+require 'opentelemetry/exporter/otlp/common'
 require 'opentelemetry/sdk'
 require 'net/http'
 require 'zlib'
@@ -26,7 +27,7 @@ module OpenTelemetry
     module OTLP
       module Metrics
         # An OpenTelemetry metrics exporter that sends metrics over HTTP as Protobuf encoded OTLP ExportMetricsServiceRequest.
-        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader # rubocop:disable Metrics/ClassLength
+        class MetricsExporter < ::OpenTelemetry::SDK::Metrics::Export::MetricReader
           include Util
 
           attr_reader :metric_snapshots
@@ -48,7 +49,7 @@ module OpenTelemetry
           end
           # rubocop:enable Lint/DuplicateBranch
 
-          def initialize(endpoint: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', default: 'http://localhost:4318/v1/metrics'),
+          def initialize(endpoint: nil,
                          certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
                          client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
                          client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
@@ -56,20 +57,16 @@ module OpenTelemetry
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
-                         aggregation_cardinality_limit: nil)
-            raise ArgumentError, "invalid url for OTLP::MetricsExporter #{endpoint}" unless OpenTelemetry::Common::Utilities.valid_url?(endpoint)
+                         aggregation_cardinality_limit: nil,
+                         default_aggregation: nil)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
             # create the MetricStore object
-            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
+            # An explicitly provided aggregation takes precedence over the environment variable.
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: self.class.histogram_aggregation_from_env.merge(default_aggregation || {}))
 
-            @uri = if endpoint == ENV['OTEL_EXPORTER_OTLP_ENDPOINT']
-                     endpoint += '/' unless endpoint.end_with?('/')
-                     URI.join(endpoint, 'v1/metrics')
-                   else
-                     URI(endpoint)
-                   end
-
+            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
 
             @path = @uri.path
@@ -78,6 +75,25 @@ module OpenTelemetry
             @compression = compression
             @mutex = Mutex.new
             @shutdown = false
+          end
+
+          # Returns the histogram aggregation requested by
+          # OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION, or an empty Hash
+          # when the spec default (explicit bucket histogram) applies.
+          #
+          # @return [Hash{Symbol => Class}]
+          def self.histogram_aggregation_from_env
+            case ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', 'explicit_bucket_histogram').strip.downcase
+            when 'base2_exponential_bucket_histogram'
+              { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+            when 'explicit_bucket_histogram'
+              {}
+            else
+              OpenTelemetry.logger.warn(
+                "OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION: unrecognized value '#{ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', nil)}', defaulting to explicit_bucket_histogram."
+              )
+              {}
+            end
           end
 
           # consolidate the metrics data into the form of MetricData
@@ -95,7 +111,7 @@ module OpenTelemetry
             end
 
             @mutex.synchronize do
-              send_bytes(encode(metrics), timeout: timeout)
+              send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_emsr(metrics), timeout: timeout)
             end
           end
 
@@ -103,18 +119,7 @@ module OpenTelemetry
           def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
-            request = Net::HTTP::Post.new(@path)
-
-            if @compression == 'gzip'
-              request.add_field('Content-Encoding', 'gzip')
-              body = Zlib.gzip(bytes)
-            else
-              body = bytes
-            end
-
-            request.body = body
-            request.add_field('Content-Type', 'application/x-protobuf')
-            @headers.each { |key, value| request.add_field(key, value) }
+            body = @compression == 'gzip' ? Zlib.gzip(bytes) : bytes
 
             retry_count = 0
             timeout ||= @timeout
@@ -123,6 +128,8 @@ module OpenTelemetry
             around_request do
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return FAILURE if remaining_timeout.zero?
+
+              request = build_request(body)
 
               @http.open_timeout = remaining_timeout
               @http.read_timeout = remaining_timeout
@@ -154,6 +161,8 @@ module OpenTelemetry
                 @http.finish
                 handle_redirect(response['location'])
                 redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.warn('Net::HTTPRedirection in MetricsExporter#send_bytes')
+                FAILURE
               else
                 @http.finish
                 OpenTelemetry.logger.warn("Unexpected error in OTLP::MetricsExporter#send_bytes - #{response.message}")
@@ -194,201 +203,43 @@ module OpenTelemetry
             @http.write_timeout = @timeout
           end
 
-          # Encodes metrics_data into a serialized ExportMetricsServiceRequest.
-          def encode(metrics_data)
-            Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(
-              Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
-                resource_metrics: metrics_data
-                                  .group_by(&:resource)
-                                  .map do |resource, scope_metrics|
-                                    Opentelemetry::Proto::Metrics::V1::ResourceMetrics.new(
-                                      resource: Opentelemetry::Proto::Resource::V1::Resource.new(
-                                        attributes: resource.attribute_enumerator.map { |key, value| as_otlp_key_value(key, value) }
-                                      ),
-                                      scope_metrics: scope_metrics
-                                                     .group_by(&:instrumentation_scope)
-                                                     .map do |instrumentation_scope, metrics|
-                                                       Opentelemetry::Proto::Metrics::V1::ScopeMetrics.new(
-                                                         scope: Opentelemetry::Proto::Common::V1::InstrumentationScope.new(
-                                                           name: instrumentation_scope.name,
-                                                           version: instrumentation_scope.version
-                                                         ),
-                                                         metrics: metrics.map { |sd| as_otlp_metrics(sd) }
-                                                       )
-                                                     end
-                                    )
-                                  end
-              )
-            )
-          rescue StandardError => e
-            OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::MetricsExporter#encode')
-            nil
+          # Builds a POST request for the current endpoint path, so that a
+          # redirect to a different path is picked up by the next retry.
+          def build_request(body)
+            request = Net::HTTP::Post.new(@path)
+            request.body = body
+            request.add_field('Content-Encoding', 'gzip') if @compression == 'gzip'
+            request.add_field('Content-Type', 'application/x-protobuf')
+            @headers.each { |key, value| request.add_field(key, value) }
+            request
           end
 
-          # metrics_pb has following type of data: :gauge, :sum, :histogram, :exponential_histogram, :summary
-          # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram, :gauge -> :gauge
+          # Follows an HTTP redirect by reinitializing the HTTP connection and
+          # request path from the Location response header before the retry.
           #
-          # metrics [MetricData]
-          def as_otlp_metrics(metrics)
-            case metrics.instrument_kind
-            when :observable_gauge, :gauge
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                gauge: Opentelemetry::Proto::Metrics::V1::Gauge.new(
-                  data_points: metrics.data_points.map do |ndp|
-                    number_data_point(ndp)
-                  end
-                )
-              )
+          # Relative locations are resolved against the current endpoint URI.
+          # The connection is re-created when the redirect points at a
+          # different host or port; TLS and certificate settings are kept.
+          def handle_redirect(location)
+            return if location.nil? || location.empty?
 
-            when :counter, :up_down_counter, :observable_counter, :observable_up_down_counter
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                sum: Opentelemetry::Proto::Metrics::V1::Sum.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |ndp|
-                    number_data_point(ndp)
-                  end,
-                  is_monotonic: metrics.is_monotonic
-                )
-              )
+            uri = URI.join(@uri, location)
+            return if uri == @uri
 
-            when :histogram
-              histogram_data_point(metrics)
-
-            end
-          end
-
-          # Converts an SDK aggregation temporality symbol to its OTLP proto enum value.
-          def as_otlp_aggregation_temporality(type)
-            case type
-            when :delta then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_DELTA
-            when :cumulative then Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_CUMULATIVE
-            else Opentelemetry::Proto::Metrics::V1::AggregationTemporality::AGGREGATION_TEMPORALITY_UNSPECIFIED
-            end
-          end
-
-          # Builds an OTLP Metric for either histogram or exponential histogram data points.
-          def histogram_data_point(metrics)
-            return if metrics.data_points.empty?
-
-            if metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |ehdp|
-                    exponential_histogram_data_point(ehdp)
-                  end
-                )
-              )
-            elsif metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::HistogramDataPoint)
-              Opentelemetry::Proto::Metrics::V1::Metric.new(
-                name: metrics.name,
-                description: metrics.description,
-                unit: metrics.unit,
-                histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
-                  aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
-                  data_points: metrics.data_points.map do |hdp|
-                    explicit_histogram_data_point(hdp)
-                  end
-                )
-              )
-            end
-          end
-
-          # Converts a {HistogramDataPoint} to its OTLP proto representation.
-          def explicit_histogram_data_point(hdp)
-            Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
-              attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
-              start_time_unix_nano: hdp.start_time_unix_nano,
-              time_unix_nano: hdp.time_unix_nano,
-              count: hdp.count,
-              sum: hdp.sum,
-              bucket_counts: hdp.bucket_counts,
-              explicit_bounds: hdp.explicit_bounds,
-              exemplars: as_otlp_exemplars(hdp.exemplars),
-              min: hdp.min,
-              max: hdp.max,
-              flags: hdp.flags
-            )
-          end
-
-          # Converts an {ExponentialHistogramDataPoint} to its OTLP proto representation.
-          def exponential_histogram_data_point(ehdp)
-            Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
-              attributes: ehdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
-              start_time_unix_nano: ehdp.start_time_unix_nano,
-              time_unix_nano: ehdp.time_unix_nano,
-              count: ehdp.count,
-              sum: ehdp.sum,
-              scale: ehdp.scale,
-              zero_count: ehdp.zero_count,
-              positive: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
-                offset: ehdp.positive.offset,
-                bucket_counts: ehdp.positive.counts
-              ),
-              negative: Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint::Buckets.new(
-                offset: ehdp.negative.offset,
-                bucket_counts: ehdp.negative.counts
-              ),
-              flags: ehdp.flags,
-              exemplars: as_otlp_exemplars(ehdp.exemplars),
-              min: ehdp.min,
-              max: ehdp.max,
-              zero_threshold: ehdp.zero_threshold
-            )
-          end
-
-          # Converts a {NumberDataPoint} to its OTLP proto representation.
-          def number_data_point(ndp)
-            args = {
-              attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
-              start_time_unix_nano: ndp.start_time_unix_nano,
-              time_unix_nano: ndp.time_unix_nano,
-              exemplars: as_otlp_exemplars(ndp.exemplars),
-              flags: ndp.flags
-            }
-
-            if ndp.value.is_a?(Float)
-              args[:as_double] = ndp.value
+            if uri.host != @uri.host || uri.port != @uri.port
+              old_http = @http
+              @http = Net::HTTP.new(uri.hostname, uri.port)
+              @http.use_ssl = uri.scheme == 'https'
+              @http.verify_mode = old_http.verify_mode
+              @http.ca_file = old_http.ca_file unless old_http.ca_file.nil?
+              @http.cert = old_http.cert unless old_http.cert.nil?
+              @http.key = old_http.key unless old_http.key.nil?
+              @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
             else
-              args[:as_int] = ndp.value
+              @http.use_ssl = uri.scheme == 'https'
             end
-
-            Opentelemetry::Proto::Metrics::V1::NumberDataPoint.new(**args)
-          end
-
-          # Converts a list of SDK exemplars to their OTLP proto representation.
-          def as_otlp_exemplars(exemplars)
-            exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
-          end
-
-          # Converts a single SDK exemplar to its OTLP proto representation.
-          def as_otlp_exemplar(exemplar)
-            args = {
-              time_unix_nano: exemplar.time_unix_nano,
-              span_id: exemplar.span_id,
-              trace_id: exemplar.trace_id
-            }
-
-            # Add filtered_attributes if present
-            args[:filtered_attributes] = exemplar.filtered_attributes.map { |k, v| as_otlp_key_value(k, v) } if exemplar.filtered_attributes
-
-            # Set value based on type
-            if exemplar.value.is_a?(Float)
-              args[:as_double] = exemplar.value
-            else
-              args[:as_int] = exemplar.value
-            end
-
-            Opentelemetry::Proto::Metrics::V1::Exemplar.new(**args)
+            @uri = uri
+            @path = uri.path
           end
 
           # may not need this
