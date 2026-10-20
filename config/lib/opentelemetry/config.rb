@@ -7,6 +7,7 @@ require 'date'
 require 'yaml'
 
 require_relative 'config/defaults'
+require_relative 'config/env_substitution'
 require_relative 'config/logs'
 require_relative 'config/propagation'
 require_relative 'config/resource'
@@ -49,12 +50,15 @@ module OpenTelemetry
         end
 
         content = File.read(path)
-        OpenTelemetry::Config::Model::OpenTelemetryConfiguration.from_hash(YAML.safe_load(content, permitted_classes: [Date, Time]))
+        OpenTelemetry::Config::Model::OpenTelemetryConfiguration.from_hash(EnvSubstitution.load(content))
       rescue Errno::ENOENT => e
         OpenTelemetry.logger.error("Config file not found: #{e.message}")
         nil
       rescue Psych::SyntaxError => e
         OpenTelemetry.logger.error("YAML parse error: #{e.message}")
+        nil
+      rescue EnvSubstitution::Error => e
+        OpenTelemetry.logger.error("Config file substitution error: #{e.message}")
         nil
       end
 
