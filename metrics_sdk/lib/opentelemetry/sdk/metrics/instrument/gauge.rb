@@ -34,12 +34,6 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e)
             nil
           end
-
-          private
-
-          def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new(exemplar_reservoir: @exemplar_reservoir)
-          end
         end
       end
     end
