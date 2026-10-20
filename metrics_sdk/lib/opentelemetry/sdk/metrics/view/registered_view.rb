@@ -63,7 +63,7 @@ module OpenTelemetry
 
           # Normalizes the +attribute_keys+ option into allow-list/exclude-list of string keys.
           # If nil, no restriction.
-          # If Hash, it should have :included and/or :excluded keys.
+          # If Hash, either only Symbol :included/:excluded keys, or only attribute keys (legacy allow-list).
           # Else, it is treated as an allow-list of attribute keys (default legacy behavior {'a' => 'b'})
           def parse_attribute_keys(attribute_keys)
             case attribute_keys
@@ -78,18 +78,19 @@ module OpenTelemetry
 
           # An empty Hash carries no configuration, and used to be the default value of this
           # option, so it is treated the same as an omitted option.
+          # String 'included'/'excluded' are legacy attribute names, not the new form.
           def parse_attribute_keys_hash(attribute_keys)
-            attribute_keys = attribute_keys.transform_keys do |key|
-              key.is_a?(String) && INCLUDE_EXCLUDE_KEYS.map(&:to_s).include?(key) ? key.to_sym : key
-            end
-
             return [nil, nil] if attribute_keys.empty?
-            return [normalize_attribute_keys(attribute_keys.keys), nil] unless (attribute_keys.keys - INCLUDE_EXCLUDE_KEYS).empty?
+
+            other_keys = attribute_keys.keys - INCLUDE_EXCLUDE_KEYS
+            return [normalize_attribute_keys(attribute_keys.keys), nil] if other_keys.size == attribute_keys.size
+            raise ArgumentError, "attribute_keys cannot mix :included/:excluded with other keys: #{other_keys.inspect}" unless other_keys.empty?
 
             included = normalize_attribute_keys(attribute_keys[:included])
             excluded = normalize_attribute_keys(attribute_keys[:excluded])
+            overlap  = included & excluded if included && excluded
 
-            OpenTelemetry.logger.warn("attribute_keys #{overlap.inspect} are both included and excluded. They will be treated as excluded.") if included && excluded && included.intersect?(excluded)
+            OpenTelemetry.logger.warn("attribute_keys #{overlap.inspect} are both included and excluded. They will be treated as excluded.") if overlap && !overlap.empty?
             [included, excluded]
           end
 

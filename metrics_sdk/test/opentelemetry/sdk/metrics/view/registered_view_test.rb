@@ -246,10 +246,6 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       _(view.filter_attributes(attributes)).must_equal(attributes)
     end
 
-    it 'keeps all attributes when attribute_keys is an empty Hash' do
-      _(view(attribute_keys: {}).filter_attributes(attributes)).must_equal(attributes)
-    end
-
     it 'returns an empty Hash for nil attributes' do
       _(view.filter_attributes(nil)).must_equal({})
       _(view(attribute_keys: ['env']).filter_attributes(nil)).must_equal({})
@@ -263,19 +259,6 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       _(view(attribute_keys: []).filter_attributes(attributes)).must_equal({})
     end
 
-    it 'keeps only the included keys' do
-      _(view(attribute_keys: { included: ['env'] }).filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
-    end
-
-    it 'drops the excluded keys and keeps the rest' do
-      _(view(attribute_keys: { excluded: ['host'] }).filter_attributes(attributes)).must_equal({ 'env' => 'prod', 'region' => 'us-east-1' })
-    end
-
-    it 'applies included and excluded together' do
-      filtered = view(attribute_keys: { included: %w[env region], excluded: ['host'] }).filter_attributes(attributes)
-      _(filtered).must_equal({ 'env' => 'prod', 'region' => 'us-east-1' })
-    end
-
     it 'accepts a single key' do
       _(view(attribute_keys: 'env').filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
     end
@@ -284,13 +267,63 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
       _(view(attribute_keys: [:env]).filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
     end
 
-    it 'treats the keys of a plain Hash as the allow-list' do
-      _(view(attribute_keys: { 'env' => nil }).filter_attributes(attributes)).must_equal({ 'env' => 'prod' })
-    end
-
     it 'does not modify the measurement attributes' do
       view(attribute_keys: { excluded: ['host'] }).filter_attributes(attributes)
       _(attributes).must_equal({ 'env' => 'prod', 'region' => 'us-east-1', 'host' => 'a' })
+    end
+
+    describe 'with a Hash' do
+      let(:attributes) { { 'env' => 'prod', 'region' => 'us-east-1', 'host' => 'a', 'included' => 'i', 'excluded' => 'e' } }
+
+      all_keys = %w[env region host included excluded]
+
+      [
+        # Empty
+        [{}, all_keys],
+        # Only Symbol :included / :excluded keys
+        [{ included: ['env'] }, %w[env]],
+        [{ excluded: ['env'] }, %w[region host included excluded]],
+        [{ included: %w[env region], excluded: ['host'] }, %w[env region]],
+        [{ included: [] }, []],
+        [{ excluded: [] }, all_keys],
+        [{ included: nil }, all_keys],
+        [{ included: 'env' }, %w[env]],
+        # Only attribute keys: legacy allow-list, values ignored
+        [{ 'env' => nil, 'host' => nil }, %w[env host]],
+        [{ env: 'x' }, %w[env]],
+        # String 'included' / 'excluded' are attribute names, not the new form
+        [{ 'included' => [] }, %w[included]],
+        [{ 'included' => nil }, %w[included]],
+        [{ 'excluded' => nil }, %w[excluded]],
+        [{ 'included' => 'env' }, %w[included]],
+        [{ 'included' => ['env'] }, %w[included]],
+        [{ 'included' => nil, 'host' => nil }, %w[host included]]
+      ].each do |attribute_keys, kept|
+        it "keeps #{kept.inspect} for #{attribute_keys.inspect}" do
+          _(view(attribute_keys: attribute_keys).filter_attributes(attributes)).must_equal(attributes.slice(*kept))
+        end
+      end
+
+      it 'treats a key that is both included and excluded as excluded and warns' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          filtered = view(attribute_keys: { included: %w[env host], excluded: ['host'] }).filter_attributes(attributes)
+
+          _(filtered).must_equal({ 'env' => 'prod' })
+          _(log_stream.string).must_match(/attribute_keys \["host"\] are both included and excluded/)
+        end
+      end
+
+      [
+        { included: ['env'], 'host' => nil },
+        { excluded: ['env'], host: nil },
+        { included: ['env'], excluded: ['host'], 'region' => nil },
+        { included: ['env'], 'included' => ['host'] },
+        { 'included' => ['env'], excluded: ['host'] }
+      ].each do |attribute_keys|
+        it "raises ArgumentError for #{attribute_keys.inspect}" do
+          _ { view(attribute_keys: attribute_keys) }.must_raise(ArgumentError)
+        end
+      end
     end
   end
 

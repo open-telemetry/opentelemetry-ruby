@@ -211,10 +211,11 @@ module OpenTelemetry
         #       an Array of keys to keep, e.g. ['http.method'], or a Hash of an allow-list and an
         #       exclude-list, e.g. { included: ['http.method'], excluded: ['http.url'] }. Attributes whose
         #       keys are not allowed are dropped from the stream. If omitted, all attributes are kept.
+        #       A key that is both included and excluded is treated as excluded and a warning is logged.
         #     aggregation_cardinality_limit: An Integer limiting the number of data points the view emits
         #       per collection, e.g. 1000
         #
-        # @raise [ArgumentError] if the same attribute key is both included and excluded.
+        # @raise [ArgumentError] if an attribute_keys Hash mixes :included/:excluded with other keys.
         #
         # @return [nil] returns nil
         #
