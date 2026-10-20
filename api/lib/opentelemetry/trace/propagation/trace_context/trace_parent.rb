@@ -27,8 +27,8 @@ module OpenTelemetry
           REGEXP = /^(?<version>[A-Fa-f0-9]{2})-(?<trace_id>[A-Fa-f0-9]{32})-(?<span_id>[A-Fa-f0-9]{16})-(?<flags>[A-Fa-f0-9]{2})(?<ignored>-.*)?$/
           private_constant :REGEXP
 
-          INVALID_TRACE_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_trace_id
-          INVALID_SPAN_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_span_id
+          INVALID_TRACE_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_trace_id.freeze
+          INVALID_SPAN_ID = OpenTelemetry::Trace::SpanContext::INVALID.hex_span_id.freeze
           private_constant :INVALID_TRACE_ID, :INVALID_SPAN_ID
 
           class << self
