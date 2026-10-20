@@ -9,7 +9,7 @@ module OpenTelemetry
     module Trace
       # {TracerProvider} is the SDK implementation of {OpenTelemetry::Trace::TracerProvider}.
       class TracerProvider < OpenTelemetry::Trace::TracerProvider # rubocop:disable Metrics/ClassLength
-        Key = Struct.new(:name, :version, :attributes)
+        Key = Struct.new(:name, :version, :attributes, :schema_url)
         EMPTY_ATTRIBUTES = {}.freeze
 
         private_constant(:Key, :EMPTY_ATTRIBUTES)
@@ -57,16 +57,19 @@ module OpenTelemetry
         # @param [String] version Instrumentation scope version
         # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric, Boolean>}] attributes
         #   Instrumentation scope attributes
+        # @param [String] schema_url Instrumentation scope schema URL
         #
         # @return [Tracer]
-        def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil, schema_url: nil) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
           name ||= deprecated_name || ''
           version ||= deprecated_version || ''
           attributes = attributes&.dup&.freeze || EMPTY_ATTRIBUTES
+          schema_url = schema_url&.dup&.freeze || ''
+
           OpenTelemetry.logger.warn 'calling TracerProvider#tracer without providing a tracer name.' if name.empty?
           @registry_mutex.synchronize do
-            @registry[Key.new(name, version, attributes)] ||=
-              Tracer.new(name, version, self, attributes: attributes)
+            @registry[Key.new(name, version, attributes, schema_url)] ||=
+              Tracer.new(name, version, self, attributes: attributes, schema_url: schema_url)
           end
         end
 
