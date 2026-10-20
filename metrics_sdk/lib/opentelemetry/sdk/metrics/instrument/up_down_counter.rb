@@ -31,12 +31,6 @@ module OpenTelemetry
             OpenTelemetry.handle_error(exception: e)
             nil
           end
-
-          private
-
-          def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :cumulative, exemplar_reservoir: @exemplar_reservoir, monotonic: false)
-          end
         end
       end
     end
