@@ -143,7 +143,7 @@ module ConstantsGenerator
     direct = ref_name(prop)
 
     if direct && struct?(defs, direct) && nullable?(defs, direct)
-      "h.key?('#{key}') ? #{direct}.from_hash(h['#{key}'] || {}) : nil"
+      "Model.nullable_from_hash(#{direct}, h, '#{key}')"
     elsif direct && struct?(defs, direct)
       "#{direct}.from_hash(h['#{key}'])"
     elsif direct && marker?(defs, direct)
@@ -216,6 +216,15 @@ module ConstantsGenerator
         module Config
           # Generated struct definitions mirroring the OpenTelemetry configuration schema.
           module Model
+            # Parses the nullable object at +key+ with +klass+. An explicit null
+            # parses as an object with every property omitted.
+            def self.nullable_from_hash(klass, h, key)
+              return nil unless h.key?(key)
+
+              value = h[key]
+              klass.from_hash(value.nil? ? {} : value)
+            end
+
       #{indent(body.rstrip, 6)}
           end
         end

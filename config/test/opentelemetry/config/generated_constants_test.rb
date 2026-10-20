@@ -39,5 +39,9 @@ describe OpenTelemetry::Config::Model do
     it 'parses a property with a non-hash value as nil' do
       _(OpenTelemetry::Config::Model::SpanExporter.from_hash('otlp_http' => 'invalid').otlp_http).must_be_nil
     end
+
+    it 'parses a property with a false value as nil' do
+      _(OpenTelemetry::Config::Model::SpanExporter.from_hash('otlp_http' => false).otlp_http).must_be_nil
+    end
   end
 end
