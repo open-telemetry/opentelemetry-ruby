@@ -58,6 +58,7 @@ module OpenTelemetry
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
                          timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
                          aggregation_cardinality_limit: nil,
+                         default_aggregation: nil,
                          encoding: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_METRICS_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
@@ -65,7 +66,9 @@ module OpenTelemetry
             raise ArgumentError, "unsupported encoding #{encoding}" unless %w[json protobuf].include?(encoding)
 
             # create the MetricStore object
-            super(aggregation_cardinality_limit: aggregation_cardinality_limit)
+            # An explicitly provided aggregation takes precedence over the environment variable.
+            super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: self.class.histogram_aggregation_from_env.merge(default_aggregation || {}))
 
             @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/metrics', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
@@ -78,6 +81,25 @@ module OpenTelemetry
             @content_type = encoding == 'json' ? 'application/json' : 'application/x-protobuf'
             @mutex = Mutex.new
             @shutdown = false
+          end
+
+          # Returns the histogram aggregation requested by
+          # OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION, or an empty Hash
+          # when the spec default (explicit bucket histogram) applies.
+          #
+          # @return [Hash{Symbol => Class}]
+          def self.histogram_aggregation_from_env
+            case ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', 'explicit_bucket_histogram').strip.downcase
+            when 'base2_exponential_bucket_histogram'
+              { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+            when 'explicit_bucket_histogram'
+              {}
+            else
+              OpenTelemetry.logger.warn(
+                "OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION: unrecognized value '#{ENV.fetch('OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION', nil)}', defaulting to explicit_bucket_histogram."
+              )
+              {}
+            end
           end
 
           # consolidate the metrics data into the form of MetricData
@@ -103,18 +125,7 @@ module OpenTelemetry
           def send_bytes(bytes, timeout:)
             return FAILURE if bytes.nil?
 
-            request = Net::HTTP::Post.new(@path)
-
-            if @compression == 'gzip'
-              request.add_field('Content-Encoding', 'gzip')
-              body = Zlib.gzip(bytes)
-            else
-              body = bytes
-            end
-
-            request.body = body
-            request.add_field('Content-Type', @content_type)
-            @headers.each { |key, value| request.add_field(key, value) }
+            body = @compression == 'gzip' ? Zlib.gzip(bytes) : bytes
 
             retry_count = 0
             timeout ||= @timeout
@@ -123,6 +134,8 @@ module OpenTelemetry
             around_request do
               remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
               return FAILURE if remaining_timeout.zero?
+
+              request = build_request(body)
 
               @http.open_timeout = remaining_timeout
               @http.read_timeout = remaining_timeout
@@ -154,6 +167,8 @@ module OpenTelemetry
                 @http.finish
                 handle_redirect(response['location'])
                 redo if backoff?(retry_after: 0, retry_count: retry_count += 1, reason: response.code)
+                OpenTelemetry.logger.warn('Net::HTTPRedirection in MetricsExporter#send_bytes')
+                FAILURE
               else
                 @http.finish
                 OpenTelemetry.logger.warn("Unexpected error in OTLP::MetricsExporter#send_bytes - #{response.message}")
@@ -192,6 +207,45 @@ module OpenTelemetry
             @http.open_timeout = @timeout
             @http.read_timeout = @timeout
             @http.write_timeout = @timeout
+          end
+
+          # Builds a POST request for the current endpoint path, so that a
+          # redirect to a different path is picked up by the next retry.
+          def build_request(body)
+            request = Net::HTTP::Post.new(@path)
+            request.body = body
+            request.add_field('Content-Encoding', 'gzip') if @compression == 'gzip'
+            request.add_field('Content-Type', @content_type)
+            @headers.each { |key, value| request.add_field(key, value) }
+            request
+          end
+
+          # Follows an HTTP redirect by reinitializing the HTTP connection and
+          # request path from the Location response header before the retry.
+          #
+          # Relative locations are resolved against the current endpoint URI.
+          # The connection is re-created when the redirect points at a
+          # different host or port; TLS and certificate settings are kept.
+          def handle_redirect(location)
+            return if location.nil? || location.empty?
+
+            uri = URI.join(@uri, location)
+            return if uri == @uri
+
+            if uri.host != @uri.host || uri.port != @uri.port
+              old_http = @http
+              @http = Net::HTTP.new(uri.hostname, uri.port)
+              @http.use_ssl = uri.scheme == 'https'
+              @http.verify_mode = old_http.verify_mode
+              @http.ca_file = old_http.ca_file unless old_http.ca_file.nil?
+              @http.cert = old_http.cert unless old_http.cert.nil?
+              @http.key = old_http.key unless old_http.key.nil?
+              @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+            else
+              @http.use_ssl = uri.scheme == 'https'
+            end
+            @uri = uri
+            @path = uri.path
           end
 
           # may not need this

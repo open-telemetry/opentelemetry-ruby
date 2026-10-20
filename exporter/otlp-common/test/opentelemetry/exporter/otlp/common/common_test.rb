@@ -61,6 +61,19 @@ describe OpenTelemetry::Exporter::OTLP::Common do
     end
   end
 
+  describe '#decode_response' do
+    it 'decodes a protobuf body by default' do
+      body = Google::Rpc::Status.encode(Google::Rpc::Status.new(code: 3, message: 'bad request'))
+      status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body)
+      _(status.message).must_equal('bad request')
+    end
+
+    it 'decodes a JSON body with unknown fields when format is json' do
+      status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, '{"message":"bad request","futureField":1}', format: :json)
+      _(status.message).must_equal('bad request')
+    end
+  end
+
   describe '#as_encoded_etsr' do
     it 'handles valid and empty span data' do
       # Valid span data

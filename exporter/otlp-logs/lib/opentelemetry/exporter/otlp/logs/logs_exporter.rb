@@ -237,7 +237,7 @@ module OpenTelemetry
           end
 
           def log_status(body)
-            status = Google::Rpc::Status.decode(body)
+            status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body, format: @format)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
               klass = pool.lookup(detail.type_name).msgclass
@@ -249,11 +249,7 @@ module OpenTelemetry
           end
 
           def log_partial_success(body)
-            response = if @content_type == 'application/json'
-                         Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode_json(body, ignore_unknown_fields: true)
-                       else
-                         Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
-                       end
+            response = OpenTelemetry::Exporter::OTLP::Common.decode_response(Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse, body, format: @format)
             partial_success = response.partial_success
             return if partial_success.nil? || partial_success.rejected_log_records <= 0
 

@@ -17,6 +17,8 @@ It works with:
 - `opentelemetry-sdk` — Traces
 - `opentelemetry-exporter-otlp` — OTLP HTTP exporter
 - `opentelemetry-instrumentation-all` — Instrumentation for gems
+- `opentelemetry-logs-sdk` — Logs (optional, see [Logs](#logs))
+- `opentelemetry-exporter-otlp-logs` — OTLP HTTP log exporter (optional)
 
 This code is still under development and is not a complete implementation of the declarative configuration specification. Until the code becomes stable, declarative configuration functionality will live outside stable OpenTelemetry libraries.
 
@@ -69,6 +71,24 @@ sdk = OpenTelemetry::Config.configure_from_file('/path/to/otel-config.yaml')
 File-based configuration uses the values in the YAML file and the schema defaults
 for omitted settings. It does not inherit the SDK's `OTEL_*` environment-variable
 defaults.
+
+To use an environment variable in the file, reference it in a value as
+`${NAME}`, `${env:NAME}`, or `${NAME:-default}`. The default applies when the
+variable is unset or empty. Use `$$` for a literal `$`. Values are typed after
+substitution, so quote a reference to keep it a string.
+
+```yaml
+resource:
+  attributes:
+    - name: service.name
+      value: ${OTEL_SERVICE_NAME:-unknown_service}
+tracer_provider:
+  processors:
+    - batch:
+        exporter:
+          otlp_http:
+            endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://localhost:4318}/v1/traces
+```
 
 Some Ruby-specific SDK settings have no equivalent in the configuration schema:
 
@@ -184,6 +204,35 @@ propagator:
 ```
 
 Supported propagator names: `tracecontext`, `baggage`, `b3`, `b3multi`, `jaeger`, `ottrace`, `xray`, `google_cloud_trace_context`.
+
+### Logs
+
+Logs support is optional. Add `opentelemetry-logs-sdk` to your Gemfile, along with `opentelemetry-exporter-otlp-logs` if you use the `otlp_http` exporter, and require them before calling `configure`. If a required gem isn't loaded, the logger provider or processor that needs it is skipped with a warning.
+
+```ruby
+require 'opentelemetry-sdk'
+require 'opentelemetry-logs-sdk'
+require 'opentelemetry-exporter-otlp-logs'
+require 'opentelemetry-config'
+```
+
+The configured logger provider is installed as `OpenTelemetry.logger_provider`.
+
+```yaml
+logger_provider:
+  limits:
+    attribute_count_limit: 128
+  processors:
+    - batch:
+        exporter:
+          otlp_http:
+            endpoint: http://localhost:4318/v1/logs
+    - simple:
+        exporter:
+          console:
+```
+
+Supported processors: `batch`, `simple`. Supported exporters: `console`, `otlp_http`.
 
 ## Examples
 

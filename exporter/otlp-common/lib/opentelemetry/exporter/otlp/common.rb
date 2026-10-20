@@ -198,6 +198,21 @@ module OpenTelemetry
           )
         end
 
+        # Decodes an OTLP/HTTP response body
+        #
+        # @param [Class] message_class the protobuf message class to decode into.
+        # @param [String] body the response body.
+        # @param [Symbol] format the wire format of the body, either +:protobuf+ (default) or +:json+.
+        #
+        # @return [Google::Protobuf::AbstractMessage] returns the decoded message
+        def decode_response(message_class, body, format: :protobuf)
+          if format == :json
+            message_class.decode_json(body, ignore_unknown_fields: true)
+          else
+            message_class.decode(body)
+          end
+        end
+
         private
 
         def as_otlp_log_record(log_record_data, format)

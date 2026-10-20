@@ -688,6 +688,28 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
       OpenTelemetry.logger = logger
     end
 
+    it 'logs JSON rpc.Status on bad request' do
+      log_stream = StringIO.new
+      logger = OpenTelemetry.logger
+      OpenTelemetry.logger = ::Logger.new(log_stream)
+
+      exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(encoding: 'json')
+      details = [::Google::Protobuf::Any.pack(::Google::Protobuf::StringValue.new(value: 'you are a bad request'))]
+      status = ::Google::Rpc::Status.encode_json(::Google::Rpc::Status.new(code: 1, message: 'bad request', details: details))
+      stub_request(:post, 'http://localhost:4318/v1/logs').to_return(status: 400, body: status, headers: { 'Content-Type' => 'application/json' })
+      log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+
+      result = exporter.export([log_record_data])
+
+      _(log_stream.string).must_match(
+        /ERROR -- : OpenTelemetry error: OTLP logs exporter received rpc.Status{message=bad request, details=\[.*you are a bad request.*\]}/
+      )
+
+      _(result).must_equal(FAILURE)
+    ensure
+      OpenTelemetry.logger = logger
+    end
+
     it 'logs a specific message when there is a 404' do
       log_stream = StringIO.new
       logger = OpenTelemetry.logger

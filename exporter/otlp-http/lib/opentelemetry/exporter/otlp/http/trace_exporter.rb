@@ -214,7 +214,7 @@ module OpenTelemetry
           end
 
           def log_status(body)
-            status = Google::Rpc::Status.decode(body)
+            status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body, format: @format)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
               klass = pool.lookup(detail.type_name).msgclass

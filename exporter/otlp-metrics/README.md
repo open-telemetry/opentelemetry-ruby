@@ -110,11 +110,24 @@ The collector exporter can be configured explicitly in code, or via environment 
 | `compression:` | `OTEL_EXPORTER_OTLP_COMPRESSION` | `"gzip"` |
 | `timeout:` | `OTEL_EXPORTER_OTLP_TIMEOUT` | `10` |
 | `encoding:` | `OTEL_EXPORTER_OTLP_PROTOCOL` | `"protobuf"` |
+| `default_aggregation:` | `OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION` | `"explicit_bucket_histogram"` |
 | `ssl_verify_mode:` | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE` | `OpenSSL::SSL:VERIFY_PEER` |
 
 `ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.7.6/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
 
 `encoding:` selects the OTLP encoding: `"protobuf"` (the default) sends binary Protobuf, and `"json"` sends spec-compliant OTLP/JSON. When not passed explicitly, it is derived from `OTEL_EXPORTER_OTLP_PROTOCOL` (`http/protobuf` or `http/json`).
+
+`OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION` parameter values can be either `"explicit_bucket_histogram"` (the default) or `"base2_exponential_bucket_histogram"`. The value is matched case-insensitively, and an unrecognized value logs a warning and falls back to `"explicit_bucket_histogram"`.
+
+The `default_aggregation:` parameter sets the default aggregation for any instrument kind, and takes precedence over the environment variable. It is a hash where the key is the symbolized instrument kind and the value is the aggregation class, applied on top of the [default aggregation](https://opentelemetry.io/docs/specs/otel/metrics/sdk/#default-aggregation) defined by the specification. A matching View still overrides it.
+
+```ruby
+OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new(
+  default_aggregation: { histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram }
+)
+```
+
+The same parameter is available on `OpenTelemetry::SDK::Metrics::Export::MetricReader` and its subclasses, so pull readers can express a preference without an environment variable.
 
 ## How can I get involved?
 

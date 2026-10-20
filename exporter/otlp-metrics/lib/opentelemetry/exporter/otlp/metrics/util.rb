@@ -91,7 +91,7 @@ module OpenTelemetry
 
           # Decodes and logs an rpc.Status error response body.
           def log_status(body)
-            status = Google::Rpc::Status.decode(body)
+            status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body, format: @format)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
               type_name = detail.type_url.to_s.split('/').last.to_s
@@ -102,9 +102,6 @@ module OpenTelemetry
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'unexpected error decoding rpc.Status in OTLP::MetricsExporter#log_status')
           end
-
-          # No-op: HTTP redirects are not followed.
-          def handle_redirect(location); end
         end
       end
     end

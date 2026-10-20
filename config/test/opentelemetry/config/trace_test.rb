@@ -162,6 +162,24 @@ describe OpenTelemetry::Config do
       end
     end
 
+    it 'builds an OTLP HTTP exporter when otlp_http has no properties' do
+      with_config(<<~YAML) do |path|
+        file_format: "1.0"
+        tracer_provider:
+          processors:
+            - simple:
+                exporter:
+                  otlp_http:
+      YAML
+        sdk = OpenTelemetry::Config.configure_from_file(path)
+        processors = sdk.tracer_provider.instance_variable_get(:@span_processors)
+        exporter = processors[0].instance_variable_get(:@span_exporter)
+
+        _(exporter).must_be_instance_of OpenTelemetry::Exporter::OTLP::Exporter
+        _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://localhost:4318/v1/traces'
+      end
+    end
+
     describe 'OTLP HTTP TLS configuration' do
       it 'passes TLS files to the HTTP client' do
         key = OpenSSL::PKey::RSA.new(2048)
@@ -290,6 +308,24 @@ describe OpenTelemetry::Config do
           sampler = OpenTelemetry.tracer_provider.sampler
 
           _(sampler.description).must_match(/0.25/)
+        end
+      end
+
+      it 'uses TraceIdRatioBased with the default ratio when trace_id_ratio_based has no properties' do
+        with_config(<<~YAML) do |path|
+          file_format: "1.0"
+          tracer_provider:
+            processors:
+              - simple:
+                  exporter:
+                    console:
+            sampler:
+              trace_id_ratio_based:
+        YAML
+          sdk = OpenTelemetry::Config.configure_from_file(path)
+          sampler = sdk.tracer_provider.sampler
+
+          _(sampler.description).must_equal 'TraceIdRatioBased{1.000000}'
         end
       end
 

@@ -69,6 +69,7 @@ module OpenTelemetry
           @headers = prepare_headers(headers)
           @timeout = timeout.to_f
           @compression = compression
+          @format = encoding.to_sym
           @content_type = encoding == 'json' ? 'application/json' : 'application/x-protobuf'
           @metrics_reporter = metrics_reporter || OpenTelemetry::SDK::Trace::Export::MetricsReporter
           @shutdown = false
@@ -226,7 +227,7 @@ module OpenTelemetry
         end
 
         def log_status(body)
-          status = Google::Rpc::Status.decode(body)
+          status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body, format: @format)
           pool = ::Google::Protobuf::DescriptorPool.generated_pool
           details = status.details.filter_map do |detail|
             klass = pool.lookup(detail.type_name).msgclass
@@ -279,8 +280,7 @@ module OpenTelemetry
 
         def encode(span_data)
           start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-          format = @content_type == 'application/json' ? :json : :protobuf
-          OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data, format: format)
+          OpenTelemetry::Exporter::OTLP::Common.as_encoded_etsr(span_data, format: @format)
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Exporter#encode')
           nil
