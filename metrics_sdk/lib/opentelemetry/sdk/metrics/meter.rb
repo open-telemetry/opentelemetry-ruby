@@ -74,8 +74,8 @@ module OpenTelemetry
 
         # @api private
         def add_view(view)
-          @instrument_registry.each_value do |instrument|
-            instrument.register_view(view)
+          @instrument_descriptors.values.flatten.each do |descriptor|
+            descriptor.instrument.register_view(view)
           end
         end
 
