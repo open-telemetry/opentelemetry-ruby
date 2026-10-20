@@ -504,6 +504,188 @@ describe OpenTelemetry::SDK::Trace::Span do
     end
   end
 
+  describe '#on_finishing' do
+    OnFinishingProcessor = Struct.new(:on_finishing_block, :on_finishing_count, :on_finish_count) do
+      def initialize(&block)
+        super(block, 0, 0)
+      end
+
+      def on_start(_span, _parent_context); end
+
+      def on_finishing(span)
+        self.on_finishing_count += 1
+        on_finishing_block.call(span)
+      end
+
+      def on_finish(_span)
+        self.on_finish_count += 1
+      end
+    end
+
+    # The file-level span_limits caps attributes, events and links at 1 each,
+    # which would mask what these tests are checking.
+    def span_with_processors(processors)
+      Span.new(context, Context.empty, OpenTelemetry::Trace::Span::INVALID, 'name', SpanKind::INTERNAL, nil,
+               OpenTelemetry::SDK::Trace::SpanLimits::DEFAULT, processors, nil, nil, Time.now, nil, nil)
+    end
+
+    def wait_until(timeout: 5)
+      deadline = Process.clock_gettime(Process::CLOCK_MONOTONIC) + timeout
+      until yield
+        flunk('timed out waiting for the writer thread to block on the span') if Process.clock_gettime(Process::CLOCK_MONOTONIC) > deadline
+
+        sleep(0.001)
+      end
+    end
+
+    it 'prevents other threads from modifying the span once it is ending' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        ending = Queue.new
+        release = Queue.new
+        span = span_with_processors([OnFinishingProcessor.new do |_span|
+          ending << :ending
+          release.pop
+        end])
+
+        finisher = Thread.new { span.finish }
+        writer = nil
+        begin
+          ending.pop
+
+          writer = Thread.new { span.set_attribute('other', 'thread') }
+          wait_until { writer.status == 'sleep' }
+
+          release << :go
+          [finisher, writer].each(&:join)
+
+          _(span.to_span_data.attributes).must_be_nil
+          _(log_stream.string).must_match(/Calling set_attribute on an ended Span/)
+        ensure
+          # A failed assertion or a flunk above leaves both threads parked on
+          # the span's mutex, which would leak them into the rest of the suite.
+          release << :go
+          [finisher, writer].compact.each { |thread| thread.kill.join }
+        end
+      end
+    end
+
+    it 'allows a processor to set an attribute' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', 'yes') }])
+      span.finish
+      _(span.to_span_data.attributes).must_equal('finishing' => 'yes')
+    end
+
+    it 'allows a processor to add attributes' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.add_attributes('finishing' => 'yes') }])
+      span.finish
+      _(span.to_span_data.attributes).must_equal('finishing' => 'yes')
+    end
+
+    it 'allows a processor to add an event' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.add_event('finishing') }])
+      span.finish
+      _(span.to_span_data.events.map(&:name)).must_equal(['finishing'])
+    end
+
+    it 'allows a processor to add a link' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.add_link(OpenTelemetry::Trace::Link.new(context)) }])
+      span.finish
+      _(span.to_span_data.links.map(&:span_context)).must_equal([context])
+    end
+
+    it 'allows a processor to set the status' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.status = Status.error('cancelled') }])
+      span.finish
+      _(span.to_span_data.status.code).must_equal(Status::ERROR)
+    end
+
+    it 'allows a processor to set the name' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.name = 'renamed' }])
+      span.finish
+      _(span.to_span_data.name).must_equal('renamed')
+    end
+
+    it 'counts attributes set by a processor' do
+      span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', 'yes') }])
+      span.set_attribute('before', 'yes')
+      span.finish
+      _(span.to_span_data.total_recorded_attributes).must_equal(2)
+    end
+
+    it 'does not warn that the span has ended' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', 'yes') }])
+        span.finish
+        _(log_stream.string).must_be_empty
+      end
+    end
+
+    it 'validates attributes written by a processor' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        span = span_with_processors([OnFinishingProcessor.new { |s| s.set_attribute('finishing', :invalid) }])
+        span.finish
+        _(span.to_span_data.attributes).must_equal({})
+        _(span.to_span_data.attributes).must_be :frozen?
+        _(log_stream.string).must_match(/invalid span attribute value type Symbol for key 'finishing' on span 'name'/)
+      end
+    end
+
+    it 'is still recording while a processor runs' do
+      recording = nil
+      span = span_with_processors([OnFinishingProcessor.new { |s| recording = s.recording? }])
+      span.finish
+      _(recording).must_equal(true)
+    end
+
+    it 'ignores a nested finish from a processor' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        processor = OnFinishingProcessor.new(&:finish)
+        span = span_with_processors([processor])
+        span.finish
+
+        _(processor.on_finishing_count).must_equal(1)
+        _(processor.on_finish_count).must_equal(1)
+        _(log_stream.string).must_match(/Calling finish on a Span that is ending/)
+      end
+    end
+
+    it 'leaves the span finishable when a processor raises' do
+      raised = false
+      processor = OnFinishingProcessor.new do |_span|
+        next if raised
+
+        raised = true
+        raise 'boom'
+      end
+      span = span_with_processors([processor])
+
+      error = _(proc { span.finish }).must_raise(RuntimeError)
+      _(error.message).must_equal('boom')
+      _(span).must_be :recording?
+
+      span.finish
+      _(span).wont_be :recording?
+      _(processor.on_finishing_count).must_equal(2)
+      _(processor.on_finish_count).must_equal(1)
+    end
+
+    it 'runs every processor in the list' do
+      OpenTelemetry::TestHelpers.with_test_logger do
+        observed = nil
+        first = OnFinishingProcessor.new do |s|
+          s.set_attribute('first', 'yes')
+          s.finish
+        end
+        second = OnFinishingProcessor.new { |s| observed = s.attributes }
+        span = span_with_processors([first, second])
+        span.finish
+
+        _(observed).must_equal('first' => 'yes')
+        _(second.on_finishing_count).must_equal(1)
+      end
+    end
+  end
+
   describe '#instrumentation_library' do
     it 'is identical to the instrumentation_scope' do
       mock_span_processor.expect(:on_start, nil) { |_s| pass }
