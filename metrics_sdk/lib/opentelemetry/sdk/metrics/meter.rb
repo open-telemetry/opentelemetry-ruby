@@ -64,7 +64,7 @@ module OpenTelemetry
         #
         # Not synchronized on @mutex: create_instrument holds it while waiting on the
         # meter provider's mutex, which the caller of this method already holds.
-        # Iterates a snapshot so a concurrent registration cannot mutate the hash mid-iteration.
+        # @instrument_descriptors is copy-on-write to avoid race conditions.
         def add_metric_reader(metric_reader)
           @instrument_descriptors.values.flatten.each do |descriptor|
             descriptor.instrument.register_with_new_metric_store(metric_reader.metric_store,
@@ -115,9 +115,8 @@ module OpenTelemetry
 
               # Build and register a new instrument since (still build the instrument even though a conflicting one exists) it has different attributes.
               instrument = build_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
-              # Replace rather than append so arrays already snapshotted by add_metric_reader are never mutated.
-              descriptors << InstrumentDescriptor.new(name, kind, unit, description, instrument)
-              @instrument_descriptors[name.downcase] = descriptors
+              descriptor = InstrumentDescriptor.new(name, kind, unit, description, instrument)
+              @instrument_descriptors = @instrument_descriptors.merge(name.downcase => descriptors + [descriptor])
               instrument
             end
           end
