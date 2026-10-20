@@ -271,6 +271,27 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       end
     end
 
+    it 'ignores NaN measurements so they do not poison the sum' do
+      ebh.update(1, {}, data_points, cardinality_limit)
+      ebh.update(Float::NAN, {}, data_points, cardinality_limit)
+      ebh.update(2, {}, data_points, cardinality_limit)
+
+      hdp = ebh.collect(start_time, end_time, data_points)[0]
+      _(hdp.sum).must_equal(3)
+      _(hdp.count).must_equal(2)
+    end
+
+    it 'ignores +/-Infinity measurements so they do not poison the sum' do
+      ebh.update(1, {}, data_points, cardinality_limit)
+      ebh.update(Float::INFINITY, {}, data_points, cardinality_limit)
+      ebh.update(-Float::INFINITY, {}, data_points, cardinality_limit)
+      ebh.update(2, {}, data_points, cardinality_limit)
+
+      hdp = ebh.collect(start_time, end_time, data_points)[0]
+      _(hdp.sum).must_equal(3)
+      _(hdp.count).must_equal(2)
+    end
+
     describe 'with recording min max disabled' do
       let(:record_min_max) { false }
 
