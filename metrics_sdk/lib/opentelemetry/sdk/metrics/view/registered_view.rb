@@ -84,7 +84,11 @@ module OpenTelemetry
 
             other_keys = attribute_keys.keys - INCLUDE_EXCLUDE_KEYS
             return [normalize_attribute_keys(attribute_keys.keys), nil] if other_keys.size == attribute_keys.size
-            raise ArgumentError, "attribute_keys cannot mix :included/:excluded with other keys: #{other_keys.inspect}" unless other_keys.empty?
+
+            unless other_keys.empty?
+              OpenTelemetry.logger.warn("attribute_keys cannot mix :included/:excluded with other keys: #{other_keys.inspect}. attribute_keys will be ignored.")
+              return [nil, nil]
+            end
 
             included = normalize_attribute_keys(attribute_keys[:included])
             excluded = normalize_attribute_keys(attribute_keys[:excluded])

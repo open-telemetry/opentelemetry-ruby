@@ -215,8 +215,6 @@ module OpenTelemetry
         #     aggregation_cardinality_limit: An Integer limiting the number of data points the view emits
         #       per collection, e.g. 1000
         #
-        # @raise [ArgumentError] if an attribute_keys Hash mixes :included/:excluded with other keys.
-        #
         # @return [nil] returns nil
         #
         def add_view(name, **)

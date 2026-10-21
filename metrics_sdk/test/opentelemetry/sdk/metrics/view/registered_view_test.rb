@@ -320,8 +320,13 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         { included: ['env'], 'included' => ['host'] },
         { 'included' => ['env'], excluded: ['host'] }
       ].each do |attribute_keys|
-        it "raises ArgumentError for #{attribute_keys.inspect}" do
-          _ { view(attribute_keys: attribute_keys) }.must_raise(ArgumentError)
+        it "warns and keeps all attributes for #{attribute_keys.inspect}" do
+          OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+            filtered = view(attribute_keys: attribute_keys).filter_attributes(attributes)
+
+            _(filtered).must_equal(attributes)
+            _(log_stream.string).must_match(%r{attribute_keys cannot mix :included/:excluded with other keys})
+          end
         end
       end
     end

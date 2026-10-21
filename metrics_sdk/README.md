@@ -218,7 +218,7 @@ OpenTelemetry.meter_provider.add_view(
 )
 ```
 
-Both lists may be given together. If a key appears in both, `add_view` logs a warning and treats the key as excluded. The `:included` / `:excluded` keys must be Symbols and cannot be mixed with attribute keys in the same Hash; `add_view` raises `ArgumentError` if they are. Omitting `attribute_keys` keeps all attributes; passing an empty array (`attribute_keys: []`) drops all of them.
+Both lists may be given together. If a key appears in both, `add_view` logs a warning and treats the key as excluded. The `:included` / `:excluded` keys must be Symbols and cannot be mixed with attribute keys in the same Hash; `add_view` logs a warning and ignores `attribute_keys` (keeping all attributes) if they are. Omitting `attribute_keys` keeps all attributes; passing an empty array (`attribute_keys: []`) drops all of them.
 
 Note that attributes dropped from a metric stream this way may still be exported on exemplars as filtered attributes. If that is not acceptable — for example when removing an attribute that carries sensitive data — disable exemplar sampling with the `AlwaysOff` exemplar filter (see [Disabling exemplars](#disabling-exemplars) below).
 
