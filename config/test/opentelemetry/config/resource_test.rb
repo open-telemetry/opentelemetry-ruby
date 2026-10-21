@@ -465,6 +465,21 @@ describe OpenTelemetry::Config do
           _(attrs['service.name']).must_equal 'schema-test'
         end
       end
+
+      it 'warns that schema_url is not supported' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          with_config(<<~YAML) do |path|
+            file_format: "1.0"
+            resource:
+              schema_url: "https://opentelemetry.io/schemas/1.21.0"
+            #{TRACER_PROVIDER_YAML}
+          YAML
+            OpenTelemetry::Config.configure_from_file(path)
+          end
+
+          _(log_stream.string).must_match(/schema_url is not supported; ignoring/)
+        end
+      end
     end
 
     describe 'detection/development' do
