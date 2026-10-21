@@ -13,7 +13,7 @@ jobs:
     permissions:
       contents: write # required for pushing changes
       pull-requests: write # required for creating release PRs
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/.toys/release/Gemfile
     steps:
@@ -23,12 +23,12 @@ jobs:
           # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates
           persist-credentials: true
       - name: Install Ruby
-        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
+        uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1.331.0
         with:
-          ruby-version: "4.0.6"
+          ruby-version: "4.0.7"
           bundler-cache: true
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         id: app-token
         with:
           client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}

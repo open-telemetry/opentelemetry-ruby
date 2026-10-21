@@ -1,5 +1,28 @@
 # Release History: opentelemetry-metrics-sdk
 
+### v0.22.0 / 2026-10-20
+
+* ADDED: Support OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION env var (#2389)
+
+### v0.21.0 / 2026-10-13
+
+* ADDED: Fix duplicate instrument registration warning (#2417)
+
+### v0.20.0 / 2026-10-05
+
+* BREAKING CHANGE: Move the global meter provider behind an opt-in require (#2416)
+* ADDED: Move the global meter provider behind an opt-in require (#2416)
+
+### v0.19.0 / 2026-09-29
+
+* BREAKING CHANGE: Update api for spec compliance (#2309)
+* ADDED: Update api for spec compliance (#2309)
+* ADDED: Move otlp exporter uri builder to common (#2240)
+* FIXED: Scope shared aggregation state to the owning stream (#2300) (#2314)
+* FIXED: Size exponential histogram exemplars (#2392)
+* FIXED: Accept arbitrary instrument metadata (#2395)
+* FIXED: Prevent readers spanning providers (#2393)
+
 ### v0.18.0 / 2026-09-09
 
 * BREAKING CHANGE: Align with the spec for metrics sdk and metrics otlp exporter (#2301)

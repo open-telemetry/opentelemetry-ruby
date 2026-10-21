@@ -13,6 +13,11 @@ module OpenTelemetry
       # rubocop:disable-next Metrics/ClassLength
       class MeterProvider < OpenTelemetry::Metrics::MeterProvider
         EMPTY_ATTRIBUTES = {}.freeze
+        READER_OWNERS = ObjectSpace::WeakMap.new
+        READER_OWNERS_MUTEX = Mutex.new
+        READER_OWNERSHIP_ERROR = 'MetricReader cannot be registered with more than one MeterProvider'
+
+        private_constant :READER_OWNERS, :READER_OWNERS_MUTEX, :READER_OWNERSHIP_ERROR
 
         Key = Struct.new(:name, :version, :attributes)
         private_constant(:Key)
@@ -118,6 +123,7 @@ module OpenTelemetry
             if @stopped
               OpenTelemetry.logger.warn('calling MetricProvider#add_metric_reader after shutdown.')
             else
+              register_metric_reader(metric_reader)
               @metric_readers.push(metric_reader)
               @meter_registry.each_value { |meter| meter.add_metric_reader(metric_reader) }
             end
@@ -126,11 +132,31 @@ module OpenTelemetry
           end
         end
 
+        def register_metric_reader(metric_reader)
+          READER_OWNERS_MUTEX.synchronize do
+            owner = READER_OWNERS[metric_reader]
+            raise ArgumentError, READER_OWNERSHIP_ERROR if owner && !owner.equal?(self)
+
+            READER_OWNERS[metric_reader] = self
+          end
+
+          metric_reader.register_meter_provider(self) if metric_reader.respond_to?(:register_meter_provider)
+        end
+        private :register_metric_reader
+
+        # @api private
+        #
+        # Returns the reader's preferred aggregation classes, or nil for a reader that
+        # does not provide any. Readers are duck typed, so the method may be absent.
+        def self.reader_config(metric_reader)
+          metric_reader.default_aggregation if metric_reader.respond_to?(:default_aggregation)
+        end
+
         # @api private
         def register_synchronous_instrument(instrument)
           @mutex.synchronize do
             @metric_readers.each do |mr|
-              instrument.register_with_new_metric_store(mr.metric_store)
+              instrument.register_with_new_metric_store(mr.metric_store, default_aggregation: MeterProvider.reader_config(mr))
             end
           end
         end

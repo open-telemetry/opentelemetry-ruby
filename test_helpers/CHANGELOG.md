@@ -1,5 +1,9 @@
 # Release History: opentelemetry-test-helpers
 
+### v0.9.2 / 2026-09-29
+
+* FIXED: Update total_recorded_attributes when LogRecord#attributes= is called (#2241)
+
 ### v0.9.1 / 2026-07-08
 
 * DOCS: Update source for gemspec links to RubyDoc (#2123)
