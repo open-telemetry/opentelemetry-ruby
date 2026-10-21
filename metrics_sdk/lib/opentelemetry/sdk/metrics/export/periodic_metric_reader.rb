@@ -28,7 +28,9 @@ module OpenTelemetry
                          aggregation_cardinality_limit: nil,
                          metric_producers: [],
                          metric_filter: nil)
+            # The exporter knows what the destination prefers, so this reader defers to it.
             super(aggregation_cardinality_limit: aggregation_cardinality_limit,
+                  default_aggregation: (exporter.default_aggregation if exporter.respond_to?(:default_aggregation)),
                   metric_producers: metric_producers,
                   metric_filter: metric_filter,
                   timeout: export_timeout_millis / 1000.0)

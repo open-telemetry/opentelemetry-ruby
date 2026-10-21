@@ -23,12 +23,12 @@ jobs:
           # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates
           persist-credentials: true
       - name: Install Ruby
-        uses: ruby/setup-ruby@e81a8fa391b11a595c1b7ed84177cc0fe02faf83 # v1.328.0
+        uses: ruby/setup-ruby@824c0e29fdfc7d689c191c27acc969d2d04b7dd8 # v1.331.0
         with:
           ruby-version: "4.0.7"
           bundler-cache: true
       - name: Create otelbot app token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         id: app-token
         with:
           client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}

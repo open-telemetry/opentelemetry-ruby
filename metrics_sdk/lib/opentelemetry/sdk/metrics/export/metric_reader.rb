@@ -19,8 +19,27 @@ module OpenTelemetry
 
           private_constant :SINGLE_PROVIDER_ERROR
 
+          # The default aggregation for each instrument kind, as defined by the
+          # metrics SDK specification.
+          # https://opentelemetry.io/docs/specs/otel/metrics/sdk/#default-aggregation
+          DEFAULT_AGGREGATION = {
+            counter: OpenTelemetry::SDK::Metrics::Aggregation::Sum,
+            up_down_counter: OpenTelemetry::SDK::Metrics::Aggregation::Sum,
+            observable_counter: OpenTelemetry::SDK::Metrics::Aggregation::Sum,
+            observable_up_down_counter: OpenTelemetry::SDK::Metrics::Aggregation::Sum,
+            gauge: OpenTelemetry::SDK::Metrics::Aggregation::LastValue,
+            observable_gauge: OpenTelemetry::SDK::Metrics::Aggregation::LastValue,
+            histogram: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram
+          }.freeze
+
+          # @return [Hash{Symbol => Class}] the aggregation class to use for each
+          #   instrument kind, resolved once at construction.
+          attr_reader :default_aggregation
+
           # @param [optional Integer] aggregation_cardinality_limit The cardinality
           #   limit applied to the SDK's own metric store.
+          # @param [optional Hash{Symbol => Class}] default_aggregation aggregation classes
+          #   keyed by instrument kind, applied on top of {DEFAULT_AGGREGATION}.
           # @param [optional Array<MetricProducer>] metric_producers Additional
           #   MetricProducers (e.g. bridges to third-party metric sources) whose
           #   output is merged with the SDK's metric data on every #collect.
@@ -28,8 +47,9 @@ module OpenTelemetry
           #   configured MetricProducer on #collect.
           # @param [optional Numeric] timeout The default timeout in seconds shared
           #   by the configured MetricProducers on a #collect that is not given one.
-          def initialize(aggregation_cardinality_limit: nil, metric_producers: [], metric_filter: nil, timeout: nil)
+          def initialize(aggregation_cardinality_limit: nil, default_aggregation: nil, metric_producers: [], metric_filter: nil, timeout: nil)
             @mutex = Mutex.new
+            @default_aggregation = DEFAULT_AGGREGATION.merge(default_aggregation || {})
             @metric_store = OpenTelemetry::SDK::Metrics::State::MetricStore.new(cardinality_limit: aggregation_cardinality_limit)
             @metric_producers = metric_producers
             @metric_filter = metric_filter

@@ -12,6 +12,15 @@ module OpenTelemetry
   module Config
     # Generated struct definitions mirroring the OpenTelemetry configuration schema.
     module Model
+      # Parses the nullable object at +key+ with +klass+. An explicit null
+      # parses as an object with every property omitted.
+      def self.nullable_from_hash(klass, h, key)
+        return nil unless h.key?(key)
+
+        value = h[key]
+        klass.from_hash(value.nil? ? {} : value)
+      end
+
       Aggregation = Struct.new(
         :default,
         :drop,
@@ -27,8 +36,8 @@ module OpenTelemetry
           new(
             default: h.key?('default'),
             drop: h.key?('drop'),
-            explicit_bucket_histogram: ExplicitBucketHistogramAggregation.from_hash(h['explicit_bucket_histogram']),
-            base2_exponential_bucket_histogram: Base2ExponentialBucketHistogramAggregation.from_hash(h['base2_exponential_bucket_histogram']),
+            explicit_bucket_histogram: Model.nullable_from_hash(ExplicitBucketHistogramAggregation, h, 'explicit_bucket_histogram'),
+            base2_exponential_bucket_histogram: Model.nullable_from_hash(Base2ExponentialBucketHistogramAggregation, h, 'base2_exponential_bucket_histogram'),
             last_value: h.key?('last_value'),
             sum: h.key?('sum')
           )
@@ -276,8 +285,8 @@ module OpenTelemetry
             always_off: h.key?('always_off'),
             always_on: h.key?('always_on'),
             parent_threshold: ExperimentalComposableParentThresholdSampler.from_hash(h['parent_threshold']),
-            probability: ExperimentalComposableProbabilitySampler.from_hash(h['probability']),
-            rule_based: ExperimentalComposableRuleBasedSampler.from_hash(h['rule_based']),
+            probability: Model.nullable_from_hash(ExperimentalComposableProbabilitySampler, h, 'probability'),
+            rule_based: Model.nullable_from_hash(ExperimentalComposableRuleBasedSampler, h, 'rule_based'),
             additional_properties: h.except('always_off', 'always_on', 'parent_threshold', 'probability', 'rule_based')
           )
         end
@@ -736,9 +745,9 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            otlp_http: OtlpHttpExporter.from_hash(h['otlp_http']),
-            otlp_grpc: OtlpGrpcExporter.from_hash(h['otlp_grpc']),
-            otlp_file_development: ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development']),
+            otlp_http: Model.nullable_from_hash(OtlpHttpExporter, h, 'otlp_http'),
+            otlp_grpc: Model.nullable_from_hash(OtlpGrpcExporter, h, 'otlp_grpc'),
+            otlp_file_development: Model.nullable_from_hash(ExperimentalOtlpFileExporter, h, 'otlp_file/development'),
             console: h.key?('console'),
             additional_properties: h.except('otlp_http', 'otlp_grpc', 'otlp_file/development', 'console')
           )
@@ -907,7 +916,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: GrpcTls.from_hash(h['tls']),
+            tls: Model.nullable_from_hash(GrpcTls, h, 'tls'),
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -932,7 +941,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: GrpcTls.from_hash(h['tls']),
+            tls: Model.nullable_from_hash(GrpcTls, h, 'tls'),
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -958,7 +967,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: HttpTls.from_hash(h['tls']),
+            tls: Model.nullable_from_hash(HttpTls, h, 'tls'),
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -985,7 +994,7 @@ module OpenTelemetry
 
           new(
             endpoint: h['endpoint'],
-            tls: HttpTls.from_hash(h['tls']),
+            tls: Model.nullable_from_hash(HttpTls, h, 'tls'),
             headers: Array(h['headers']).filter_map { |e| NameStringValuePair.from_hash(e) },
             headers_list: h['headers_list'],
             compression: h['compression'],
@@ -1063,7 +1072,7 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            prometheus_development: ExperimentalPrometheusMetricExporter.from_hash(h['prometheus/development']),
+            prometheus_development: Model.nullable_from_hash(ExperimentalPrometheusMetricExporter, h, 'prometheus/development'),
             additional_properties: h.except('prometheus/development')
           )
         end
@@ -1098,10 +1107,10 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            otlp_http: OtlpHttpMetricExporter.from_hash(h['otlp_http']),
-            otlp_grpc: OtlpGrpcMetricExporter.from_hash(h['otlp_grpc']),
-            otlp_file_development: ExperimentalOtlpFileMetricExporter.from_hash(h['otlp_file/development']),
-            console: ConsoleMetricExporter.from_hash(h['console']),
+            otlp_http: Model.nullable_from_hash(OtlpHttpMetricExporter, h, 'otlp_http'),
+            otlp_grpc: Model.nullable_from_hash(OtlpGrpcMetricExporter, h, 'otlp_grpc'),
+            otlp_file_development: Model.nullable_from_hash(ExperimentalOtlpFileMetricExporter, h, 'otlp_file/development'),
+            console: Model.nullable_from_hash(ConsoleMetricExporter, h, 'console'),
             additional_properties: h.except('otlp_http', 'otlp_grpc', 'otlp_file/development', 'console')
           )
         end
@@ -1144,10 +1153,10 @@ module OpenTelemetry
             always_off: h.key?('always_off'),
             always_on: h.key?('always_on'),
             composite_development: ExperimentalComposableSampler.from_hash(h['composite/development']),
-            jaeger_remote_development: ExperimentalJaegerRemoteSampler.from_hash(h['jaeger_remote/development']),
-            parent_based: ParentBasedSampler.from_hash(h['parent_based']),
-            probability_development: ExperimentalProbabilitySampler.from_hash(h['probability/development']),
-            trace_id_ratio_based: TraceIdRatioBasedSampler.from_hash(h['trace_id_ratio_based']),
+            jaeger_remote_development: Model.nullable_from_hash(ExperimentalJaegerRemoteSampler, h, 'jaeger_remote/development'),
+            parent_based: Model.nullable_from_hash(ParentBasedSampler, h, 'parent_based'),
+            probability_development: Model.nullable_from_hash(ExperimentalProbabilitySampler, h, 'probability/development'),
+            trace_id_ratio_based: Model.nullable_from_hash(TraceIdRatioBasedSampler, h, 'trace_id_ratio_based'),
             additional_properties: h.except('always_off', 'always_on', 'composite/development', 'jaeger_remote/development', 'parent_based', 'probability/development', 'trace_id_ratio_based')
           )
         end
@@ -1191,9 +1200,9 @@ module OpenTelemetry
           return nil unless h.is_a?(Hash)
 
           new(
-            otlp_http: OtlpHttpExporter.from_hash(h['otlp_http']),
-            otlp_grpc: OtlpGrpcExporter.from_hash(h['otlp_grpc']),
-            otlp_file_development: ExperimentalOtlpFileExporter.from_hash(h['otlp_file/development']),
+            otlp_http: Model.nullable_from_hash(OtlpHttpExporter, h, 'otlp_http'),
+            otlp_grpc: Model.nullable_from_hash(OtlpGrpcExporter, h, 'otlp_grpc'),
+            otlp_file_development: Model.nullable_from_hash(ExperimentalOtlpFileExporter, h, 'otlp_file/development'),
             console: h.key?('console'),
             additional_properties: h.except('otlp_http', 'otlp_grpc', 'otlp_file/development', 'console')
           )
