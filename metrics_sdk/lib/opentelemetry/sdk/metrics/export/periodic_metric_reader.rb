@@ -49,14 +49,15 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             thread = lock do
               @continue = false # force termination in next iteration
               @condition.signal
               @thread
             end
-            thread&.join(@export_interval)
-            flush_result = @exporter.force_flush if @exporter.respond_to?(:force_flush)
-            worst_result(flush_result, @exporter.shutdown)
+            thread&.join(timeout || @export_interval)
+            flush_result = @exporter.force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)) if @exporter.respond_to?(:force_flush)
+            worst_result(flush_result, @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)))
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Fail to shutdown PeriodicMetricReader.')
             Export::FAILURE
@@ -77,11 +78,12 @@ module OpenTelemetry
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             export_result = export(timeout:)
 
             # exporter force flush won't do anything since currently all exporter force_flush implementations
             # return immediately with success.
-            flush_result = @exporter.force_flush(timeout:) if @exporter.respond_to?(:force_flush)
+            flush_result = @exporter.force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)) if @exporter.respond_to?(:force_flush)
             worst_result(export_result, flush_result)
           rescue StandardError
             Export::FAILURE
@@ -126,13 +128,15 @@ module OpenTelemetry
 
           # Helper function for the defined exporter to export metrics.
           # It only exports if the collection did not fail and the collected metrics
-          # are not empty. Metrics collected before a timeout are still exported,
-          # but TIMEOUT is returned so the caller knows the collection was incomplete.
+          # are not empty. Metrics collected before a timeout are still handed to the
+          # exporter, but TIMEOUT is returned so the caller knows the collection was incomplete.
+          # Collection and export share a single timeout budget.
           #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
           #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def export(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             @export_mutex.synchronize do
               timeout ||= @export_timeout
               collection = collect_with_result(timeout: timeout)
@@ -140,7 +144,10 @@ module OpenTelemetry
               return collection.status if collection.failure?
 
               collected_metrics = collection.metrics
-              result_code = @exporter.export(collected_metrics, timeout: timeout) unless collected_metrics.empty?
+              unless collected_metrics.empty?
+                remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+                result_code = @exporter.export(collected_metrics, timeout: remaining_timeout)
+              end
               report_result(result_code)
               worst_result(collection.status, result_code)
             end

@@ -19,9 +19,10 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       @force_flush_count = 0
     end
 
-    attr_reader :exported_metrics, :force_flush_count, :force_flush_timeout
+    attr_reader :exported_metrics, :export_timeout, :force_flush_count, :force_flush_timeout, :shutdown_timeout
 
     def export(metrics, timeout: nil)
+      @export_timeout = timeout
       s = @status_codes.shift
       if s.nil? || s == SUCCESS
         @exported_metrics.concat(metrics)
@@ -31,7 +32,10 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       end
     end
 
-    def shutdown(timeout: nil) = @shutdown_status
+    def shutdown(timeout: nil)
+      @shutdown_timeout = timeout
+      @shutdown_status
+    end
 
     def force_flush(timeout: nil)
       @force_flush_count += 1
@@ -113,6 +117,35 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
 
       _(captured_timeout).must_equal 5
     end
+
+    it 'passes only the time remaining after collection to the exporter' do
+      succeeded = collection_result.new(['mock_metric'], export::SUCCESS)
+      clock = [0, 3]
+
+      reader.stub(:collect_with_result, succeeded) do
+        OpenTelemetry::Common::Utilities.stub(:timeout_timestamp, -> { clock.shift }) do
+          reader.send(:export, timeout: 5)
+        end
+      end
+
+      _(exporter.export_timeout).must_equal 2
+    end
+
+    it 'counts time spent waiting for an in-flight export against the timeout' do
+      succeeded = collection_result.new(['mock_metric'], export::SUCCESS)
+      export_mutex = reader.instance_variable_get(:@export_mutex)
+
+      reader.stub(:collect_with_result, succeeded) do
+        export_mutex.lock
+        waiter = Thread.new { reader.send(:export, timeout: 1) }
+        Thread.pass until waiter.status == 'sleep'
+        sleep 0.2
+        export_mutex.unlock
+        waiter.join
+      end
+
+      _(exporter.export_timeout).must_be :<=, 0.8
+    end
   end
 
   describe '#force_flush status' do
@@ -161,9 +194,18 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       let(:exporter) { TestExporter.new }
       let(:reader) { PeriodicMetricReader.new(exporter: exporter) }
 
-      it "passes the timeout to the exporter's force_flush" do
-        reader.stub(:collect, ['mock_metric']) { reader.force_flush(timeout: 5) }
-        _(exporter.force_flush_timeout).must_equal 5
+      it "passes the time remaining after export to the exporter's force_flush" do
+        # force_flush start, export start, export remaining, force_flush remaining
+        clock = [0, 0, 1, 4]
+
+        reader.stub(:collect_with_result, OpenTelemetry::SDK::Metrics::Export::CollectionResult.new(['mock_metric'], export::SUCCESS)) do
+          OpenTelemetry::Common::Utilities.stub(:timeout_timestamp, -> { clock.shift }) do
+            reader.force_flush(timeout: 5)
+          end
+        end
+
+        _(exporter.export_timeout).must_equal 4
+        _(exporter.force_flush_timeout).must_equal 1
       end
     end
 
@@ -197,6 +239,22 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       reader = PeriodicMetricReader.new(exporter: TestExporter.new(force_flush_status: nil, shutdown_status: nil))
 
       _(reader.shutdown).must_equal export::SUCCESS
+    end
+
+    it 'passes the time remaining to the exporter' do
+      exporter = TestExporter.new
+      reader = PeriodicMetricReader.new(exporter: exporter)
+      # shutdown start, exporter force_flush remaining, exporter shutdown remaining
+      clock = [0, 0.25, 0.75]
+
+      reader.stub(:export, nil) do
+        OpenTelemetry::Common::Utilities.stub(:timeout_timestamp, -> { clock.shift }) do
+          reader.shutdown(timeout: 1)
+        end
+      end
+
+      _(exporter.force_flush_timeout).must_equal 0.75
+      _(exporter.shutdown_timeout).must_equal 0.25
     end
   end
 end
