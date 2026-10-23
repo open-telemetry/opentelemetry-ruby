@@ -122,17 +122,38 @@ describe OpenTelemetry::SDK::Logs::LogRecord do
         $stdout = original_stdout
       end
 
-      it 'emits an error message if attribute key is invalid' do
+      it 'logs a warning with the expected message if attribute key is invalid' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-          logger.on_emit(attributes: { a: 'a' })
-          assert_match(/Invalid log record attribute key type Symbol/, log_stream.string)
+          Logs::LogRecord.new(body: 'private body', attributes: { a: 'a' })
+
+          expected_message = [
+            'Invalid log record attribute key type Symbol for key :a.',
+            'Attribute keys must be Strings. Dropping attribute.'
+          ].join(' ')
+          assert_includes(log_stream.string, expected_message)
+          refute_includes(log_stream.string, 'private body')
         end
       end
 
-      it 'emits an error message if the attribute value is invalid' do
+      it 'logs invalid attribute key warnings at most once per log record' do
         OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
-          logger.on_emit(attributes: { 'a' => Class.new })
-          assert_match(/Invalid log record attribute value type Class/, log_stream.string)
+          log_record = Logs::LogRecord.new
+          log_record.attributes = { a: 'a' }
+          log_record.attributes = { b: 'b' }
+
+          assert_equal(1, log_stream.string.scan(/Invalid log record attribute key type Symbol/).length)
+          assert_includes(log_stream.string, 'key :a.')
+          refute_includes(log_stream.string, 'key :b.')
+        end
+      end
+
+      it 'logs a warning with the expected message if the attribute value is invalid' do
+        OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+          Logs::LogRecord.new(body: 'private body', attributes: { 'a' => Class.new })
+
+          expected_message = "Invalid log record attribute value type Class for key 'a'. Dropping attribute."
+          assert_includes(log_stream.string, expected_message)
+          refute_includes(log_stream.string, 'private body')
         end
       end
 
