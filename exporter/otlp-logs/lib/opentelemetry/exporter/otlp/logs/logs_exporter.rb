@@ -57,8 +57,12 @@ module OpenTelemetry
                          ssl_verify_mode: LogsExporter.ssl_verify_mode,
                          headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         encoding: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_PROTOCOL', 'OTEL_EXPORTER_OTLP_PROTOCOL', default: 'http/protobuf'))
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
+
+            encoding = encoding&.delete_prefix('http/')
+            raise ArgumentError, "unsupported encoding #{encoding}" unless %w[json protobuf].include?(encoding)
 
             @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
             @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
@@ -67,6 +71,8 @@ module OpenTelemetry
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
             @compression = compression
+            @format = encoding.to_sym
+            @content_type = encoding == 'json' ? 'application/json' : 'application/x-protobuf'
             @shutdown = false
           end
 
@@ -81,7 +87,7 @@ module OpenTelemetry
             OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down') if @shutdown
             return FAILURE if @shutdown
 
-            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data), timeout: timeout)
+            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data, format: @format), timeout: timeout)
           end
 
           # Called when {OpenTelemetry::SDK::Logs::LoggerProvider#force_flush} is called, if
@@ -144,7 +150,7 @@ module OpenTelemetry
             end
 
             request.body = body
-            request.add_field('Content-Type', 'application/x-protobuf')
+            request.add_field('Content-Type', @content_type)
             @headers.each { |key, value| request.add_field(key, value) }
 
             retry_count = 0
@@ -231,7 +237,7 @@ module OpenTelemetry
           end
 
           def log_status(body)
-            status = Google::Rpc::Status.decode(body)
+            status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body, format: @format)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
               klass = pool.lookup(detail.type_name).msgclass
@@ -243,7 +249,7 @@ module OpenTelemetry
           end
 
           def log_partial_success(body)
-            response = Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse.decode(body)
+            response = OpenTelemetry::Exporter::OTLP::Common.decode_response(Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceResponse, body, format: @format)
             partial_success = response.partial_success
             return if partial_success.nil? || partial_success.rejected_log_records <= 0
 
