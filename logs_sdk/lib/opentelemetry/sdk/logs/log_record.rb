@@ -157,11 +157,10 @@ module OpenTelemetry
           attrs.keep_if do |k, v|
             if !Internal.valid_key?(k)
               log_attribute_discard("Invalid log record attribute key type #{k.class} for " \
-                                    "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
+                                    "key #{k.inspect}. Attribute keys must be Strings. Dropping attribute.")
               return false
             elsif !Internal.valid_value?(v)
-              log_attribute_discard("Invalid log record attribute value type #{v.class} for key '#{k}' " \
-                                    "on record: '#{body}'. Dropping attribute.")
+              log_attribute_discard("Invalid log record attribute value type #{v.class} for key '#{k}'. Dropping attribute.")
               return false
             end
 
@@ -173,7 +172,7 @@ module OpenTelemetry
           return if @attribute_discard_logged
 
           @attribute_discard_logged = true
-          OpenTelemetry.handle_error(message: message)
+          OpenTelemetry.logger.warn(message)
         end
 
         def truncate_attribute_values(attributes, attribute_length_limit)
