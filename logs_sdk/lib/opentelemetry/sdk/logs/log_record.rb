@@ -160,7 +160,8 @@ module OpenTelemetry
                                     "key #{k.inspect}. Attribute keys must be Strings. Dropping attribute.")
               return false
             elsif !Internal.valid_value?(v)
-              log_attribute_discard("Invalid log record attribute value type #{v.class} for key '#{k}'. Dropping attribute.")
+              log_attribute_discard("Invalid log record attribute value type #{v.class} for key '#{k}'. " \
+                                    "Dropping attribute.")
               return false
             end
 
