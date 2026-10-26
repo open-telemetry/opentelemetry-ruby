@@ -46,6 +46,27 @@ describe OpenTelemetry::Exporter::OTLP::Common do
     end
   end
 
+  describe '#as_otlp_any_value' do
+    it 'reports unsupported value types instead of silently accepting them' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        result = OpenTelemetry::Exporter::OTLP::Common.send(:as_otlp_any_value, :unsupported)
+
+        _(result).must_be_kind_of(Opentelemetry::Proto::Common::V1::AnyValue)
+        _(log_stream.string).must_match(/unsupported OTLP AnyValue type: Symbol/)
+      end
+    end
+  end
+
+  describe '#as_otlp_trace_flags' do
+    it 'accepts the documented integer representation' do
+      _(OpenTelemetry::Exporter::OTLP::Common.send(:as_otlp_trace_flags, 1)).must_equal(1)
+    end
+
+    it 'preserves nil trace flags' do
+      _(OpenTelemetry::Exporter::OTLP::Common.send(:as_otlp_trace_flags, nil)).must_be_nil
+    end
+  end
+
   describe '#as_encoded_emsr' do
     it 'handles valid and empty metrics data' do
       # Valid metrics data
