@@ -103,7 +103,8 @@ module OpenTelemetry
           ssl_verify_mode: OpenSSL::SSL::VERIFY_PEER,
           headers: headers_to_hash(cfg),
           compression: cfg.compression || Defaults::OTLP_HTTP_EXPORTER[:compression],
-          timeout: (cfg.timeout || Defaults::OTLP_HTTP_EXPORTER[:timeout]) / 1000.0
+          timeout: (cfg.timeout || Defaults::OTLP_HTTP_EXPORTER[:timeout]) / 1000.0,
+          encoding: cfg.encoding || Defaults::OTLP_HTTP_EXPORTER[:encoding]
         )
       end
 
