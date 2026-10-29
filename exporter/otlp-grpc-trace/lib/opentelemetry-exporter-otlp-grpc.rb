@@ -4,4 +4,4 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-require 'opentelemetry/exporter/otlp/grpc'
+require 'opentelemetry/exporter/otlp/grpc/trace'
