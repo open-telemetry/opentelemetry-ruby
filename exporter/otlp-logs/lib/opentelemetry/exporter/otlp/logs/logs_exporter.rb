@@ -23,7 +23,7 @@ module OpenTelemetry
   module Exporter
     module OTLP
       module Logs
-        # An OpenTelemetry log exporter that sends log records over HTTP as Protobuf encoded OTLP ExportLogsServiceRequests.
+        # An OpenTelemetry log exporter that sends log records over HTTP as Protobuf encoded OTLP ExportLogsServiceRequests. Export and shutdown are thread-safe.
         class LogsExporter # rubocop:disable Metrics/ClassLength
           SUCCESS = OpenTelemetry::SDK::Logs::Export::SUCCESS
           FAILURE = OpenTelemetry::SDK::Logs::Export::FAILURE
@@ -68,6 +68,7 @@ module OpenTelemetry
             @timeout = timeout.to_f
             @compression = compression
             @shutdown = false
+            @mutex = Mutex.new
           end
 
           # Called to export sampled {OpenTelemetry::SDK::Logs::LogRecordData} structs.
@@ -78,10 +79,14 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
           def export(log_record_data, timeout: nil)
-            OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down') if @shutdown
-            return FAILURE if @shutdown
+            @mutex.synchronize do
+              if @shutdown
+                OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down')
+                return FAILURE
+              end
 
-            send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data), timeout: timeout)
+              send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data), timeout: timeout)
+            end
           end
 
           # Called when {OpenTelemetry::SDK::Logs::LoggerProvider#force_flush} is called, if
@@ -99,8 +104,10 @@ module OpenTelemetry
           #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           def shutdown(timeout: nil)
-            @shutdown = true
-            @http.finish if @http.started?
+            @mutex.synchronize do
+              @shutdown = true
+              @http.finish if @http.started?
+            end
             SUCCESS
           end
 
