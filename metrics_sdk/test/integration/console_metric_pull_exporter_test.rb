@@ -79,6 +79,18 @@ describe OpenTelemetry::SDK do
       _(exporter.export(metrics)).must_equal export::FAILURE
     end
 
+    it 'fails to collect after shutdown' do
+      OpenTelemetry::SDK.configure
+      OpenTelemetry.meter_provider.add_metric_reader(exporter)
+      OpenTelemetry.meter_provider.meter('test').create_counter('counter').add(1)
+
+      exporter.shutdown
+
+      _(exporter.collect).must_equal []
+      _(exporter.pull).must_equal export::FAILURE
+      _(captured_stdout.string).must_be_empty
+    end
+
     describe 'cardinality limit' do
       it 'accepts cardinality_limit parameter on initialization' do
         exporter_with_limit = export::ConsoleMetricPullExporter.new(aggregation_cardinality_limit: 100)
