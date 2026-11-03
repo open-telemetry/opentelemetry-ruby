@@ -8,6 +8,10 @@ module OpenTelemetry
   module Trace
     # No-op implementation of a tracer provider.
     class TracerProvider
+      # Shared by every instance, so that frozen instances can return it too.
+      TRACER = Tracer.new.freeze
+      private_constant :TRACER
+
       # Returns a {Tracer} instance.
       #
       # Supports both positional arguments (legacy) and keyword arguments:
@@ -24,7 +28,7 @@ module OpenTelemetry
       #
       # @return [Tracer]
       def tracer(deprecated_name = nil, deprecated_version = nil, name: nil, version: nil, attributes: nil)
-        @tracer ||= Tracer.new
+        TRACER
       end
     end
   end

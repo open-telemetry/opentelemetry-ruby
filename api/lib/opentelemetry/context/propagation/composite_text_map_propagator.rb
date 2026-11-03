@@ -11,7 +11,8 @@ module OpenTelemetry
       # list of extractors, or wraps a list of propagators, into a single interface
       # exposing inject and extract methods. Injection and extraction will preserve
       # the order of the injectors and extractors (or propagators) passed in during
-      # initialization.
+      # initialization. Composite propagators are frozen, so that they are
+      # shareable between Ractors if the propagators they compose are.
       class CompositeTextMapPropagator
         class << self
           private :new
@@ -24,7 +25,7 @@ module OpenTelemetry
           def compose(injectors:, extractors:)
             raise ArgumentError, 'injectors and extractors must both be non-nil arrays' unless injectors.is_a?(Array) && extractors.is_a?(Array)
 
-            new(injectors: injectors, extractors: extractors)
+            new(injectors: injectors.dup.freeze, extractors: extractors.dup.freeze).freeze
           end
 
           # Returns a Propagator that extracts using the provided propagators.
@@ -36,7 +37,7 @@ module OpenTelemetry
             return NoopTextMapPropagator.new if propagators.empty?
             return propagators.first if propagators.size == 1
 
-            new(propagators: propagators)
+            new(propagators: propagators.dup.freeze).freeze
           end
         end
 

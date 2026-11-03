@@ -43,8 +43,8 @@ module OpenTelemetry
         @flags.anybits?(1)
       end
 
-      DEFAULT = from_byte(0)
-      SAMPLED = from_byte(1)
+      DEFAULT = from_byte(0).freeze
+      SAMPLED = from_byte(1).freeze
     end
   end
 end
