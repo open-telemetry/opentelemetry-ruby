@@ -1,0 +1,132 @@
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+deprecated:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/jaeger/**"
+everything:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".simplecov"
+          - "Gemfile"
+          - "Rakefile"
+
+api:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "api/**"
+api-baggage:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "api/lib/opentelemetry/baggage/**"
+          - "api/test/opentelemetry/baggage/**"
+api-context:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "api/lib/opentelemetry/context/**"
+          - "api/test/opentelemetry/baggage/**"
+api-logs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "logs_api/**"
+api-metrics:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "metrics_api/**"
+api-trace:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "api/lib/opentelemetry/trace/**"
+          - "api/test/opentelemetry/trace/**"
+
+common:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "common/**"
+
+config:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "config/**"
+
+exporter-jaeger:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/jaeger/**"
+exporter-otlp-common:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/otlp-common/**"
+exporter-otlp-grpc-trace:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/otlp-grpc/**"
+exporter-otlp-http-logs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/otlp-logs/**"
+exporter-otlp-http-metrics:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/otlp-metrics/**"
+exporter-otlp-http-trace:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/otlp/**"
+exporter-zipkin:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "exporter/zipkin/**"
+
+propagator-b3:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "propagator/b3/**"
+propagator-jaeger:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "propagator/jaeger/**"
+
+registry:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "registry/**"
+
+sdk:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "sdk/**"
+sdk-experimental:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "sdk_experimental/**"
+sdk-logs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "logs_sdk/**"
+sdk-metrics:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "metrics_sdk/**"
+sdk-resources:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "sdk/lib/opentelemetry/sdk/resources/**"
+          - "sdk/test/opentelemetry/sdk/resources/**"
+sdk-trace:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "sdk/lib/opentelemetry/sdk/trace/**"
+          - "sdk/test/opentelemetry/sdk/trace/**"
+
+semantic_conventions:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "semantic_conventions/**"
+
+test_helpers:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "test_helpers/**"
