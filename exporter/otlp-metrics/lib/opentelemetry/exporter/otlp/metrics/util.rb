@@ -91,7 +91,7 @@ module OpenTelemetry
 
           # Decodes and logs an rpc.Status error response body.
           def log_status(body)
-            status = Google::Rpc::Status.decode(body)
+            status = OpenTelemetry::Exporter::OTLP::Common.decode_response(Google::Rpc::Status, body, format: @format)
             pool = ::Google::Protobuf::DescriptorPool.generated_pool
             details = status.details.filter_map do |detail|
               type_name = detail.type_url.to_s.split('/').last.to_s

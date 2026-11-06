@@ -29,7 +29,7 @@ describe OpenTelemetry::Config do
     end
 
     describe 'batch processor with OTLP HTTP exporter' do
-      it 'installs a BatchSpanProcessor with the correct endpoint, headers, compression, and timeout' do
+      it 'installs a BatchSpanProcessor with the correct endpoint, headers, compression, timeout, and encoding' do
         with_config(<<~YAML) do |path|
           file_format: "1.0"
           tracer_provider:
@@ -47,6 +47,7 @@ describe OpenTelemetry::Config do
                           value: "secret-token"
                       compression: gzip
                       timeout: 10000
+                      encoding: json
         YAML
           sdk = OpenTelemetry::Config.configure_from_file(path)
           OpenTelemetry.tracer_provider = sdk.tracer_provider
@@ -63,6 +64,7 @@ describe OpenTelemetry::Config do
           _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://localhost:4318/v1/traces'
           _(exporter.instance_variable_get(:@compression)).must_equal 'gzip'
           _(exporter.instance_variable_get(:@timeout)).must_equal 10.0
+          _(exporter.instance_variable_get(:@content_type)).must_equal 'application/json'
           _(exporter.instance_variable_get(:@headers)['api-key']).must_equal 'secret-token'
         end
       end
@@ -128,6 +130,7 @@ describe OpenTelemetry::Config do
           'OTEL_EXPORTER_OTLP_TRACES_HEADERS' => 'x-env=present',
           'OTEL_EXPORTER_OTLP_TRACES_COMPRESSION' => 'gzip',
           'OTEL_EXPORTER_OTLP_TRACES_TIMEOUT' => '1234',
+          'OTEL_EXPORTER_OTLP_TRACES_PROTOCOL' => 'http/json',
           'OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE' => '1',
           'OTEL_EXPORTER_OTLP_CERTIFICATE' => '/env/global-ca.pem',
           'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE' => '/env/global-client.pem',
@@ -151,6 +154,7 @@ describe OpenTelemetry::Config do
             _(exporter.instance_variable_get(:@uri).to_s).must_equal 'http://localhost:4318/v1/traces'
             _(exporter.instance_variable_get(:@compression)).must_equal 'none'
             _(exporter.instance_variable_get(:@timeout)).must_equal 10.0
+            _(exporter.instance_variable_get(:@content_type)).must_equal 'application/x-protobuf'
             _(exporter.instance_variable_get(:@headers)).wont_include 'x-env'
             http = exporter.instance_variable_get(:@http)
             _(http.verify_mode).must_equal OpenSSL::SSL::VERIFY_PEER

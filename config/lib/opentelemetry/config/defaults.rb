@@ -27,7 +27,8 @@ module OpenTelemetry
 
       OTLP_HTTP_EXPORTER = {
         compression: 'none',
-        timeout: 10_000
+        timeout: 10_000,
+        encoding: 'protobuf'
       }.freeze
 
       OTLP_HTTP_TRACES_ENDPOINT = 'http://localhost:4318/v1/traces'
