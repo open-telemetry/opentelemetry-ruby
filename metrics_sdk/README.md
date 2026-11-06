@@ -303,7 +303,7 @@ reader = OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader.new(
 OpenTelemetry.meter_provider.add_metric_reader(reader)
 ```
 
-The producer's aggregation temporality is required and supports `:delta` and
+The producer's aggregation temporality is required and supports `:cumulative` and
 `:cumulative`. A
 producer can include successfully produced metrics in a failure result so the
 reader can still export partial data. When a producer reports a non-success

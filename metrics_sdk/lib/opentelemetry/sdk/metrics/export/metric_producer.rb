@@ -57,8 +57,8 @@ module OpenTelemetry
             elsif %i[delta cumulative].include?(value)
               value
             else
-              # spec doesn't define if temporality is nil, we give cumulative as default
-              OpenTelemetry.logger.warn('Aggregation temporality not specified or invalid, defaulting to cumulative')
+              # spec doesn't define the default when temporality is not given, we use cumulative
+              OpenTelemetry.logger.warn("Invalid aggregation temporality #{value.inspect}, defaulting to cumulative") unless value.nil?
               Aggregation::AggregationTemporality::CUMULATIVE
             end
           end

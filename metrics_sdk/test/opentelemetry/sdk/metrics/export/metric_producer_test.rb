@@ -44,15 +44,22 @@ describe OpenTelemetry::SDK::Metrics::Export::MetricProducer do
     _(producer.aggregation_temporality).must_equal(:delta)
   end
 
-  it 'when no aggregation or invalid temporality is given' do
-    producer = OpenTelemetry::SDK::Metrics::Export::MetricProducer.new
-    _(producer.aggregation_temporality).must_equal(:cumulative)
+  it 'defaults to cumulative without warning when no aggregation temporality is given' do
+    with_test_logger do |log_stream|
+      producer = OpenTelemetry::SDK::Metrics::Export::MetricProducer.new
+
+      _(producer.aggregation_temporality).must_equal(:cumulative)
+      _(log_stream.string).must_be_empty
+    end
   end
 
-  it 'rejects an invalid aggregation temporality' do
-    producer = OpenTelemetry::SDK::Metrics::Export::MetricProducer.new(aggregation_temporality: :invalid)
+  it 'defaults to cumulative with a warning when an invalid aggregation temporality is given' do
+    with_test_logger do |log_stream|
+      producer = OpenTelemetry::SDK::Metrics::Export::MetricProducer.new(aggregation_temporality: :invalid)
 
-    _(producer.aggregation_temporality).must_equal(:cumulative)
+      _(producer.aggregation_temporality).must_equal(:cumulative)
+      _(log_stream.string).must_match(/Invalid aggregation temporality :invalid/)
+    end
   end
 
   it 'requires subclasses to implement #produce' do
