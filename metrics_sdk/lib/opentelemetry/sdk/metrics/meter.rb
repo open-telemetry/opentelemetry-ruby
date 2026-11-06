@@ -117,6 +117,7 @@ module OpenTelemetry
               instrument = build_instrument(kind, name, unit, description, callback, exemplar_filter, exemplar_reservoir)
               descriptor = InstrumentDescriptor.new(name, kind, unit, description, instrument)
               @instrument_descriptors = @instrument_descriptors.merge(name.downcase => descriptors + [descriptor])
+              @meter_provider.registered_views.each { |view| instrument.register_view(view) }
               instrument
             end
           end
