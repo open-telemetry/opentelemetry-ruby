@@ -10,7 +10,7 @@
 # ---------------------------------------------------------------------------
 ARG APP_VERSION=instrumented
 
-FROM ruby:3.3.12-slim@sha256:af55abc3e35217b7bf17a9f4a456b35e2e73550eaaa2e3be949f9db7f6e65396 AS base
+FROM ruby:3.3.13-slim@sha256:2c2e72bb9c949373c07bfc6852218584d014bcee7002e1bbb033bec8570af5a0 AS base
 
 WORKDIR /app
 
