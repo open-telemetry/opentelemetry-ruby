@@ -92,17 +92,17 @@ module OpenTelemetry
 
             included = normalize_attribute_keys(attribute_keys[:included])
             excluded = normalize_attribute_keys(attribute_keys[:excluded])
-            overlap  = included & excluded if included && excluded
+            overlap  = (included & excluded).to_a if included && excluded
 
             OpenTelemetry.logger.warn("attribute_keys #{overlap.inspect} are both included and excluded. They will be treated as excluded.") if overlap && !overlap.empty?
             [included, excluded]
           end
 
-          # Return an array of normalized attribute keys as strings, or nil if no keys are provided.
+          # Return a Set of normalized attribute keys as strings, or nil if no keys are provided.
           def normalize_attribute_keys(keys)
             return nil if keys.nil?
 
-            Array(keys).map(&:to_s).uniq
+            Set.new(Array(keys), &:to_s)
           end
 
           def generate_regex_pattern(view_name)
