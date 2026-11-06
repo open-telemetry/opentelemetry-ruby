@@ -28,12 +28,6 @@ module OpenTelemetry
           def observe(timeout: nil, attributes: {})
             update(timeout, attributes)
           end
-
-          private
-
-          def default_aggregation
-            OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(exemplar_reservoir: @exemplar_reservoir, monotonic: true, instrument_kind: instrument_kind)
-          end
         end
       end
     end
