@@ -89,14 +89,57 @@ module OpenTelemetry
         # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::JVM::JVM_CPU_TIME}.
         JVM_CPU_TIME = 'jvm.cpu.time'
 
-        # Number of open file descriptors as reported by the JVM.
+        # The maximum number of tasks the executor queue can hold.
+        #
+        # Instrumentations SHOULD emit this metric only when the queue has a finite capacity that represents a meaningful operational limit. This metric SHOULD NOT be emitted for unbounded or effectively unbounded queues.
         #
         # @note Stability Level: development
+        JVM_EXECUTOR_QUEUE_CAPACITY = 'jvm.executor.queue.capacity'
+
+        # The number of tasks currently queued for execution.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_QUEUE_SIZE = 'jvm.executor.queue.size'
+
+        # The number of tasks completed by the executor.
+        #
+        # A task SHOULD be counted as completed when the executor has finished processing it, regardless of whether it returns normally, terminates with an exception, or is canceled. Cancellation during processing does not complete the task until processing ends. A task that never begins processing on the executor SHOULD NOT be counted. A task initially rejected but subsequently resubmitted to and processed by the executor SHOULD be counted when processing ends.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_TASK_COMPLETED = 'jvm.executor.task.completed'
+
+        # The number of task submissions rejected by the executor.
+        #
+        # A task submission SHOULD be counted as rejected when the executor invokes its rejection handler, regardless of whether the handler subsequently executes the task in the caller (for example, `CallerRunsPolicy`) or discards or replaces a queued task (for example, `DiscardOldestPolicy`). This metric counts rejected submissions, not tasks ultimately discarded from the queue.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_TASK_REJECTED = 'jvm.executor.task.rejected'
+
+        # The number of core threads configured for the executor.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_THREAD_CORE = 'jvm.executor.thread.core'
+
+        # The number of executor threads that are currently in the state described by the `jvm.executor.thread.state` attribute.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_THREAD_COUNT = 'jvm.executor.thread.count'
+
+        # The maximum number of threads allowed for the executor.
+        #
+        # Instrumentations SHOULD emit this metric only when the maximum thread count is finite and represents a meaningful operational limit. This metric SHOULD NOT be emitted for unbounded or effectively unbounded executors. For example, an executor with a maximum thread count of `Integer.MAX_VALUE` is effectively unbounded.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_THREAD_LIMIT = 'jvm.executor.thread.limit'
+
+        # Number of open file descriptors as reported by the JVM.
+        #
+        # @note Stability Level: release_candidate
         JVM_FILE_DESCRIPTOR_COUNT = 'jvm.file_descriptor.count'
 
         # Measure of max open file descriptors as reported by the JVM.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         JVM_FILE_DESCRIPTOR_LIMIT = 'jvm.file_descriptor.limit'
 
         # Duration of JVM garbage collection actions.
