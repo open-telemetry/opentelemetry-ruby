@@ -51,4 +51,26 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableUpDownCounter do
     _(last_snapshot[0].data_points[1].attributes).must_equal({})
     _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
   end
+
+  it 'exports a steady observed value unchanged at every collection' do
+    meter.create_observable_up_down_counter('up_down_counter', unit: 'smidgen', description: 'a small amount of something', callback: proc { 1000 })
+
+    values = Array.new(3) do
+      metric_exporter.reset
+      metric_exporter.pull
+      metric_exporter.metric_snapshots[0].data_points[0].value
+    end
+
+    _(values).must_equal([1000, 1000, 1000])
+  end
+
+  it 'exports the latest value when observed more than once before a collection' do
+    instrument = meter.create_observable_up_down_counter('up_down_counter', unit: 'smidgen', description: 'a small amount of something', callback: proc { 25 })
+    instrument.observe
+    instrument.observe
+
+    metric_exporter.pull
+
+    _(metric_exporter.metric_snapshots[0].data_points[0].value).must_equal(25)
+  end
 end
