@@ -87,7 +87,7 @@ jobs:
         gem:
           - opentelemetry-exporter-otlp
           - opentelemetry-exporter-otlp-common
-          - opentelemetry-exporter-otlp-grpc
+          - opentelemetry-exporter-otlp-grpc-trace
           - opentelemetry-exporter-otlp-http
           - opentelemetry-exporter-otlp-logs
           - opentelemetry-exporter-otlp-metrics
@@ -98,7 +98,7 @@ jobs:
         exclude:
          # Windows runs Ruby 3.4, which isn't compatible with this gem
           - os: windows-2025
-            gem: opentelemetry-exporter-otlp-grpc
+            gem: opentelemetry-exporter-otlp-grpc-trace
     name: ${{ matrix.gem }} / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -124,7 +124,7 @@ jobs:
           rubocop: true
           build: true
       - name: "Test truffleruby"
-        if: "${{ startsWith(matrix.os, 'ubuntu') && matrix.gem != 'opentelemetry-exporter-otlp-grpc' }}"
+        if: "${{ startsWith(matrix.os, 'ubuntu') && matrix.gem != 'opentelemetry-exporter-otlp-grpc-trace' }}"
         uses: $/.github/actions/test_gem
         with:
           gem: "${{ matrix.gem }}"
