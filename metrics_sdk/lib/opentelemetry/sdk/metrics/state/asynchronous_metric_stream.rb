@@ -51,44 +51,48 @@ module OpenTelemetry
             super
           end
 
-          # Invokes each registered callback and records its observed value(s).
+          # Invokes each registered callback once and records the values they observe.
+          #
+          # The callbacks together report the instrument's current value for these attributes, so
+          # their values are summed into a single observation. Aggregations that understand
+          # absolute observations (Sum) record it with #observe; the others receive each value.
           def invoke_callback(timeout, attributes)
-            if @registered_views.empty?
+            values = @callback.filter_map do |cb|
+              value = safe_guard_callback(cb, timeout: timeout)
+              value if value.is_a?(Numeric) # ignore if value is not valid number
+            end
+            return if values.empty?
 
+            if @registered_views.empty?
               resolved_cardinality_limit = @cardinality_limit || DEFAULT_CARDINALITY_LIMIT
               @mutex.synchronize do
-                @callback.each do |cb|
-                  value = safe_guard_callback(cb, timeout: timeout)
-
-                  if value.is_a?(Numeric)
-                    exemplar_offer = should_offer_exemplar?(value, attributes)
-                    @default_aggregation.update(value, attributes, @data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
-                  end
-                end
+                record_observation(@default_aggregation, values, attributes, @data_points, resolved_cardinality_limit)
               end
             else
               @registered_views.each do |view, data_points|
                 resolved_cardinality_limit = resolve_cardinality_limit(view)
 
                 @mutex.synchronize do
-                  @callback.each do |cb|
-                    value = safe_guard_callback(cb, timeout: timeout)
-                    next unless value.is_a?(Numeric) # ignore if value is not valid number
+                  merged_attributes = (attributes || {}).merge(view.attribute_keys)
 
-                    merged_attributes = attributes || {}
-                    merged_attributes.merge!(view.attribute_keys)
-
-                    if view.valid_aggregation?
-                      exemplar_offer = should_offer_exemplar?(value, merged_attributes)
-                      view.aggregation.update(value, attributes, data_points, resolved_cardinality_limit, exemplar_offer: exemplar_offer)
-                    end
-                  end
+                  record_observation(view.aggregation, values, merged_attributes, data_points, resolved_cardinality_limit) if view.valid_aggregation?
                 end
               end
             end
           end
 
           private
+
+          def record_observation(aggregation, values, attributes, data_points, cardinality_limit)
+            if aggregation.respond_to?(:observe)
+              total = values.sum
+              aggregation.observe(total, attributes, data_points, cardinality_limit, exemplar_offer: should_offer_exemplar?(total, attributes))
+            else
+              values.each do |value|
+                aggregation.update(value, attributes, data_points, cardinality_limit, exemplar_offer: should_offer_exemplar?(value, attributes))
+              end
+            end
+          end
 
           def safe_guard_callback(callback, timeout: DEFAULT_TIMEOUT)
             result = nil
