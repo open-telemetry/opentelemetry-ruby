@@ -15,6 +15,7 @@ ignorePaths:
   - "*.j2"
   - "*.thrift"
   - "mise.toml"
+  - "semantic_conventions/lib/opentelemetry/semconv/**"
 patterns:
   - name: CodeBlock
     pattern: |

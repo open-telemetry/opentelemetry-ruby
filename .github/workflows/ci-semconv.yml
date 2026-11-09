@@ -66,7 +66,7 @@ jobs:
     steps:
       - name: Create otelbot app token
         if: ${{ github.event.pull_request.head.repo.fork == false }}
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
         id: app-token
         with:
           client-id: ${{ vars.OTELBOT_RUBY_CLIENT_ID }}
@@ -89,9 +89,9 @@ jobs:
           persist-credentials: false
 
       - name: Set up Ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
         with:
-          ruby-version: '4.0.7'
+          ruby-version: '4.0.9'
           bundler-cache: true
           working-directory: ${{ matrix.dir }}
 

@@ -7,6 +7,8 @@ require 'date'
 require 'yaml'
 
 require_relative 'config/defaults'
+require_relative 'config/env_substitution'
+require_relative 'config/logs'
 require_relative 'config/propagation'
 require_relative 'config/resource'
 require_relative 'config/constants'
@@ -48,12 +50,15 @@ module OpenTelemetry
         end
 
         content = File.read(path)
-        OpenTelemetry::Config::Model::OpenTelemetryConfiguration.from_hash(YAML.safe_load(content, permitted_classes: [Date, Time]))
+        OpenTelemetry::Config::Model::OpenTelemetryConfiguration.from_hash(EnvSubstitution.load(content))
       rescue Errno::ENOENT => e
         OpenTelemetry.logger.error("Config file not found: #{e.message}")
         nil
       rescue Psych::SyntaxError => e
         OpenTelemetry.logger.error("YAML parse error: #{e.message}")
+        nil
+      rescue EnvSubstitution::Error => e
+        OpenTelemetry.logger.error("Config file substitution error: #{e.message}")
         nil
       end
 
@@ -81,11 +86,13 @@ module OpenTelemetry
 
         # tracer_provider will be noop if opentelemetry-sdk is not installed
         tracer_provider = Trace.build_tracer_provider(config.tracer_provider, resource)
+        logger_provider = Logs.build_logger_provider(config.logger_provider, resource)
 
         propagators = configure_propagation(config.propagator)
 
         RubySDK.new(
           tracer_provider: tracer_provider,
+          logger_provider: logger_provider,
           propagator: propagators,
           resource: resource
         )
@@ -100,8 +107,20 @@ module OpenTelemetry
         return ruby_sdk if ruby_sdk.equal?(NOOP_SDK)
 
         OpenTelemetry.tracer_provider = ruby_sdk.tracer_provider if ruby_sdk.tracer_provider
+        install_logger_provider(ruby_sdk.logger_provider) if ruby_sdk.logger_provider
         OpenTelemetry.propagation = ruby_sdk.propagator if ruby_sdk.propagator
         ruby_sdk
+      end
+
+      private
+
+      def install_logger_provider(provider)
+        if OpenTelemetry.respond_to?(:logger_provider=)
+          OpenTelemetry.logger_provider = provider
+        else
+          OpenTelemetry.logger.warn('Cannot install the configured logger provider: OpenTelemetry.logger_provider= ' \
+                                    'is not defined. Require opentelemetry-logs-sdk.')
+        end
       end
     end
   end
