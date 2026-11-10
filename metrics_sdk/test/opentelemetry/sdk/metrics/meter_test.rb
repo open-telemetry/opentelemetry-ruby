@@ -273,6 +273,25 @@ describe OpenTelemetry::SDK::Metrics::Meter do
     end
   end
 
+  describe '#add_view' do
+    # add_view does not take the meter mutex, so it can land after an instrument's streams
+    # are built but before its descriptor is stored.
+    it 'applies a view added while an instrument is being created' do
+      meter_provider = OpenTelemetry::SDK::Metrics::MeterProvider.new
+      meter_provider.add_metric_reader(OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new)
+      meter_provider.define_singleton_method(:register_synchronous_instrument) do |instrument|
+        super(instrument)
+        add_view('a_counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Drop.new)
+      end
+
+      counter = meter_provider.meter('view_during_creation').create_counter('a_counter')
+
+      view = meter_provider.registered_views.first
+      streams = counter.instance_variable_get(:@metric_streams)
+      _(streams.map { |stream| stream.instance_variable_get(:@registered_views).keys }).must_equal([[view]])
+    end
+  end
+
   describe 'duplicate instrument registration' do
     let(:meter_provider) { OpenTelemetry::SDK::Metrics::MeterProvider.new }
     let(:meter) { meter_provider.meter('duplicate_registration') }
