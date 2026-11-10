@@ -52,4 +52,92 @@ describe OpenTelemetry::SDK::Metrics::Export::PeriodicMetricReader do
       mock_logger.verify
     end
   end
+
+  describe 'with metric producers' do
+    class TimeoutRecordingExporter < TestExporter
+      attr_reader :timeouts
+
+      def initialize
+        super
+        @timeouts = []
+      end
+
+      def export(metrics, timeout: nil)
+        @timeouts << timeout
+        super
+      end
+    end
+
+    # Advances a fake clock while producing, like a bridge that takes time to respond.
+    class ClockAdvancingMetricProducer < OpenTelemetry::SDK::Metrics::Export::MetricProducer
+      attr_reader :timeouts
+
+      def initialize(clock, duration)
+        super(aggregation_temporality: :cumulative)
+        @clock = clock
+        @duration = duration
+        @timeouts = []
+      end
+
+      def produce(resource:, metric_filter: nil, timeout: nil)
+        @timeouts << timeout
+        @clock[0] += @duration
+        Result.new(metrics: [OpenTelemetry::SDK::Metrics::State::MetricData.new('producer_metric')], status: SUCCESS, errors: [])
+      end
+    end
+
+    let(:clock) { [0.0] }
+    let(:exporter) { TimeoutRecordingExporter.new }
+
+    def build_reader(producer)
+      PeriodicMetricReader.new(exporter: exporter, metric_producers: [producer], export_timeout_millis: 30_000)
+    end
+
+    def with_fake_clock(&)
+      OpenTelemetry::Common::Utilities.stub(:timeout_timestamp, -> { clock[0] }, &)
+    end
+
+    it 'hands the force_flush timeout to producers and the remainder to the exporter' do
+      producer = ClockAdvancingMetricProducer.new(clock, 0.5)
+      reader = build_reader(producer)
+
+      with_fake_clock { reader.force_flush(timeout: 2) }
+
+      _(producer.timeouts).must_equal([2])
+      _(exporter.timeouts.length).must_equal(1)
+      _(exporter.timeouts[0]).must_be_within_delta(1.5, 1e-9)
+    ensure
+      reader&.shutdown
+    end
+
+    it 'shares the export timeout when force_flush is not given one' do
+      producer = ClockAdvancingMetricProducer.new(clock, 0.5)
+      reader = build_reader(producer)
+
+      with_fake_clock { reader.force_flush }
+
+      _(producer.timeouts).must_equal([30.0])
+      _(exporter.timeouts.length).must_equal(1)
+      _(exporter.timeouts[0]).must_be_within_delta(29.5, 1e-9)
+    ensure
+      reader&.shutdown
+    end
+
+    it 'skips the export when producers use up the timeout' do
+      producer = ClockAdvancingMetricProducer.new(clock, 3)
+      reader = build_reader(producer)
+      handled = []
+
+      with_fake_clock do
+        OpenTelemetry.stub(:handle_error, ->(exception: nil, message: nil) { handled << [exception, message] }) do
+          reader.force_flush(timeout: 2)
+        end
+      end
+
+      _(exporter.timeouts).must_be_empty
+      _(handled.map(&:last)).must_equal(['PeriodicMetricReader timed out while collecting metrics; skipped exporting them.'])
+    ensure
+      reader&.shutdown
+    end
+  end
 end
