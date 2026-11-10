@@ -142,6 +142,25 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       _(attrs['original']).must_equal('value')
     end
 
+    it 'keeps reporting the latest value when a view adds attributes' do
+      meter_provider.add_view('async_counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new)
+      meter_provider.add_view('async_counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new,
+                                               attribute_keys: { 'service' => 'metrics' })
+      instrument_attributes = { 'original' => 'value' }
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_counter', 'description', 'unit', :observable_counter,
+        meter_provider, instrumentation_scope, aggregation,
+        callback, timeout, instrument_attributes, nil, nil
+      )
+
+      stream.collect(0, 1000)
+      metric_data = stream.collect(1000, 2000)
+
+      points = metric_data.map { |md| md.data_points.map { |ndp| [ndp.attributes, ndp.value] } }
+      _(points).must_equal([[[{ 'original' => 'value' }, 42]], [[{ 'original' => 'value', 'service' => 'metrics' }, 42]]])
+      _(instrument_attributes).must_equal({ 'original' => 'value' })
+    end
+
     it 'handles callback exceptions' do
       skip if RUBY_PLATFORM.include? 'darwin'
 
@@ -200,7 +219,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       threads.each(&:join)
 
       _(thread_count).must_equal(5)
-      _(metric_data.first.data_points.first.value).must_equal 210
+      _(metric_data.first.data_points.first.value).must_equal 42
       _(metric_data.first.data_points.first.attributes['environment']).must_equal 'test'
       _(metric_data.first.start_time_unix_nano).must_equal 0
       _(metric_data.first.time_unix_nano).must_equal 10_000
@@ -208,8 +227,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
   end
 
   describe 'aggregation and view integration' do
-    it 'supports different aggregation types and accumulation' do
-      # Test Sum aggregation accumulation
+    it 'reports the latest observed value of a Sum instead of adding observations up' do
       callback_value = 100
       callback_proc = [proc { callback_value }]
       stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
@@ -220,7 +238,7 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
 
       stream.collect(0, 1000)
       metric_data = stream.collect(1000, 2000)
-      _(metric_data.first.data_points.first.value).must_equal 200
+      _(metric_data.first.data_points.first.value).must_equal 100
 
       # Test LastValue aggregation
       last_value_aggregation = OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new
@@ -278,6 +296,88 @@ describe OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream do
       dropped_data = drop_stream.collect(0, 1000)
       _(dropped_data.size).must_equal(1)
       _(dropped_data.first.data_points.first.value).must_equal(0) # Dropped value
+    end
+
+    it 'reports the change between collections of a delta observable_counter' do
+      observed = 1000
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_counter', 'description', 'unit', :observable_counter,
+        meter_provider, instrumentation_scope,
+        OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta, monotonic: true),
+        [proc { observed }], timeout, attributes, nil, nil
+      )
+
+      values = [1000, 1500, 1800].map do |value|
+        observed = value
+        stream.collect(0, 1000).first.data_points.first.value
+      end
+
+      _(values).must_equal([1000, 500, 300])
+    end
+
+    it 'reports a steady observable_up_down_counter as its value at every collection' do
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_up_down_counter', 'description', 'unit', :observable_up_down_counter,
+        meter_provider, instrumentation_scope, nil,
+        [proc { 1000 }], timeout, attributes, nil, nil
+      )
+
+      values = Array.new(3) { stream.collect(0, 1000).first.data_points.first.value }
+
+      _(values).must_equal([1000, 1000, 1000])
+    end
+
+    it 'invokes the callbacks once per collection when several views match' do
+      invocations = 0
+      meter_provider.add_view('async_counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::Sum.new)
+      meter_provider.add_view('async_counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::LastValue.new)
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_counter', 'description', 'unit', :observable_counter,
+        meter_provider, instrumentation_scope, aggregation,
+        [proc { invocations += 1 }], timeout, attributes, nil, nil
+      )
+
+      stream.collect(0, 1000)
+
+      _(invocations).must_equal(1)
+    end
+
+    it 'sums only the numeric values returned by the callbacks' do
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_counter', 'description', 'unit', :observable_counter,
+        meter_provider, instrumentation_scope, aggregation,
+        [proc { 10 }, proc { 'ten' }, proc {}, proc { 2.5 }], timeout, attributes, nil, nil
+      )
+
+      _(stream.collect(0, 1000).first.data_points.first.value).must_equal(12.5)
+    end
+
+    it 'records each callback value separately in a histogram view' do
+      meter_provider.add_view('async_counter', aggregation: OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram.new)
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_counter', 'description', 'unit', :observable_counter,
+        meter_provider, instrumentation_scope, aggregation,
+        [proc { 10 }, proc { 20 }], timeout, attributes, nil, nil
+      )
+
+      hdp = stream.collect(0, 1000).first.data_points.first
+
+      _(hdp.count).must_equal(2)
+      _(hdp.sum).must_equal(30)
+    end
+
+    it 'does not record observations into a view whose aggregation is not an SDK aggregation' do
+      foreign_aggregation = Minitest::Mock.new # raises if any method is called on it
+      meter_provider.add_view('async_counter', aggregation: foreign_aggregation)
+      stream = OpenTelemetry::SDK::Metrics::State::AsynchronousMetricStream.new(
+        'async_counter', 'description', 'unit', :observable_counter,
+        meter_provider, instrumentation_scope, aggregation,
+        callback, timeout, attributes, nil, nil
+      )
+
+      stream.invoke_callback(timeout, attributes)
+
+      foreign_aggregation.verify
     end
 
     it 'lets a view set delta temporality on an observable_up_down_counter' do

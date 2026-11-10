@@ -220,4 +220,124 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     _(a_ndp.exemplars.map(&:value)).must_equal([1])
     _(b_ndp.exemplars.map(&:value)).must_equal([2])
   end
+
+  describe '#observe' do
+    let(:monotonic) { true }
+
+    describe 'with cumulative aggregation' do
+      let(:aggregation_temporality) { :cumulative }
+
+      it 'reports the latest observation rather than adding observations up' do
+        values = [1000, 1000, 1500].map do |value|
+          sum_aggregation.observe(value, {}, data_points, cardinality_limit)
+          sum_aggregation.collect(start_time, end_time, data_points).first.value
+        end
+
+        _(values).must_equal([1000, 1000, 1500])
+      end
+
+      it 'keeps only the latest of several observations made before a collect' do
+        sum_aggregation.observe(25, {}, data_points, cardinality_limit)
+        sum_aggregation.observe(25, {}, data_points, cardinality_limit)
+
+        _(sum_aggregation.collect(start_time, end_time, data_points).first.value).must_equal(25)
+      end
+
+      it 'restarts the data point when a monotonic sum observes a lower value' do
+        sum_aggregation.observe(30, {}, data_points, cardinality_limit)
+        _(sum_aggregation.collect(0, 1000, data_points).first.start_time_unix_nano).must_equal(0)
+
+        sum_aggregation.observe(10, {}, data_points, cardinality_limit)
+        ndp = sum_aggregation.collect(1000, 2000, data_points).first
+
+        _(ndp.value).must_equal(10)
+        _(ndp.start_time_unix_nano).must_equal(1000)
+      end
+
+      it 'reports a lower value of a non-monotonic sum without restarting it' do
+        sum_aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :cumulative, monotonic: false)
+        sum_aggregation.observe(1000, {}, data_points, cardinality_limit)
+        sum_aggregation.collect(0, 1000, data_points)
+
+        sum_aggregation.observe(400, {}, data_points, cardinality_limit)
+        ndp = sum_aggregation.collect(1000, 2000, data_points).first
+
+        _(ndp.value).must_equal(400)
+        _(ndp.start_time_unix_nano).must_equal(0)
+      end
+
+      it 'keeps attribute sets separate' do
+        sum_aggregation.observe(10, { 'a' => 1 }, data_points, cardinality_limit)
+        sum_aggregation.observe(20, { 'b' => 1 }, data_points, cardinality_limit)
+        sum_aggregation.observe(15, { 'a' => 1 }, data_points, cardinality_limit)
+
+        ndps = sum_aggregation.collect(start_time, end_time, data_points)
+        _(ndps.to_h { |ndp| [ndp.attributes, ndp.value] }).must_equal({ { 'a' => 1 } => 15, { 'b' => 1 } => 20 })
+      end
+
+      it 'reports the latest observations of the attribute sets in the overflow data point' do
+        3.times do
+          sum_aggregation.observe(10, { 'a' => 1 }, data_points, 2)
+          sum_aggregation.observe(20, { 'b' => 1 }, data_points, 2)
+          sum_aggregation.observe(30, { 'c' => 1 }, data_points, 2)
+        end
+
+        ndps = sum_aggregation.collect(start_time, end_time, data_points)
+        _(ndps.to_h { |ndp| [ndp.attributes, ndp.value] }).must_equal({ { 'a' => 1 } => 10, { 'otel.metric.overflow' => true } => 50 })
+      end
+
+      it 'ignores negative observations of a monotonic sum' do
+        sum_aggregation.observe(10, {}, data_points, cardinality_limit)
+        sum_aggregation.observe(-5, {}, data_points, cardinality_limit)
+
+        _(sum_aggregation.collect(start_time, end_time, data_points).first.value).must_equal(10)
+      end
+    end
+
+    describe 'with delta aggregation' do
+      let(:aggregation_temporality) { :delta }
+
+      it 'reports the change since the previous collect' do
+        values = [1000, 1500, 1800, 1800].map do |value|
+          sum_aggregation.observe(value, {}, data_points, cardinality_limit)
+          sum_aggregation.collect(start_time, end_time, data_points).first.value
+        end
+
+        _(values).must_equal([1000, 500, 300, 0])
+      end
+
+      it 'reports the whole new value when a monotonic sum observes a lower value' do
+        sum_aggregation.observe(30, {}, data_points, cardinality_limit)
+        sum_aggregation.collect(start_time, end_time, data_points)
+
+        sum_aggregation.observe(10, {}, data_points, cardinality_limit)
+
+        _(sum_aggregation.collect(start_time, end_time, data_points).first.value).must_equal(10)
+      end
+
+      it 'reports a negative change when a non-monotonic sum observes a lower value' do
+        sum_aggregation = OpenTelemetry::SDK::Metrics::Aggregation::Sum.new(aggregation_temporality: :delta, monotonic: false)
+        values = [100, 40].map do |value|
+          sum_aggregation.observe(value, {}, data_points, cardinality_limit)
+          sum_aggregation.collect(start_time, end_time, data_points).first.value
+        end
+
+        _(values).must_equal([100, -60])
+      end
+
+      it 'keeps the previous observations of each stream sharing the aggregation separate' do
+        other_data_points = {}
+        sum_aggregation.observe(100, {}, data_points, cardinality_limit)
+        sum_aggregation.observe(5, {}, other_data_points, cardinality_limit)
+        sum_aggregation.collect(start_time, end_time, data_points)
+        sum_aggregation.collect(start_time, end_time, other_data_points)
+
+        sum_aggregation.observe(110, {}, data_points, cardinality_limit)
+        sum_aggregation.observe(7, {}, other_data_points, cardinality_limit)
+
+        _(sum_aggregation.collect(start_time, end_time, data_points).first.value).must_equal(10)
+        _(sum_aggregation.collect(start_time, end_time, other_data_points).first.value).must_equal(2)
+      end
+    end
+  end
 end
