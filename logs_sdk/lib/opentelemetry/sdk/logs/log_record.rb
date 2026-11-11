@@ -91,6 +91,7 @@ module OpenTelemetry
           @instrumentation_scope = instrumentation_scope
           @log_record_limits = log_record_limits || LogRecordLimits::DEFAULT
           @dropped_attributes_count = 0
+          @attribute_discard_logged = false
           self.attributes = attributes
         end
 
@@ -147,6 +148,7 @@ module OpenTelemetry
 
           excess.times { attrs.shift }
           @dropped_attributes_count += excess
+          log_attribute_discard("Log record attribute count limit exceeded; dropping #{excess} attribute(s).")
         end
 
         def validate_attributes(attrs)
@@ -154,17 +156,24 @@ module OpenTelemetry
           # Future refactor opportunity: https://github.com/open-telemetry/opentelemetry-ruby/issues/1739
           attrs.keep_if do |k, v|
             if !Internal.valid_key?(k)
-              OpenTelemetry.handle_error(message: "Invalid log record attribute key type #{k.class} for " \
-                                                  "key #{k.inspect} on record: '#{body}'. Attribute keys must be Strings. Dropping attribute.")
+              log_attribute_discard("Invalid log record attribute key type #{k.class} for " \
+                                    "key #{k.inspect}. Attribute keys must be Strings. Dropping attribute.")
               return false
             elsif !Internal.valid_value?(v)
-              OpenTelemetry.handle_error(message: "Invalid log record attribute value type #{v.class} for key '#{k}' " \
-                                                  "on record: '#{body}'. Dropping attribute.")
+              log_attribute_discard("Invalid log record attribute value type #{v.class} for key '#{k}'. " \
+                                    "Dropping attribute.")
               return false
             end
 
             true
           end
+        end
+
+        def log_attribute_discard(message)
+          return if @attribute_discard_logged
+
+          @attribute_discard_logged = true
+          OpenTelemetry.logger.warn(message)
         end
 
         def truncate_attribute_values(attributes, attribute_length_limit)
