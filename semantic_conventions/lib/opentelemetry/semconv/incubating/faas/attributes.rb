@@ -64,7 +64,12 @@ module OpenTelemetry
         # The invocation ID of the current function invocation.
         #
         # @note Stability Level: development
-        FAAS_INVOCATION_ID = 'faas.invocation_id'
+        FAAS_INVOCATION_ID = 'faas.invocation.id'
+
+        # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
+        #
+        # @note Stability Level: development
+        FAAS_INVOCATION_START_TIME = 'faas.invocation.start_time'
 
         # The name of the invoked function.
         #
@@ -117,8 +122,7 @@ module OpenTelemetry
         FAAS_NAME = 'faas.name'
 
         # A string containing the function invocation time in the [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format expressed in [UTC](https://www.w3.org/TR/NOTE-datetime).
-        #
-        # @note Stability Level: development
+        # @deprecated Replaced by `faas.invocation.start_time`.
         FAAS_TIME = 'faas.time'
 
         # Type of the trigger which caused this function invocation.

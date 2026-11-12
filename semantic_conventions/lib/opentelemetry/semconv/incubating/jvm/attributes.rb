@@ -31,6 +31,30 @@ module OpenTelemetry
         # @note Stability Level: development
         JVM_BUFFER_POOL_NAME = 'jvm.buffer.pool.name'
 
+        # Name of the executor.
+        #
+        # The executor name SHOULD be low-cardinality. If `jvm.executor.owner.name` is present, the combination of `jvm.executor.owner.name` and `jvm.executor.name` SHOULD be unique within the instrumented application; otherwise, `jvm.executor.name` SHOULD be unique when an executor-specific name is available. If the executor implementation does not provide an explicit name, instrumentation SHOULD derive a name from available implementation-specific metadata, such as a normalized worker thread name. If no executor-specific name or metadata is available, instrumentation MAY use `unknown`. The `unknown` value does not identify an executor, and metrics from multiple executors using this value MAY be aggregated. Users requiring per-executor metric series SHOULD configure a distinct name through the executor's `ThreadFactory`. Instrumentations SHOULD document how the name is derived and how users can configure it. Once metric series registration for an executor has started, `jvm.executor.name` and `jvm.executor.owner.name` MUST remain stable for the lifetime of that registration. Instrumentations SHOULD determine these attributes before the first worker is registered. Instrumentations MUST NOT re-register cumulative metrics under a new attribute set or replay prior cumulative values under new attributes.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_NAME = 'jvm.executor.name'
+
+        # Name of the logical component that owns the executor.
+        #
+        # The executor owner name SHOULD be a low-cardinality identifier for the component that creates and configures the executor. It is neither the executor implementation type nor an OpenTelemetry instrumentation scope.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_OWNER_NAME = 'jvm.executor.owner.name'
+
+        # State of an executor thread.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_THREAD_STATE = 'jvm.executor.thread.state'
+
+        # The fully qualified class name of the executor implementation.
+        #
+        # @note Stability Level: development
+        JVM_EXECUTOR_TYPE = 'jvm.executor.type'
+
         # Name of the garbage collector action.
         #
         # Garbage collector action is generally obtained via [GarbageCollectionNotificationInfo#getGcAction()](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.management/com/sun/management/GarbageCollectionNotificationInfo.html#getGcAction()).
