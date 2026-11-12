@@ -47,6 +47,12 @@ module OpenTelemetry
         # The maximum number of open connections allowed.
         #
         # @note Stability Level: development
+        DB_CLIENT_CONNECTION_LIMIT = 'db.client.connection.limit'
+
+        # Deprecated, use `db.client.connection.limit` instead.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `db.client.connection.limit`.
         DB_CLIENT_CONNECTION_MAX = 'db.client.connection.max'
 
         # The number of current pending requests for an open connection.
@@ -87,10 +93,10 @@ module OpenTelemetry
         # @deprecated Replaced by `db.client.connection.idle.min`.
         DB_CLIENT_CONNECTIONS_IDLE_MIN = 'db.client.connections.idle.min'
 
-        # Deprecated, use `db.client.connection.max` instead.
+        # Deprecated, use `db.client.connection.limit` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `db.client.connection.max`.
+        # @deprecated Replaced by `db.client.connection.limit`.
         DB_CLIENT_CONNECTIONS_MAX = 'db.client.connections.max'
 
         # Deprecated, use `db.client.connection.pending_requests` instead.
