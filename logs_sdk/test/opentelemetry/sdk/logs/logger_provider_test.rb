@@ -92,6 +92,25 @@ describe OpenTelemetry::SDK::Logs::LoggerProvider do
       assert_equal(name, logger.instance_variable_get(:@instrumentation_scope).name)
       assert_equal(version, logger.instance_variable_get(:@instrumentation_scope).version)
     end
+
+    it 'returns a no-op logger if the provider is stopped' do
+      logger_provider.shutdown
+      logger = logger_provider.logger(name: 'name', version: 'version')
+
+      refute_instance_of(OpenTelemetry::SDK::Logs::Logger, logger)
+      assert_instance_of(OpenTelemetry::Logs::Logger, logger)
+      assert_nil(logger.on_emit(body: 'test'))
+    end
+
+    it 'logs a warning if called after shutdown' do
+      OpenTelemetry::TestHelpers.with_test_logger do |log_stream|
+        logger_provider.shutdown
+        assert logger_provider.instance_variable_get(:@stopped)
+        assert_empty(log_stream.string)
+        logger_provider.logger(name: 'name', version: 'version')
+        assert_match(/.* called on a stopped/, log_stream.string)
+      end
+    end
   end
 
   describe '#shutdown' do

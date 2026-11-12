@@ -18,7 +18,7 @@ module OpenTelemetry
         # @param [Integer] flags 8-bit byte of bit flags
         # @return [TraceFlags]
         def from_byte(flags)
-          flags = 0 unless flags & ~0xFF == 0
+          flags = 0 unless flags.nobits?(~0xFF)
 
           new(flags)
         end

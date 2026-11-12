@@ -31,7 +31,7 @@ module OpenTelemetry
           end
         end
 
-        OpenTelemetry.logger.warn('Config: schema_url is supported; ignoring.') if resource_cfg.schema_url
+        OpenTelemetry.logger.warn('Config: schema_url is not supported; ignoring.') if resource_cfg.schema_url
 
         attrs = detected.merge(explicit)
         custom = OpenTelemetry::SDK::Resources::Resource.create(attrs)

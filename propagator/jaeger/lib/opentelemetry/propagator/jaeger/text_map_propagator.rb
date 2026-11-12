@@ -56,7 +56,7 @@ module OpenTelemetry
 
           sampling_flags = match['sampling_flags'].to_i
           span = build_span(match, sampling_flags)
-          context = Jaeger.context_with_debug(context) if sampling_flags & DEBUG_FLAG_BIT != 0
+          context = Jaeger.context_with_debug(context) if sampling_flags.anybits?(DEBUG_FLAG_BIT)
           context = context_with_extracted_baggage(carrier, context, getter)
           Trace.context_with_span(span, parent_context: context)
         end

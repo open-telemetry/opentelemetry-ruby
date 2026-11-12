@@ -67,7 +67,8 @@ module OpenTelemetry
         # Iterates a snapshot so a concurrent registration cannot mutate the hash mid-iteration.
         def add_metric_reader(metric_reader)
           @instrument_descriptors.values.flatten.each do |descriptor|
-            descriptor.instrument.register_with_new_metric_store(metric_reader.metric_store)
+            descriptor.instrument.register_with_new_metric_store(metric_reader.metric_store,
+                                                                 default_aggregation: MeterProvider.reader_config(metric_reader))
           end
         end
 

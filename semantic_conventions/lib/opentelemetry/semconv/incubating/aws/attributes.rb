@@ -149,7 +149,7 @@ module OpenTelemetry
         # @note Stability Level: development
         AWS_ECS_CLUSTER_ARN = 'aws.ecs.cluster.arn'
 
-        # The Amazon Resource Name (ARN) of an [ECS container instance](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ECS_instances.html).
+        # The Amazon Resource Name (ARN) of an [ECS container](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4-response.html).
         #
         # @note Stability Level: development
         AWS_ECS_CONTAINER_ARN = 'aws.ecs.container.arn'

@@ -36,39 +36,45 @@ module OpenTelemetry
         # @deprecated Replaced by `cpu.mode`.
         SYSTEM_CPU_STATE = 'system.cpu.state'
 
-        # The device identifier
+        # Deprecated, use `system.device.name` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `system.device.name`.
         SYSTEM_DEVICE = 'system.device'
+
+        # The OS level identifier for a device, such as disk, partition or network interface.
+        #
+        # @note Stability Level: release_candidate
+        SYSTEM_DEVICE_NAME = 'system.device.name'
 
         # The filesystem mode
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_FILESYSTEM_MODE = 'system.filesystem.mode'
 
         # The filesystem mount path
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_FILESYSTEM_MOUNTPOINT = 'system.filesystem.mountpoint'
 
         # The filesystem state
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_FILESYSTEM_STATE = 'system.filesystem.state'
 
         # The filesystem type
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_FILESYSTEM_TYPE = 'system.filesystem.type'
 
         # The Linux HugePages memory state
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_MEMORY_LINUX_HUGEPAGES_STATE = 'system.memory.linux.hugepages.state'
 
         # The Linux Slab memory state
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_MEMORY_LINUX_SLAB_STATE = 'system.memory.linux.slab.state'
 
         # The memory state
@@ -84,7 +90,7 @@ module OpenTelemetry
 
         # The paging access direction
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_PAGING_DIRECTION = 'system.paging.direction'
 
         # The paging fault type
@@ -94,7 +100,7 @@ module OpenTelemetry
 
         # The memory paging state
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         SYSTEM_PAGING_STATE = 'system.paging.state'
 
         # Deprecated, use `system.paging.fault.type` instead.
