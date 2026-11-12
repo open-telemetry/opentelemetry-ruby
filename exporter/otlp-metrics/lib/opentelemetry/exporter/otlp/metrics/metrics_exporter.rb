@@ -50,9 +50,9 @@ module OpenTelemetry
             super(aggregation_cardinality_limit: aggregation_cardinality_limit,
                   default_aggregation: self.class.histogram_aggregation_from_env.merge(default_aggregation || {}))
 
-            params = kwargs.values.compact.any? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(**kwargs) : nil
+            @params = kwargs.values.compact.any? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(**kwargs) : nil
 
-            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'METRICS', 'v1/metrics')
+            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(@params, 'METRICS', 'v1/metrics')
 
             @uri = @http.uri
             @path = @uri.path
@@ -214,13 +214,9 @@ module OpenTelemetry
 
             if uri.host != @uri.host || uri.port != @uri.port
               old_http = @http
-              @http = Net::HTTP.new(uri.hostname, uri.port)
-              @http.use_ssl = uri.scheme == 'https'
-              @http.verify_mode = old_http.verify_mode
-              @http.ca_file = old_http.ca_file unless old_http.ca_file.nil?
-              @http.cert = old_http.cert unless old_http.cert.nil?
-              @http.key = old_http.key unless old_http.key.nil?
-              @http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
+              @params ||= OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new
+              @params.endpoint = uri.to_s
+              @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(@params, 'METRICS', 'v1/metrics')
             else
               @http.use_ssl = uri.scheme == 'https'
             end

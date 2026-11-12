@@ -33,6 +33,7 @@ module OpenTelemetry
                          :ca_file,
                          :cert,
                          :key,
+                         :use_ssl=,
                          :use_ssl?,
                          :address,
                          :port,
