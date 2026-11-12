@@ -6,7 +6,7 @@
 # rake generate:constants
 #
 # Downloads the upstream opentelemetry-configuration JSON Schema (YAML format)
-# and regenerates lib/opentelemetry/constants/generated_constants.rb from it.
+# and regenerates lib/opentelemetry/config/generated_constants.rb from it.
 #
 # Usage:
 #   bundle exec rake generate:constants
@@ -23,7 +23,7 @@ require 'rubygems/package'
 
 SCHEMA_VERSION = ENV.fetch('SCHEMA_VERSION', 'v1.0.0-rc.3')
 SCHEMA_TARBALL = "https://api.github.com/repos/open-telemetry/opentelemetry-configuration/tarball/#{SCHEMA_VERSION}".freeze
-OUTPUT_FILE    = File.expand_path('../opentelemetry/constants/generated_constants.rb', __dir__)
+OUTPUT_FILE    = File.expand_path('../opentelemetry/config/generated_constants.rb', __dir__)
 
 # Ruby tarball downloader
 module SchemaDownloader
@@ -90,7 +90,7 @@ module SchemaReader
   end
 end
 
-# schema $defs → ruby struct definitions in constants/generated_constants.rb
+# schema $defs → ruby struct definitions in config/generated_constants.rb
 module ConstantsGenerator
   module_function
 
@@ -115,6 +115,12 @@ module ConstantsGenerator
     body.is_a?(Hash) && body['properties'].is_a?(Hash) && !body['properties'].empty?
   end
 
+  # Returns true when the +name+ definition allows null, which the schema uses
+  # for objects that may be present with every property omitted.
+  def nullable?(defs, name)
+    Array(defs.dig(name, 'type')).include?('null')
+  end
+
   # Returns true when +name+ is a presence-only marker object (no properties, no enum).
   def marker?(defs, name)
     body = defs[name]
@@ -136,7 +142,9 @@ module ConstantsGenerator
   def value_expr(prop, defs, key)
     direct = ref_name(prop)
 
-    if direct && struct?(defs, direct)
+    if direct && struct?(defs, direct) && nullable?(defs, direct)
+      "Model.nullable_from_hash(#{direct}, h, '#{key}')"
+    elsif direct && struct?(defs, direct)
       "#{direct}.from_hash(h['#{key}'])"
     elsif direct && marker?(defs, direct)
       "h.key?('#{key}')"
@@ -168,7 +176,7 @@ module ConstantsGenerator
     end
     if capture_additional
       known = props.keys.map { |k| "'#{k}'" }.join(', ')
-      assignments << "      additional_properties: h.reject { |k, _| [#{known}].include?(k) }"
+      assignments << "      additional_properties: h.except(#{known})"
     end
 
     <<~RUBY
@@ -208,6 +216,15 @@ module ConstantsGenerator
         module Config
           # Generated struct definitions mirroring the OpenTelemetry configuration schema.
           module Model
+            # Parses the nullable object at +key+ with +klass+. An explicit null
+            # parses as an object with every property omitted.
+            def self.nullable_from_hash(klass, h, key)
+              return nil unless h.key?(key)
+
+              value = h[key]
+              klass.from_hash(value.nil? ? {} : value)
+            end
+
       #{indent(body.rstrip, 6)}
           end
         end
@@ -233,7 +250,7 @@ module ConstantsGenerator
 end
 
 namespace :generate do
-  desc "Download OTel configuration schema (#{SCHEMA_VERSION}) and regenerate lib/opentelemetry/constants/generated_constants.rb"
+  desc "Download OTel configuration schema (#{SCHEMA_VERSION}) and regenerate lib/opentelemetry/config/generated_constants.rb"
   task :constants do
     schema_dir = ENV.fetch('SCHEMA_DIR', nil)
 

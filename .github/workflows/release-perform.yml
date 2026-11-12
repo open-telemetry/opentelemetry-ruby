@@ -34,9 +34,9 @@ jobs:
           # zizmor: ignore[artipacked] Credentials are required to push release tags and gh-pages
           persist-credentials: true
       - name: Install Ruby
-        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
         with:
-          ruby-version: "4.0.7"
+          ruby-version: "4.0.9"
           bundler-cache: true
       - name: Perform release
         env:

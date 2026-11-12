@@ -177,6 +177,26 @@ module OpenTelemetry
         # @note Stability Level: development
         GCP_GCE_INSTANCE_GROUP_MANAGER_ZONE = 'gcp.gce.instance_group_manager.zone'
 
+        # The ack deadline in seconds set for the modify ack deadline request.
+        #
+        # @note Stability Level: development
+        GCP_PUBSUB_MESSAGE_ACK_DEADLINE = 'gcp.pubsub.message.ack_deadline'
+
+        # The ack ID for a given message.
+        #
+        # @note Stability Level: development
+        GCP_PUBSUB_MESSAGE_ACK_ID = 'gcp.pubsub.message.ack_id'
+
+        # The delivery attempt for a given message.
+        #
+        # @note Stability Level: development
+        GCP_PUBSUB_MESSAGE_DELIVERY_ATTEMPT = 'gcp.pubsub.message.delivery_attempt'
+
+        # The ordering key for a given message. If the attribute is not present, the message does not have an ordering key.
+        #
+        # @note Stability Level: development
+        GCP_PUBSUB_MESSAGE_ORDERING_KEY = 'gcp.pubsub.message.ordering_key'
+
         # @!endgroup
       end
     end

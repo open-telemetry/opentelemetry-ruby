@@ -61,6 +61,11 @@ module OpenTelemetry
         # @note Stability Level: development
         AZURE_COSMOSDB_RESPONSE_SUB_STATUS_CODE = 'azure.cosmosdb.response.sub_status_code'
 
+        # The UTC epoch seconds at which the message has been accepted and stored in the entity.
+        #
+        # @note Stability Level: development
+        AZURE_EVENTHUBS_MESSAGE_ENQUEUED_TIME = 'azure.eventhubs.message.enqueued_time'
+
         # The name of the Azure [resource group](https://learn.microsoft.com/azure/azure-resource-manager/management/manage-resource-groups-portal) the resource belongs to.
         #
         # @note Stability Level: development
@@ -75,6 +80,21 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         AZURE_SERVICE_REQUEST_ID = 'azure.service.request.id'
+
+        # Describes the [settlement type](https://learn.microsoft.com/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock).
+        #
+        # @note Stability Level: development
+        AZURE_SERVICEBUS_DISPOSITION_STATUS = 'azure.servicebus.disposition_status'
+
+        # Number of deliveries that have been attempted for this message.
+        #
+        # @note Stability Level: development
+        AZURE_SERVICEBUS_MESSAGE_DELIVERY_COUNT = 'azure.servicebus.message.delivery_count'
+
+        # The UTC epoch seconds at which the message has been accepted and stored in the entity.
+        #
+        # @note Stability Level: development
+        AZURE_SERVICEBUS_MESSAGE_ENQUEUED_TIME = 'azure.servicebus.message.enqueued_time'
 
         # @!endgroup
       end

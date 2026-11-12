@@ -10,7 +10,7 @@ module OpenTelemetry
       module Export
         # Outputs {LogRecordData} to the console.
         #
-        # Potentially useful for exploratory purposes.
+        # This exporter is intended for debugging and learning purposes. It is not recommended for production use. The output format is not standardized and can change at any time.
         class ConsoleLogRecordExporter
           def initialize
             @stopped = false
