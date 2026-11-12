@@ -11,15 +11,15 @@ module OpenTelemetry
   module Trace
     extend self
 
-    CURRENT_SPAN_KEY = Context.create_key('current-span')
+    CURRENT_SPAN_KEY = Context.create_key('current-span').freeze
 
     private_constant :CURRENT_SPAN_KEY
 
     # An invalid trace identifier, a 16-byte string with all zero bytes.
-    INVALID_TRACE_ID = ("\0" * 16).b
+    INVALID_TRACE_ID = ("\0" * 16).b.freeze
 
     # An invalid span identifier, an 8-byte string with all zero bytes.
-    INVALID_SPAN_ID = ("\0" * 8).b
+    INVALID_SPAN_ID = ("\0" * 8).b.freeze
 
     # Generates a valid trace identifier, a 16-byte string with at least one
     # non-zero byte.

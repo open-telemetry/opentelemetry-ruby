@@ -49,9 +49,9 @@ module OpenTelemetry
     module Propagation
       extend self
 
-      TEXT_MAP_GETTER = TextMapGetter.new
-      TEXT_MAP_SETTER = TextMapSetter.new
-      RACK_ENV_GETTER = RackEnvGetter.new
+      TEXT_MAP_GETTER = TextMapGetter.new.freeze
+      TEXT_MAP_SETTER = TextMapSetter.new.freeze
+      RACK_ENV_GETTER = RackEnvGetter.new.freeze
 
       private_constant :TEXT_MAP_GETTER, :TEXT_MAP_SETTER, :RACK_ENV_GETTER
 
