@@ -1,4 +1,4 @@
-# Release History: opentelemetry-exporter-otlp-grpc
+# Release History: opentelemetry-exporter-otlp-grpc-trace
 
 ### Unreleased
 
