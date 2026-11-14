@@ -10,6 +10,22 @@ describe OpenTelemetry::SDK do
   describe '#configure' do
     before { reset_metrics_sdk }
 
+    it 'does not collect or export metrics after shutdown' do
+      OpenTelemetry::SDK.configure
+
+      metric_exporter = OpenTelemetry::SDK::Metrics::Export::InMemoryMetricPullExporter.new
+      OpenTelemetry.meter_provider.add_metric_reader(metric_exporter)
+
+      counter = OpenTelemetry.meter_provider.meter('test').create_counter('counter')
+      counter.add(1)
+
+      _(OpenTelemetry.meter_provider.shutdown).must_equal(OpenTelemetry::SDK::Metrics::Export::SUCCESS)
+
+      _(metric_exporter.pull).must_equal(OpenTelemetry::SDK::Metrics::Export::FAILURE)
+      _(metric_exporter.collect).must_be_empty
+      _(metric_exporter.metric_snapshots).must_be_empty
+    end
+
     it 'emits metrics' do
       OpenTelemetry::SDK.configure
 
