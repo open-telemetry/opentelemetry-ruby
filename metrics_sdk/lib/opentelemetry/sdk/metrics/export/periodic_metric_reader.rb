@@ -47,17 +47,17 @@ module OpenTelemetry
           #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
-          #   non-specific failure occurred.
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def shutdown(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             thread = lock do
               @continue = false # force termination in next iteration
               @condition.signal
               @thread
             end
-            thread&.join(@export_interval)
-            @exporter.force_flush if @exporter.respond_to?(:force_flush)
-            @exporter.shutdown
-            Export::SUCCESS
+            thread&.join(timeout || @export_interval)
+            flush_result = @exporter.force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)) if @exporter.respond_to?(:force_flush)
+            worst_result(flush_result, @exporter.shutdown(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)))
           rescue StandardError => e
             OpenTelemetry.handle_error(exception: e, message: 'Fail to shutdown PeriodicMetricReader.')
             Export::FAILURE
@@ -71,12 +71,20 @@ module OpenTelemetry
           # the process after an invocation, but before the `PeriodicMetricReader` exports
           # the completed metrics.
           #
+          # Reports the most severe status of the export and of the exporter's own
+          # force_flush, as the spec requires ForceFlush to fail if either fails or times out.
+          #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
-          #   non-specific failure occurred.
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def force_flush(timeout: nil)
-            export(timeout:)
-            Export::SUCCESS
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+            export_result = export(timeout:)
+
+            # exporter force flush won't do anything since currently all exporter force_flush implementations
+            # return immediately with success.
+            flush_result = @exporter.force_flush(timeout: OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)) if @exporter.respond_to?(:force_flush)
+            worst_result(export_result, flush_result)
           rescue StandardError
             Export::FAILURE
           end
@@ -119,18 +127,41 @@ module OpenTelemetry
           end
 
           # Helper function for the defined exporter to export metrics.
-          # It only exports if the collected metrics are not an empty array (collect returns an Array).
+          # It only exports if the collection did not fail and the collected metrics
+          # are not empty. Metrics collected before a timeout are still handed to the
+          # exporter, but TIMEOUT is returned so the caller knows the collection was incomplete.
+          # Collection and export share a single timeout budget.
           #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] SUCCESS if no error occurred, FAILURE if a
-          #   non-specific failure occurred
+          #   non-specific failure occurred, TIMEOUT if a timeout occurred.
           def export(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
             @export_mutex.synchronize do
-              collected_metrics = collect
-              result_code = @exporter.export(collected_metrics, timeout: timeout || @export_timeout) unless collected_metrics.empty?
+              timeout ||= @export_timeout
+              collection = collect_with_result(timeout: timeout)
+              report_collection_result(collection)
+              return collection.status if collection.failure?
+
+              collected_metrics = collection.metrics
+              unless collected_metrics.empty?
+                remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+                result_code = @exporter.export(collected_metrics, timeout: remaining_timeout)
+              end
               report_result(result_code)
-              result_code
+              worst_result(collection.status, result_code)
             end
+          end
+
+          # Returns the most severe of the given result codes (SUCCESS < FAILURE < TIMEOUT).
+          # A nil or non-Integer result (nothing exported, or a duck-typed exporter
+          # that reports no status) counts as SUCCESS.
+          def worst_result(*results)
+            results.map { |result| result.is_a?(Integer) ? result : Export::SUCCESS }.max
+          end
+
+          def report_collection_result(collection)
+            OpenTelemetry.logger.warn 'Timed out while collecting metrics' if collection.timeout?
           end
 
           def report_result(result_code)
