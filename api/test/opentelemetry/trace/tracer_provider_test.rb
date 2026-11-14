@@ -50,5 +50,16 @@ describe OpenTelemetry::Trace::TracerProvider do
       tracer2 = tracer_provider.tracer('component', '1.0', attributes: nil)
       _(tracer1).must_equal(tracer2)
     end
+
+    # Schema URL
+    it 'accepts positional arguments with schema_url keyword' do
+      tracer = tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      _(tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    end
+
+    it 'accepts all keyword arguments with schema_url' do
+      tracer = tracer_provider.tracer(name: 'component', version: '1.0', attributes: { 'key' => 'value' }, schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      _(tracer).must_be_instance_of(OpenTelemetry::Trace::Tracer)
+    end
   end
 end
