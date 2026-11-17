@@ -24,10 +24,10 @@ module OpenTelemetry
       module RPC
         # @!group Attribute Names
 
-        # Deprecated, use `rpc.response.status_code` attribute instead.
+        # Deprecated, use `rpc.status_code` attribute instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.response.status_code`.
+        # @deprecated Replaced by `rpc.status_code`.
         RPC_CONNECT_RPC_ERROR_CODE = 'rpc.connect_rpc.error_code'
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -36,10 +36,10 @@ module OpenTelemetry
         # @example Usage
         #   RPC_CONNECT_RPC_REQUEST_METADATA_LAMBDA.call('some-cool-key') #=> 'rpc.connect_rpc.request.metadata.some-cool-key'
         #
-        # Deprecated, use `rpc.request.metadata` instead.
+        # Deprecated, use `rpc.request.header` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.request.metadata`.
+        # @deprecated Replaced by `rpc.request.header`.
         RPC_CONNECT_RPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.request.metadata.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -48,10 +48,10 @@ module OpenTelemetry
         # @example Usage
         #   RPC_CONNECT_RPC_RESPONSE_METADATA_LAMBDA.call('some-cool-key') #=> 'rpc.connect_rpc.response.metadata.some-cool-key'
         #
-        # Deprecated, use `rpc.response.metadata` instead.
+        # Deprecated, use `rpc.response.header` and `rpc.response.trailer`.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.response.metadata`.
+        # @deprecated Split to `rpc.response.header` for metadata sent before the response payload and `rpc.response.trailer` for metadata sent after it.
         RPC_CONNECT_RPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.connect_rpc.response.metadata.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -60,10 +60,10 @@ module OpenTelemetry
         # @example Usage
         #   RPC_GRPC_REQUEST_METADATA_LAMBDA.call('some-cool-key') #=> 'rpc.grpc.request.metadata.some-cool-key'
         #
-        # Deprecated, use `rpc.request.metadata` instead.
+        # Deprecated, use `rpc.request.header` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.request.metadata`.
+        # @deprecated Replaced by `rpc.request.header`.
         RPC_GRPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.grpc.request.metadata.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
@@ -72,22 +72,22 @@ module OpenTelemetry
         # @example Usage
         #   RPC_GRPC_RESPONSE_METADATA_LAMBDA.call('some-cool-key') #=> 'rpc.grpc.response.metadata.some-cool-key'
         #
-        # Deprecated, use `rpc.response.metadata` instead.
+        # Deprecated, use `rpc.response.header` and `rpc.response.trailer`.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `rpc.response.metadata`.
+        # @deprecated Split to `rpc.response.header` for metadata sent before the response payload and `rpc.response.trailer` for metadata sent after it.
         RPC_GRPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.grpc.response.metadata.#{key}" }
 
-        # Deprecated, use string representation on the `rpc.response.status_code` attribute instead.
+        # Deprecated, use string representation on the `rpc.status_code` attribute instead.
         #
         # @note Stability Level: development
-        # @deprecated Use string representation of the gRPC status code on the `rpc.response.status_code` attribute.
+        # @deprecated Use string representation of the gRPC status code on the `rpc.status_code` attribute.
         RPC_GRPC_STATUS_CODE = 'rpc.grpc.status_code'
 
-        # Deprecated, use string representation on the `rpc.response.status_code` attribute instead.
+        # Deprecated, use string representation on the `rpc.status_code` attribute instead.
         #
         # @note Stability Level: development
-        # @deprecated Use string representation of the error code on the `rpc.response.status_code` attribute.
+        # @deprecated Use string representation of the error code on the `rpc.status_code` attribute.
         RPC_JSONRPC_ERROR_CODE = 'rpc.jsonrpc.error_code'
 
         # Deprecated, use the span status description when reporting JSON-RPC spans.
@@ -158,13 +158,41 @@ module OpenTelemetry
         # method actually executing the call on the server side, or the
         # RPC client stub method on the client side.
         #
-        # @note Stability Level: release_candidate
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::RPC::RPC_METHOD}.
         RPC_METHOD = 'rpc.method'
 
         # The original name of the method used by the client.
         #
-        # @note Stability Level: release_candidate
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::RPC::RPC_METHOD_ORIGINAL}.
         RPC_METHOD_ORIGINAL = 'rpc.method_original'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   RPC_REQUEST_HEADER_LAMBDA.call('some-cool-key') #=> 'rpc.request.header.some-cool-key'
+        #
+        # RPC request headers or metadata, `<key>` being the normalized header name (lowercase), the value being the header values.
+        #
+        # Instrumentations SHOULD require an explicit configuration of which headers are to be captured.
+        # Including all request headers can be a security risk - explicit configuration helps avoid leaking sensitive information.
+        #
+        # For example, a header `my-custom-key` with value `["1.2.3.4", "1.2.3.5"]` SHOULD be recorded as
+        # the `rpc.request.header.my-custom-key` attribute with value `["1.2.3.4", "1.2.3.5"]`
+        #
+        # The attribute value MUST consist of either multiple header values as an array of
+        # strings or a single-item array containing a possibly comma-concatenated string,
+        # depending on the way the RPC library provides access to headers.
+        #
+        # Values that the RPC system exposes as binary data, or that are otherwise not valid
+        # UTF-8 strings, SHOULD be base64-encoded when recorded.
+        #
+        # @note Stability Level: release_candidate
+        RPC_REQUEST_HEADER_LAMBDA = ->(key) { "rpc.request.header.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
@@ -172,16 +200,35 @@ module OpenTelemetry
         # @example Usage
         #   RPC_REQUEST_METADATA_LAMBDA.call('some-cool-key') #=> 'rpc.request.metadata.some-cool-key'
         #
-        # RPC request metadata, `<key>` being the normalized RPC metadata key (lowercase), the value being the metadata values.
-        #
-        # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured.
-        # Including all request metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information.
-        #
-        # For example, a property `my-custom-key` with value `["1.2.3.4", "1.2.3.5"]` SHOULD be recorded as
-        # `rpc.request.metadata.my-custom-key` attribute with value `["1.2.3.4", "1.2.3.5"]`
+        # Deprecated, use `rpc.request.header` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rpc.request.header`.
         RPC_REQUEST_METADATA_LAMBDA = ->(key) { "rpc.request.metadata.#{key}" }
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   RPC_RESPONSE_HEADER_LAMBDA.call('some-cool-key') #=> 'rpc.response.header.some-cool-key'
+        #
+        # RPC response headers or metadata sent before the response payload, `<key>` being the normalized header name (lowercase), the value being the header values.
+        #
+        # Instrumentations SHOULD require an explicit configuration of which headers are to be captured.
+        # Including all response headers can be a security risk - explicit configuration helps avoid leaking sensitive information.
+        #
+        # For example, a header `my-custom-key` with value `["attribute_value"]` SHOULD be recorded as
+        # the `rpc.response.header.my-custom-key` attribute with value `["attribute_value"]`
+        #
+        # The attribute value MUST consist of either multiple header values as an array of
+        # strings or a single-item array containing a possibly comma-concatenated string,
+        # depending on the way the RPC library provides access to headers.
+        #
+        # Values that the RPC system exposes as binary data, or that are otherwise not valid
+        # UTF-8 strings, SHOULD be base64-encoded when recorded.
+        #
+        # @note Stability Level: release_candidate
+        RPC_RESPONSE_HEADER_LAMBDA = ->(key) { "rpc.response.header.#{key}" }
 
         # Must be called with a key for the full attribute name. See notes below about the expectations
         # for the state of the key.
@@ -189,30 +236,58 @@ module OpenTelemetry
         # @example Usage
         #   RPC_RESPONSE_METADATA_LAMBDA.call('some-cool-key') #=> 'rpc.response.metadata.some-cool-key'
         #
-        # RPC response metadata, `<key>` being the normalized RPC metadata key (lowercase), the value being the metadata values.
-        #
-        # Instrumentations SHOULD require an explicit configuration of which metadata values are to be captured.
-        # Including all response metadata values can be a security risk - explicit configuration helps avoid leaking sensitive information.
-        #
-        # For example, a property `my-custom-key` with value `["attribute_value"]` SHOULD be recorded as
-        # the `rpc.response.metadata.my-custom-key` attribute with value `["attribute_value"]`
+        # Deprecated, use `rpc.response.header` and `rpc.response.trailer`.
         #
         # @note Stability Level: development
+        # @deprecated Split to `rpc.response.header` for metadata sent before the response payload and `rpc.response.trailer` for metadata sent after it.
         RPC_RESPONSE_METADATA_LAMBDA = ->(key) { "rpc.response.metadata.#{key}" }
 
-        # Status code of the RPC returned by the RPC server or generated by the client
-        #
-        # Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
-        # Semantic conventions for individual RPC frameworks SHOULD document what `rpc.response.status_code` means in the context of that system and which values are considered to represent errors.
+        # Deprecated, use `rpc.status_code` instead.
         #
         # @note Stability Level: release_candidate
+        # @deprecated Replaced by `rpc.status_code`.
         RPC_RESPONSE_STATUS_CODE = 'rpc.response.status_code'
+
+        # Must be called with a key for the full attribute name. See notes below about the expectations
+        # for the state of the key.
+        #
+        # @example Usage
+        #   RPC_RESPONSE_TRAILER_LAMBDA.call('some-cool-key') #=> 'rpc.response.trailer.some-cool-key'
+        #
+        # RPC response trailers or metadata sent after the response payload, `<key>` being the normalized trailer name (lowercase), the value being the trailer values.
+        #
+        # Instrumentations SHOULD require an explicit configuration of which trailers are to be captured.
+        # Including all response trailers can be a security risk - explicit configuration helps avoid leaking sensitive information.
+        #
+        # For example, a trailer `my-custom-key` with value `["attribute_value"]` SHOULD be recorded as
+        # the `rpc.response.trailer.my-custom-key` attribute with value `["attribute_value"]`
+        #
+        # The attribute value MUST consist of either multiple trailer values as an array of
+        # strings or a single-item array containing a possibly comma-concatenated string,
+        # depending on the way the RPC library provides access to trailers.
+        #
+        # Values that the RPC system exposes as binary data, or that are otherwise not valid
+        # UTF-8 strings, SHOULD be base64-encoded when recorded.
+        #
+        # @note Stability Level: release_candidate
+        RPC_RESPONSE_TRAILER_LAMBDA = ->(key) { "rpc.response.trailer.#{key}" }
 
         # Deprecated, use fully-qualified `rpc.method` instead.
         #
         # @note Stability Level: development
         # @deprecated Value should be included in `rpc.method` which is expected to be a fully-qualified name.
         RPC_SERVICE = 'rpc.service'
+
+        # Status code of the RPC returned by the RPC server or generated by the client
+        #
+        # Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
+        # The value MAY use a standardized string representation of a numeric status code, if one exists, instead of the numeric code. The value MAY be a synthetic status provided by the client library rather than returned by the remote service.
+        # Semantic conventions for individual RPC frameworks SHOULD document what `rpc.status_code` means in the context of that system and which values are considered to represent errors.
+        #
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::RPC::RPC_STATUS_CODE}.
+        RPC_STATUS_CODE = 'rpc.status_code'
 
         # Deprecated, use `rpc.system.name` attribute instead.
         #
@@ -224,7 +299,9 @@ module OpenTelemetry
         #
         # The client and server RPC systems may differ for the same RPC interaction. For example, a client may use Apache Dubbo or Connect RPC to communicate with a server that uses gRPC since both protocols provide compatibility with gRPC.
         #
-        # @note Stability Level: release_candidate
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::RPC::RPC_SYSTEM_NAME}.
         RPC_SYSTEM_NAME = 'rpc.system.name'
 
         # @!endgroup

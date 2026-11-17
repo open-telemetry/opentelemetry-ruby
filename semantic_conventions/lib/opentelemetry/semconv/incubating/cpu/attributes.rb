@@ -24,9 +24,11 @@ module OpenTelemetry
       module CPU
         # @!group Attribute Names
 
-        # The logical CPU number [0..n-1]
+        # The identifier of a logical execution target (CPU) as seen by the operating system, in the range [0..n-1].
         #
-        # @note Stability Level: development
+        # On systems with simultaneous multithreading (SMT) enabled — such as Intel Hyper-Threading or AMD SMT — this value will usually differ from the physical core number, because each core presents multiple logical CPUs for the system to use.
+        #
+        # @note Stability Level: release_candidate
         CPU_LOGICAL_NUMBER = 'cpu.logical_number'
 
         # The mode of the CPU

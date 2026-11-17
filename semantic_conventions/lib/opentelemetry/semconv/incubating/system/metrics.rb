@@ -137,7 +137,7 @@ module OpenTelemetry
 
         # An estimate of how much memory is available for starting new applications, without causing swapping.
         #
-        # This is an alternative to `system.memory.usage` metric with `state=free`.
+        # This is equivalent to the `system.memory.usage` metric with `state=available`.
         # Linux starting from 3.14 exports "available" memory. It takes "free" memory as a baseline, and then factors in kernel-specific values.
         # This is supposed to be more accurate than just "free" memory.
         # For reference, see the calculations [here](https://superuser.com/a/980821).
@@ -207,12 +207,16 @@ module OpenTelemetry
         # @deprecated Replaced by `system.memory.linux.shared`.
         SYSTEM_MEMORY_SHARED = 'system.memory.shared'
 
-        # Reports memory in use by state.
+        # Reports memory by state.
+        #
+        # The sum of the `used` and `available` state values SHOULD be equal to `system.memory.limit`.
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_USAGE = 'system.memory.usage'
 
-        # Percentage of memory bytes in use.
+        # Fraction of memory bytes by state.
+        #
+        # The sum of the `used` and `available` state values SHOULD be equal to 1.
         #
         # @note Stability Level: development
         SYSTEM_MEMORY_UTILIZATION = 'system.memory.utilization'

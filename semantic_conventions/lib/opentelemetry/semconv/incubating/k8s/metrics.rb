@@ -94,22 +94,23 @@ module OpenTelemetry
         #
         # The current CPU request reflects the request applied to the running container, as reported by
         # [ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core).
-        # The value range is [0.0,1.0]. A value of 1.0 means the container is using 100% of its actual CPU request.
-        # If the CPU request is not set, this metric SHOULD NOT be emitted for that container.
+        # A value of 1.0 means the container is using exactly its CPU request. Since a CPU request is a scheduling
+        # reservation and not a hard cap, values above 1.0 are possible and indicate the container is using more CPU
+        # than requested. If the CPU request is not set, this metric SHOULD NOT be emitted for that container.
         #
         # @note Stability Level: development
         K8S_CONTAINER_CPU_REQUEST_UTILIZATION = 'k8s.container.cpu.request.utilization'
 
         # Maximum ephemeral storage resource limit set for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
+        # See the [Kubernetes ResourceRequirements API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_EPHEMERAL_STORAGE_LIMIT = 'k8s.container.ephemeral_storage.limit'
 
         # Ephemeral storage resource requested for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
+        # See the [Kubernetes ResourceRequirements API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_EPHEMERAL_STORAGE_REQUEST = 'k8s.container.ephemeral_storage.request'
@@ -149,6 +150,17 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_CONTAINER_MEMORY_LIMIT_DESIRED = 'k8s.container.memory.limit.desired'
 
+        # The ratio of container memory working set to its current memory limit.
+        #
+        # The numerator is the container memory working set, as reported by `container.memory.working_set`. The current memory limit
+        # reflects the actual resources applied to the container, as reported by
+        # [ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core).
+        # A value of 1.0 means the container is using 100% of its actual memory limit. Values above 1.0 can occur transiently, since memory usage can briefly exceed the limit.
+        # If the memory limit is not set, this metric SHOULD NOT be emitted for that container.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_MEMORY_LIMIT_UTILIZATION = 'k8s.container.memory.limit.utilization'
+
         # Deprecated, use `k8s.container.memory.request.desired` and `k8s.container.memory.request.current` instead.
         #
         # @note Stability Level: development
@@ -176,6 +188,19 @@ module OpenTelemetry
         #
         # @note Stability Level: development
         K8S_CONTAINER_MEMORY_REQUEST_DESIRED = 'k8s.container.memory.request.desired'
+
+        # The ratio of container memory working set to its current memory request.
+        #
+        # The numerator is the container memory working set, as reported by `container.memory.working_set`. The current memory request
+        # reflects the request applied to the running container, as reported by
+        # [ContainerStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#containerstatus-v1-core).
+        # A value of 1.0 means the container is using exactly its memory request. Since a memory request is a
+        # scheduling reservation and not a hard cap, values above 1.0 are possible and indicate the container is
+        # using more memory than requested. If the memory request is not set, this metric SHOULD NOT be emitted for
+        # that container.
+        #
+        # @note Stability Level: development
+        K8S_CONTAINER_MEMORY_REQUEST_UTILIZATION = 'k8s.container.memory.request.utilization'
 
         # Indicates whether the container is currently marked as ready to accept traffic, based on its readiness probe (1 = ready, 0 = not ready).
         #
@@ -214,14 +239,14 @@ module OpenTelemetry
 
         # Maximum storage resource limit set for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
+        # See the [Kubernetes ResourceRequirements API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_STORAGE_LIMIT = 'k8s.container.storage.limit'
 
         # Storage resource requested for the container.
         #
-        # See https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core for details.
+        # See the [Kubernetes ResourceRequirements API](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#resourcerequirements-v1-core) for details.
         #
         # @note Stability Level: development
         K8S_CONTAINER_STORAGE_REQUEST = 'k8s.container.storage.request'
@@ -580,7 +605,7 @@ module OpenTelemetry
         #
         # CPU usage of the specific Node on all available CPU cores. It is calculated as the change in cumulative CPU time (k8s.node.cpu.time) over a measurement interval, divided by the elapsed time: usageCores = (cpuTimeEnd - cpuTimeStart) / elapsedSeconds
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_CPU_USAGE = 'k8s.node.cpu.usage'
 
         # Amount of ephemeral-storage allocatable on the node.
@@ -591,53 +616,55 @@ module OpenTelemetry
         # Node filesystem available bytes.
         #
         # This metric is derived from the
-        # [FsStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # [FsStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_FILESYSTEM_AVAILABLE = 'k8s.node.filesystem.available'
 
         # Node filesystem capacity.
         #
         # This metric is derived from the
-        # [FsStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # [FsStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_FILESYSTEM_CAPACITY = 'k8s.node.filesystem.capacity'
 
         # The total inodes in the node's root filesystem.
         #
         # This metric is derived from the
-        # [FsStats.Inodes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # [FsStats.Inodes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_FILESYSTEM_INODE_COUNT = 'k8s.node.filesystem.inode.count'
 
         # The free inodes in the node's root filesystem.
         #
         # This metric is derived from the
-        # [FsStats.InodesFree](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # [FsStats.InodesFree](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_FILESYSTEM_INODE_FREE = 'k8s.node.filesystem.inode.free'
 
         # Node filesystem usage.
         #
-        # This may not equal capacity - available.
-        #
         # This metric is derived from the
-        # [FsStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats)
+        # [FsStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [NodeStats.Fs](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # Capacity and available are reported for the backing filesystem,
+        # which may be shared with other workloads; therefore,
+        # usage may not equal `capacity - available`.
+        #
+        # @note Stability Level: release_candidate
         K8S_NODE_FILESYSTEM_USAGE = 'k8s.node.filesystem.usage'
 
         # Amount of memory allocatable on the node.
@@ -680,7 +707,7 @@ module OpenTelemetry
 
         # Node memory working set.
         #
-        # The amount of working set memory. This includes recently accessed memory, dirty memory, and kernel memory. WorkingSetBytes is <= UsageBytes.
+        # The amount of working set memory. This includes recently accessed memory, dirty memory, and kernel memory. On Linux, the working set is calculated by excluding inactive file-backed memory from memory usage (`inactive_file` on cgroup v2, `total_inactive_file` on cgroup v1), so active file-backed memory remains included. On Linux, the kubelet uses the node working set when determining memory availability for the `memory.available` eviction signal. `WorkingSetBytes` is less than or equal to `UsageBytes`.
         # This metric is derived from the [MemoryStats.WorkingSetBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
         #
         # @note Stability Level: release_candidate
@@ -688,21 +715,42 @@ module OpenTelemetry
 
         # Node network errors.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_NETWORK_ERRORS = 'k8s.node.network.errors'
 
         # Network bytes for the Node.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_NETWORK_IO = 'k8s.node.network.io'
 
         # Node memory paging faults.
         #
-        # Cumulative number of major/minor page faults.
-        # This metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) fields of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API.
+        # Cumulative number of major and minor page faults.
+        # The [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [NodeStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#NodeStats) of the Kubelet's stats API maps directly to `system.paging.fault.type=major`.
+        # The [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field reports the total number of page faults (equivalent to `pgfault` in the cgroup `memory.stat`), with minor and major combined. The minor page faults MUST therefore be derived as `MemoryStats.PageFaults - MemoryStats.MajorPageFaults`, so that summing the metric over `system.paging.fault.type` yields the total number of page faults.
+        #
+        # @note Stability Level: release_candidate
+        K8S_NODE_PAGING_FAULTS = 'k8s.node.paging.faults'
+
+        # Total number of processes/threads allowed by the operating system on the node.
+        #
+        # Derived from the Kubelet Summary API
+        # ([RlimitStats.MaxPID](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#RlimitStats))
+        # field of the [NodeStats.Rlimit](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats),
+        # representing the system-wide task limit (the lower of `kernel.pid_max` and `kernel.threads-max`).
         #
         # @note Stability Level: development
-        K8S_NODE_PAGING_FAULTS = 'k8s.node.paging.faults'
+        K8S_NODE_PID_LIMIT = 'k8s.node.pid.limit'
+
+        # Total number of existing processes and threads on the node.
+        #
+        # Derived from the Kubelet Summary API
+        # ([RlimitStats.NumOfRunningProcesses](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#RlimitStats))
+        # field of the [NodeStats.Rlimit](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#NodeStats),
+        # which reads the total count of scheduling entities (threads/processes across all states) from `/proc/loadavg`.
+        #
+        # @note Stability Level: development
+        K8S_NODE_PID_USAGE = 'k8s.node.pid.usage'
 
         # Amount of pods allocatable on the node.
         #
@@ -739,10 +787,10 @@ module OpenTelemetry
 
         # The time the Node has been running.
         #
-        # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
-        # The actual accuracy would depend on the instrumentation and operating system.
+        # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available. The actual accuracy would depend on the instrumentation and operating system.
+        # This metric is derived from the [NodeStats.StartTime](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L42) field of Kubelet's stats API, which is set to the [system boot time](https://github.com/kubernetes/kubernetes/blob/v1.36.3/pkg/kubelet/server/stats/summary.go#L113). This value resets when the node reboots.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_NODE_UPTIME = 'k8s.node.uptime'
 
         # Number of PersistentVolumes in a given phase.
@@ -786,6 +834,77 @@ module OpenTelemetry
         # @note Stability Level: development
         K8S_PERSISTENTVOLUMECLAIM_STORAGE_REQUEST = 'k8s.persistentvolumeclaim.storage.request'
 
+        # Maximum CPU resource limit currently configured for a running Pod.
+        #
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core)
+        # (status.resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_POD_CPU_LIMIT_CURRENT = 'k8s.pod.cpu.limit.current'
+
+        # Maximum CPU resource limit as defined by the Pod spec.
+        #
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podspec-v1-core)
+        # (spec.resources). See
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/)
+        # for more details on Pod level resources. Note that Kubernetes can default unset Pod level limits
+        # based on the aggregated limits of the Pod's containers. Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/).
+        #
+        # @note Stability Level: development
+        K8S_POD_CPU_LIMIT_DESIRED = 'k8s.pod.cpu.limit.desired'
+
+        # The ratio of Pod CPU usage to its current CPU limit.
+        #
+        # The current CPU limit reflects the actual resources applied at the Pod level, as reported by
+        # [PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core).
+        # The value range is [0.0,1.0]. A value of 1.0 means the Pod is using 100% of its actual CPU limit.
+        # If the CPU limit is not set, this metric SHOULD NOT be emitted for that Pod.
+        #
+        # @note Stability Level: development
+        K8S_POD_CPU_LIMIT_UTILIZATION = 'k8s.pod.cpu.limit.utilization'
+
+        # CPU resource requested currently configured for a running Pod.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core)
+        # (status.resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_POD_CPU_REQUEST_CURRENT = 'k8s.pod.cpu.request.current'
+
+        # CPU resource requested as defined by the Pod spec.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podspec-v1-core)
+        # (spec.resources). See
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/)
+        # for more details on Pod level resources. Note that Kubernetes can default unset Pod level requests
+        # based on the aggregated requests of the Pod's containers. Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/).
+        #
+        # @note Stability Level: development
+        K8S_POD_CPU_REQUEST_DESIRED = 'k8s.pod.cpu.request.desired'
+
+        # The ratio of Pod CPU usage to its current CPU request.
+        #
+        # The current CPU request reflects the request applied at the Pod level, as reported by
+        # [PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core).
+        # A value of 1.0 means the Pod is using exactly its CPU request. Since a CPU request is a scheduling
+        # reservation and not a hard cap, values above 1.0 are possible and indicate the Pod is using more CPU
+        # than requested. If the CPU request is not set, this metric SHOULD NOT be emitted for that Pod.
+        #
+        # @note Stability Level: development
+        K8S_POD_CPU_REQUEST_UTILIZATION = 'k8s.pod.cpu.request.utilization'
+
         # Total CPU time consumed.
         #
         # Total CPU time consumed by the specific Pod on all available CPU cores
@@ -797,39 +916,40 @@ module OpenTelemetry
         #
         # CPU usage of the specific Pod on all available CPU cores. It is calculated as the change in cumulative CPU time (k8s.pod.cpu.time) over a measurement interval, divided by the elapsed time: usageCores = (cpuTimeEnd - cpuTimeStart) / elapsedSeconds
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_CPU_USAGE = 'k8s.pod.cpu.usage'
 
         # Pod filesystem available bytes.
         #
         # This metric is derived from the
-        # [FsStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [PodStats.EphemeralStorage](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats)
+        # [FsStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [PodStats.EphemeralStorage](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_FILESYSTEM_AVAILABLE = 'k8s.pod.filesystem.available'
 
         # Pod filesystem capacity.
         #
         # This metric is derived from the
-        # [FsStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [PodStats.EphemeralStorage](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats)
+        # [FsStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [PodStats.EphemeralStorage](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_FILESYSTEM_CAPACITY = 'k8s.pod.filesystem.capacity'
 
         # Pod filesystem usage.
         #
-        # This may not equal capacity - available.
-        #
         # This metric is derived from the
-        # [FsStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#FsStats) field
-        # of the [PodStats.EphemeralStorage](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats)
+        # [FsStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#FsStats) field
+        # of the [PodStats.EphemeralStorage](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats)
         # of the Kubelet's stats API.
         #
-        # @note Stability Level: development
+        # Capacity and available are reported for the backing filesystem, which may be shared
+        # with other workloads; therefore, usage may not equal `capacity - available`.
+        #
+        # @note Stability Level: release_candidate
         K8S_POD_FILESYSTEM_USAGE = 'k8s.pod.filesystem.usage'
 
         # Pod memory available.
@@ -840,6 +960,42 @@ module OpenTelemetry
         # @note Stability Level: release_candidate
         K8S_POD_MEMORY_AVAILABLE = 'k8s.pod.memory.available'
 
+        # Maximum memory resource limit currently configured for a running Pod.
+        #
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core)
+        # (status.resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_POD_MEMORY_LIMIT_CURRENT = 'k8s.pod.memory.limit.current'
+
+        # Maximum memory resource limit as defined by the Pod spec.
+        #
+        # This metric aligns with the limit in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podspec-v1-core)
+        # (spec.resources). See
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/)
+        # for more details on Pod level resources. Note that Kubernetes can default unset Pod level limits
+        # based on the aggregated limits of the Pod's containers. Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/).
+        #
+        # @note Stability Level: development
+        K8S_POD_MEMORY_LIMIT_DESIRED = 'k8s.pod.memory.limit.desired'
+
+        # The ratio of Pod memory working set to its current memory limit.
+        #
+        # The numerator is the Pod memory working set, as reported by `k8s.pod.memory.working_set`. The current memory limit
+        # reflects the actual resources applied at the Pod level, as reported by
+        # [PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core).
+        # A value of 1.0 means the Pod is using 100% of its actual memory limit. Values above 1.0 can occur transiently, since memory usage can briefly exceed the limit.
+        # If the memory limit is not set, this metric SHOULD NOT be emitted for that Pod.
+        #
+        # @note Stability Level: development
+        K8S_POD_MEMORY_LIMIT_UTILIZATION = 'k8s.pod.memory.limit.utilization'
+
         # Deprecated, use `k8s.pod.paging.faults` instead.
         #
         # Cumulative number of major/minor page faults.
@@ -848,6 +1004,43 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.pod.paging.faults`.
         K8S_POD_MEMORY_PAGING_FAULTS = 'k8s.pod.memory.paging.faults'
+
+        # Memory resource request currently configured for a running Pod.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core)
+        # (status.resources). Also see `Actual Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/) for more details.
+        #
+        # @note Stability Level: development
+        K8S_POD_MEMORY_REQUEST_CURRENT = 'k8s.pod.memory.request.current'
+
+        # Memory resource requested as defined by the Pod spec.
+        #
+        # This metric aligns with the request in the
+        # [`resources`](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#resourcerequirements-v1-core) field of
+        # [K8s PodSpec](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podspec-v1-core)
+        # (spec.resources). See
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/assign-pod-level-resources/)
+        # for more details on Pod level resources. Note that Kubernetes can default unset Pod level requests
+        # based on the aggregated requests of the Pod's containers. Also see `Desired Resources` in
+        # [https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/](https://kubernetes.io/docs/tasks/configure-pod-container/resize-container-resources/).
+        #
+        # @note Stability Level: development
+        K8S_POD_MEMORY_REQUEST_DESIRED = 'k8s.pod.memory.request.desired'
+
+        # The ratio of Pod memory working set to its current memory request.
+        #
+        # The numerator is the Pod memory working set, as reported by `k8s.pod.memory.working_set`. The current memory request
+        # reflects the request applied at the Pod level, as reported by
+        # [PodStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.35/#podstatus-v1-core).
+        # A value of 1.0 means the Pod is using exactly its memory request. Since a memory request is a
+        # scheduling reservation and not a hard cap, values above 1.0 are possible and indicate the Pod is using
+        # more memory than requested. If the memory request is not set, this metric SHOULD NOT be emitted for that Pod.
+        #
+        # @note Stability Level: development
+        K8S_POD_MEMORY_REQUEST_UTILIZATION = 'k8s.pod.memory.request.utilization'
 
         # Pod memory RSS.
         #
@@ -867,7 +1060,7 @@ module OpenTelemetry
 
         # Pod memory working set.
         #
-        # The amount of working set memory. This includes recently accessed memory, dirty memory, and kernel memory. WorkingSetBytes is <= UsageBytes.
+        # The amount of working set memory. This includes recently accessed memory, dirty memory, and kernel memory. On Linux, the working set is calculated by excluding inactive file-backed memory from memory usage (`inactive_file` on cgroup v2, `total_inactive_file` on cgroup v1), so active file-backed memory remains included. The kubelet uses the Pod working set when ranking Pods for eviction under memory pressure. `WorkingSetBytes` is less than or equal to `UsageBytes`.
         # This metric is derived from the [MemoryStats.WorkingSetBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
         #
         # @note Stability Level: release_candidate
@@ -875,20 +1068,21 @@ module OpenTelemetry
 
         # Pod network errors.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_NETWORK_ERRORS = 'k8s.pod.network.errors'
 
         # Network bytes for the Pod.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_NETWORK_IO = 'k8s.pod.network.io'
 
         # Pod memory paging faults.
         #
-        # Cumulative number of major/minor page faults.
-        # This metric is derived from the [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) and [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API.
+        # Cumulative number of major and minor page faults.
+        # The [MemoryStats.MajorPageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field of the [PodStats.Memory](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the Kubelet's stats API maps directly to `system.paging.fault.type=major`.
+        # The [MemoryStats.PageFaults](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#MemoryStats) field reports the total number of page faults (equivalent to `pgfault` in the cgroup `memory.stat`), with minor and major combined. The minor page faults MUST therefore be derived as `MemoryStats.PageFaults - MemoryStats.MajorPageFaults`, so that summing the metric over `system.paging.fault.type` yields the total number of page faults.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_PAGING_FAULTS = 'k8s.pod.paging.faults'
 
         # Describes number of K8s Pods that are currently in a given phase.
@@ -909,17 +1103,17 @@ module OpenTelemetry
 
         # The time the Pod has been running.
         #
-        # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available.
-        # The actual accuracy would depend on the instrumentation and operating system.
+        # Instrumentations SHOULD use a gauge with type `double` and measure uptime in seconds as a floating point number with the highest precision available. The actual accuracy would depend on the instrumentation and operating system.
+        # This metric is derived from the [PodStats.StartTime](https://github.com/kubernetes/kubelet/blob/v0.35.2/pkg/apis/stats/v1alpha1/types.go#L122) field of Kubelet's stats API, where `StartTime` represents the pod sandbox creation time as [noted in the Kubelet source](https://github.com/kubernetes/kubernetes/blob/v1.36.3/pkg/kubelet/stats/cri_stats_provider.go#L299). This value resets when the node restarts, as the pod sandbox is recreated.
         #
-        # @note Stability Level: development
+        # @note Stability Level: release_candidate
         K8S_POD_UPTIME = 'k8s.pod.uptime'
 
         # Pod volume storage space available.
         #
         # This metric is derived from the
-        # [VolumeStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#VolumeStats) field
-        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats) of the
+        # [VolumeStats.AvailableBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#VolumeStats) field
+        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the
         # Kubelet's stats API.
         #
         # @note Stability Level: development
@@ -928,8 +1122,8 @@ module OpenTelemetry
         # Pod volume total capacity.
         #
         # This metric is derived from the
-        # [VolumeStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#VolumeStats) field
-        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats) of the
+        # [VolumeStats.CapacityBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#VolumeStats) field
+        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the
         # Kubelet's stats API.
         #
         # @note Stability Level: development
@@ -938,8 +1132,8 @@ module OpenTelemetry
         # The total inodes in the filesystem of the Pod's volume.
         #
         # This metric is derived from the
-        # [VolumeStats.Inodes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#VolumeStats) field
-        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats) of the
+        # [VolumeStats.Inodes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#VolumeStats) field
+        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the
         # Kubelet's stats API.
         #
         # @note Stability Level: development
@@ -948,8 +1142,8 @@ module OpenTelemetry
         # The free inodes in the filesystem of the Pod's volume.
         #
         # This metric is derived from the
-        # [VolumeStats.InodesFree](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#VolumeStats) field
-        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats) of the
+        # [VolumeStats.InodesFree](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#VolumeStats) field
+        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the
         # Kubelet's stats API.
         #
         # @note Stability Level: development
@@ -958,8 +1152,8 @@ module OpenTelemetry
         # The inodes used by the filesystem of the Pod's volume.
         #
         # This metric is derived from the
-        # [VolumeStats.InodesUsed](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#VolumeStats) field
-        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats) of the
+        # [VolumeStats.InodesUsed](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#VolumeStats) field
+        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the
         # Kubelet's stats API.
         #
         # This may not be equal to `inodes - free` because filesystem may share inodes with other filesystems.
@@ -972,8 +1166,8 @@ module OpenTelemetry
         # This may not equal capacity - available.
         #
         # This metric is derived from the
-        # [VolumeStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#VolumeStats) field
-        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.33.0/pkg/apis/stats/v1alpha1#PodStats) of the
+        # [VolumeStats.UsedBytes](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#VolumeStats) field
+        # of the [PodStats](https://pkg.go.dev/k8s.io/kubelet@v0.34.0/pkg/apis/stats/v1alpha1#PodStats) of the
         # Kubelet's stats API.
         #
         # @note Stability Level: development
@@ -1305,6 +1499,14 @@ module OpenTelemetry
         # @note Stability Level: development
         # @deprecated Replaced by `k8s.statefulset.pod.desired`.
         K8S_STATEFULSET_DESIRED_PODS = 'k8s.statefulset.desired_pods'
+
+        # Total number of available replica pods (ready for at least minReadySeconds) targeted by this statefulset.
+        #
+        # This metric aligns with the `availableReplicas` field of the
+        # [K8s StatefulSetStatus](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.34/#statefulsetstatus-v1-apps).
+        #
+        # @note Stability Level: development
+        K8S_STATEFULSET_POD_AVAILABLE = 'k8s.statefulset.pod.available'
 
         # The number of replica pods created by the statefulset controller from the statefulset version indicated by currentRevision.
         #

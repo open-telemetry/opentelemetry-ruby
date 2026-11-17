@@ -29,6 +29,7 @@ module OpenTelemetry
         # The causal relationship between a child Span and a parent Span.
         #
         # @note Stability Level: development
+        # @deprecated OpenTracing compatibility requirements are [deprecated in OpenTelemetry Specification](https://opentelemetry.io/docs/specs/otel/compatibility/opentracing/)
         OPENTRACING_REF_TYPE = 'opentracing.ref_type'
 
         # @!endgroup

@@ -29,7 +29,9 @@ module OpenTelemetry
         # When this metric is reported alongside an RPC client span, the metric value
         # SHOULD be the same as the RPC client span duration.
         #
-        # @note Stability Level: release_candidate
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::RPC::RPC_CLIENT_CALL_DURATION}.
         RPC_CLIENT_CALL_DURATION = 'rpc.client.call.duration'
 
         # Deprecated, use `rpc.client.call.duration` instead. Note: the unit also changed from `ms` to `s`.
@@ -84,7 +86,9 @@ module OpenTelemetry
         # When this metric is reported alongside an RPC server span, the metric value
         # SHOULD be the same as the RPC server span duration.
         #
-        # @note Stability Level: release_candidate
+        # @note Stability Level: stable
+        #
+        # @deprecated Now available in the stable namespace at {OpenTelemetry::SemConv::RPC::RPC_SERVER_CALL_DURATION}.
         RPC_SERVER_CALL_DURATION = 'rpc.server.call.duration'
 
         # Deprecated, use `rpc.server.call.duration` instead. Note: the unit also changed from `ms` to `s`.

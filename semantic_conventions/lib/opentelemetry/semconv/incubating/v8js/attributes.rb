@@ -31,7 +31,8 @@ module OpenTelemetry
 
         # The name of the space type of heap memory.
         #
-        # Value can be retrieved from value `space_name` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics)
+        # Value can be retrieved from value `space_name` of [`v8.getHeapSpaceStatistics()`](https://nodejs.org/api/v8.html#v8getheapspacestatistics).
+        # The set of reported spaces depends on the V8 version the runtime embeds.
         #
         # @note Stability Level: development
         V8JS_HEAP_SPACE_NAME = 'v8js.heap.space.name'
