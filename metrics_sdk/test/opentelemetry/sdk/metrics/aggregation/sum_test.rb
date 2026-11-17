@@ -110,7 +110,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::Sum do
     _(ndps[0].attributes).must_equal({}, data_points)
 
     _(ndps[1].value).must_equal(4)
-    _(ndps[1].attributes).must_equal('foo' => 'bar')
+    _(ndps[1].attributes).must_equal({ 'foo' => 'bar' })
   end
 
   it 'aggregates and collects negative values' do

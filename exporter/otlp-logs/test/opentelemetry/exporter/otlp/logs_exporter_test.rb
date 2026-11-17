@@ -23,7 +23,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
     it 'initializes with defaults' do
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
       _(exp).wont_be_nil
-      _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'User-Agent' => DEFAULT_USER_AGENT })
       _(exp.instance_variable_get(:@timeout)).must_equal 10.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
@@ -93,7 +93,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                                                 'OTEL_EXPORTER_OTLP_TIMEOUT' => '11') do
         OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
       end
-      _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'a' => 'b', 'c' => 'd', 'User-Agent' => DEFAULT_USER_AGENT })
       _(exp.instance_variable_get(:@timeout)).must_equal 11.0
       _(exp.instance_variable_get(:@path)).must_equal '/v1/logs'
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
@@ -126,7 +126,7 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
                                                               ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE,
                                                               timeout: 12)
       end
-      _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y', 'User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'x' => 'y', 'User-Agent' => DEFAULT_USER_AGENT })
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
       _(exp.instance_variable_get(:@path)).must_equal ''
       _(exp.instance_variable_get(:@compression)).must_equal 'gzip'
@@ -179,14 +179,14 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
 
     it 'restricts explicit headers to a String or Hash' do
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(headers: { 'token' => 'über' })
-      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
 
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(headers: 'token=%C3%BCber')
-      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
 
       error = _ do
         exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(headers: Object.new)
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über')
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über' })
       end.must_raise(ArgumentError)
       _(error.message).must_match(/headers/i)
     end
@@ -194,11 +194,11 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
     it 'ignores later mutations of a headers Hash parameter' do
       a_hash_to_mutate_later = { 'token' => 'über' }
       exp = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new(headers: a_hash_to_mutate_later)
-      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
 
       a_hash_to_mutate_later['token'] = 'unter'
       a_hash_to_mutate_later['oops'] = 'i forgot to add this, too'
-      _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+      _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
     end
 
     describe 'Headers Environment Variable' do
@@ -206,60 +206,60 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'a' => 'b', 'c' => 'd==', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT })
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_LOGS_HEADERS' => 'a=b,c=d==,e=f') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd==', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'a' => 'b', 'c' => 'd==', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT })
       end
 
       it 'trims any leading or trailing whitespaces in keys and values' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a =  b  ,c=d , e=f') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'a' => 'b', 'c' => 'd', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT })
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_LOGS_HEADERS' => 'a =  b  ,c=d , e=f') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('a' => 'b', 'c' => 'd', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'a' => 'b', 'c' => 'd', 'e' => 'f', 'User-Agent' => DEFAULT_USER_AGENT })
       end
 
       it 'decodes values as URL encoded UTF-8 strings' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'token=%C3%BCber') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => '%C3%BCber=token') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'über' => 'token', 'User-Agent' => DEFAULT_USER_AGENT })
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_LOGS_HEADERS' => 'token=%C3%BCber') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
 
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_LOGS_HEADERS' => '%C3%BCber=token') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('über' => 'token', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'über' => 'token', 'User-Agent' => DEFAULT_USER_AGENT })
       end
 
       it 'appends the default user agent to one provided in config' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'User-Agent=%C3%BCber/3.2.1') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('User-Agent' => "über/3.2.1 #{DEFAULT_USER_AGENT}")
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'User-Agent' => "über/3.2.1 #{DEFAULT_USER_AGENT}" })
       end
 
       it 'prefers LOGS specific variable' do
         exp = OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_HEADERS' => 'a=b,c=d==,e=f', 'OTEL_EXPORTER_OTLP_LOGS_HEADERS' => 'token=%C3%BCber') do
           OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
         end
-        _(exp.instance_variable_get(:@headers)).must_equal('token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT)
+        _(exp.instance_variable_get(:@headers)).must_equal({ 'token' => 'über', 'User-Agent' => DEFAULT_USER_AGENT })
       end
 
       it 'fails fast when header values are missing' do
