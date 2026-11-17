@@ -13,6 +13,7 @@ SimpleCov.start
 require 'opentelemetry-test-helpers'
 require 'opentelemetry-exporter-otlp-http'
 require 'minitest/autorun'
+require 'minitest/mock'
 require 'webmock/minitest'
 
 OpenTelemetry.logger = Logger.new(File::NULL)
