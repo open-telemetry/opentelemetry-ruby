@@ -140,4 +140,43 @@ describe OpenTelemetry::SDK::Metrics::Instrument::ObservableCounter do
     last_snapshot = metric_exporter.metric_snapshots
     _(last_snapshot.size).must_equal 0
   end
+
+  it 'exports a steady observed value unchanged at every collection' do
+    meter.create_observable_counter('counter', unit: 'smidgen', description: 'a small amount of something', callback: proc { 1000 })
+
+    values = Array.new(3) do
+      metric_exporter.reset
+      metric_exporter.pull
+      metric_exporter.metric_snapshots[0].data_points[0].value
+    end
+
+    _(values).must_equal([1000, 1000, 1000])
+  end
+
+  it 'exports the latest value when observed more than once before a collection' do
+    instrument = meter.create_observable_counter('counter', unit: 'smidgen', description: 'a small amount of something', callback: proc { 25 })
+    instrument.observe
+    instrument.observe
+
+    metric_exporter.pull
+
+    _(metric_exporter.metric_snapshots[0].data_points[0].value).must_equal(25)
+  end
+
+  it 'exports the change since the previous collection with delta temporality' do
+    observed = 1000
+    OpenTelemetry::TestHelpers.with_env('OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE' => 'delta') do
+      meter.create_observable_counter('counter', unit: 'smidgen', description: 'a small amount of something', callback: proc { observed })
+    end
+
+    values = [1000, 1500, 1800].map do |value|
+      observed = value
+      metric_exporter.reset
+      metric_exporter.pull
+      metric_exporter.metric_snapshots[0].data_points[0].value
+    end
+
+    _(values).must_equal([1000, 500, 300])
+    _(metric_exporter.metric_snapshots[0].aggregation_temporality).must_equal(:delta)
+  end
 end
