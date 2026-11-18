@@ -6,6 +6,7 @@
 
 require 'opentelemetry/common'
 require 'opentelemetry/exporter/otlp/common'
+require 'opentelemetry/exporter/otlp/http/common'
 require 'opentelemetry/sdk'
 require 'opentelemetry-logs-api' # the sdk isn't loading the api, but not sure why
 require 'opentelemetry/sdk/logs'
@@ -30,39 +31,25 @@ module OpenTelemetry
           private_constant(:SUCCESS, :FAILURE)
 
           # Default timeouts in seconds.
-          KEEP_ALIVE_TIMEOUT = 30
           RETRY_COUNT = 5
-          private_constant(:KEEP_ALIVE_TIMEOUT, :RETRY_COUNT)
+          private_constant(:RETRY_COUNT)
 
           ERROR_MESSAGE_INVALID_HEADERS = 'headers must be a String with comma-separated URL Encoded UTF-8 k=v pairs or a Hash'
           private_constant(:ERROR_MESSAGE_INVALID_HEADERS)
 
           DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Logs::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
-          # rubocop:disable-next Lint/DuplicateBranch
-          def self.ssl_verify_mode
-            if ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER'] == 'true'
-              OpenSSL::SSL::VERIFY_PEER
-            elsif ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE'] == 'true'
-              OpenSSL::SSL::VERIFY_NONE
-            else
-              OpenSSL::SSL::VERIFY_PEER
-            end
-          end
-
-          def initialize(endpoint: nil,
-                         certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CERTIFICATE'),
-                         client_certificate_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CLIENT_CERTIFICATE', 'OTEL_EXPORTER_OTLP_CLIENT_CERTIFICATE'),
-                         client_key_file: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_CLIENT_KEY', 'OTEL_EXPORTER_OTLP_CLIENT_KEY'),
-                         ssl_verify_mode: LogsExporter.ssl_verify_mode,
-                         headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
+          def initialize(headers: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_HEADERS', 'OTEL_EXPORTER_OTLP_HEADERS', default: {}),
                          compression: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_COMPRESSION', 'OTEL_EXPORTER_OTLP_COMPRESSION', default: 'gzip'),
-                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10))
+                         timeout: OpenTelemetry::Common::Utilities.config_opt('OTEL_EXPORTER_OTLP_LOGS_TIMEOUT', 'OTEL_EXPORTER_OTLP_TIMEOUT', default: 10),
+                         **kwargs)
             raise ArgumentError, "unsupported compression key #{compression}" unless compression.nil? || %w[gzip none].include?(compression)
 
-            @uri = OpenTelemetry::Exporter::OTLP::Common::Utilities.build_uri(endpoint, 'v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT', 'OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4318/')
-            @http = http_connection(@uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
+            params = kwargs.values.compact.any? ? OpenTelemetry::Exporter::OTLP::HTTP::OtlpHttpExporterConfig.new(**kwargs) : nil
 
+            @http = OpenTelemetry::Exporter::OTLP::HTTP::OTLPHTTPClient.new(params, 'LOGS', 'v1/logs')
+
+            @uri = @http.uri
             @path = @uri.path
             @headers = prepare_headers(headers)
             @timeout = timeout.to_f
@@ -108,17 +95,6 @@ module OpenTelemetry
 
           def handle_http_error(response)
             OpenTelemetry.handle_error(message: "OTLP logs exporter received #{response.class.name}, http.code=#{response.code}, for uri: '#{@path}'")
-          end
-
-          def http_connection(uri, ssl_verify_mode, certificate_file, client_certificate_file, client_key_file)
-            http = Net::HTTP.new(uri.hostname, uri.port)
-            http.use_ssl = uri.scheme == 'https'
-            http.verify_mode = ssl_verify_mode
-            http.ca_file = certificate_file unless certificate_file.nil?
-            http.cert = OpenSSL::X509::Certificate.new(File.read(client_certificate_file)) unless client_certificate_file.nil?
-            http.key = OpenSSL::PKey::RSA.new(File.read(client_key_file)) unless client_key_file.nil?
-            http.keep_alive_timeout = KEEP_ALIVE_TIMEOUT
-            http
           end
 
           # The around_request is a private method that provides an extension
