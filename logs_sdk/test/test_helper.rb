@@ -14,5 +14,6 @@ require 'opentelemetry-logs-api'
 require 'opentelemetry-logs-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
+require 'minitest/mock'
 
 OpenTelemetry.logger = Logger.new(File::NULL)

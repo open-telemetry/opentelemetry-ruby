@@ -95,7 +95,7 @@ describe OpenTelemetry::Internal do
       OpenTelemetry::Internal.logger_provider.logger(name: 'component', version: '1.0')
       custom_logger_provider = CustomLoggerProvider.new
       OpenTelemetry::Internal.logger_provider = custom_logger_provider
-      _(custom_logger_provider.requested).must_equal(name: 'component', version: '1.0')
+      _(custom_logger_provider.requested).must_equal({ name: 'component', version: '1.0' })
     end
 
     it 'forwards log record fields through an upgraded proxy logger' do
@@ -106,17 +106,17 @@ describe OpenTelemetry::Internal do
       proxy_logger.on_emit(body: 'hello', severity_text: 'WARN', severity_number: 13)
 
       _(custom_logger_provider.logger(name: 'component').emitted).must_equal(
-        timestamp: nil,
-        observed_timestamp: nil,
-        severity_number: 13,
-        severity_text: 'WARN',
-        body: 'hello',
-        trace_id: nil,
-        span_id: nil,
-        trace_flags: nil,
-        attributes: nil,
-        event_name: nil,
-        context: nil
+        { timestamp: nil,
+          observed_timestamp: nil,
+          severity_number: 13,
+          severity_text: 'WARN',
+          body: 'hello',
+          trace_id: nil,
+          span_id: nil,
+          trace_flags: nil,
+          attributes: nil,
+          event_name: nil,
+          context: nil }
       )
     end
   end

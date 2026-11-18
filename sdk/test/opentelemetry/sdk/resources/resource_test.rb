@@ -148,10 +148,10 @@ describe OpenTelemetry::SDK::Resources::Resource do
       res2 = Resource.create('k3' => 'v3', 'k4' => 'v4')
       res3 = res1.merge(res2)
 
-      _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1', 'k2' => 'v2',
-                                                   'k3' => 'v3', 'k4' => 'v4')
-      _(res1.attribute_enumerator.to_h).must_equal('k1' => 'v1', 'k2' => 'v2')
-      _(res2.attribute_enumerator.to_h).must_equal('k3' => 'v3', 'k4' => 'v4')
+      _(res3.attribute_enumerator.to_h).must_equal({ 'k1' => 'v1', 'k2' => 'v2',
+                                                     'k3' => 'v3', 'k4' => 'v4' })
+      _(res1.attribute_enumerator.to_h).must_equal({ 'k1' => 'v1', 'k2' => 'v2' })
+      _(res2.attribute_enumerator.to_h).must_equal({ 'k3' => 'v3', 'k4' => 'v4' })
     end
 
     it 'overwrites receiver\'s keys' do
@@ -159,9 +159,9 @@ describe OpenTelemetry::SDK::Resources::Resource do
       res2 = Resource.create('k2' => '2v2', 'k3' => '2v3')
       res3 = res1.merge(res2)
 
-      _(res3.attribute_enumerator.to_h).must_equal('k1' => 'v1',
-                                                   'k2' => '2v2',
-                                                   'k3' => '2v3')
+      _(res3.attribute_enumerator.to_h).must_equal({ 'k1' => 'v1',
+                                                     'k2' => '2v2',
+                                                     'k3' => '2v3' })
     end
   end
 end

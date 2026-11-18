@@ -148,7 +148,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       mock_sampler.expect(:should_sample?, result, [], trace_id: String, parent_context: OpenTelemetry::Context, links: nil, name: String, kind: Symbol, attributes: Hash)
       tracer_provider.sampler = mock_sampler
       span = tracer.start_root_span('op', attributes: { '1' => 0, '2' => 2 })
-      _(span.attributes).must_equal('1' => 1, '2' => 2)
+      _(span.attributes).must_equal({ '1' => 1, '2' => 2 })
     end
 
     it 'ignores the implicit current span context' do
@@ -302,7 +302,7 @@ describe OpenTelemetry::SDK::Trace::Tracer do
       mock_sampler.expect(:should_sample?, result, [], trace_id: String, parent_context: OpenTelemetry::Context, links: nil, name: String, kind: Symbol, attributes: Hash)
       tracer_provider.sampler = mock_sampler
       span = tracer.start_span('op', with_parent: context, attributes: { '1' => 0, '2' => 2 })
-      _(span.attributes).must_equal('1' => 1, '2' => 2)
+      _(span.attributes).must_equal({ '1' => 1, '2' => 2 })
     end
 
     it 'uses the context from parent if supplied' do

@@ -55,7 +55,7 @@ describe OpenTelemetry::Config do
         OpenTelemetry::Config.stub(:run_detector, fake_resource) do
           result = OpenTelemetry::Config.send(:build_detected_attributes, detection_cfg)
 
-          _(result).must_equal('process.runtime.name' => 'ruby')
+          _(result).must_equal({ 'process.runtime.name' => 'ruby' })
           _(result).wont_include('process.pid')
           _(result).wont_include('other.key')
         end
