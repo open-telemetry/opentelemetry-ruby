@@ -11,7 +11,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'opentelemetry-test-helpers'
-require 'opentelemetry/exporter/otlp/grpc'
+require 'opentelemetry/exporter/otlp/grpc/trace'
 require 'minitest/autorun'
 require 'webmock/minitest'
 
