@@ -39,6 +39,7 @@ module OpenTelemetry
 
           DEFAULT_USER_AGENT = "OTel-OTLP-Exporter-Ruby/#{OpenTelemetry::Exporter::OTLP::Logs::VERSION} Ruby/#{RUBY_VERSION} (#{RUBY_PLATFORM}; #{RUBY_ENGINE}/#{RUBY_ENGINE_VERSION})".freeze
 
+          # Determines the SSL verification mode from the exporter environment variables.
           # rubocop:disable-next Lint/DuplicateBranch
           def self.ssl_verify_mode
             if ENV['OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER'] == 'true'
