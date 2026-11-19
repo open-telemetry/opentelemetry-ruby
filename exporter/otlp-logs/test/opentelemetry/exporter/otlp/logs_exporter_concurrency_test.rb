@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'test_helper'
-require 'thread'
 
 describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
   it 'waits for an in-flight export before completing shutdown' do
