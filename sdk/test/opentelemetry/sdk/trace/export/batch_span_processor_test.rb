@@ -383,7 +383,7 @@ describe OpenTelemetry::SDK::Trace::Export::BatchSpanProcessor do
 
       _(metrics_reporter.reported_metrics['otel.bsp.error']).wont_be_nil
       _(metrics_reporter.reported_metrics['otel.bsp.error'][0][0]).must_equal(1)
-      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal({ 'reason' => 'RuntimeError' })
+      _(metrics_reporter.reported_metrics['otel.bsp.error'][0][1]).must_equal('reason' => 'RuntimeError')
     end
   end
 

@@ -95,7 +95,7 @@ describe OpenTelemetry do
       OpenTelemetry.tracer_provider = provider
       _(provider.last_name).must_equal('component')
       _(provider.last_version).must_equal('1.0')
-      _(provider.last_attributes).must_equal({ 'k' => 'v' })
+      _(provider.last_attributes).must_equal('k' => 'v')
     end
 
     it 'delegates tracers obtained after delegate assignment with attributes' do
@@ -104,7 +104,7 @@ describe OpenTelemetry do
       OpenTelemetry.tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
       _(provider.last_name).must_equal('component')
       _(provider.last_version).must_equal('1.0')
-      _(provider.last_attributes).must_equal({ 'key' => 'value' })
+      _(provider.last_attributes).must_equal('key' => 'value')
     end
   end
 

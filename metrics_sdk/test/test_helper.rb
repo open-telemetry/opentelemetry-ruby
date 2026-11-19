@@ -13,7 +13,6 @@ SimpleCov.start
 require 'opentelemetry-metrics-sdk'
 require 'opentelemetry-test-helpers'
 require 'minitest/autorun'
-require 'minitest/mock'
 
 # reset_metrics_sdk is a test helper used to clear
 # SDK configuration state between calls

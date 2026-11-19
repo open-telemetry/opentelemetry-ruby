@@ -60,7 +60,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExponentialBucketHistogram do
       _(exphdps[0].negative.counts).must_equal([0])
       _(exphdps[0].zero_threshold).must_equal(0)
 
-      _(exphdps[1].attributes).must_equal({ 'foo' => 'bar' })
+      _(exphdps[1].attributes).must_equal('foo' => 'bar')
       _(exphdps[1].count).must_equal(2)
       _(exphdps[1].sum).must_equal(3.12)
       _(exphdps[1].min).must_equal(1.45)

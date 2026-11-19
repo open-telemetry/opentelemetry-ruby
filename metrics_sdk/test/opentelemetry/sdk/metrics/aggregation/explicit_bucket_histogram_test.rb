@@ -114,7 +114,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::ExplicitBucketHistogram do
       _(hdps[0].bucket_counts).must_equal([1, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0])
       _(hdps[0].explicit_bounds).must_equal([0, 5, 10, 25, 50, 75, 100, 250, 500, 1000])
 
-      _(hdps[1].attributes).must_equal({ 'foo' => 'bar' })
+      _(hdps[1].attributes).must_equal('foo' => 'bar')
       _(hdps[1].count).must_equal(5)
       _(hdps[1].sum).must_equal(148)
       _(hdps[1].min).must_equal(-10)

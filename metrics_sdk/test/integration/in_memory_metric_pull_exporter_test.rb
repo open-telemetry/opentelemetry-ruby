@@ -39,13 +39,13 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].attributes).must_equal({})
 
       _(last_snapshot[0].data_points[1].value).must_equal(4)
-      _(last_snapshot[0].data_points[1].attributes).must_equal({ 'a' => 'b' })
+      _(last_snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
 
       _(last_snapshot[0].data_points[2].value).must_equal(3)
-      _(last_snapshot[0].data_points[2].attributes).must_equal({ 'b' => 'c' })
+      _(last_snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
 
       _(last_snapshot[0].data_points[3].value).must_equal(4)
-      _(last_snapshot[0].data_points[3].attributes).must_equal({ 'd' => 'e' })
+      _(last_snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
 
       _(last_snapshot[0].aggregation_temporality).must_equal(:cumulative)
     end

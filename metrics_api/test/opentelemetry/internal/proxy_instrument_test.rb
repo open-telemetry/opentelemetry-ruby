@@ -197,7 +197,7 @@ describe OpenTelemetry::Internal::ProxyInstrument do
 
       instrument.upgrade_with(meter)
 
-      _(meter.created).must_equal({ name: 'my.instrument', unit: 's', description: 'a description' })
+      _(meter.created).must_equal(name: 'my.instrument', unit: 's', description: 'a description')
     end
   end
 

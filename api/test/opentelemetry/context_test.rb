@@ -214,7 +214,7 @@ describe OpenTelemetry::Context do
       Context.with_values(foo_key => 'bar', bar_key => 'baz') do |_, values|
         _(Context.current.value(foo_key)).must_equal('bar')
         _(Context.current.value(bar_key)).must_equal('baz')
-        _(values).must_equal({ foo_key => 'bar', bar_key => 'baz' })
+        _(values).must_equal(foo_key => 'bar', bar_key => 'baz')
         block_called = true
       end
 

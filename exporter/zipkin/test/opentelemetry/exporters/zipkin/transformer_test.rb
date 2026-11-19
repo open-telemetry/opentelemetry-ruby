@@ -14,11 +14,11 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     _(encoded_span[:name]).must_equal('')
     _(encoded_span['localEndpoint']['serviceName']).must_equal('foo')
     _(encoded_span['tags']).must_equal(
-      { 'bar' => 'baz',
-        'otel.library.version' => '0.0.0',
-        'otel.scope.version' => '0.0.0',
-        'otel.library.name' => 'vendorlib',
-        'otel.scope.name' => 'vendorlib' }
+      'bar' => 'baz',
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
     )
   end
 
@@ -63,12 +63,12 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     tags = encoded_span['tags']
     _(tags).must_equal(
-      { 'akey' => 'avalue',
-        'bar' => 'baz',
-        'otel.library.version' => '0.0.0',
-        'otel.scope.version' => '0.0.0',
-        'otel.library.name' => 'vendorlib',
-        'otel.scope.name' => 'vendorlib' }
+      'akey' => 'avalue',
+      'bar' => 'baz',
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
     )
   end
 
@@ -78,13 +78,13 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
     tags = encoded_span['tags']
     _(tags).must_equal(
-      { 'otel.library.version' => '0.0.0',
-        'otel.scope.version' => '0.0.0',
-        'otel.library.name' => 'vendorlib',
-        'otel.scope.name' => 'vendorlib',
-        'otel.dropped_attributes_count' => '1',
-        'otel.dropped_events_count' => '1',
-        'otel.dropped_links_count' => '1' }
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib',
+      'otel.dropped_attributes_count' => '1',
+      'otel.dropped_events_count' => '1',
+      'otel.dropped_links_count' => '1'
     )
   end
 
@@ -94,10 +94,10 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
     encoded_span = Transformer.to_zipkin_span(span_data, resource)
     tags = encoded_span['tags']
     _(tags).must_equal(
-      { 'otel.library.version' => '0.0.0',
-        'otel.scope.version' => '0.0.0',
-        'otel.library.name' => 'vendorlib',
-        'otel.scope.name' => 'vendorlib' }
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
     )
   end
 
@@ -120,12 +120,12 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
     tags = encoded_span['tags']
     _(tags).must_equal(
-      { 'akey' => ['avalue'].to_s,
-        'bar' => 'baz',
-        'otel.library.version' => '0.0.0',
-        'otel.scope.version' => '0.0.0',
-        'otel.library.name' => 'vendorlib',
-        'otel.scope.name' => 'vendorlib' }
+      'akey' => ['avalue'].to_s,
+      'bar' => 'baz',
+      'otel.library.version' => '0.0.0',
+      'otel.scope.version' => '0.0.0',
+      'otel.library.name' => 'vendorlib',
+      'otel.scope.name' => 'vendorlib'
     )
   end
 
@@ -139,12 +139,12 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
       tags = encoded_span['tags']
       _(tags).must_equal(
-        { 'otel.status_code' => 'OK',
-          'bar' => 'baz',
-          'otel.library.version' => '0.0.0',
-          'otel.scope.version' => '0.0.0',
-          'otel.library.name' => 'vendorlib',
-          'otel.scope.name' => 'vendorlib' }
+        'otel.status_code' => 'OK',
+        'bar' => 'baz',
+        'otel.library.version' => '0.0.0',
+        'otel.scope.version' => '0.0.0',
+        'otel.library.name' => 'vendorlib',
+        'otel.scope.name' => 'vendorlib'
       )
     end
 
@@ -157,13 +157,13 @@ describe OpenTelemetry::Exporter::Zipkin::Transformer do
 
       tags = encoded_span['tags']
       _(tags).must_equal(
-        { 'error' => error_description,
-          'otel.status_code' => 'ERROR',
-          'bar' => 'baz',
-          'otel.library.version' => '0.0.0',
-          'otel.scope.version' => '0.0.0',
-          'otel.library.name' => 'vendorlib',
-          'otel.scope.name' => 'vendorlib' }
+        'error' => error_description,
+        'otel.status_code' => 'ERROR',
+        'bar' => 'baz',
+        'otel.library.version' => '0.0.0',
+        'otel.scope.version' => '0.0.0',
+        'otel.library.name' => 'vendorlib',
+        'otel.scope.name' => 'vendorlib'
       )
     end
   end

@@ -40,7 +40,7 @@ describe OpenTelemetry::SDK::Metrics::Aggregation::LastValue do
     _(ndps[0].attributes).must_equal({}, data_points)
 
     _(ndps[1].value).must_equal(2)
-    _(ndps[1].attributes).must_equal({ 'foo' => 'bar' })
+    _(ndps[1].attributes).must_equal('foo' => 'bar')
   end
 
   describe 'cardinality limit' do

@@ -32,7 +32,7 @@ describe OpenTelemetry::Common::HTTP::ClientContext do
   describe '#with_attributes' do
     it 'yields the passed in attributes' do
       client_context.with_attributes('foo' => 'bar') do |attributes|
-        _(attributes).must_equal({ 'foo' => 'bar' })
+        _(attributes).must_equal('foo' => 'bar')
       end
     end
 
@@ -45,13 +45,13 @@ describe OpenTelemetry::Common::HTTP::ClientContext do
 
     it 'should reactivate the attributes after the block' do
       client_context.with_attributes('foo' => 'bar') do
-        _(client_context.attributes).must_equal({ 'foo' => 'bar' })
+        _(client_context.attributes).must_equal('foo' => 'bar')
 
         client_context.with_attributes('foo' => 'baz') do
-          _(client_context.attributes).must_equal({ 'foo' => 'baz' })
+          _(client_context.attributes).must_equal('foo' => 'baz')
         end
 
-        _(client_context.attributes).must_equal({ 'foo' => 'bar' })
+        _(client_context.attributes).must_equal('foo' => 'bar')
       end
     end
 
@@ -61,8 +61,8 @@ describe OpenTelemetry::Common::HTTP::ClientContext do
         'c' => '2'
       ) do
         _(client_context.attributes).must_equal(
-          { 'a' => '1',
-            'c' => '2' }
+          'a' => '1',
+          'c' => '2'
         )
 
         client_context.with_attributes(
@@ -70,15 +70,15 @@ describe OpenTelemetry::Common::HTTP::ClientContext do
           'b' => '1'
         ) do
           _(client_context.attributes).must_equal(
-            { 'a' => '0',
-              'b' => '1',
-              'c' => '2' }
+            'a' => '0',
+            'b' => '1',
+            'c' => '2'
           )
         end
 
         _(client_context.attributes).must_equal(
-          { 'a' => '1',
-            'c' => '2' }
+          'a' => '1',
+          'c' => '2'
         )
       end
     end
@@ -94,7 +94,7 @@ describe OpenTelemetry::Common::HTTP::ClientContext do
     it 'returns a context containing attributes' do
       parent_ctx = OpenTelemetry::Context.empty.set_value('foo', 'bar')
       ctx = client_context.context_with_attributes({ 'bar' => 'baz' }, parent_context: parent_ctx)
-      _(client_context.attributes(ctx)).must_equal({ 'bar' => 'baz' })
+      _(client_context.attributes(ctx)).must_equal('bar' => 'baz')
       _(ctx.value('foo')).must_equal('bar')
     end
   end

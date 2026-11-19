@@ -367,7 +367,7 @@ describe OpenTelemetry::SDK::Configurator do
         configurator.use 'TestInstrumentation', opt: true
         configurator.configure
         _(instrumentation).must_be(:installed?)
-        _(instrumentation.config).must_equal({ opt: true })
+        _(instrumentation.config).must_equal(opt: true)
       end
 
       it 'installs all' do
@@ -378,7 +378,7 @@ describe OpenTelemetry::SDK::Configurator do
         configurator.use_all 'TestInstrumentation' => { opt: true }
         configurator.configure
         _(instrumentation).must_be(:installed?)
-        _(instrumentation.config).must_equal({ opt: true })
+        _(instrumentation.config).must_equal(opt: true)
       end
     end
   end

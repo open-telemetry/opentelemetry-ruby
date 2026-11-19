@@ -111,10 +111,10 @@ describe OpenTelemetry::Instrumentation::Registry do
           )
 
           _(instrumentation1).must_be :installed?
-          _(instrumentation1.config).must_equal({ a: 'a' })
+          _(instrumentation1.config).must_equal(a: 'a')
 
           _(instrumentation2).must_be :installed?
-          _(instrumentation2.config).must_equal({ b: 'b' })
+          _(instrumentation2.config).must_equal(b: 'b')
         end
       end
     end
@@ -163,10 +163,10 @@ describe OpenTelemetry::Instrumentation::Registry do
         )
 
         _(instrumentation1).must_be :installed?
-        _(instrumentation1.config).must_equal({ a: 'a' })
+        _(instrumentation1.config).must_equal(a: 'a')
 
         _(instrumentation2).must_be :installed?
-        _(instrumentation2.config).must_equal({ b: 'b' })
+        _(instrumentation2.config).must_equal(b: 'b')
       end
     end
 
@@ -184,7 +184,7 @@ describe OpenTelemetry::Instrumentation::Registry do
         _(@log_stream.string).must_match(/Could not install NotInstalled because it was not found/)
 
         _(instrumentation2).must_be :installed?
-        _(instrumentation2.config).must_equal({ b: 'b' })
+        _(instrumentation2.config).must_equal(b: 'b')
       end
     end
 

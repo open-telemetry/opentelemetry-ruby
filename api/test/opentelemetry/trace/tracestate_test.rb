@@ -25,35 +25,35 @@ describe OpenTelemetry::Trace::Tracestate do
     end
     it 'omits empty members' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,,b=b')
-      _(tracestate.to_h).must_equal({ 'a' => 'a', 'b' => 'b' })
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'omits invalid keys' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,0xaa=0xaa,b=b')
-      _(tracestate.to_h).must_equal({ 'a' => 'a', 'b' => 'b' })
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'omits invalid values' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,key==,,b=b')
-      _(tracestate.to_h).must_equal({ 'a' => 'a', 'b' => 'b' })
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'omits keys containing whitespace' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=a,ke y=value,b=b')
-      _(tracestate.to_h).must_equal({ 'a' => 'a', 'b' => 'b' })
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'strips surrounding whitespace from members' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('  a=a  ')
-      _(tracestate.to_h).must_equal({ 'a' => 'a' })
+      _(tracestate.to_h).must_equal('a' => 'a')
     end
     it 'preserves whitespace in value prefixes' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('a=  a')
-      _(tracestate.to_h).must_equal({ 'a' => '  a' })
+      _(tracestate.to_h).must_equal('a' => '  a')
     end
     it 'permits multitenant vendor keys' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('0mg@a-vendor=a')
-      _(tracestate.to_h).must_equal({ '0mg@a-vendor' => 'a' })
+      _(tracestate.to_h).must_equal('0mg@a-vendor' => 'a')
     end
     it 'supports _-*/ in keys' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_string('omg/what_is-this*thing=a')
-      _(tracestate.to_h).must_equal({ 'omg/what_is-this*thing' => 'a' })
+      _(tracestate.to_h).must_equal('omg/what_is-this*thing' => 'a')
     end
   end
 
@@ -72,7 +72,7 @@ describe OpenTelemetry::Trace::Tracestate do
         '0x_the-vendor/key@my*v3nd0r' => 'another-great-value'
       }
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash(h)
-      _(tracestate.to_h).must_equal({ 'the-good-key' => '  the-good-value', '0x_the-vendor/key@my*v3nd0r' => 'another-great-value' })
+      _(tracestate.to_h).must_equal('the-good-key' => '  the-good-value', '0x_the-vendor/key@my*v3nd0r' => 'another-great-value')
     end
     it 'will not exceed 32 members' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash(Array.new(33) { |n| [n.to_s, n.to_s] }.to_h)
@@ -104,12 +104,12 @@ describe OpenTelemetry::Trace::Tracestate do
     it 'adds a new key-value pair' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
       tracestate = tracestate.set_value('b', 'b')
-      _(tracestate.to_h).must_equal({ 'a' => 'a', 'b' => 'b' })
+      _(tracestate.to_h).must_equal('a' => 'a', 'b' => 'b')
     end
     it 'updates the value for an existing key' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a')
       tracestate = tracestate.set_value('a', 'b')
-      _(tracestate.to_h).must_equal({ 'a' => 'b' })
+      _(tracestate.to_h).must_equal('a' => 'b')
     end
   end
 
@@ -122,7 +122,7 @@ describe OpenTelemetry::Trace::Tracestate do
     it 'deletes the specified key' do
       tracestate = OpenTelemetry::Trace::Tracestate.from_hash('a' => 'a', 'b' => 'b')
       tracestate = tracestate.delete('a')
-      _(tracestate.to_h).must_equal({ 'b' => 'b' })
+      _(tracestate.to_h).must_equal('b' => 'b')
     end
   end
 

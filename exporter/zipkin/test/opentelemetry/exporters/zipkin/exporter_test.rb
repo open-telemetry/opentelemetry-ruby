@@ -59,7 +59,7 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
                                                       headers: { 'x' => 'y' },
                                                       timeout: 12)
       end
-      _(exp.instance_variable_get(:@headers)).must_equal({ 'x' => 'y' })
+      _(exp.instance_variable_get(:@headers)).must_equal('x' => 'y')
       _(exp.instance_variable_get(:@timeout)).must_equal 12.0
       _(exp.instance_variable_get(:@path)).must_equal ''
       http = exp.instance_variable_get(:@http)
@@ -168,7 +168,7 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
           request_duration = metrics_reporter.records.first
           _(request_duration.fetch(:metric)).must_equal('otel.zipkin_exporter.request_duration')
           _(request_duration.fetch(:value)).must_be :>, 0
-          _(request_duration.fetch(:labels)).must_equal({ 'status' => '202' })
+          _(request_duration.fetch(:labels)).must_equal('status' => '202')
         end
       end
 
@@ -184,12 +184,12 @@ describe OpenTelemetry::Exporter::Zipkin::Exporter do
           failed_count = metrics_reporter.counters.first
           _(failed_count.fetch(:metric)).must_equal('otel.zipkin_exporter.failure')
           _(failed_count.fetch(:value)).must_equal(1)
-          _(failed_count.fetch(:labels)).must_equal({ 'reason' => 'StandardError' })
+          _(failed_count.fetch(:labels)).must_equal('reason' => 'StandardError')
 
           request_duration = metrics_reporter.records.first
           _(request_duration.fetch(:metric)).must_equal('otel.zipkin_exporter.request_duration')
           _(request_duration.fetch(:value)).must_be :>, 0
-          _(request_duration.fetch(:labels)).must_equal({ 'status' => 'unknown' })
+          _(request_duration.fetch(:labels)).must_equal('status' => 'unknown')
         end
       end
     end

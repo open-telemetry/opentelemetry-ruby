@@ -56,23 +56,23 @@ describe OpenTelemetry::SDK::Trace::Span do
   describe '#set_attribute' do
     it 'sets an attribute' do
       span.set_attribute('foo', 'bar')
-      _(span.attributes).must_equal({ 'foo' => 'bar' })
+      _(span.attributes).must_equal('foo' => 'bar')
     end
 
     it 'trims the newest attribute' do
       span.set_attribute('old', 'oldbar')
       span.set_attribute('foo', 'bar')
-      _(span.attributes).must_equal({ 'old' => 'oldbar' })
+      _(span.attributes).must_equal('old' => 'oldbar')
     end
 
     it 'truncates attribute value length based if configured' do
       span.set_attribute('foo', 'oldbaroldbaroldbaroldbaroldbaroldbar')
-      _(span.attributes).must_equal({ 'foo' => 'oldbaroldbaroldbaroldbaroldba...' })
+      _(span.attributes).must_equal('foo' => 'oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'truncates elements of attribute value array based if configured' do
       span.set_attribute('foo', ['not too long', 'oldbaroldbaroldbaroldbaroldbaroldbar'])
-      _(span.attributes).must_equal({ 'foo' => ['not too long', 'oldbaroldbaroldbaroldbaroldba...'] })
+      _(span.attributes).must_equal('foo' => ['not too long', 'oldbaroldbaroldbaroldbaroldba...'])
     end
 
     it 'does not set an attribute if span is ended' do
@@ -89,12 +89,12 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'accepts an array value' do
       span.set_attribute('foo', [1, 2, 3])
-      _(span.attributes).must_equal({ 'foo' => [1, 2, 3] })
+      _(span.attributes).must_equal('foo' => [1, 2, 3])
     end
 
     it 'accepts floats even if attribute length limit is configured' do
       span.set_attribute('foo', 1.23)
-      _(span.attributes).must_equal({ 'foo' => 1.23 })
+      _(span.attributes).must_equal('foo' => 1.23)
     end
 
     it 'reports an error for an invalid value' do
@@ -134,18 +134,18 @@ describe OpenTelemetry::SDK::Trace::Span do
   describe '#add_attributes' do
     it 'sets attributes' do
       span.add_attributes('foo' => 'bar')
-      _(span.attributes).must_equal({ 'foo' => 'bar' })
+      _(span.attributes).must_equal('foo' => 'bar')
     end
 
     it 'trims the newest attributes' do
       span.add_attributes('old' => 'oldbar')
       span.add_attributes('foo' => 'bar', 'bar' => 'baz')
-      _(span.attributes).must_equal({ 'old' => 'oldbar' })
+      _(span.attributes).must_equal('old' => 'oldbar')
     end
 
     it 'truncates attribute value length based if configured' do
       span.set_attribute('foo', 'oldbaroldbaroldbaroldbaroldbaroldbar')
-      _(span.attributes).must_equal({ 'foo' => 'oldbaroldbaroldbaroldbaroldba...' })
+      _(span.attributes).must_equal('foo' => 'oldbaroldbaroldbaroldbaroldba...')
     end
 
     it 'does not set an attribute if span is ended' do
@@ -162,7 +162,7 @@ describe OpenTelemetry::SDK::Trace::Span do
 
     it 'accepts an array value' do
       span.add_attributes('foo' => [1, 2, 3])
-      _(span.attributes).must_equal({ 'foo' => [1, 2, 3] })
+      _(span.attributes).must_equal('foo' => [1, 2, 3])
     end
   end
 
@@ -544,7 +544,7 @@ describe OpenTelemetry::SDK::Trace::Span do
                       [], attributes, nil, Time.now, nil, nil)
       _(span.to_span_data.total_recorded_attributes).must_equal(2)
       _(span.attributes.length).must_equal(1)
-      _(span.attributes).must_equal({ 'foo' => 'bar' })
+      _(span.attributes).must_equal('foo' => 'bar')
     end
 
     it 'truncates attributes if configured' do
