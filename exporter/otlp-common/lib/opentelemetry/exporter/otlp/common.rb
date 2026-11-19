@@ -32,10 +32,17 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Logs::LogRecordData>] log_record_data
         #   the list of recorded {OpenTelemetry::SDK::Logs::LogRecordData} structs to
         #   be encoded.
+        # @param [Symbol] format the wire format to encode to, either +:protobuf+
+        #   (default) or +:json+.
         #
         # @return [String] returns an encoded ELSR of the provided log record data
-        def as_encoded_elsr(log_record_data)
-          Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(as_elsr(log_record_data))
+        def as_encoded_elsr(log_record_data, format: :protobuf)
+          elsr = as_elsr(log_record_data, format:)
+          if format == :json
+            elsr.to_json(format_enums_as_integers: true)
+          else
+            Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.encode(elsr)
+          end
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_elsr')
           nil
@@ -46,10 +53,12 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Logs::LogRecordData>] log_record_data
         #   the list of recorded {OpenTelemetry::SDK::Logs::LogRecordData} structs to
         #   be encoded.
+        # @param [Symbol] format the wire format the ELSR is destined for, either
+        #   +:protobuf+ (default) or +:json+.
         #
         # @return [Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest]
         #   returns an ELSR of the provided log record data
-        def as_elsr(log_record_data)
+        def as_elsr(log_record_data, format: :protobuf)
           Opentelemetry::Proto::Collector::Logs::V1::ExportLogsServiceRequest.new(
             resource_logs: log_record_data
                            .group_by(&:resource)
@@ -66,7 +75,7 @@ module OpenTelemetry
                                                  name: il.name,
                                                  version: il.version
                                                ),
-                                               log_records: lrd.map { |lr| as_otlp_log_record(lr) }
+                                               log_records: lrd.map { |lr| as_otlp_log_record(lr, format) }
                                              )
                                            end
                              )
@@ -79,10 +88,17 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Metrics::MetricData>] metrics_data the
         #   list of recorded {OpenTelemetry::SDK::Metrics::MetricData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format to encode to, either +:protobuf+
+        #   (default) or +:json+.
         #
         # @return [String] returns an encoded EMSR of the provided metrics data
-        def as_encoded_emsr(metrics_data)
-          Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(as_emsr(metrics_data))
+        def as_encoded_emsr(metrics_data, format: :protobuf)
+          emsr = as_emsr(metrics_data, format:)
+          if format == :json
+            emsr.to_json(format_enums_as_integers: true)
+          else
+            Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.encode(emsr)
+          end
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_emsr')
           nil
@@ -93,10 +109,12 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Metrics::MetricData>] metrics_data the
         #   list of recorded {OpenTelemetry::SDK::Metrics::MetricData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format the EMSR is destined for, either
+        #   +:protobuf+ (default) or +:json+.
         #
         # @return [Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest]
         #   returns an EMSR of the provided metrics data
-        def as_emsr(metrics_data)
+        def as_emsr(metrics_data, format: :protobuf)
           Opentelemetry::Proto::Collector::Metrics::V1::ExportMetricsServiceRequest.new(
             resource_metrics: metrics_data
                               .group_by(&:resource)
@@ -113,7 +131,7 @@ module OpenTelemetry
                                                        name: instrumentation_scope.name,
                                                        version: instrumentation_scope.version
                                                      ),
-                                                     metrics: metrics.map { |sd| as_otlp_metrics(sd) }
+                                                     metrics: metrics.map { |sd| as_otlp_metrics(sd, format) }
                                                    )
                                                  end
                                 )
@@ -126,10 +144,19 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format to encode to, either +:protobuf+
+        #   (default, protobuf-encoded) or +:json+ (spec-compliant OTLP/JSON with
+        #   hex ids and integer enums).
         #
         # @return [String] returns an encoded ETSR of the provided span data
-        def as_encoded_etsr(span_data)
-          Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(as_etsr(span_data))
+        def as_encoded_etsr(span_data, format: :protobuf)
+          etsr = as_etsr(span_data, format:)
+          if format == :json
+            # Spec-compliant OTLP/JSON: hex ids (see #format_id) and integer enums.
+            etsr.to_json(format_enums_as_integers: true)
+          else
+            Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.encode(etsr)
+          end
         rescue StandardError => e
           OpenTelemetry.handle_error(exception: e, message: 'unexpected error in OTLP::Common#as_encoded_etsr')
           nil
@@ -140,10 +167,13 @@ module OpenTelemetry
         # @param [Enumerable<OpenTelemetry::SDK::Trace::SpanData>] span_data the
         #   list of recorded {OpenTelemetry::SDK::Trace::SpanData} structs to be
         #   encoded.
+        # @param [Symbol] format the wire format the ETSR is destined for, either
+        #   +:protobuf+ (default) or +:json+. Controls how ids are formatted
+        #   (binary for protobuf, hex for JSON).
         #
         # @return [Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest]
         #   returns an ETSR of the provided span data
-        def as_etsr(span_data)
+        def as_etsr(span_data, format: :protobuf)
           Opentelemetry::Proto::Collector::Trace::V1::ExportTraceServiceRequest.new(
             resource_spans: span_data
                             .group_by(&:resource)
@@ -160,7 +190,7 @@ module OpenTelemetry
                                                    name: il.name,
                                                    version: il.version
                                                  ),
-                                                 spans: sds.map { |sd| as_otlp_span(sd) }
+                                                 spans: sds.map { |sd| as_otlp_span(sd, format) }
                                                )
                                              end
                               )
@@ -168,9 +198,24 @@ module OpenTelemetry
           )
         end
 
+        # Decodes an OTLP/HTTP response body
+        #
+        # @param [Class] message_class the protobuf message class to decode into.
+        # @param [String] body the response body.
+        # @param [Symbol] format the wire format of the body, either +:protobuf+ (default) or +:json+.
+        #
+        # @return [Google::Protobuf::AbstractMessage] returns the decoded message
+        def decode_response(message_class, body, format: :protobuf)
+          if format == :json
+            message_class.decode_json(body, ignore_unknown_fields: true)
+          else
+            message_class.decode(body)
+          end
+        end
+
         private
 
-        def as_otlp_log_record(log_record_data)
+        def as_otlp_log_record(log_record_data, format)
           Opentelemetry::Proto::Logs::V1::LogRecord.new(
             time_unix_nano: log_record_data.timestamp,
             observed_time_unix_nano: log_record_data.observed_timestamp,
@@ -181,8 +226,8 @@ module OpenTelemetry
             dropped_attributes_count: log_record_data.dropped_attributes_count,
             event_name: log_record_data.event_name,
             flags: log_record_data.trace_flags.instance_variable_get(:@flags),
-            trace_id: log_record_data.trace_id,
-            span_id: log_record_data.span_id
+            trace_id: format_id(log_record_data.trace_id, format),
+            span_id: format_id(log_record_data.span_id, format)
           )
         end
 
@@ -190,14 +235,14 @@ module OpenTelemetry
         # current metric sdk only implements instrument: :counter -> :sum, :histogram -> :histogram, :gauge -> :gauge
         #
         # metrics [MetricData]
-        def as_otlp_metrics(metrics)
+        def as_otlp_metrics(metrics, format)
           case metrics.instrument_kind
           when :observable_gauge, :gauge
             Opentelemetry::Proto::Metrics::V1::Metric.new(
               name: metrics.name,
               description: metrics.description,
               unit: metrics.unit,
-              gauge: gauge_data_point(metrics)
+              gauge: gauge_data_point(metrics, format)
             )
 
           when :counter, :up_down_counter, :observable_counter, :observable_up_down_counter
@@ -205,21 +250,22 @@ module OpenTelemetry
               name: metrics.name,
               description: metrics.description,
               unit: metrics.unit,
-              sum: sum_data_point(metrics)
+              sum: sum_data_point(metrics, format)
             )
 
           when :histogram
-            histogram_data_point(metrics)
+            histogram_data_point(metrics, format)
 
           end
         end
 
-        def as_otlp_span(span_data) # rubocop:disable Metrics/MethodLength
+        def as_otlp_span(span_data, format = :protobuf) # rubocop:disable Metrics/MethodLength
+          parent_span_id = span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id
           Opentelemetry::Proto::Trace::V1::Span.new(
-            trace_id: span_data.trace_id,
-            span_id: span_data.span_id,
+            trace_id: format_id(span_data.trace_id, format),
+            span_id: format_id(span_data.span_id, format),
             trace_state: span_data.tracestate.to_s,
-            parent_span_id: span_data.parent_span_id == OpenTelemetry::Trace::INVALID_SPAN_ID ? nil : span_data.parent_span_id,
+            parent_span_id: format_id(parent_span_id, format),
             name: span_data.name,
             kind: as_otlp_span_kind(span_data.kind),
             start_time_unix_nano: span_data.start_timestamp,
@@ -237,8 +283,8 @@ module OpenTelemetry
             dropped_events_count: span_data.total_recorded_events - span_data.events&.size.to_i,
             links: span_data.links&.map do |link|
               Opentelemetry::Proto::Trace::V1::Span::Link.new(
-                trace_id: link.span_context.trace_id,
-                span_id: link.span_context.span_id,
+                trace_id: format_id(link.span_context.trace_id, format),
+                span_id: format_id(link.span_context.span_id, format),
                 trace_state: link.span_context.tracestate.to_s,
                 attributes: link.attributes&.map { |k, v| as_otlp_key_value(k, v) },
                 # TODO: track dropped_attributes_count in Span#trim_links
@@ -266,16 +312,16 @@ module OpenTelemetry
         end
 
         # Builds an OTLP Metric for gauge data points.
-        def gauge_data_point(metrics)
+        def gauge_data_point(metrics, format)
           Opentelemetry::Proto::Metrics::V1::Gauge.new(
             data_points: metrics.data_points.map do |ndp|
-              number_data_point(ndp)
+              number_data_point(ndp, format)
             end
           )
         end
 
         # Builds an OTLP Metric for either histogram or exponential histogram data points.
-        def histogram_data_point(metrics) # rubocop:disable Metrics/MethodLength
+        def histogram_data_point(metrics, format) # rubocop:disable Metrics/MethodLength
           return if metrics.data_points.empty?
 
           if metrics.data_points.first.instance_of?(OpenTelemetry::SDK::Metrics::Aggregation::ExponentialHistogramDataPoint)
@@ -286,7 +332,7 @@ module OpenTelemetry
               exponential_histogram: Opentelemetry::Proto::Metrics::V1::ExponentialHistogram.new(
                 aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                 data_points: metrics.data_points.map do |ehdp|
-                  exponential_histogram_data_point(ehdp)
+                  exponential_histogram_data_point(ehdp, format)
                 end
               )
             )
@@ -298,7 +344,7 @@ module OpenTelemetry
               histogram: Opentelemetry::Proto::Metrics::V1::Histogram.new(
                 aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
                 data_points: metrics.data_points.map do |hdp|
-                  explicit_histogram_data_point(hdp)
+                  explicit_histogram_data_point(hdp, format)
                 end
               )
             )
@@ -306,7 +352,7 @@ module OpenTelemetry
         end
 
         # Converts a {HistogramDataPoint} to its OTLP proto representation.
-        def explicit_histogram_data_point(hdp)
+        def explicit_histogram_data_point(hdp, format)
           Opentelemetry::Proto::Metrics::V1::HistogramDataPoint.new(
             attributes: hdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
             start_time_unix_nano: hdp.start_time_unix_nano,
@@ -315,7 +361,7 @@ module OpenTelemetry
             sum: hdp.sum,
             bucket_counts: hdp.bucket_counts,
             explicit_bounds: hdp.explicit_bounds,
-            exemplars: as_otlp_exemplars(hdp.exemplars),
+            exemplars: as_otlp_exemplars(hdp.exemplars, format),
             min: hdp.min,
             max: hdp.max,
             flags: hdp.flags
@@ -323,7 +369,7 @@ module OpenTelemetry
         end
 
         # Converts an {ExponentialHistogramDataPoint} to its OTLP proto representation.
-        def exponential_histogram_data_point(ehdp)
+        def exponential_histogram_data_point(ehdp, format)
           Opentelemetry::Proto::Metrics::V1::ExponentialHistogramDataPoint.new(
             attributes: ehdp.attributes.map { |k, v| as_otlp_key_value(k, v) },
             start_time_unix_nano: ehdp.start_time_unix_nano,
@@ -341,7 +387,7 @@ module OpenTelemetry
               bucket_counts: ehdp.negative.counts
             ),
             flags: ehdp.flags,
-            exemplars: as_otlp_exemplars(ehdp.exemplars),
+            exemplars: as_otlp_exemplars(ehdp.exemplars, format),
             min: ehdp.min,
             max: ehdp.max,
             zero_threshold: ehdp.zero_threshold
@@ -349,23 +395,23 @@ module OpenTelemetry
         end
 
         # Builds an OTLP Metric for sum data points.
-        def sum_data_point(metrics)
+        def sum_data_point(metrics, format)
           Opentelemetry::Proto::Metrics::V1::Sum.new(
             aggregation_temporality: as_otlp_aggregation_temporality(metrics.aggregation_temporality),
             data_points: metrics.data_points.map do |ndp|
-              number_data_point(ndp)
+              number_data_point(ndp, format)
             end,
             is_monotonic: metrics.is_monotonic
           )
         end
 
         # Converts a {NumberDataPoint} to its OTLP proto representation.
-        def number_data_point(ndp)
+        def number_data_point(ndp, format)
           args = {
             attributes: ndp.attributes.map { |k, v| as_otlp_key_value(k, v) },
             start_time_unix_nano: ndp.start_time_unix_nano,
             time_unix_nano: ndp.time_unix_nano,
-            exemplars: as_otlp_exemplars(ndp.exemplars),
+            exemplars: as_otlp_exemplars(ndp.exemplars, format),
             flags: ndp.flags
           }
 
@@ -379,16 +425,16 @@ module OpenTelemetry
         end
 
         # Converts a list of SDK exemplars to their OTLP proto representation.
-        def as_otlp_exemplars(exemplars)
-          exemplars&.map { |ex| as_otlp_exemplar(ex) } || []
+        def as_otlp_exemplars(exemplars, format)
+          exemplars&.map { |ex| as_otlp_exemplar(ex, format) } || []
         end
 
         # Converts a single SDK exemplar to its OTLP proto representation.
-        def as_otlp_exemplar(exemplar)
+        def as_otlp_exemplar(exemplar, format)
           args = {
             time_unix_nano: exemplar.time_unix_nano,
-            span_id: exemplar.span_id,
-            trace_id: exemplar.trace_id
+            span_id: format_id(exemplar.span_id, format),
+            trace_id: format_id(exemplar.trace_id, format)
           }
 
           # Add filtered_attributes if present
@@ -422,6 +468,16 @@ module OpenTelemetry
           flags = base_flags_int | has_remote_mask
           flags |= is_remote_mask if parent_span_is_remote
           flags
+        end
+
+        # OTLP/JSON requires trace/span ids as hex, but protobuf JSON base64-encodes.
+        # For the JSON path, applying initial base64 decoding to the hex string
+        # yields bytes that protobuf re-encodes back into that hex string.
+        def format_id(id_bytes, format)
+          return id_bytes unless format == :json
+          return id_bytes if id_bytes.nil? || id_bytes.empty?
+
+          id_bytes.unpack1('H*').unpack1('m0')
         end
 
         def as_otlp_status_code(code)

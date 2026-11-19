@@ -109,10 +109,13 @@ The collector exporter can be configured explicitly in code, or via environment 
 | `headers:` | `OTEL_EXPORTER_OTLP_HEADERS` | |
 | `compression:` | `OTEL_EXPORTER_OTLP_COMPRESSION` | `"gzip"` |
 | `timeout:` | `OTEL_EXPORTER_OTLP_TIMEOUT` | `10` |
+| `encoding:` | `OTEL_EXPORTER_OTLP_PROTOCOL` | `"protobuf"` |
 | `default_aggregation:` | `OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION` | `"explicit_bucket_histogram"` |
 | `ssl_verify_mode:` | `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_PEER` or `OTEL_RUBY_EXPORTER_OTLP_SSL_VERIFY_NONE` | `OpenSSL::SSL:VERIFY_PEER` |
 
 `ssl_verify_mode:` parameter values should be flags for server certificate verification: `OpenSSL::SSL:VERIFY_PEER` and `OpenSSL::SSL:VERIFY_NONE` are acceptable. These values can also be set using the appropriately named environment variables as shown where `VERIFY_PEER` will take precedence over `VERIFY_NONE`.  Please see [the Net::HTTP docs](https://ruby-doc.org/stdlib-2.7.6/libdoc/net/http/rdoc/Net/HTTP.html#verify_mode) for more information about these flags.
+
+`encoding:` selects the OTLP encoding: `"protobuf"` (the default) sends binary Protobuf, and `"json"` sends spec-compliant OTLP/JSON. When not passed explicitly, it is derived from `OTEL_EXPORTER_OTLP_PROTOCOL` (`http/protobuf` or `http/json`).
 
 `OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION` parameter values can be either `"explicit_bucket_histogram"` (the default) or `"base2_exponential_bucket_histogram"`. The value is matched case-insensitively, and an unrecognized value logs a warning and falls back to `"explicit_bucket_histogram"`.
 
