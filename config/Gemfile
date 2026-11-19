@@ -22,6 +22,7 @@ group :test, :development do
   gem 'opentelemetry-logs-sdk',                  path: '../logs_sdk',                  require: false
   gem 'opentelemetry-registry',                  path: '../registry',                  require: false
   gem 'opentelemetry-test-helpers',              path: '../test_helpers',              require: false
+  gem 'opentelemetry-types-otlp',                path: '../types/otlp',                require: false
 
   gem 'opentelemetry-propagator-google_cloud_trace_context',    '~> 0.4.0'
   gem 'opentelemetry-propagator-ottrace',                       '~> 0.25.0'
