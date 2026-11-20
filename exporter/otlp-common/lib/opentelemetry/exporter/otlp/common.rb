@@ -180,7 +180,7 @@ module OpenTelemetry
             attributes: log_record_data.attributes&.map { |k, v| as_otlp_key_value(k, v) },
             dropped_attributes_count: log_record_data.dropped_attributes_count,
             event_name: log_record_data.event_name,
-            flags: log_record_data.trace_flags.instance_variable_get(:@flags),
+            flags: as_otlp_trace_flags(log_record_data.trace_flags),
             trace_id: log_record_data.trace_id,
             span_id: log_record_data.span_id
           )
@@ -469,8 +469,23 @@ module OpenTelemetry
           when Hash
             values = value.map { |k, v| as_otlp_key_value(k, v) }
             result.kvlist_value = Opentelemetry::Proto::Common::V1::KeyValueList.new(values: values)
+          else
+            OpenTelemetry.handle_error(message: "unsupported OTLP AnyValue type: #{value.class}")
           end
           result
+        end
+
+        # Accept the integer representation documented by LogRecordData while
+        # remaining compatible with TraceFlags objects used by older callers.
+        def as_otlp_trace_flags(trace_flags)
+          case trace_flags
+          when Integer
+            trace_flags
+          when nil
+            nil
+          else
+            trace_flags.instance_variable_get(:@flags)
+          end
         end
       end
     end
