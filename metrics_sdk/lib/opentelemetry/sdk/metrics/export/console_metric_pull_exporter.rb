@@ -35,12 +35,6 @@ module OpenTelemetry
           def force_flush(timeout: nil)
             SUCCESS
           end
-
-          # Marks this exporter as stopped so subsequent exports fail.
-          def shutdown(timeout: nil)
-            @stopped = true
-            SUCCESS
-          end
         end
       end
     end
