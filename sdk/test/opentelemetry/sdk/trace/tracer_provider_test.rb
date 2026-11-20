@@ -237,5 +237,30 @@ describe OpenTelemetry::SDK::Trace::TracerProvider do
       tracer = tracer_provider.tracer('component', '1.0', attributes: { 'key' => 'value' })
       _(tracer).wont_be_nil
     end
+
+    # Schema URL
+    it 'returns the same tracer for the same name, version, and schema_url' do
+      tracer1 = tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      _(tracer1).must_equal(tracer2)
+    end
+
+    it 'returns different tracers for different schema_urls' do
+      tracer1 = tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.39.0')
+      _(tracer1).wont_equal(tracer2)
+    end
+
+    it 'treats nil schema_url the same as no schema_url' do
+      tracer1 = tracer_provider.tracer('component', '1.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', schema_url: nil)
+      _(tracer1).must_equal(tracer2)
+    end
+
+    it 'treats empty schema_url the same as no schema_url' do
+      tracer1 = tracer_provider.tracer('component', '1.0')
+      tracer2 = tracer_provider.tracer('component', '1.0', schema_url: '')
+      _(tracer1).must_equal(tracer2)
+    end
   end
 end
