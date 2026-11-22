@@ -15,7 +15,7 @@ module OpenTelemetry
       module TraceContext
         extend self
 
-        TEXT_MAP_PROPAGATOR = TextMapPropagator.new
+        TEXT_MAP_PROPAGATOR = TextMapPropagator.new.freeze
 
         private_constant :TEXT_MAP_PROPAGATOR
 

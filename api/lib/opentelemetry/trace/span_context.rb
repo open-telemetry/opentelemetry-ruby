@@ -74,7 +74,7 @@ module OpenTelemetry
       end
 
       # Represents an invalid {SpanContext}, with an invalid trace ID and an invalid span ID.
-      INVALID = new(trace_id: INVALID_TRACE_ID, span_id: INVALID_SPAN_ID)
+      INVALID = new(trace_id: INVALID_TRACE_ID, span_id: INVALID_SPAN_ID).freeze
     end
   end
 end
