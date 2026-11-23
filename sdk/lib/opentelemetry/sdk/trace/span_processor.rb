@@ -28,8 +28,19 @@ module OpenTelemetry
         # keyword in Ruby, we are using `on_finishing` instead.
         #
         # Called when a {Span} is ending, after the end timestamp has been set
-        # but before span becomes immutable. This allows for updating the span
-        # by setting attributes or adding links and events.
+        # but before span becomes immutable. The span may be updated here by
+        # setting attributes or adding links and events.
+        #
+        # The SDK holds the span's lock for the duration of this callback, so
+        # only the calling thread may modify the span. Writes from any other
+        # thread block until the span has ended and are then dropped with a
+        # warning. A processor must not modify the span from another thread or
+        # fiber it spawns here, because that thread or fiber would block on a
+        # lock this one holds.
+        #
+        # If any processor raises here, the span stays finishable and a later
+        # {Span#finish} runs this callback again, so it must tolerate being
+        # called more than once for the same span.
         #
         # This method is called synchronously and should not block the current
         # thread nor throw exceptions.
