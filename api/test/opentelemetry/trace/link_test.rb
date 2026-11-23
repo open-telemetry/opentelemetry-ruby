@@ -17,7 +17,7 @@ describe OpenTelemetry::Trace::Link do
 
     it 'returns a link with the given span context and attributes' do
       link = Link.new(span_context, '1' => 1)
-      _(link.attributes).must_equal('1' => 1)
+      _(link.attributes).must_equal({ '1' => 1 })
       _(link.span_context).must_equal(span_context)
     end
 

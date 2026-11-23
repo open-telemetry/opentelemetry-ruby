@@ -101,13 +101,13 @@ describe OpenTelemetry::SDK do
       _(snapshot[0].data_points[0].attributes).must_equal({})
 
       _(snapshot[0].data_points[1].value).must_equal(4)
-      _(snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
+      _(snapshot[0].data_points[1].attributes).must_equal({ 'a' => 'b' })
 
       _(snapshot[0].data_points[2].value).must_equal(3)
-      _(snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
+      _(snapshot[0].data_points[2].attributes).must_equal({ 'b' => 'c' })
 
       _(snapshot[0].data_points[3].value).must_equal(4)
-      _(snapshot[0].data_points[3].attributes).must_equal('d' => 'e')
+      _(snapshot[0].data_points[3].attributes).must_equal({ 'd' => 'e' })
 
       _(snapshot[1].data_points.size).must_equal(1)
       _(snapshot[1].data_points[0].value).must_equal(11)
@@ -176,7 +176,7 @@ describe OpenTelemetry::SDK do
         periodic_metric_reader.shutdown
         snapshot = JSON.parse(read.gets.chomp)
         _(snapshot.size).must_equal(1)
-        _(snapshot[0]).must_equal('name' => 'counter')
+        _(snapshot[0]).must_equal({ 'name' => 'counter' })
         _(periodic_metric_reader.instance_variable_get(:@thread).alive?).must_equal false
       end
     end

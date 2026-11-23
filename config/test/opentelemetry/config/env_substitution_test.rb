@@ -69,7 +69,7 @@ describe OpenTelemetry::Config::EnvSubstitution do
     it 'does not substitute mapping keys' do
       result = OpenTelemetry::Config::EnvSubstitution.load('${STRING_VALUE}: value', env)
 
-      _(result).must_equal('${STRING_VALUE}' => 'value')
+      _(result).must_equal({ '${STRING_VALUE}' => 'value' })
     end
 
     it 'substitutes nested scalars and sequence items' do
@@ -81,7 +81,7 @@ describe OpenTelemetry::Config::EnvSubstitution do
             - name: ${BOOL_VALUE}
       YAML
 
-      _(result).must_equal('outer' => { 'inner' => 'value', 'list' => [1, { 'name' => true }] })
+      _(result).must_equal({ 'outer' => { 'inner' => 'value', 'list' => [1, { 'name' => true }] } })
     end
 
     it 'raises on an invalid reference' do

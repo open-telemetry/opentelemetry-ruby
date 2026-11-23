@@ -66,7 +66,7 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
         Context.with_values('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3') do
           carrier = {}
           propagator.inject(carrier)
-          _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
+          _(carrier).must_equal({ 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' })
         end
       end
 
@@ -75,7 +75,7 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
           ctx = Context.current.set_value('k3', 'v3')
           carrier = {}
           propagator.inject(carrier, context: ctx)
-          _(carrier).must_equal('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3')
+          _(carrier).must_equal({ 'k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3' })
         end
       end
 
@@ -88,7 +88,7 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
           end.new
           result = {}
           propagator.inject(result, setter: setter)
-          _(result).must_equal('K1' => 'V1', 'K2' => 'V2', 'K3' => 'V3')
+          _(result).must_equal({ 'K1' => 'V1', 'K2' => 'V2', 'K3' => 'V3' })
         end
       end
     end
@@ -150,7 +150,7 @@ describe OpenTelemetry::Context::Propagation::CompositeTextMapPropagator do
         Context.with_values('k1' => 'v1', 'k2' => 'v2', 'k3' => 'v3') do
           carrier = {}
           propagator.inject(carrier)
-          _(carrier).must_equal('k1' => 'v1', 'k3' => 'v3')
+          _(carrier).must_equal({ 'k1' => 'v1', 'k3' => 'v3' })
         end
       end
     end
