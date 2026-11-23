@@ -18,12 +18,19 @@ module OpenTelemetry
         #   * Local parent (!SpanContext.remote? with trace_flags.sampled?)
         #   * Local parent (!SpanContext.remote? with !trace_flags.sampled?)
         class ParentBased
-          def initialize(root, remote_parent_sampled, remote_parent_not_sampled, local_parent_sampled, local_parent_not_sampled)
-            @root = root
-            @remote_parent_sampled = remote_parent_sampled
-            @remote_parent_not_sampled = remote_parent_not_sampled
-            @local_parent_sampled = local_parent_sampled
-            @local_parent_not_sampled = local_parent_not_sampled
+          def initialize(root = nil, remote_parent_sampled = nil, remote_parent_not_sampled = nil, local_parent_sampled = nil, local_parent_not_sampled = nil)
+            # rubocop:disable-next Lint/DuplicateBranch
+            @root = root ||
+                    case ENV.fetch('OTEL_TRACES_SAMPLER', 'parentbased_always_on')
+                    when 'parentbased_always_on' then Samplers::ALWAYS_ON
+                    when 'parentbased_always_off' then Samplers::ALWAYS_OFF
+                    when 'parentbased_traceidratio' then TraceIdRatioBased.new
+                    else Samplers::ALWAYS_ON
+                    end
+            @remote_parent_sampled = remote_parent_sampled || Samplers::ALWAYS_ON
+            @remote_parent_not_sampled = remote_parent_not_sampled || Samplers::ALWAYS_OFF
+            @local_parent_sampled = local_parent_sampled || Samplers::ALWAYS_ON
+            @local_parent_not_sampled = local_parent_not_sampled || Samplers::ALWAYS_OFF
           end
 
           def ==(other)
