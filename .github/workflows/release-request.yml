@@ -34,7 +34,7 @@ jobs:
       - name: Install Ruby
         uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
         with:
-          ruby-version: "4.0.9"
+          ruby-version: "4.0.10"
           bundler-cache: true
       - name: Create otelbot app token
         uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.3.0
