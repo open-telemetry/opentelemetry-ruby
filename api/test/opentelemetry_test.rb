@@ -144,6 +144,14 @@ describe OpenTelemetry do
       tracer_b = proxy.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.44.0')
       _(tracer_a).wont_equal(tracer_b)
     end
+
+    it 'drops schema_url for a provider that does not support it' do
+      proxy = OpenTelemetry::Internal::ProxyTracerProvider.new
+      proxy.tracer('component', '1.0', schema_url: 'https://opentelemetry.io/schemas/1.43.0')
+      provider = AttributeAwareTracerProvider.new
+      proxy.delegate = provider
+      _(provider.last_name).must_equal('component')
+    end
   end
 
   describe '.handle_error' do
