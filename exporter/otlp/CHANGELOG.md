@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp
 
+### v0.37.1 / 2026-11-24
+
+* FIXED: Declare required dependency versions (#2488)
+
 ### v0.37.0 / 2026-09-29
 
 * ADDED: Move otlp exporter uri builder to common (#2240)

@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-common
 
+### v0.4.1 / 2026-11-24
+
+* FIXED: Require uri where the utilities use it (#2490)
+
 ### v0.4.0 / 2026-10-13
 
 * ADDED: Use centralized otlp log encoding (#2434)

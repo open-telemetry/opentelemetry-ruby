@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-metrics
 
+### v0.15.1 / 2026-11-24
+
+* FIXED: Declare required SDK and OTLP common versions (#2487)
+
 ### v0.15.0 / 2026-10-20
 
 * ADDED: Support OTEL_EXPORTER_OTLP_METRICS_DEFAULT_HISTOGRAM_AGGREGATION env var (#2389)

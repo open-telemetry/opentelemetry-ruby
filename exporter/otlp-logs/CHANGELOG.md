@@ -1,5 +1,9 @@
 # Release History: opentelemetry-exporter-otlp-logs
 
+### v0.7.1 / 2026-11-24
+
+* FIXED: Declare required dependency versions (#2488)
+
 ### v0.7.0 / 2026-10-13
 
 * ADDED: Use centralized otlp log encoding (#2434)
