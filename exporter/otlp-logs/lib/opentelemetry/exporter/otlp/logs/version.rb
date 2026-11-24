@@ -9,7 +9,7 @@ module OpenTelemetry
     module OTLP
       module Logs
         ## Current OpenTelemetry OTLP logs exporter version
-        VERSION = '0.7.0'
+        VERSION = '0.7.1'
       end
     end
   end
