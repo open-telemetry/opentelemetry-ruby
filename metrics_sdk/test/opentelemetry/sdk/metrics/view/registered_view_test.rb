@@ -200,7 +200,7 @@ describe OpenTelemetry::SDK::Metrics::View::RegisteredView do
         _(snapshot.data_points).wont_be_empty
       end
 
-      _(last_snapshot[0].data_points.first.value).must_equal 75 # view aggregation sum
+      _(last_snapshot[0].data_points.first.value).must_equal 25 # view aggregation sum keeps the latest observation
       _(last_snapshot[1].data_points.first.value).must_equal 25 # view aggregation last value
     end
 

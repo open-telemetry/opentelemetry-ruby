@@ -27,6 +27,7 @@ module OpenTelemetry
             @monotonic = monotonic
             @exemplar_reservoir = exemplar_reservoir || DEFAULT_RESERVOIR
             @exemplar_reservoir_storage = new_stream_storage
+            @observed_values = new_stream_storage
           end
 
           # Returns the current sum data points, clearing them for delta temporality.
@@ -70,6 +71,34 @@ module OpenTelemetry
                   end
 
             update_number_data_point(ndp, increment, data_points, exemplar_offer: exemplar_offer)
+            nil
+          end
+
+          # Records the current total observed by an asynchronous instrument for the given attributes.
+          #
+          # Asynchronous instruments report absolute values, so only the change since the previous
+          # observation of these attributes is added. A cumulative sum therefore reports the latest
+          # observation, and a delta sum reports the change since the last collection. A monotonic
+          # sum that observes a lower value treats it as a counter reset. Attribute sets over the
+          # cardinality limit are tracked together as the overflow attribute set.
+          def observe(value, attributes, data_points, cardinality_limit, exemplar_offer: false)
+            return if @monotonic && value < 0
+
+            observed_values = @observed_values[data_points]
+            attributes = OVERFLOW_ATTRIBUTE_SET unless observed_values.key?(attributes) || observed_values.size < cardinality_limit - 1
+            previous = observed_values.fetch(attributes, 0)
+            observed_values[attributes] = value
+            ndp = data_points[attributes] || create_new_data_point(attributes, data_points)
+
+            if @monotonic && value < previous
+              # Counter reset: a cumulative sum starts over from the new value at the next
+              # collection, and a delta sum reports everything counted since the reset.
+              ndp.start_time_unix_nano = nil if @aggregation_temporality.cumulative?
+              previous = 0 if @aggregation_temporality.delta?
+            end
+
+            reservior_update(ndp.attributes, value, exemplar_offer, data_points)
+            ndp.value += value - previous
             nil
           end
 
