@@ -32,8 +32,9 @@ module OpenTelemetry
       # when the database system supports query text with multiple collections
       # in non-batch operations.
       #
-      # For batch operations, if the individual operations are known to have the same
-      # collection name then that collection name SHOULD be used.
+      # For batch operations, if the individual operations would all have the same
+      # `db.collection.name` when executed as non-batch operations,
+      # then that collection name SHOULD be used.
       #
       # @note Stability Level: stable
       DB_COLLECTION_NAME = 'db.collection.name'
@@ -87,9 +88,10 @@ module OpenTelemetry
       # If spaces can occur in the operation name, multiple consecutive spaces
       # SHOULD be normalized to a single space.
       #
-      # For batch operations, if the individual operations are known to have the same operation name
-      # then that operation name SHOULD be used prepended by `BATCH `,
-      # otherwise `db.operation.name` SHOULD be `BATCH` or some other database
+      # For batch operations, if the individual operations would all have the same
+      # `db.operation.name` when executed as non-batch operations,
+      # then that operation name SHOULD be used prepended by `BATCH `.
+      # Otherwise, `db.operation.name` SHOULD be `BATCH` or some other database
       # system specific term if more applicable.
       #
       # @note Stability Level: stable
@@ -107,9 +109,10 @@ module OpenTelemetry
       # [Generating query summary](/docs/db/database-spans.md#generating-a-summary-of-the-query)
       # section.
       #
-      # For batch operations, if the individual operations are known to have the same query summary
-      # then that query summary SHOULD be used prepended by `BATCH `,
-      # otherwise `db.query.summary` SHOULD be `BATCH` or some other database
+      # For batch operations, if the individual operations would all have the same
+      # `db.query.summary` when executed as non-batch operations,
+      # then that query summary SHOULD be used prepended by `BATCH `.
+      # Otherwise, `db.query.summary` SHOULD be `BATCH` or some other database
       # system specific term if more applicable.
       #
       # @note Stability Level: stable
@@ -118,7 +121,7 @@ module OpenTelemetry
       # The database query being executed.
       #
       # For sanitization see [Sanitization of `db.query.text`](/docs/db/database-spans.md#sanitization-of-dbquerytext).
-      # For batch operations, if the individual operations are known to have the same query text then that query text SHOULD be used, otherwise all of the individual query texts SHOULD be concatenated with separator `; ` or some other database system specific separator if more applicable.
+      # For batch operations, if the individual operations would all have the same `db.query.text` when executed as non-batch operations, then that query text SHOULD be used. Otherwise, all of the individual query texts SHOULD be concatenated with separator `; ` or some other database system specific separator if more applicable.
       # Parameterized query text SHOULD NOT be sanitized. Even though parameterized query text can potentially have sensitive data, by using a parameterized query the user is giving a strong signal that any sensitive data will be passed as parameter values, and the benefit to observability of capturing the static part of the query text by default outweighs the risk.
       #
       # @note Stability Level: stable
@@ -127,6 +130,7 @@ module OpenTelemetry
       # Database response status code.
       #
       # The status code returned by the database. Usually it represents an error code, but may also represent partial success, warning, or differentiate between various types of successful outcomes.
+      # The value MAY use a standardized string representation of a numeric status code, if one exists, instead of the numeric code. The value MAY be a synthetic status provided by the client library rather than returned by the remote service.
       # Semantic conventions for individual database systems SHOULD document what `db.response.status_code` means in the context of that system.
       #
       # @note Stability Level: stable
@@ -137,8 +141,9 @@ module OpenTelemetry
       # It is RECOMMENDED to capture the value as provided by the application
       # without attempting to do any case normalization.
       #
-      # For batch operations, if the individual operations are known to have the same
-      # stored procedure name then that stored procedure name SHOULD be used.
+      # For batch operations, if the individual operations would all have the same
+      # `db.stored_procedure.name` when executed as non-batch operations,
+      # then that stored procedure name SHOULD be used.
       #
       # @note Stability Level: stable
       DB_STORED_PROCEDURE_NAME = 'db.stored_procedure.name'

@@ -46,14 +46,14 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].exemplars[0]).must_be_kind_of OpenTelemetry::SDK::Metrics::Exemplar::Exemplar
 
       # Second data point: {'a' => 'b'} attributes, value=4, 2 exemplars
-      _(last_snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
+      _(last_snapshot[0].data_points[1].attributes).must_equal({ 'a' => 'b' })
       _(last_snapshot[0].data_points[1].value).must_equal(4)
       _(last_snapshot[0].data_points[1].exemplars.size).must_equal 2
       _(last_snapshot[0].data_points[1].exemplars[0].value).must_equal 2
       _(last_snapshot[0].data_points[1].exemplars[1].value).must_equal 2
 
       # Third data point: {'b' => 'c'} attributes, value=3, 1 exemplar
-      _(last_snapshot[0].data_points[2].attributes).must_equal('b' => 'c')
+      _(last_snapshot[0].data_points[2].attributes).must_equal({ 'b' => 'c' })
       _(last_snapshot[0].data_points[2].value).must_equal(3)
       _(last_snapshot[0].data_points[2].exemplars.size).must_equal 1
       _(last_snapshot[0].data_points[2].exemplars[0].value).must_equal 3
@@ -82,7 +82,7 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 10
 
       # Second data point: {'a' => 'b'} attributes, count=2, sum=50, 2 exemplars with values 20 and 30
-      _(last_snapshot[0].data_points[1].attributes).must_equal('a' => 'b')
+      _(last_snapshot[0].data_points[1].attributes).must_equal({ 'a' => 'b' })
       _(last_snapshot[0].data_points[1].count).must_equal 2
       _(last_snapshot[0].data_points[1].sum).must_equal 50
       _(last_snapshot[0].data_points[1].exemplars.size).must_equal 2
@@ -112,7 +112,7 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 25
 
       # Second data point: {'location' => 'room1'} attributes, value=28, 1 exemplar with value 28
-      _(last_snapshot[0].data_points[1].attributes).must_equal('location' => 'room1')
+      _(last_snapshot[0].data_points[1].attributes).must_equal({ 'location' => 'room1' })
       _(last_snapshot[0].data_points[1].value).must_equal 28
       _(last_snapshot[0].data_points[1].exemplars.size).must_equal 1
       _(last_snapshot[0].data_points[1].exemplars[0].value).must_equal 28
@@ -139,7 +139,7 @@ describe OpenTelemetry::SDK do
       _(last_snapshot[0].data_points[0].exemplars[0].value).must_equal 5
 
       # Second data point: {'queue' => 'main'} attributes, value=1, 2 exemplars with values -2 and 3
-      _(last_snapshot[0].data_points[1].attributes).must_equal('queue' => 'main')
+      _(last_snapshot[0].data_points[1].attributes).must_equal({ 'queue' => 'main' })
       _(last_snapshot[0].data_points[1].value).must_equal 1
       _(last_snapshot[0].data_points[1].exemplars.size).must_equal 2
       _(last_snapshot[0].data_points[1].exemplars[0].value).must_equal(-2)
@@ -266,7 +266,7 @@ describe OpenTelemetry::SDK do
       _(exponential_histogram.data_points[0].exemplars.size).must_equal 1
 
       # Second data point: {'type' => 'upload'} attributes, count=2, sum=600, 2 exemplars
-      _(exponential_histogram.data_points[1].attributes).must_equal('type' => 'upload')
+      _(exponential_histogram.data_points[1].attributes).must_equal({ 'type' => 'upload' })
       _(exponential_histogram.data_points[1].count).must_equal 2
       _(exponential_histogram.data_points[1].sum).must_equal 600
       _(exponential_histogram.data_points[1].scale).must_equal 7
@@ -295,7 +295,7 @@ describe OpenTelemetry::SDK do
 
       # With max_size=2, reservoir should contain at most 2 exemplars per data point
       _(last_snapshot[0].data_points.size).must_equal 1
-      _(last_snapshot[0].data_points[0].attributes).must_equal('operation' => 'read')
+      _(last_snapshot[0].data_points[0].attributes).must_equal({ 'operation' => 'read' })
       _(last_snapshot[0].data_points[0].value).must_equal 100
       _(last_snapshot[0].data_points[0].exemplars.size).must_be :<=, 2
 

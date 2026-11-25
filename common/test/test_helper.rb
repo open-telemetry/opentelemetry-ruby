@@ -13,3 +13,4 @@ SimpleCov.start
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/common'
 require 'minitest/autorun'
+require 'minitest/mock'

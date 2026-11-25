@@ -24,14 +24,16 @@ module OpenTelemetry
       module ZOS
         # @!group Attribute Names
 
-        # The System Management Facility (SMF) Identifier uniquely identified a z/OS system within a SYSPLEX or mainframe environment and is used for system and performance analysis.
+        # The System Management Facility (SMF) identifier that uniquely identifies a z/OS system within a sysplex or mainframe environment and is used for system and performance analysis.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry Mainframe semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-mainframe).
         ZOS_SMF_ID = 'zos.smf.id'
 
-        # The name of the SYSPLEX to which the z/OS system belongs too.
+        # The name of the sysplex to which the z/OS system belongs.
         #
         # @note Stability Level: development
+        # @deprecated Moved to the [OpenTelemetry Mainframe semantic conventions repository](https://github.com/open-telemetry/semantic-conventions-mainframe).
         ZOS_SYSPLEX_NAME = 'zos.sysplex.name'
 
         # @!endgroup

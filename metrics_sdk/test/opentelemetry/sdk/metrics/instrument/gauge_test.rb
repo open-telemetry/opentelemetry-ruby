@@ -26,7 +26,7 @@ describe OpenTelemetry::SDK::Metrics::Instrument::Gauge do
     _(last_snapshot[0].unit).must_equal('smidgen')
     _(last_snapshot[0].description).must_equal('a small amount of something')
     _(last_snapshot[0].instrumentation_scope.name).must_equal('test')
-    _(last_snapshot[0].data_points[0].attributes).must_equal('foo' => 'bar')
+    _(last_snapshot[0].data_points[0].attributes).must_equal({ 'foo' => 'bar' })
     _(last_snapshot[0].data_points[0].value).must_equal(-2)
   end
 

@@ -13,6 +13,7 @@ SimpleCov.start
 require 'opentelemetry-test-helpers'
 require 'opentelemetry/exporter/otlp_logs'
 require 'minitest/autorun'
+require 'minitest/mock'
 require 'webmock/minitest'
 require 'minitest/stub_const'
 

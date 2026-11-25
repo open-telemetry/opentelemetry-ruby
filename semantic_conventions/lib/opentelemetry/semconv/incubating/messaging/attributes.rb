@@ -98,36 +98,42 @@ module OpenTelemetry
         # @deprecated Replaced by `messaging.consumer.group.name`.
         MESSAGING_EVENTHUBS_CONSUMER_GROUP = 'messaging.eventhubs.consumer.group'
 
-        # The UTC epoch seconds at which the message has been accepted and stored in the entity.
+        # Deprecated, use `azure.eventhubs.message.enqueued_time` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `azure.eventhubs.message.enqueued_time`.
         MESSAGING_EVENTHUBS_MESSAGE_ENQUEUED_TIME = 'messaging.eventhubs.message.enqueued_time'
 
-        # The ack deadline in seconds set for the modify ack deadline request.
+        # Deprecated, use `gcp.pubsub.message.ack_deadline` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `gcp.pubsub.message.ack_deadline`.
         MESSAGING_GCP_PUBSUB_MESSAGE_ACK_DEADLINE = 'messaging.gcp_pubsub.message.ack_deadline'
 
-        # The ack ID for a given message.
+        # Deprecated, use `gcp.pubsub.message.ack_id` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `gcp.pubsub.message.ack_id`.
         MESSAGING_GCP_PUBSUB_MESSAGE_ACK_ID = 'messaging.gcp_pubsub.message.ack_id'
 
-        # The delivery attempt for a given message.
+        # Deprecated, use `gcp.pubsub.message.delivery_attempt` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `gcp.pubsub.message.delivery_attempt`.
         MESSAGING_GCP_PUBSUB_MESSAGE_DELIVERY_ATTEMPT = 'messaging.gcp_pubsub.message.delivery_attempt'
 
-        # The ordering key for a given message. If the attribute is not present, the message does not have an ordering key.
+        # Deprecated, use `gcp.pubsub.message.ordering_key` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `gcp.pubsub.message.ordering_key`.
         MESSAGING_GCP_PUBSUB_MESSAGE_ORDERING_KEY = 'messaging.gcp_pubsub.message.ordering_key'
 
-        # The Kafka cluster ID, obtained from the broker metadata exposed through the Kafka client (or AdminClient) API.
+        # Deprecated, use `kafka.cluster.id` instead.
         #
         # The cluster ID is a unique identifier reported by the Kafka broker. It identifies the cluster independently of the individual brokers the client is configured to connect to, and remains stable even if broker hostnames, IP addresses, or ports change.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `kafka.cluster.id`.
         MESSAGING_KAFKA_CLUSTER_ID = 'messaging.kafka.cluster.id'
 
         # Deprecated, use `messaging.consumer.group.name` instead.
@@ -142,27 +148,30 @@ module OpenTelemetry
         # @deprecated Record string representation of the partition ID in `messaging.destination.partition.id` attribute.
         MESSAGING_KAFKA_DESTINATION_PARTITION = 'messaging.kafka.destination.partition'
 
-        # Message keys in Kafka are used for grouping alike messages to ensure they're processed on the same partition. They differ from `messaging.message.id` in that they're not unique. If the key is `null`, the attribute MUST NOT be set.
+        # Deprecated, use `kafka.message.key` instead.
         #
         # If the key type is not string, it's string representation has to be supplied for the attribute. If the key has no unambiguous, canonical string form, don't include its value.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `kafka.message.key`.
         MESSAGING_KAFKA_MESSAGE_KEY = 'messaging.kafka.message.key'
 
-        # Deprecated, use `messaging.kafka.offset` instead.
+        # Deprecated, use `kafka.offset` instead.
         #
         # @note Stability Level: development
-        # @deprecated Replaced by `messaging.kafka.offset`.
+        # @deprecated Replaced by `kafka.offset`.
         MESSAGING_KAFKA_MESSAGE_OFFSET = 'messaging.kafka.message.offset'
 
-        # A boolean that is true if the message is a tombstone.
+        # Deprecated, use `kafka.message.tombstone` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `kafka.message.tombstone`.
         MESSAGING_KAFKA_MESSAGE_TOMBSTONE = 'messaging.kafka.message.tombstone'
 
-        # The offset of a record in the corresponding Kafka partition.
+        # Deprecated, use `kafka.offset` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `kafka.offset`.
         MESSAGING_KAFKA_OFFSET = 'messaging.kafka.offset'
 
         # The size of the message body in bytes.
@@ -209,14 +218,16 @@ module OpenTelemetry
         # @note Stability Level: development
         MESSAGING_OPERATION_TYPE = 'messaging.operation.type'
 
-        # RabbitMQ message routing key.
+        # Deprecated, use `rabbitmq.destination.routing_key` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rabbitmq.destination.routing_key`.
         MESSAGING_RABBITMQ_DESTINATION_ROUTING_KEY = 'messaging.rabbitmq.destination.routing_key'
 
-        # RabbitMQ message delivery tag
+        # Deprecated, use `rabbitmq.message.delivery_tag` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rabbitmq.message.delivery_tag`.
         MESSAGING_RABBITMQ_MESSAGE_DELIVERY_TAG = 'messaging.rabbitmq.message.delivery_tag'
 
         # Deprecated, use `messaging.consumer.group.name` instead.
@@ -225,44 +236,52 @@ module OpenTelemetry
         # @deprecated Replaced by `messaging.consumer.group.name` on the consumer spans. No replacement for producer spans.
         MESSAGING_ROCKETMQ_CLIENT_GROUP = 'messaging.rocketmq.client_group'
 
-        # Model of message consumption. This only applies to consumer spans.
+        # Deprecated, use `rocketmq.consumption_model` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.consumption_model`.
         MESSAGING_ROCKETMQ_CONSUMPTION_MODEL = 'messaging.rocketmq.consumption_model'
 
-        # The delay time level for delay message, which determines the message delay time.
+        # Deprecated, use `rocketmq.message.delay_time_level` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.message.delay_time_level`.
         MESSAGING_ROCKETMQ_MESSAGE_DELAY_TIME_LEVEL = 'messaging.rocketmq.message.delay_time_level'
 
-        # The timestamp in milliseconds that the delay message is expected to be delivered to consumer.
+        # Deprecated, use `rocketmq.message.delivery_timestamp` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.message.delivery_timestamp`.
         MESSAGING_ROCKETMQ_MESSAGE_DELIVERY_TIMESTAMP = 'messaging.rocketmq.message.delivery_timestamp'
 
-        # It is essential for FIFO message. Messages that belong to the same message group are always processed one by one within the same consumer group.
+        # Deprecated, use `rocketmq.message.group` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.message.group`.
         MESSAGING_ROCKETMQ_MESSAGE_GROUP = 'messaging.rocketmq.message.group'
 
-        # Key(s) of message, another way to mark message besides message ID.
+        # Deprecated, use `rocketmq.message.keys` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.message.keys`.
         MESSAGING_ROCKETMQ_MESSAGE_KEYS = 'messaging.rocketmq.message.keys'
 
-        # The secondary classifier of message besides topic.
+        # Deprecated, use `rocketmq.message.tag` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.message.tag`.
         MESSAGING_ROCKETMQ_MESSAGE_TAG = 'messaging.rocketmq.message.tag'
 
-        # Type of message.
+        # Deprecated, use `rocketmq.message.type` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.message.type`.
         MESSAGING_ROCKETMQ_MESSAGE_TYPE = 'messaging.rocketmq.message.type'
 
-        # Namespace of RocketMQ resources, resources in different namespaces are individual.
+        # Deprecated, use `rocketmq.namespace` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `rocketmq.namespace`.
         MESSAGING_ROCKETMQ_NAMESPACE = 'messaging.rocketmq.namespace'
 
         # Deprecated, use `messaging.destination.subscription.name` instead.
@@ -271,27 +290,50 @@ module OpenTelemetry
         # @deprecated Replaced by `messaging.destination.subscription.name`.
         MESSAGING_SERVICEBUS_DESTINATION_SUBSCRIPTION_NAME = 'messaging.servicebus.destination.subscription_name'
 
-        # Describes the [settlement type](https://learn.microsoft.com/azure/service-bus-messaging/message-transfers-locks-settlement#peeklock).
+        # Deprecated, use `azure.servicebus.disposition_status` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `azure.servicebus.disposition_status`.
         MESSAGING_SERVICEBUS_DISPOSITION_STATUS = 'messaging.servicebus.disposition_status'
 
-        # Number of deliveries that have been attempted for this message.
+        # Deprecated, use `azure.servicebus.message.delivery_count` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `azure.servicebus.message.delivery_count`.
         MESSAGING_SERVICEBUS_MESSAGE_DELIVERY_COUNT = 'messaging.servicebus.message.delivery_count'
 
-        # The UTC epoch seconds at which the message has been accepted and stored in the entity.
+        # Deprecated, use `azure.servicebus.message.enqueued_time` instead.
         #
         # @note Stability Level: development
+        # @deprecated Replaced by `azure.servicebus.message.enqueued_time`.
         MESSAGING_SERVICEBUS_MESSAGE_ENQUEUED_TIME = 'messaging.servicebus.message.enqueued_time'
+
+        # Deprecated, use `messaging.system.name` instead.
+        #
+        # The actual messaging system may differ from the one known by the client.
+        # For example, when using Kafka client libraries to communicate with Azure Event Hubs, the `messaging.system`
+        # is set to `kafka` based on the instrumentation's best knowledge.
+        #
+        # When migrating to `messaging.system.name`, update the following values:
+        #
+        # - `aws_sqs` to `aws.sqs`
+        # - `eventgrid` to `azure.eventgrid`
+        # - `eventhubs` to `azure.eventhubs`
+        # - `servicebus` to `azure.servicebus`
+        # - `gcp_pubsub` to `gcp.pubsub`
+        #
+        # All other values are unchanged.
+        #
+        # @note Stability Level: development
+        # @deprecated Replaced by `messaging.system.name`.
+        MESSAGING_SYSTEM = 'messaging.system'
 
         # The messaging system as identified by the client instrumentation.
         #
-        # The actual messaging system may differ from the one known by the client. For example, when using Kafka client libraries to communicate with Azure Event Hubs, the `messaging.system` is set to `kafka` based on the instrumentation's best knowledge.
+        # The actual messaging system may differ from the one known by the client. For example, when using Kafka client libraries to communicate with Azure Event Hubs, the `messaging.system.name` is set to `kafka` based on the instrumentation's best knowledge.
         #
         # @note Stability Level: development
-        MESSAGING_SYSTEM = 'messaging.system'
+        MESSAGING_SYSTEM_NAME = 'messaging.system.name'
 
         # @!endgroup
       end
