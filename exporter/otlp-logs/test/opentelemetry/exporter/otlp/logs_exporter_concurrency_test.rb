@@ -42,4 +42,34 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
 
     assert_equal OpenTelemetry::SDK::Logs::Export::FAILURE, exporter.export([log_record_data])
   end
+
+  it 'returns TIMEOUT when shutdown exceeds its deadline and closes after export finishes' do
+    exporter = OpenTelemetry::Exporter::OTLP::Logs::LogsExporter.new
+    log_record_data = OpenTelemetry::TestHelpers.create_log_record_data
+    entered_export = Queue.new
+    release_export = Queue.new
+    connection_closed = Queue.new
+
+    send_bytes = lambda do |_bytes, **_options|
+      entered_export << true
+      release_export.pop
+      OpenTelemetry::SDK::Logs::Export::SUCCESS
+    end
+
+    exporter.stub(:send_bytes, send_bytes) do
+      exporter.stub(:finish_http_connection, -> { connection_closed << true }) do
+        export_thread = Thread.new { exporter.export([log_record_data]) }
+        entered_export.pop
+
+        assert_equal OpenTelemetry::SDK::Logs::Export::TIMEOUT, exporter.shutdown(timeout: 0.01)
+        assert_equal 0, connection_closed.size
+
+        release_export << true
+
+        assert_equal OpenTelemetry::SDK::Logs::Export::SUCCESS, export_thread.value
+        assert_equal true, connection_closed.pop
+        assert_equal OpenTelemetry::SDK::Logs::Export::FAILURE, exporter.export([log_record_data])
+      end
+    end
+  end
 end
