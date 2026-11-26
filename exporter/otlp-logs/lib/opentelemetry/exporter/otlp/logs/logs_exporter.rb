@@ -85,34 +85,14 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
           def export(log_record_data, timeout: nil)
-            accepted = @mutex.synchronize do
-              next false if @shutdown
-
-              @active_exports += 1
-              true
-            end
-
-            unless accepted
-              OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down')
-              return FAILURE
-            end
+            accepted = begin_export
+            return FAILURE unless accepted
 
             @export_mutex.synchronize do
               send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data), timeout: timeout)
             end
           ensure
-            if accepted
-              @mutex.synchronize do
-                @active_exports -= 1
-                if @shutdown && @active_exports.zero?
-                  begin
-                    finish_http_connection
-                  ensure
-                    @condition.broadcast
-                  end
-                end
-              end
-            end
+            complete_export if accepted
           end
 
           # Called when {OpenTelemetry::SDK::Logs::LoggerProvider#force_flush} is called, if
@@ -134,13 +114,7 @@ module OpenTelemetry
 
             @mutex.synchronize do
               @shutdown = true
-
-              while @active_exports.positive?
-                remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
-                return TIMEOUT if remaining_timeout&.zero?
-
-                @condition.wait(@mutex, remaining_timeout)
-              end
+              return TIMEOUT unless wait_for_exports(timeout, start_time)
 
               finish_http_connection
             end
@@ -148,6 +122,41 @@ module OpenTelemetry
           end
 
           private
+
+          def begin_export
+            @mutex.synchronize do
+              if @shutdown
+                OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down')
+                next false
+              end
+
+              @active_exports += 1
+              true
+            end
+          end
+
+          def complete_export
+            @mutex.synchronize do
+              @active_exports -= 1
+              close_after_export if @shutdown && @active_exports.zero?
+            end
+          end
+
+          def close_after_export
+            finish_http_connection
+          ensure
+            @condition.broadcast
+          end
+
+          def wait_for_exports(timeout, start_time)
+            while @active_exports.positive?
+              remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+              return false if remaining_timeout&.zero?
+
+              @condition.wait(@mutex, remaining_timeout)
+            end
+            true
+          end
 
           def finish_http_connection
             return if @http_finished
