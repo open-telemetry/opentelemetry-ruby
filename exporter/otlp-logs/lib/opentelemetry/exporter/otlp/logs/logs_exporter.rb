@@ -27,7 +27,8 @@ module OpenTelemetry
         class LogsExporter # rubocop:disable Metrics/ClassLength
           SUCCESS = OpenTelemetry::SDK::Logs::Export::SUCCESS
           FAILURE = OpenTelemetry::SDK::Logs::Export::FAILURE
-          private_constant(:SUCCESS, :FAILURE)
+          TIMEOUT = OpenTelemetry::SDK::Logs::Export::TIMEOUT
+          private_constant(:SUCCESS, :FAILURE, :TIMEOUT)
 
           # Default timeouts in seconds.
           KEEP_ALIVE_TIMEOUT = 30
@@ -70,6 +71,10 @@ module OpenTelemetry
             @compression = compression
             @shutdown = false
             @mutex = Mutex.new
+            @condition = ConditionVariable.new
+            @active_exports = 0
+            @export_mutex = Mutex.new
+            @http_finished = false
           end
 
           # Called to export sampled {OpenTelemetry::SDK::Logs::LogRecordData} structs.
@@ -80,13 +85,33 @@ module OpenTelemetry
           # @param [optional Numeric] timeout An optional timeout in seconds.
           # @return [Integer] the result of the export.
           def export(log_record_data, timeout: nil)
-            @mutex.synchronize do
-              if @shutdown
-                OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down')
-                return FAILURE
-              end
+            accepted = @mutex.synchronize do
+              next false if @shutdown
 
+              @active_exports += 1
+              true
+            end
+
+            unless accepted
+              OpenTelemetry.logger.error('Logs Exporter tried to export, but it has already shut down')
+              return FAILURE
+            end
+
+            @export_mutex.synchronize do
               send_bytes(OpenTelemetry::Exporter::OTLP::Common.as_encoded_elsr(log_record_data), timeout: timeout)
+            end
+          ensure
+            if accepted
+              @mutex.synchronize do
+                @active_exports -= 1
+                if @shutdown && @active_exports.zero?
+                  begin
+                    finish_http_connection
+                  ensure
+                    @condition.broadcast
+                  end
+                end
+              end
             end
           end
 
@@ -105,14 +130,31 @@ module OpenTelemetry
           #
           # @param [optional Numeric] timeout An optional timeout in seconds.
           def shutdown(timeout: nil)
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+
             @mutex.synchronize do
               @shutdown = true
-              @http.finish if @http.started?
+
+              while @active_exports.positive?
+                remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+                return TIMEOUT if remaining_timeout&.zero?
+
+                @condition.wait(@mutex, remaining_timeout)
+              end
+
+              finish_http_connection
             end
             SUCCESS
           end
 
           private
+
+          def finish_http_connection
+            return if @http_finished
+
+            @http.finish if @http.started?
+            @http_finished = true
+          end
 
           def handle_http_error(response)
             OpenTelemetry.handle_error(message: "OTLP logs exporter received #{response.class.name}, http.code=#{response.code}, for uri: '#{@path}'")
