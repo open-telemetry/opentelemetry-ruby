@@ -17,6 +17,7 @@ module OpenTelemetry
             @mutex = Mutex.new
           end
 
+          # Exports the provided log records to the console.
           def export(log_records, timeout: nil)
             @mutex.synchronize do
               return FAILURE if @stopped
@@ -26,10 +27,12 @@ module OpenTelemetry
             end
           end
 
+          # Flushes any pending log records.
           def force_flush(timeout: nil)
             SUCCESS
           end
 
+          # Stops the exporter after any in-flight export has completed.
           def shutdown(timeout: nil)
             @mutex.synchronize { @stopped = true }
             SUCCESS
