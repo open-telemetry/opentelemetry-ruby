@@ -67,6 +67,23 @@ describe OpenTelemetry::Config do
         end
       end
 
+      it 'percent-decodes headers_list names and values' do
+        with_config(<<~YAML) do |path|
+          file_format: "1.0"
+          tracer_provider:
+            processors:
+              - batch:
+                  exporter:
+                    otlp_http:
+                      headers_list: "Authorization=Bearer%20token"
+        YAML
+          sdk = OpenTelemetry::Config.configure_from_file(path)
+          exporter = sdk.tracer_provider.instance_variable_get(:@span_processors).first.instance_variable_get(:@exporter)
+
+          _(exporter.instance_variable_get(:@headers)['Authorization']).must_equal 'Bearer token'
+        end
+      end
+
       it 'forwards batch tuning parameters to the processor' do
         with_config(<<~YAML) do |path|
           file_format: "1.0"
