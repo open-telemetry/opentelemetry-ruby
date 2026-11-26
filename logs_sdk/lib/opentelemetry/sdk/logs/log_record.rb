@@ -104,6 +104,7 @@ module OpenTelemetry
           trim_attributes(@attributes = new_attributes&.to_h) # We need a mutable copy of attributes
         end
 
+        # Converts this log record to the SDK's exportable data representation.
         def to_log_record_data
           LogRecordData.new(
             to_integer_nanoseconds(@timestamp),
