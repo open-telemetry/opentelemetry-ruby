@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 require 'openssl'
+require 'uri'
 
 module OpenTelemetry
   module Config
@@ -159,7 +160,8 @@ module OpenTelemetry
       end
 
       # Converts the OTLP exporter headers (array of NameStringValuePair structs)
-      # into a flat Hash. Falls back to the comma-separated headers_list string.
+      # into a flat Hash. Falls back to the comma-separated headers_list string,
+      # whose names and values are percent-decoded as in OTEL_EXPORTER_OTLP_HEADERS.
       def headers_to_hash(cfg)
         headers = {}
 
@@ -170,11 +172,19 @@ module OpenTelemetry
         if headers.empty? && cfg.headers_list.is_a?(String)
           cfg.headers_list.split(',').each do |entry|
             key, value = entry.strip.split('=', 2)
-            headers[key] = value if key && value
+            headers[percent_decode(key)] = percent_decode(value) if key && value
           end
         end
 
         headers
+      end
+
+      # Returns +value+ percent-decoded, or unchanged when it is not valid
+      # percent-encoding.
+      def percent_decode(value)
+        URI.decode_uri_component(value)
+      rescue ArgumentError
+        value
       end
     end
 

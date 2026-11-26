@@ -178,6 +178,54 @@ describe OpenTelemetry::Config do
         _(headers['tenant']).must_equal 'acme'
       end
 
+      it 'percent-decodes headers_list names and values' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors:
+              - simple:
+                  exporter:
+                    otlp_http:
+                      headers_list: "Authorization=Bearer%20token,x%2Dtenant=a%2Cb"
+        YAML
+
+        headers = processors[0].instance_variable_get(:@log_record_exporter).instance_variable_get(:@headers)
+        _(headers['Authorization']).must_equal 'Bearer token'
+        _(headers['x-tenant']).must_equal 'a,b'
+      end
+
+      it 'keeps a headers_list value that is not valid percent-encoding' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors:
+              - simple:
+                  exporter:
+                    otlp_http:
+                      headers_list: "Authorization=Bearer%zz"
+        YAML
+
+        headers = processors[0].instance_variable_get(:@log_record_exporter).instance_variable_get(:@headers)
+        _(headers['Authorization']).must_equal 'Bearer%zz'
+      end
+
+      it 'does not percent-decode headers values' do
+        configure(<<~YAML)
+          file_format: "1.0"
+          logger_provider:
+            processors:
+              - simple:
+                  exporter:
+                    otlp_http:
+                      headers:
+                        - name: Authorization
+                          value: "Bearer%20token"
+        YAML
+
+        headers = processors[0].instance_variable_get(:@log_record_exporter).instance_variable_get(:@headers)
+        _(headers['Authorization']).must_equal 'Bearer%20token'
+      end
+
       it 'forwards the TLS CA file to the HTTP client' do
         configure(<<~YAML)
           file_format: "1.0"
