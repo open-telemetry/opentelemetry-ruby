@@ -12,6 +12,7 @@ module OpenTelemetry
       # The ConfiguratorPatch implements a hook to configure the logs portion
       # of the SDK.
       module ConfiguratorPatch
+        # Adds a log record processor to the SDK configurator.
         def add_log_record_processor(log_record_processor)
           @log_record_processors << log_record_processor
         end
