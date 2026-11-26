@@ -61,10 +61,12 @@ describe OpenTelemetry::Exporter::OTLP::Logs::LogsExporter do
         export_thread = Thread.new { exporter.export([log_record_data]) }
         entered_export.pop
 
-        assert_equal OpenTelemetry::SDK::Logs::Export::TIMEOUT, exporter.shutdown(timeout: 0.01)
-        assert_equal 0, connection_closed.size
-
-        release_export << true
+        begin
+          assert_equal OpenTelemetry::SDK::Logs::Export::TIMEOUT, exporter.shutdown(timeout: 0.01)
+          assert_equal 0, connection_closed.size
+        ensure
+          release_export << true
+        end
 
         assert_equal OpenTelemetry::SDK::Logs::Export::SUCCESS, export_thread.value
         assert_equal true, connection_closed.pop
