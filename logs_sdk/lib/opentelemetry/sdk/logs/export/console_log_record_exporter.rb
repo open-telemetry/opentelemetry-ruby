@@ -15,15 +15,28 @@ module OpenTelemetry
           def initialize
             @stopped = false
             @mutex = Mutex.new
+            @condition = ConditionVariable.new
+            @active_exports = 0
           end
 
           # Exports the provided log records to the console.
           def export(log_records, timeout: nil)
-            @mutex.synchronize do
-              return FAILURE if @stopped
+            accepted = @mutex.synchronize do
+              next false if @stopped
 
-              Array(log_records).each { |s| pp s }
-              SUCCESS
+              @active_exports += 1
+              true
+            end
+            return FAILURE unless accepted
+
+            Array(log_records).each { |s| pp s }
+            SUCCESS
+          ensure
+            if accepted
+              @mutex.synchronize do
+                @active_exports -= 1
+                @condition.broadcast if @active_exports.zero?
+              end
             end
           end
 
@@ -33,8 +46,22 @@ module OpenTelemetry
           end
 
           # Stops the exporter after any in-flight export has completed.
+          #
+          # @param [optional Numeric] timeout An optional timeout in seconds.
+          # @return [Integer] SUCCESS if no error occurred, TIMEOUT if the deadline elapsed.
           def shutdown(timeout: nil)
-            @mutex.synchronize { @stopped = true }
+            start_time = OpenTelemetry::Common::Utilities.timeout_timestamp
+
+            @mutex.synchronize do
+              @stopped = true
+              while @active_exports.positive?
+                remaining_timeout = OpenTelemetry::Common::Utilities.maybe_timeout(timeout, start_time)
+                return TIMEOUT if remaining_timeout&.zero?
+
+                @condition.wait(@mutex, remaining_timeout)
+              end
+            end
+
             SUCCESS
           end
         end
