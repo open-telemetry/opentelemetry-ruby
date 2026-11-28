@@ -13,7 +13,7 @@ runs:
   using: composite
   steps:
     - name: Install Ruby ${{ inputs.ruby }}
-      uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+      uses: ruby/setup-ruby@145243922b4465b78e04dd66294782c7de45901f # v1.345.0
       with:
         ruby-version: "${{ inputs.ruby }}"
         working-directory: "examples/dice_roller/${{ inputs.version }}"
