@@ -55,7 +55,7 @@ jobs:
           echo "Title: $TITLE" > pr_title.md
       - name: Check PR Title spelling
         if: ${{ steps.lint_pr_title.outputs.scope != 'deps' }}
-        uses: streetsidesoftware/cspell-action@ce1816e4ce36532956ac6e983737392774b6e169 # v9.2.0
+        uses: streetsidesoftware/cspell-action@6775881c37fa4d293f36b318316d59d03c839b39 # v9.3.0
         with:
           config: .cspell.yml
           suggestions: true

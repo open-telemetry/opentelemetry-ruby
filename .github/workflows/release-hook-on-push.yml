@@ -24,7 +24,7 @@ jobs:
           # zizmor: ignore[artipacked] Credentials are required to push version/changelog updates when auto-requesting releases
           persist-credentials: true
       - name: Install Ruby
-        uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f # v1.335.0
+        uses: ruby/setup-ruby@145243922b4465b78e04dd66294782c7de45901f # v1.345.0
         with:
           ruby-version: "4.0.9"
           bundler-cache: true
